@@ -26,9 +26,9 @@ configure<PublishingExtension> {
                 }
 
                 scm {
-                    connection.set("scm:git:git://github.com/stainless-sdks/growsurf-java.git")
-                    developerConnection.set("scm:git:git://github.com/stainless-sdks/growsurf-java.git")
-                    url.set("https://github.com/stainless-sdks/growsurf-java")
+                    connection.set("scm:git:git://github.com/growsurf/growsurf-java.git")
+                    developerConnection.set("scm:git:git://github.com/growsurf/growsurf-java.git")
+                    url.set("https://github.com/growsurf/growsurf-java")
                 }
 
                 versionMapping {
