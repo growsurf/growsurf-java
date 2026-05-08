@@ -1,0 +1,644 @@
+// File generated from our OpenAPI spec by Stainless.
+
+package com.growsurf.api.services.blocking
+
+import com.google.errorprone.annotations.MustBeClosed
+import com.growsurf.api.core.ClientOptions
+import com.growsurf.api.core.RequestOptions
+import com.growsurf.api.core.http.HttpResponseFor
+import com.growsurf.api.models.campaign.Campaign
+import com.growsurf.api.models.campaign.CampaignListCommissionsParams
+import com.growsurf.api.models.campaign.CampaignListLeaderboardParams
+import com.growsurf.api.models.campaign.CampaignListParams
+import com.growsurf.api.models.campaign.CampaignListParticipantsParams
+import com.growsurf.api.models.campaign.CampaignListPayoutsParams
+import com.growsurf.api.models.campaign.CampaignListReferralsParams
+import com.growsurf.api.models.campaign.CampaignListResponse
+import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsParams
+import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsResponse
+import com.growsurf.api.models.campaign.CampaignRetrieveParams
+import com.growsurf.api.models.campaign.ParticipantCommissionList
+import com.growsurf.api.models.campaign.ParticipantList
+import com.growsurf.api.models.campaign.ParticipantPayoutList
+import com.growsurf.api.models.campaign.ReferralList
+import com.growsurf.api.services.blocking.campaign.CommissionService
+import com.growsurf.api.services.blocking.campaign.ParticipantService
+import com.growsurf.api.services.blocking.campaign.RewardService
+import java.util.function.Consumer
+
+interface CampaignService {
+
+    /**
+     * Returns a view of this service that provides access to raw HTTP responses for each method.
+     */
+    fun withRawResponse(): WithRawResponse
+
+    /**
+     * Returns a view of this service with the given option modifications applied.
+     *
+     * The original service is not modified.
+     */
+    fun withOptions(modifier: Consumer<ClientOptions.Builder>): CampaignService
+
+    fun participant(): ParticipantService
+
+    /** Participant reward retrieval and manual reward operations. */
+    fun reward(): RewardService
+
+    /** Affiliate transaction, commission, and payout operations. */
+    fun commission(): CommissionService
+
+    /** Retrieves a program for the given program ID. */
+    fun retrieve(id: String): Campaign = retrieve(id, CampaignRetrieveParams.none())
+
+    /** @see retrieve */
+    fun retrieve(
+        id: String,
+        params: CampaignRetrieveParams = CampaignRetrieveParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): Campaign = retrieve(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see retrieve */
+    fun retrieve(
+        id: String,
+        params: CampaignRetrieveParams = CampaignRetrieveParams.none(),
+    ): Campaign = retrieve(id, params, RequestOptions.none())
+
+    /** @see retrieve */
+    fun retrieve(
+        params: CampaignRetrieveParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): Campaign
+
+    /** @see retrieve */
+    fun retrieve(params: CampaignRetrieveParams): Campaign = retrieve(params, RequestOptions.none())
+
+    /** @see retrieve */
+    fun retrieve(id: String, requestOptions: RequestOptions): Campaign =
+        retrieve(id, CampaignRetrieveParams.none(), requestOptions)
+
+    /** Retrieves a list of your programs. Deleted programs are not returned. */
+    fun list(): CampaignListResponse = list(CampaignListParams.none())
+
+    /** @see list */
+    fun list(
+        params: CampaignListParams = CampaignListParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CampaignListResponse
+
+    /** @see list */
+    fun list(params: CampaignListParams = CampaignListParams.none()): CampaignListResponse =
+        list(params, RequestOptions.none())
+
+    /** @see list */
+    fun list(requestOptions: RequestOptions): CampaignListResponse =
+        list(CampaignListParams.none(), requestOptions)
+
+    /** Retrieves a paged list of all participant commissions in an affiliate program. */
+    fun listCommissions(id: String): ParticipantCommissionList =
+        listCommissions(id, CampaignListCommissionsParams.none())
+
+    /** @see listCommissions */
+    fun listCommissions(
+        id: String,
+        params: CampaignListCommissionsParams = CampaignListCommissionsParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ParticipantCommissionList =
+        listCommissions(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see listCommissions */
+    fun listCommissions(
+        id: String,
+        params: CampaignListCommissionsParams = CampaignListCommissionsParams.none(),
+    ): ParticipantCommissionList = listCommissions(id, params, RequestOptions.none())
+
+    /** @see listCommissions */
+    fun listCommissions(
+        params: CampaignListCommissionsParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ParticipantCommissionList
+
+    /** @see listCommissions */
+    fun listCommissions(params: CampaignListCommissionsParams): ParticipantCommissionList =
+        listCommissions(params, RequestOptions.none())
+
+    /** @see listCommissions */
+    fun listCommissions(id: String, requestOptions: RequestOptions): ParticipantCommissionList =
+        listCommissions(id, CampaignListCommissionsParams.none(), requestOptions)
+
+    /** Retrieves participants in leaderboard order for the specified leaderboard type. */
+    fun listLeaderboard(id: String): ParticipantList =
+        listLeaderboard(id, CampaignListLeaderboardParams.none())
+
+    /** @see listLeaderboard */
+    fun listLeaderboard(
+        id: String,
+        params: CampaignListLeaderboardParams = CampaignListLeaderboardParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ParticipantList = listLeaderboard(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see listLeaderboard */
+    fun listLeaderboard(
+        id: String,
+        params: CampaignListLeaderboardParams = CampaignListLeaderboardParams.none(),
+    ): ParticipantList = listLeaderboard(id, params, RequestOptions.none())
+
+    /** @see listLeaderboard */
+    fun listLeaderboard(
+        params: CampaignListLeaderboardParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ParticipantList
+
+    /** @see listLeaderboard */
+    fun listLeaderboard(params: CampaignListLeaderboardParams): ParticipantList =
+        listLeaderboard(params, RequestOptions.none())
+
+    /** @see listLeaderboard */
+    fun listLeaderboard(id: String, requestOptions: RequestOptions): ParticipantList =
+        listLeaderboard(id, CampaignListLeaderboardParams.none(), requestOptions)
+
+    /** Retrieves a paged list of participants in a program. */
+    fun listParticipants(id: String): ParticipantList =
+        listParticipants(id, CampaignListParticipantsParams.none())
+
+    /** @see listParticipants */
+    fun listParticipants(
+        id: String,
+        params: CampaignListParticipantsParams = CampaignListParticipantsParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ParticipantList = listParticipants(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see listParticipants */
+    fun listParticipants(
+        id: String,
+        params: CampaignListParticipantsParams = CampaignListParticipantsParams.none(),
+    ): ParticipantList = listParticipants(id, params, RequestOptions.none())
+
+    /** @see listParticipants */
+    fun listParticipants(
+        params: CampaignListParticipantsParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ParticipantList
+
+    /** @see listParticipants */
+    fun listParticipants(params: CampaignListParticipantsParams): ParticipantList =
+        listParticipants(params, RequestOptions.none())
+
+    /** @see listParticipants */
+    fun listParticipants(id: String, requestOptions: RequestOptions): ParticipantList =
+        listParticipants(id, CampaignListParticipantsParams.none(), requestOptions)
+
+    /** Retrieves a paged list of all participant payouts in an affiliate program. */
+    fun listPayouts(id: String): ParticipantPayoutList =
+        listPayouts(id, CampaignListPayoutsParams.none())
+
+    /** @see listPayouts */
+    fun listPayouts(
+        id: String,
+        params: CampaignListPayoutsParams = CampaignListPayoutsParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ParticipantPayoutList = listPayouts(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see listPayouts */
+    fun listPayouts(
+        id: String,
+        params: CampaignListPayoutsParams = CampaignListPayoutsParams.none(),
+    ): ParticipantPayoutList = listPayouts(id, params, RequestOptions.none())
+
+    /** @see listPayouts */
+    fun listPayouts(
+        params: CampaignListPayoutsParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ParticipantPayoutList
+
+    /** @see listPayouts */
+    fun listPayouts(params: CampaignListPayoutsParams): ParticipantPayoutList =
+        listPayouts(params, RequestOptions.none())
+
+    /** @see listPayouts */
+    fun listPayouts(id: String, requestOptions: RequestOptions): ParticipantPayoutList =
+        listPayouts(id, CampaignListPayoutsParams.none(), requestOptions)
+
+    /** Retrieves a list of all referrals and email invites made by participants in a program. */
+    fun listReferrals(id: String): ReferralList =
+        listReferrals(id, CampaignListReferralsParams.none())
+
+    /** @see listReferrals */
+    fun listReferrals(
+        id: String,
+        params: CampaignListReferralsParams = CampaignListReferralsParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ReferralList = listReferrals(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see listReferrals */
+    fun listReferrals(
+        id: String,
+        params: CampaignListReferralsParams = CampaignListReferralsParams.none(),
+    ): ReferralList = listReferrals(id, params, RequestOptions.none())
+
+    /** @see listReferrals */
+    fun listReferrals(
+        params: CampaignListReferralsParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ReferralList
+
+    /** @see listReferrals */
+    fun listReferrals(params: CampaignListReferralsParams): ReferralList =
+        listReferrals(params, RequestOptions.none())
+
+    /** @see listReferrals */
+    fun listReferrals(id: String, requestOptions: RequestOptions): ReferralList =
+        listReferrals(id, CampaignListReferralsParams.none(), requestOptions)
+
+    /** Retrieves analytics for a program. */
+    fun retrieveAnalytics(id: String): CampaignRetrieveAnalyticsResponse =
+        retrieveAnalytics(id, CampaignRetrieveAnalyticsParams.none())
+
+    /** @see retrieveAnalytics */
+    fun retrieveAnalytics(
+        id: String,
+        params: CampaignRetrieveAnalyticsParams = CampaignRetrieveAnalyticsParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CampaignRetrieveAnalyticsResponse =
+        retrieveAnalytics(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see retrieveAnalytics */
+    fun retrieveAnalytics(
+        id: String,
+        params: CampaignRetrieveAnalyticsParams = CampaignRetrieveAnalyticsParams.none(),
+    ): CampaignRetrieveAnalyticsResponse = retrieveAnalytics(id, params, RequestOptions.none())
+
+    /** @see retrieveAnalytics */
+    fun retrieveAnalytics(
+        params: CampaignRetrieveAnalyticsParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CampaignRetrieveAnalyticsResponse
+
+    /** @see retrieveAnalytics */
+    fun retrieveAnalytics(
+        params: CampaignRetrieveAnalyticsParams
+    ): CampaignRetrieveAnalyticsResponse = retrieveAnalytics(params, RequestOptions.none())
+
+    /** @see retrieveAnalytics */
+    fun retrieveAnalytics(
+        id: String,
+        requestOptions: RequestOptions,
+    ): CampaignRetrieveAnalyticsResponse =
+        retrieveAnalytics(id, CampaignRetrieveAnalyticsParams.none(), requestOptions)
+
+    /** A view of [CampaignService] that provides access to raw HTTP responses for each method. */
+    interface WithRawResponse {
+
+        /**
+         * Returns a view of this service with the given option modifications applied.
+         *
+         * The original service is not modified.
+         */
+        fun withOptions(modifier: Consumer<ClientOptions.Builder>): CampaignService.WithRawResponse
+
+        fun participant(): ParticipantService.WithRawResponse
+
+        /** Participant reward retrieval and manual reward operations. */
+        fun reward(): RewardService.WithRawResponse
+
+        /** Affiliate transaction, commission, and payout operations. */
+        fun commission(): CommissionService.WithRawResponse
+
+        /**
+         * Returns a raw HTTP response for `get /campaign/{id}`, but is otherwise the same as
+         * [CampaignService.retrieve].
+         */
+        @MustBeClosed
+        fun retrieve(id: String): HttpResponseFor<Campaign> =
+            retrieve(id, CampaignRetrieveParams.none())
+
+        /** @see retrieve */
+        @MustBeClosed
+        fun retrieve(
+            id: String,
+            params: CampaignRetrieveParams = CampaignRetrieveParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<Campaign> = retrieve(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see retrieve */
+        @MustBeClosed
+        fun retrieve(
+            id: String,
+            params: CampaignRetrieveParams = CampaignRetrieveParams.none(),
+        ): HttpResponseFor<Campaign> = retrieve(id, params, RequestOptions.none())
+
+        /** @see retrieve */
+        @MustBeClosed
+        fun retrieve(
+            params: CampaignRetrieveParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<Campaign>
+
+        /** @see retrieve */
+        @MustBeClosed
+        fun retrieve(params: CampaignRetrieveParams): HttpResponseFor<Campaign> =
+            retrieve(params, RequestOptions.none())
+
+        /** @see retrieve */
+        @MustBeClosed
+        fun retrieve(id: String, requestOptions: RequestOptions): HttpResponseFor<Campaign> =
+            retrieve(id, CampaignRetrieveParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /campaigns`, but is otherwise the same as
+         * [CampaignService.list].
+         */
+        @MustBeClosed
+        fun list(): HttpResponseFor<CampaignListResponse> = list(CampaignListParams.none())
+
+        /** @see list */
+        @MustBeClosed
+        fun list(
+            params: CampaignListParams = CampaignListParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<CampaignListResponse>
+
+        /** @see list */
+        @MustBeClosed
+        fun list(
+            params: CampaignListParams = CampaignListParams.none()
+        ): HttpResponseFor<CampaignListResponse> = list(params, RequestOptions.none())
+
+        /** @see list */
+        @MustBeClosed
+        fun list(requestOptions: RequestOptions): HttpResponseFor<CampaignListResponse> =
+            list(CampaignListParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /campaign/{id}/commissions`, but is otherwise the
+         * same as [CampaignService.listCommissions].
+         */
+        @MustBeClosed
+        fun listCommissions(id: String): HttpResponseFor<ParticipantCommissionList> =
+            listCommissions(id, CampaignListCommissionsParams.none())
+
+        /** @see listCommissions */
+        @MustBeClosed
+        fun listCommissions(
+            id: String,
+            params: CampaignListCommissionsParams = CampaignListCommissionsParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ParticipantCommissionList> =
+            listCommissions(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see listCommissions */
+        @MustBeClosed
+        fun listCommissions(
+            id: String,
+            params: CampaignListCommissionsParams = CampaignListCommissionsParams.none(),
+        ): HttpResponseFor<ParticipantCommissionList> =
+            listCommissions(id, params, RequestOptions.none())
+
+        /** @see listCommissions */
+        @MustBeClosed
+        fun listCommissions(
+            params: CampaignListCommissionsParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ParticipantCommissionList>
+
+        /** @see listCommissions */
+        @MustBeClosed
+        fun listCommissions(
+            params: CampaignListCommissionsParams
+        ): HttpResponseFor<ParticipantCommissionList> =
+            listCommissions(params, RequestOptions.none())
+
+        /** @see listCommissions */
+        @MustBeClosed
+        fun listCommissions(
+            id: String,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<ParticipantCommissionList> =
+            listCommissions(id, CampaignListCommissionsParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /campaign/{id}/leaderboard`, but is otherwise the
+         * same as [CampaignService.listLeaderboard].
+         */
+        @MustBeClosed
+        fun listLeaderboard(id: String): HttpResponseFor<ParticipantList> =
+            listLeaderboard(id, CampaignListLeaderboardParams.none())
+
+        /** @see listLeaderboard */
+        @MustBeClosed
+        fun listLeaderboard(
+            id: String,
+            params: CampaignListLeaderboardParams = CampaignListLeaderboardParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ParticipantList> =
+            listLeaderboard(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see listLeaderboard */
+        @MustBeClosed
+        fun listLeaderboard(
+            id: String,
+            params: CampaignListLeaderboardParams = CampaignListLeaderboardParams.none(),
+        ): HttpResponseFor<ParticipantList> = listLeaderboard(id, params, RequestOptions.none())
+
+        /** @see listLeaderboard */
+        @MustBeClosed
+        fun listLeaderboard(
+            params: CampaignListLeaderboardParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ParticipantList>
+
+        /** @see listLeaderboard */
+        @MustBeClosed
+        fun listLeaderboard(
+            params: CampaignListLeaderboardParams
+        ): HttpResponseFor<ParticipantList> = listLeaderboard(params, RequestOptions.none())
+
+        /** @see listLeaderboard */
+        @MustBeClosed
+        fun listLeaderboard(
+            id: String,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<ParticipantList> =
+            listLeaderboard(id, CampaignListLeaderboardParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /campaign/{id}/participants`, but is otherwise the
+         * same as [CampaignService.listParticipants].
+         */
+        @MustBeClosed
+        fun listParticipants(id: String): HttpResponseFor<ParticipantList> =
+            listParticipants(id, CampaignListParticipantsParams.none())
+
+        /** @see listParticipants */
+        @MustBeClosed
+        fun listParticipants(
+            id: String,
+            params: CampaignListParticipantsParams = CampaignListParticipantsParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ParticipantList> =
+            listParticipants(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see listParticipants */
+        @MustBeClosed
+        fun listParticipants(
+            id: String,
+            params: CampaignListParticipantsParams = CampaignListParticipantsParams.none(),
+        ): HttpResponseFor<ParticipantList> = listParticipants(id, params, RequestOptions.none())
+
+        /** @see listParticipants */
+        @MustBeClosed
+        fun listParticipants(
+            params: CampaignListParticipantsParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ParticipantList>
+
+        /** @see listParticipants */
+        @MustBeClosed
+        fun listParticipants(
+            params: CampaignListParticipantsParams
+        ): HttpResponseFor<ParticipantList> = listParticipants(params, RequestOptions.none())
+
+        /** @see listParticipants */
+        @MustBeClosed
+        fun listParticipants(
+            id: String,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<ParticipantList> =
+            listParticipants(id, CampaignListParticipantsParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /campaign/{id}/payouts`, but is otherwise the same
+         * as [CampaignService.listPayouts].
+         */
+        @MustBeClosed
+        fun listPayouts(id: String): HttpResponseFor<ParticipantPayoutList> =
+            listPayouts(id, CampaignListPayoutsParams.none())
+
+        /** @see listPayouts */
+        @MustBeClosed
+        fun listPayouts(
+            id: String,
+            params: CampaignListPayoutsParams = CampaignListPayoutsParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ParticipantPayoutList> =
+            listPayouts(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see listPayouts */
+        @MustBeClosed
+        fun listPayouts(
+            id: String,
+            params: CampaignListPayoutsParams = CampaignListPayoutsParams.none(),
+        ): HttpResponseFor<ParticipantPayoutList> = listPayouts(id, params, RequestOptions.none())
+
+        /** @see listPayouts */
+        @MustBeClosed
+        fun listPayouts(
+            params: CampaignListPayoutsParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ParticipantPayoutList>
+
+        /** @see listPayouts */
+        @MustBeClosed
+        fun listPayouts(params: CampaignListPayoutsParams): HttpResponseFor<ParticipantPayoutList> =
+            listPayouts(params, RequestOptions.none())
+
+        /** @see listPayouts */
+        @MustBeClosed
+        fun listPayouts(
+            id: String,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<ParticipantPayoutList> =
+            listPayouts(id, CampaignListPayoutsParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /campaign/{id}/referrals`, but is otherwise the same
+         * as [CampaignService.listReferrals].
+         */
+        @MustBeClosed
+        fun listReferrals(id: String): HttpResponseFor<ReferralList> =
+            listReferrals(id, CampaignListReferralsParams.none())
+
+        /** @see listReferrals */
+        @MustBeClosed
+        fun listReferrals(
+            id: String,
+            params: CampaignListReferralsParams = CampaignListReferralsParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ReferralList> =
+            listReferrals(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see listReferrals */
+        @MustBeClosed
+        fun listReferrals(
+            id: String,
+            params: CampaignListReferralsParams = CampaignListReferralsParams.none(),
+        ): HttpResponseFor<ReferralList> = listReferrals(id, params, RequestOptions.none())
+
+        /** @see listReferrals */
+        @MustBeClosed
+        fun listReferrals(
+            params: CampaignListReferralsParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ReferralList>
+
+        /** @see listReferrals */
+        @MustBeClosed
+        fun listReferrals(params: CampaignListReferralsParams): HttpResponseFor<ReferralList> =
+            listReferrals(params, RequestOptions.none())
+
+        /** @see listReferrals */
+        @MustBeClosed
+        fun listReferrals(
+            id: String,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<ReferralList> =
+            listReferrals(id, CampaignListReferralsParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /campaign/{id}/analytics`, but is otherwise the same
+         * as [CampaignService.retrieveAnalytics].
+         */
+        @MustBeClosed
+        fun retrieveAnalytics(id: String): HttpResponseFor<CampaignRetrieveAnalyticsResponse> =
+            retrieveAnalytics(id, CampaignRetrieveAnalyticsParams.none())
+
+        /** @see retrieveAnalytics */
+        @MustBeClosed
+        fun retrieveAnalytics(
+            id: String,
+            params: CampaignRetrieveAnalyticsParams = CampaignRetrieveAnalyticsParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<CampaignRetrieveAnalyticsResponse> =
+            retrieveAnalytics(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see retrieveAnalytics */
+        @MustBeClosed
+        fun retrieveAnalytics(
+            id: String,
+            params: CampaignRetrieveAnalyticsParams = CampaignRetrieveAnalyticsParams.none(),
+        ): HttpResponseFor<CampaignRetrieveAnalyticsResponse> =
+            retrieveAnalytics(id, params, RequestOptions.none())
+
+        /** @see retrieveAnalytics */
+        @MustBeClosed
+        fun retrieveAnalytics(
+            params: CampaignRetrieveAnalyticsParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<CampaignRetrieveAnalyticsResponse>
+
+        /** @see retrieveAnalytics */
+        @MustBeClosed
+        fun retrieveAnalytics(
+            params: CampaignRetrieveAnalyticsParams
+        ): HttpResponseFor<CampaignRetrieveAnalyticsResponse> =
+            retrieveAnalytics(params, RequestOptions.none())
+
+        /** @see retrieveAnalytics */
+        @MustBeClosed
+        fun retrieveAnalytics(
+            id: String,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<CampaignRetrieveAnalyticsResponse> =
+            retrieveAnalytics(id, CampaignRetrieveAnalyticsParams.none(), requestOptions)
+    }
+}
