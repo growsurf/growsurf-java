@@ -5,6 +5,7 @@ package com.growsurf.api.services.blocking.campaign
 import com.growsurf.api.client.okhttp.GrowsurfOkHttpClient
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.models.campaign.participant.ParticipantAddParams
+import com.growsurf.api.models.campaign.participant.ParticipantCreateMobileTokenParams
 import com.growsurf.api.models.campaign.participant.ParticipantDeleteParams
 import com.growsurf.api.models.campaign.participant.ParticipantListCommissionsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListPayoutsParams
@@ -111,6 +112,23 @@ internal class ParticipantServiceTest {
             )
 
         participant.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun createMobileToken() {
+        val client = GrowsurfOkHttpClient.builder().apiKey("My API Key").build()
+        val participantService = client.campaign().participant()
+
+        val response =
+            participantService.createMobileToken(
+                ParticipantCreateMobileTokenParams.builder()
+                    .id("id")
+                    .participantIdOrEmail("participantIdOrEmail")
+                    .build()
+            )
+
+        response.validate()
     }
 
     @Disabled("Mock server tests are disabled")
