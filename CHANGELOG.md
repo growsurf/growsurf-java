@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.0 (2026-05-13)
+
+Full Changelog: [v0.1.0...v0.2.0](https://github.com/growsurf/growsurf-java/compare/v0.1.0...v0.2.0)
+
+### Features
+
+* **api:** manual updates ([3ce79ce](https://github.com/growsurf/growsurf-java/commit/3ce79ce82542a946241fca2c0268f1c25a3d3b38))
+
 ## 0.1.0 (2026-05-13)
 
 Full Changelog: [v0.0.1...v0.1.0](https://github.com/growsurf/growsurf-java/compare/v0.0.1...v0.1.0)
