@@ -236,11 +236,14 @@ private constructor(
     class Analytics
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
+        private val androidNativeShares: JsonField<Long>,
         private val blueskyShares: JsonField<Long>,
+        private val copyRefLinkShares: JsonField<Long>,
         private val emailShares: JsonField<Long>,
         private val facebookShares: JsonField<Long>,
         private val impressions: JsonField<Long>,
         private val invites: JsonField<Long>,
+        private val iosNativeShares: JsonField<Long>,
         private val linkedInShares: JsonField<Long>,
         private val messengerShares: JsonField<Long>,
         private val participants: JsonField<Long>,
@@ -266,9 +269,15 @@ private constructor(
 
         @JsonCreator
         private constructor(
+            @JsonProperty("androidNativeShares")
+            @ExcludeMissing
+            androidNativeShares: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("blueskyShares")
             @ExcludeMissing
             blueskyShares: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("copyRefLinkShares")
+            @ExcludeMissing
+            copyRefLinkShares: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("emailShares")
             @ExcludeMissing
             emailShares: JsonField<Long> = JsonMissing.of(),
@@ -279,6 +288,9 @@ private constructor(
             @ExcludeMissing
             impressions: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("invites") @ExcludeMissing invites: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("iosNativeShares")
+            @ExcludeMissing
+            iosNativeShares: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("linkedInShares")
             @ExcludeMissing
             linkedInShares: JsonField<Long> = JsonMissing.of(),
@@ -340,11 +352,14 @@ private constructor(
             @ExcludeMissing
             whatsAppShares: JsonField<Long> = JsonMissing.of(),
         ) : this(
+            androidNativeShares,
             blueskyShares,
+            copyRefLinkShares,
             emailShares,
             facebookShares,
             impressions,
             invites,
+            iosNativeShares,
             linkedInShares,
             messengerShares,
             participants,
@@ -372,7 +387,20 @@ private constructor(
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
+        fun androidNativeShares(): Optional<Long> =
+            androidNativeShares.getOptional("androidNativeShares")
+
+        /**
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
         fun blueskyShares(): Optional<Long> = blueskyShares.getOptional("blueskyShares")
+
+        /**
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun copyRefLinkShares(): Optional<Long> = copyRefLinkShares.getOptional("copyRefLinkShares")
 
         /**
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -397,6 +425,12 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun invites(): Optional<Long> = invites.getOptional("invites")
+
+        /**
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun iosNativeShares(): Optional<Long> = iosNativeShares.getOptional("iosNativeShares")
 
         /**
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -528,6 +562,16 @@ private constructor(
         fun whatsAppShares(): Optional<Long> = whatsAppShares.getOptional("whatsAppShares")
 
         /**
+         * Returns the raw JSON value of [androidNativeShares].
+         *
+         * Unlike [androidNativeShares], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("androidNativeShares")
+        @ExcludeMissing
+        fun _androidNativeShares(): JsonField<Long> = androidNativeShares
+
+        /**
          * Returns the raw JSON value of [blueskyShares].
          *
          * Unlike [blueskyShares], this method doesn't throw if the JSON field has an unexpected
@@ -536,6 +580,16 @@ private constructor(
         @JsonProperty("blueskyShares")
         @ExcludeMissing
         fun _blueskyShares(): JsonField<Long> = blueskyShares
+
+        /**
+         * Returns the raw JSON value of [copyRefLinkShares].
+         *
+         * Unlike [copyRefLinkShares], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("copyRefLinkShares")
+        @ExcludeMissing
+        fun _copyRefLinkShares(): JsonField<Long> = copyRefLinkShares
 
         /**
          * Returns the raw JSON value of [emailShares].
@@ -571,6 +625,16 @@ private constructor(
          * Unlike [invites], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("invites") @ExcludeMissing fun _invites(): JsonField<Long> = invites
+
+        /**
+         * Returns the raw JSON value of [iosNativeShares].
+         *
+         * Unlike [iosNativeShares], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("iosNativeShares")
+        @ExcludeMissing
+        fun _iosNativeShares(): JsonField<Long> = iosNativeShares
 
         /**
          * Returns the raw JSON value of [linkedInShares].
@@ -787,11 +851,14 @@ private constructor(
         /** A builder for [Analytics]. */
         class Builder internal constructor() {
 
+            private var androidNativeShares: JsonField<Long> = JsonMissing.of()
             private var blueskyShares: JsonField<Long> = JsonMissing.of()
+            private var copyRefLinkShares: JsonField<Long> = JsonMissing.of()
             private var emailShares: JsonField<Long> = JsonMissing.of()
             private var facebookShares: JsonField<Long> = JsonMissing.of()
             private var impressions: JsonField<Long> = JsonMissing.of()
             private var invites: JsonField<Long> = JsonMissing.of()
+            private var iosNativeShares: JsonField<Long> = JsonMissing.of()
             private var linkedInShares: JsonField<Long> = JsonMissing.of()
             private var messengerShares: JsonField<Long> = JsonMissing.of()
             private var participants: JsonField<Long> = JsonMissing.of()
@@ -816,11 +883,14 @@ private constructor(
 
             @JvmSynthetic
             internal fun from(analytics: Analytics) = apply {
+                androidNativeShares = analytics.androidNativeShares
                 blueskyShares = analytics.blueskyShares
+                copyRefLinkShares = analytics.copyRefLinkShares
                 emailShares = analytics.emailShares
                 facebookShares = analytics.facebookShares
                 impressions = analytics.impressions
                 invites = analytics.invites
+                iosNativeShares = analytics.iosNativeShares
                 linkedInShares = analytics.linkedInShares
                 messengerShares = analytics.messengerShares
                 participants = analytics.participants
@@ -844,6 +914,20 @@ private constructor(
                 additionalProperties = analytics.additionalProperties.toMutableMap()
             }
 
+            fun androidNativeShares(androidNativeShares: Long) =
+                androidNativeShares(JsonField.of(androidNativeShares))
+
+            /**
+             * Sets [Builder.androidNativeShares] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.androidNativeShares] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun androidNativeShares(androidNativeShares: JsonField<Long>) = apply {
+                this.androidNativeShares = androidNativeShares
+            }
+
             fun blueskyShares(blueskyShares: Long) = blueskyShares(JsonField.of(blueskyShares))
 
             /**
@@ -855,6 +939,20 @@ private constructor(
              */
             fun blueskyShares(blueskyShares: JsonField<Long>) = apply {
                 this.blueskyShares = blueskyShares
+            }
+
+            fun copyRefLinkShares(copyRefLinkShares: Long) =
+                copyRefLinkShares(JsonField.of(copyRefLinkShares))
+
+            /**
+             * Sets [Builder.copyRefLinkShares] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.copyRefLinkShares] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun copyRefLinkShares(copyRefLinkShares: JsonField<Long>) = apply {
+                this.copyRefLinkShares = copyRefLinkShares
             }
 
             fun emailShares(emailShares: Long) = emailShares(JsonField.of(emailShares))
@@ -902,6 +1000,20 @@ private constructor(
              * supported value.
              */
             fun invites(invites: JsonField<Long>) = apply { this.invites = invites }
+
+            fun iosNativeShares(iosNativeShares: Long) =
+                iosNativeShares(JsonField.of(iosNativeShares))
+
+            /**
+             * Sets [Builder.iosNativeShares] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.iosNativeShares] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun iosNativeShares(iosNativeShares: JsonField<Long>) = apply {
+                this.iosNativeShares = iosNativeShares
+            }
 
             fun linkedInShares(linkedInShares: Long) = linkedInShares(JsonField.of(linkedInShares))
 
@@ -1197,11 +1309,14 @@ private constructor(
              */
             fun build(): Analytics =
                 Analytics(
+                    androidNativeShares,
                     blueskyShares,
+                    copyRefLinkShares,
                     emailShares,
                     facebookShares,
                     impressions,
                     invites,
+                    iosNativeShares,
                     linkedInShares,
                     messengerShares,
                     participants,
@@ -1242,11 +1357,14 @@ private constructor(
                 return@apply
             }
 
+            androidNativeShares()
             blueskyShares()
+            copyRefLinkShares()
             emailShares()
             facebookShares()
             impressions()
             invites()
+            iosNativeShares()
             linkedInShares()
             messengerShares()
             participants()
@@ -1286,11 +1404,14 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (blueskyShares.asKnown().isPresent) 1 else 0) +
+            (if (androidNativeShares.asKnown().isPresent) 1 else 0) +
+                (if (blueskyShares.asKnown().isPresent) 1 else 0) +
+                (if (copyRefLinkShares.asKnown().isPresent) 1 else 0) +
                 (if (emailShares.asKnown().isPresent) 1 else 0) +
                 (if (facebookShares.asKnown().isPresent) 1 else 0) +
                 (if (impressions.asKnown().isPresent) 1 else 0) +
                 (if (invites.asKnown().isPresent) 1 else 0) +
+                (if (iosNativeShares.asKnown().isPresent) 1 else 0) +
                 (if (linkedInShares.asKnown().isPresent) 1 else 0) +
                 (if (messengerShares.asKnown().isPresent) 1 else 0) +
                 (if (participants.asKnown().isPresent) 1 else 0) +
@@ -1318,11 +1439,14 @@ private constructor(
             }
 
             return other is Analytics &&
+                androidNativeShares == other.androidNativeShares &&
                 blueskyShares == other.blueskyShares &&
+                copyRefLinkShares == other.copyRefLinkShares &&
                 emailShares == other.emailShares &&
                 facebookShares == other.facebookShares &&
                 impressions == other.impressions &&
                 invites == other.invites &&
+                iosNativeShares == other.iosNativeShares &&
                 linkedInShares == other.linkedInShares &&
                 messengerShares == other.messengerShares &&
                 participants == other.participants &&
@@ -1348,11 +1472,14 @@ private constructor(
 
         private val hashCode: Int by lazy {
             Objects.hash(
+                androidNativeShares,
                 blueskyShares,
+                copyRefLinkShares,
                 emailShares,
                 facebookShares,
                 impressions,
                 invites,
+                iosNativeShares,
                 linkedInShares,
                 messengerShares,
                 participants,
@@ -1380,7 +1507,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Analytics{blueskyShares=$blueskyShares, emailShares=$emailShares, facebookShares=$facebookShares, impressions=$impressions, invites=$invites, linkedInShares=$linkedInShares, messengerShares=$messengerShares, participants=$participants, pinterestShares=$pinterestShares, qrcodeShares=$qrcodeShares, redditShares=$redditShares, referralCreditExpireds=$referralCreditExpireds, referralCreditPendings=$referralCreditPendings, referrals=$referrals, smsShares=$smsShares, telegramShares=$telegramShares, threadsShares=$threadsShares, totalCommissionCount=$totalCommissionCount, totalCommissions=$totalCommissions, totalRevenue=$totalRevenue, tumblrShares=$tumblrShares, twitterShares=$twitterShares, uniqueImpressions=$uniqueImpressions, wechatShares=$wechatShares, whatsAppShares=$whatsAppShares, additionalProperties=$additionalProperties}"
+            "Analytics{androidNativeShares=$androidNativeShares, blueskyShares=$blueskyShares, copyRefLinkShares=$copyRefLinkShares, emailShares=$emailShares, facebookShares=$facebookShares, impressions=$impressions, invites=$invites, iosNativeShares=$iosNativeShares, linkedInShares=$linkedInShares, messengerShares=$messengerShares, participants=$participants, pinterestShares=$pinterestShares, qrcodeShares=$qrcodeShares, redditShares=$redditShares, referralCreditExpireds=$referralCreditExpireds, referralCreditPendings=$referralCreditPendings, referrals=$referrals, smsShares=$smsShares, telegramShares=$telegramShares, threadsShares=$threadsShares, totalCommissionCount=$totalCommissionCount, totalCommissions=$totalCommissions, totalRevenue=$totalRevenue, tumblrShares=$tumblrShares, twitterShares=$twitterShares, uniqueImpressions=$uniqueImpressions, wechatShares=$wechatShares, whatsAppShares=$whatsAppShares, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
