@@ -4,8 +4,8 @@ package com.growsurf.api.services.blocking.campaign
 
 import com.growsurf.api.client.okhttp.GrowsurfOkHttpClient
 import com.growsurf.api.core.JsonValue
+import com.growsurf.api.models.campaign.participant.Create
 import com.growsurf.api.models.campaign.participant.ParticipantAddParams
-import com.growsurf.api.models.campaign.participant.ParticipantCreateMobileTokenParams
 import com.growsurf.api.models.campaign.participant.ParticipantDeleteParams
 import com.growsurf.api.models.campaign.participant.ParticipantListCommissionsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListPayoutsParams
@@ -95,40 +95,26 @@ internal class ParticipantServiceTest {
             participantService.add(
                 ParticipantAddParams.builder()
                     .id("id")
-                    .email("gavin@hooli.com")
-                    .fingerprint("fingerprint")
-                    .firstName("Gavin")
-                    .ipAddress("203.0.113.10")
-                    .lastName("Belson")
-                    .metadata(
-                        ParticipantAddParams.Metadata.builder()
-                            .putAdditionalProperty("companyName", JsonValue.from("bar"))
-                            .putAdditionalProperty("industry", JsonValue.from("bar"))
+                    .create(
+                        Create.builder()
+                            .email("dev@stainless.com")
+                            .fingerprint("fingerprint")
+                            .firstName("firstName")
+                            .ipAddress("ipAddress")
+                            .lastName("lastName")
+                            .metadata(
+                                Create.Metadata.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .referralStatus(Create.ReferralStatus.CREDIT_PENDING)
+                            .referredBy("referredBy")
                             .build()
                     )
-                    .referralStatus(ParticipantAddParams.ReferralStatus.CREDIT_PENDING)
-                    .referredBy("richard-h8kp6l")
                     .build()
             )
 
         participant.validate()
-    }
-
-    @Disabled("Mock server tests are disabled")
-    @Test
-    fun createMobileToken() {
-        val client = GrowsurfOkHttpClient.builder().apiKey("My API Key").build()
-        val participantService = client.campaign().participant()
-
-        val response =
-            participantService.createMobileToken(
-                ParticipantCreateMobileTokenParams.builder()
-                    .id("id")
-                    .participantIdOrEmail("participantIdOrEmail")
-                    .build()
-            )
-
-        response.validate()
     }
 
     @Disabled("Mock server tests are disabled")

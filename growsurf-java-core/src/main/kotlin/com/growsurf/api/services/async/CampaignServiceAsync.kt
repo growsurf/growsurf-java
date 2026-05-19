@@ -6,6 +6,8 @@ import com.growsurf.api.core.ClientOptions
 import com.growsurf.api.core.RequestOptions
 import com.growsurf.api.core.http.HttpResponseFor
 import com.growsurf.api.models.campaign.Campaign
+import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenParams
+import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenResponse
 import com.growsurf.api.models.campaign.CampaignListCommissionsParams
 import com.growsurf.api.models.campaign.CampaignListLeaderboardParams
 import com.growsurf.api.models.campaign.CampaignListParams
@@ -96,6 +98,38 @@ interface CampaignServiceAsync {
     /** @see list */
     fun list(requestOptions: RequestOptions): CompletableFuture<CampaignListResponse> =
         list(CampaignListParams.none(), requestOptions)
+
+    /**
+     * Creates or returns a participant using the same input behavior as Add Participant, then
+     * returns a participant-scoped token for GrowSurf mobile SDK participant endpoints. Use this
+     * endpoint from your backend after your mobile app authenticates a signed-in user. The program
+     * must have mobile SDK access enabled.
+     */
+    fun createMobileParticipantToken(
+        id: String,
+        params: CampaignCreateMobileParticipantTokenParams,
+    ): CompletableFuture<CampaignCreateMobileParticipantTokenResponse> =
+        createMobileParticipantToken(id, params, RequestOptions.none())
+
+    /** @see createMobileParticipantToken */
+    fun createMobileParticipantToken(
+        id: String,
+        params: CampaignCreateMobileParticipantTokenParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<CampaignCreateMobileParticipantTokenResponse> =
+        createMobileParticipantToken(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see createMobileParticipantToken */
+    fun createMobileParticipantToken(
+        params: CampaignCreateMobileParticipantTokenParams
+    ): CompletableFuture<CampaignCreateMobileParticipantTokenResponse> =
+        createMobileParticipantToken(params, RequestOptions.none())
+
+    /** @see createMobileParticipantToken */
+    fun createMobileParticipantToken(
+        params: CampaignCreateMobileParticipantTokenParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<CampaignCreateMobileParticipantTokenResponse>
 
     /** Retrieves a paged list of all participant commissions in an affiliate program. */
     fun listCommissions(id: String): CompletableFuture<ParticipantCommissionList> =
@@ -395,6 +429,36 @@ interface CampaignServiceAsync {
             requestOptions: RequestOptions
         ): CompletableFuture<HttpResponseFor<CampaignListResponse>> =
             list(CampaignListParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `post /campaign/{id}/mobile-participant-token`, but is
+         * otherwise the same as [CampaignServiceAsync.createMobileParticipantToken].
+         */
+        fun createMobileParticipantToken(
+            id: String,
+            params: CampaignCreateMobileParticipantTokenParams,
+        ): CompletableFuture<HttpResponseFor<CampaignCreateMobileParticipantTokenResponse>> =
+            createMobileParticipantToken(id, params, RequestOptions.none())
+
+        /** @see createMobileParticipantToken */
+        fun createMobileParticipantToken(
+            id: String,
+            params: CampaignCreateMobileParticipantTokenParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<CampaignCreateMobileParticipantTokenResponse>> =
+            createMobileParticipantToken(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see createMobileParticipantToken */
+        fun createMobileParticipantToken(
+            params: CampaignCreateMobileParticipantTokenParams
+        ): CompletableFuture<HttpResponseFor<CampaignCreateMobileParticipantTokenResponse>> =
+            createMobileParticipantToken(params, RequestOptions.none())
+
+        /** @see createMobileParticipantToken */
+        fun createMobileParticipantToken(
+            params: CampaignCreateMobileParticipantTokenParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<CampaignCreateMobileParticipantTokenResponse>>
 
         /**
          * Returns a raw HTTP response for `get /campaign/{id}/commissions`, but is otherwise the

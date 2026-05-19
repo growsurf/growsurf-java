@@ -1,36 +1,36 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.growsurf.api.models.campaign.participant
+package com.growsurf.api.models.campaign
 
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.Params
 import com.growsurf.api.core.checkRequired
 import com.growsurf.api.core.http.Headers
 import com.growsurf.api.core.http.QueryParams
-import com.growsurf.api.core.toImmutable
+import com.growsurf.api.models.campaign.participant.Create
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Creates a participant-scoped token for GrowSurf mobile SDK participant endpoints. The program
- * must have mobile SDK access enabled.
+ * Creates or returns a participant using the same input behavior as Add Participant, then returns a
+ * participant-scoped token for GrowSurf mobile SDK participant endpoints. Use this endpoint from
+ * your backend after your mobile app authenticates a signed-in user. The program must have mobile
+ * SDK access enabled.
  */
-class ParticipantCreateMobileTokenParams
+class CampaignCreateMobileParticipantTokenParams
 private constructor(
-    private val id: String,
-    private val participantIdOrEmail: String?,
+    private val id: String?,
+    private val create: Create,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
-    private val additionalBodyProperties: Map<String, JsonValue>,
 ) : Params {
 
-    fun id(): String = id
+    fun id(): Optional<String> = Optional.ofNullable(id)
 
-    fun participantIdOrEmail(): Optional<String> = Optional.ofNullable(participantIdOrEmail)
+    fun create(): Create = create
 
-    /** Additional body properties to send with the request. */
-    fun _additionalBodyProperties(): Map<String, JsonValue> = additionalBodyProperties
+    fun _additionalBodyProperties(): Map<String, JsonValue> = create._additionalProperties()
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -44,49 +44,42 @@ private constructor(
 
         /**
          * Returns a mutable builder for constructing an instance of
-         * [ParticipantCreateMobileTokenParams].
+         * [CampaignCreateMobileParticipantTokenParams].
          *
          * The following fields are required:
          * ```java
-         * .id()
+         * .create()
          * ```
          */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [ParticipantCreateMobileTokenParams]. */
+    /** A builder for [CampaignCreateMobileParticipantTokenParams]. */
     class Builder internal constructor() {
 
         private var id: String? = null
-        private var participantIdOrEmail: String? = null
+        private var create: Create? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
-        private var additionalBodyProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(participantCreateMobileTokenParams: ParticipantCreateMobileTokenParams) =
-            apply {
-                id = participantCreateMobileTokenParams.id
-                participantIdOrEmail = participantCreateMobileTokenParams.participantIdOrEmail
-                additionalHeaders = participantCreateMobileTokenParams.additionalHeaders.toBuilder()
-                additionalQueryParams =
-                    participantCreateMobileTokenParams.additionalQueryParams.toBuilder()
-                additionalBodyProperties =
-                    participantCreateMobileTokenParams.additionalBodyProperties.toMutableMap()
-            }
-
-        fun id(id: String) = apply { this.id = id }
-
-        fun participantIdOrEmail(participantIdOrEmail: String?) = apply {
-            this.participantIdOrEmail = participantIdOrEmail
+        internal fun from(
+            campaignCreateMobileParticipantTokenParams: CampaignCreateMobileParticipantTokenParams
+        ) = apply {
+            id = campaignCreateMobileParticipantTokenParams.id
+            create = campaignCreateMobileParticipantTokenParams.create
+            additionalHeaders =
+                campaignCreateMobileParticipantTokenParams.additionalHeaders.toBuilder()
+            additionalQueryParams =
+                campaignCreateMobileParticipantTokenParams.additionalQueryParams.toBuilder()
         }
 
-        /**
-         * Alias for calling [Builder.participantIdOrEmail] with
-         * `participantIdOrEmail.orElse(null)`.
-         */
-        fun participantIdOrEmail(participantIdOrEmail: Optional<String>) =
-            participantIdOrEmail(participantIdOrEmail.getOrNull())
+        fun id(id: String?) = apply { this.id = id }
+
+        /** Alias for calling [Builder.id] with `id.orElse(null)`. */
+        fun id(id: Optional<String>) = id(id.getOrNull())
+
+        fun create(create: Create) = apply { this.create = create }
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -186,57 +179,32 @@ private constructor(
             additionalQueryParams.removeAll(keys)
         }
 
-        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
-            this.additionalBodyProperties.clear()
-            putAllAdditionalBodyProperties(additionalBodyProperties)
-        }
-
-        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
-            additionalBodyProperties.put(key, value)
-        }
-
-        fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
-            apply {
-                this.additionalBodyProperties.putAll(additionalBodyProperties)
-            }
-
-        fun removeAdditionalBodyProperty(key: String) = apply {
-            additionalBodyProperties.remove(key)
-        }
-
-        fun removeAllAdditionalBodyProperties(keys: Set<String>) = apply {
-            keys.forEach(::removeAdditionalBodyProperty)
-        }
-
         /**
-         * Returns an immutable instance of [ParticipantCreateMobileTokenParams].
+         * Returns an immutable instance of [CampaignCreateMobileParticipantTokenParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
          * The following fields are required:
          * ```java
-         * .id()
+         * .create()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): ParticipantCreateMobileTokenParams =
-            ParticipantCreateMobileTokenParams(
-                checkRequired("id", id),
-                participantIdOrEmail,
+        fun build(): CampaignCreateMobileParticipantTokenParams =
+            CampaignCreateMobileParticipantTokenParams(
+                id,
+                checkRequired("create", create),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
-                additionalBodyProperties.toImmutable(),
             )
     }
 
-    fun _body(): Optional<Map<String, JsonValue>> =
-        Optional.ofNullable(additionalBodyProperties.ifEmpty { null })
+    fun _body(): Create = create
 
     fun _pathParam(index: Int): String =
         when (index) {
-            0 -> id
-            1 -> participantIdOrEmail ?: ""
+            0 -> id ?: ""
             else -> ""
         }
 
@@ -249,23 +217,16 @@ private constructor(
             return true
         }
 
-        return other is ParticipantCreateMobileTokenParams &&
+        return other is CampaignCreateMobileParticipantTokenParams &&
             id == other.id &&
-            participantIdOrEmail == other.participantIdOrEmail &&
+            create == other.create &&
             additionalHeaders == other.additionalHeaders &&
-            additionalQueryParams == other.additionalQueryParams &&
-            additionalBodyProperties == other.additionalBodyProperties
+            additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(
-            id,
-            participantIdOrEmail,
-            additionalHeaders,
-            additionalQueryParams,
-            additionalBodyProperties,
-        )
+        Objects.hash(id, create, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "ParticipantCreateMobileTokenParams{id=$id, participantIdOrEmail=$participantIdOrEmail, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams, additionalBodyProperties=$additionalBodyProperties}"
+        "CampaignCreateMobileParticipantTokenParams{id=$id, create=$create, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

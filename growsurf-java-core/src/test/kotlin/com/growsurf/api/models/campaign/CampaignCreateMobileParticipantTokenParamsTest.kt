@@ -1,16 +1,17 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.growsurf.api.models.campaign.participant
+package com.growsurf.api.models.campaign
 
 import com.growsurf.api.core.JsonValue
+import com.growsurf.api.models.campaign.participant.Create
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
-internal class ParticipantAddParamsTest {
+internal class CampaignCreateMobileParticipantTokenParamsTest {
 
     @Test
     fun create() {
-        ParticipantAddParams.builder()
+        CampaignCreateMobileParticipantTokenParams.builder()
             .id("id")
             .create(
                 Create.builder()
@@ -34,7 +35,7 @@ internal class ParticipantAddParamsTest {
     @Test
     fun pathParams() {
         val params =
-            ParticipantAddParams.builder()
+            CampaignCreateMobileParticipantTokenParams.builder()
                 .id("id")
                 .create(Create.builder().email("dev@stainless.com").build())
                 .build()
@@ -47,7 +48,7 @@ internal class ParticipantAddParamsTest {
     @Test
     fun body() {
         val params =
-            ParticipantAddParams.builder()
+            CampaignCreateMobileParticipantTokenParams.builder()
                 .id("id")
                 .create(
                     Create.builder()
@@ -91,7 +92,7 @@ internal class ParticipantAddParamsTest {
     @Test
     fun bodyWithoutOptionalFields() {
         val params =
-            ParticipantAddParams.builder()
+            CampaignCreateMobileParticipantTokenParams.builder()
                 .id("id")
                 .create(Create.builder().email("dev@stainless.com").build())
                 .build()
