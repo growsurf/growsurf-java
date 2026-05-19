@@ -1,6 +1,6 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.growsurf.api.models.campaign.participant
+package com.growsurf.api.models.campaign
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
@@ -12,13 +12,17 @@ import com.growsurf.api.core.JsonMissing
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.checkRequired
 import com.growsurf.api.errors.GrowsurfInvalidDataException
+import com.growsurf.api.models.campaign.participant.Participant
 import java.util.Collections
 import java.util.Objects
+import kotlin.jvm.optionals.getOrNull
 
-class ParticipantCreateMobileTokenResponse
+class CampaignCreateMobileParticipantTokenResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val expiresIn: JsonField<Long>,
+    private val isNew: JsonField<Boolean>,
+    private val participant: JsonField<Participant>,
     private val participantToken: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
@@ -26,10 +30,14 @@ private constructor(
     @JsonCreator
     private constructor(
         @JsonProperty("expiresIn") @ExcludeMissing expiresIn: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("isNew") @ExcludeMissing isNew: JsonField<Boolean> = JsonMissing.of(),
+        @JsonProperty("participant")
+        @ExcludeMissing
+        participant: JsonField<Participant> = JsonMissing.of(),
         @JsonProperty("participantToken")
         @ExcludeMissing
         participantToken: JsonField<String> = JsonMissing.of(),
-    ) : this(expiresIn, participantToken, mutableMapOf())
+    ) : this(expiresIn, isNew, participant, participantToken, mutableMapOf())
 
     /**
      * Token lifetime in seconds.
@@ -38,6 +46,21 @@ private constructor(
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun expiresIn(): Long = expiresIn.getRequired("expiresIn")
+
+    /**
+     * Whether this request created a new participant. Returns false when the participant already
+     * existed.
+     *
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun isNew(): Boolean = isNew.getRequired("isNew")
+
+    /**
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
+     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     */
+    fun participant(): Participant = participant.getRequired("participant")
 
     /**
      * Participant-scoped bearer token for GrowSurf mobile SDK participant endpoints.
@@ -53,6 +76,22 @@ private constructor(
      * Unlike [expiresIn], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("expiresIn") @ExcludeMissing fun _expiresIn(): JsonField<Long> = expiresIn
+
+    /**
+     * Returns the raw JSON value of [isNew].
+     *
+     * Unlike [isNew], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("isNew") @ExcludeMissing fun _isNew(): JsonField<Boolean> = isNew
+
+    /**
+     * Returns the raw JSON value of [participant].
+     *
+     * Unlike [participant], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("participant")
+    @ExcludeMissing
+    fun _participant(): JsonField<Participant> = participant
 
     /**
      * Returns the raw JSON value of [participantToken].
@@ -80,32 +119,39 @@ private constructor(
 
         /**
          * Returns a mutable builder for constructing an instance of
-         * [ParticipantCreateMobileTokenResponse].
+         * [CampaignCreateMobileParticipantTokenResponse].
          *
          * The following fields are required:
          * ```java
          * .expiresIn()
+         * .isNew()
+         * .participant()
          * .participantToken()
          * ```
          */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [ParticipantCreateMobileTokenResponse]. */
+    /** A builder for [CampaignCreateMobileParticipantTokenResponse]. */
     class Builder internal constructor() {
 
         private var expiresIn: JsonField<Long>? = null
+        private var isNew: JsonField<Boolean>? = null
+        private var participant: JsonField<Participant>? = null
         private var participantToken: JsonField<String>? = null
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(
-            participantCreateMobileTokenResponse: ParticipantCreateMobileTokenResponse
+            campaignCreateMobileParticipantTokenResponse:
+                CampaignCreateMobileParticipantTokenResponse
         ) = apply {
-            expiresIn = participantCreateMobileTokenResponse.expiresIn
-            participantToken = participantCreateMobileTokenResponse.participantToken
+            expiresIn = campaignCreateMobileParticipantTokenResponse.expiresIn
+            isNew = campaignCreateMobileParticipantTokenResponse.isNew
+            participant = campaignCreateMobileParticipantTokenResponse.participant
+            participantToken = campaignCreateMobileParticipantTokenResponse.participantToken
             additionalProperties =
-                participantCreateMobileTokenResponse.additionalProperties.toMutableMap()
+                campaignCreateMobileParticipantTokenResponse.additionalProperties.toMutableMap()
         }
 
         /** Token lifetime in seconds. */
@@ -118,6 +164,33 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun expiresIn(expiresIn: JsonField<Long>) = apply { this.expiresIn = expiresIn }
+
+        /**
+         * Whether this request created a new participant. Returns false when the participant
+         * already existed.
+         */
+        fun isNew(isNew: Boolean) = isNew(JsonField.of(isNew))
+
+        /**
+         * Sets [Builder.isNew] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.isNew] with a well-typed [Boolean] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun isNew(isNew: JsonField<Boolean>) = apply { this.isNew = isNew }
+
+        fun participant(participant: Participant) = participant(JsonField.of(participant))
+
+        /**
+         * Sets [Builder.participant] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.participant] with a well-typed [Participant] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun participant(participant: JsonField<Participant>) = apply {
+            this.participant = participant
+        }
 
         /** Participant-scoped bearer token for GrowSurf mobile SDK participant endpoints. */
         fun participantToken(participantToken: String) =
@@ -154,21 +227,25 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [ParticipantCreateMobileTokenResponse].
+         * Returns an immutable instance of [CampaignCreateMobileParticipantTokenResponse].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
          * The following fields are required:
          * ```java
          * .expiresIn()
+         * .isNew()
+         * .participant()
          * .participantToken()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): ParticipantCreateMobileTokenResponse =
-            ParticipantCreateMobileTokenResponse(
+        fun build(): CampaignCreateMobileParticipantTokenResponse =
+            CampaignCreateMobileParticipantTokenResponse(
                 checkRequired("expiresIn", expiresIn),
+                checkRequired("isNew", isNew),
+                checkRequired("participant", participant),
                 checkRequired("participantToken", participantToken),
                 additionalProperties.toMutableMap(),
             )
@@ -184,12 +261,14 @@ private constructor(
      * @throws GrowsurfInvalidDataException if any value type in this object doesn't match its
      *   expected type.
      */
-    fun validate(): ParticipantCreateMobileTokenResponse = apply {
+    fun validate(): CampaignCreateMobileParticipantTokenResponse = apply {
         if (validated) {
             return@apply
         }
 
         expiresIn()
+        isNew()
+        participant().validate()
         participantToken()
         validated = true
     }
@@ -210,6 +289,8 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (if (expiresIn.asKnown().isPresent) 1 else 0) +
+            (if (isNew.asKnown().isPresent) 1 else 0) +
+            (participant.asKnown().getOrNull()?.validity() ?: 0) +
             (if (participantToken.asKnown().isPresent) 1 else 0)
 
     override fun equals(other: Any?): Boolean {
@@ -217,18 +298,20 @@ private constructor(
             return true
         }
 
-        return other is ParticipantCreateMobileTokenResponse &&
+        return other is CampaignCreateMobileParticipantTokenResponse &&
             expiresIn == other.expiresIn &&
+            isNew == other.isNew &&
+            participant == other.participant &&
             participantToken == other.participantToken &&
             additionalProperties == other.additionalProperties
     }
 
     private val hashCode: Int by lazy {
-        Objects.hash(expiresIn, participantToken, additionalProperties)
+        Objects.hash(expiresIn, isNew, participant, participantToken, additionalProperties)
     }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ParticipantCreateMobileTokenResponse{expiresIn=$expiresIn, participantToken=$participantToken, additionalProperties=$additionalProperties}"
+        "CampaignCreateMobileParticipantTokenResponse{expiresIn=$expiresIn, isNew=$isNew, participant=$participant, participantToken=$participantToken, additionalProperties=$additionalProperties}"
 }

@@ -3,12 +3,15 @@
 package com.growsurf.api.services.blocking
 
 import com.growsurf.api.client.okhttp.GrowsurfOkHttpClient
+import com.growsurf.api.core.JsonValue
+import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenParams
 import com.growsurf.api.models.campaign.CampaignListCommissionsParams
 import com.growsurf.api.models.campaign.CampaignListLeaderboardParams
 import com.growsurf.api.models.campaign.CampaignListParticipantsParams
 import com.growsurf.api.models.campaign.CampaignListPayoutsParams
 import com.growsurf.api.models.campaign.CampaignListReferralsParams
 import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsParams
+import com.growsurf.api.models.campaign.participant.Create
 import com.growsurf.api.models.campaign.participant.ReferralStatus
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -35,6 +38,38 @@ internal class CampaignServiceTest {
         val campaigns = campaignService.list()
 
         campaigns.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun createMobileParticipantToken() {
+        val client = GrowsurfOkHttpClient.builder().apiKey("My API Key").build()
+        val campaignService = client.campaign()
+
+        val response =
+            campaignService.createMobileParticipantToken(
+                CampaignCreateMobileParticipantTokenParams.builder()
+                    .id("id")
+                    .create(
+                        Create.builder()
+                            .email("dev@stainless.com")
+                            .fingerprint("fingerprint")
+                            .firstName("firstName")
+                            .ipAddress("ipAddress")
+                            .lastName("lastName")
+                            .metadata(
+                                Create.Metadata.builder()
+                                    .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                    .build()
+                            )
+                            .referralStatus(Create.ReferralStatus.CREDIT_PENDING)
+                            .referredBy("referredBy")
+                            .build()
+                    )
+                    .build()
+            )
+
+        response.validate()
     }
 
     @Disabled("Mock server tests are disabled")
