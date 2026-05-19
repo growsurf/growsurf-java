@@ -13,9 +13,12 @@ import com.growsurf.api.core.http.HttpRequest
 import com.growsurf.api.core.http.HttpResponse
 import com.growsurf.api.core.http.HttpResponse.Handler
 import com.growsurf.api.core.http.HttpResponseFor
+import com.growsurf.api.core.http.json
 import com.growsurf.api.core.http.parseable
 import com.growsurf.api.core.prepare
 import com.growsurf.api.models.campaign.Campaign
+import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenParams
+import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenResponse
 import com.growsurf.api.models.campaign.CampaignListCommissionsParams
 import com.growsurf.api.models.campaign.CampaignListLeaderboardParams
 import com.growsurf.api.models.campaign.CampaignListParams
@@ -78,6 +81,13 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
     ): CampaignListResponse =
         // get /campaigns
         withRawResponse().list(params, requestOptions).parse()
+
+    override fun createMobileParticipantToken(
+        params: CampaignCreateMobileParticipantTokenParams,
+        requestOptions: RequestOptions,
+    ): CampaignCreateMobileParticipantTokenResponse =
+        // post /campaign/{id}/mobile-participant-token
+        withRawResponse().createMobileParticipantToken(params, requestOptions).parse()
 
     override fun listCommissions(
         params: CampaignListCommissionsParams,
@@ -203,6 +213,38 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
             return errorHandler.handle(response).parseable {
                 response
                     .use { listHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val createMobileParticipantTokenHandler:
+            Handler<CampaignCreateMobileParticipantTokenResponse> =
+            jsonHandler<CampaignCreateMobileParticipantTokenResponse>(clientOptions.jsonMapper)
+
+        override fun createMobileParticipantToken(
+            params: CampaignCreateMobileParticipantTokenParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<CampaignCreateMobileParticipantTokenResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("id", params.id().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("campaign", params._pathParam(0), "mobile-participant-token")
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { createMobileParticipantTokenHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

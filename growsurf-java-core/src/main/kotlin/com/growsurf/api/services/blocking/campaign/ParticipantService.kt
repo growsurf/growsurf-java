@@ -11,8 +11,6 @@ import com.growsurf.api.models.campaign.ParticipantPayoutList
 import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.models.campaign.participant.Participant
 import com.growsurf.api.models.campaign.participant.ParticipantAddParams
-import com.growsurf.api.models.campaign.participant.ParticipantCreateMobileTokenParams
-import com.growsurf.api.models.campaign.participant.ParticipantCreateMobileTokenResponse
 import com.growsurf.api.models.campaign.participant.ParticipantDeleteParams
 import com.growsurf.api.models.campaign.participant.ParticipantDeleteResponse
 import com.growsurf.api.models.campaign.participant.ParticipantListCommissionsParams
@@ -142,38 +140,6 @@ interface ParticipantService {
         params: ParticipantAddParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): Participant
-
-    /**
-     * Creates a participant-scoped token for GrowSurf mobile SDK participant endpoints. The program
-     * must have mobile SDK access enabled.
-     */
-    fun createMobileToken(
-        participantIdOrEmail: String,
-        params: ParticipantCreateMobileTokenParams,
-    ): ParticipantCreateMobileTokenResponse =
-        createMobileToken(participantIdOrEmail, params, RequestOptions.none())
-
-    /** @see createMobileToken */
-    fun createMobileToken(
-        participantIdOrEmail: String,
-        params: ParticipantCreateMobileTokenParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): ParticipantCreateMobileTokenResponse =
-        createMobileToken(
-            params.toBuilder().participantIdOrEmail(participantIdOrEmail).build(),
-            requestOptions,
-        )
-
-    /** @see createMobileToken */
-    fun createMobileToken(
-        params: ParticipantCreateMobileTokenParams
-    ): ParticipantCreateMobileTokenResponse = createMobileToken(params, RequestOptions.none())
-
-    /** @see createMobileToken */
-    fun createMobileToken(
-        params: ParticipantCreateMobileTokenParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): ParticipantCreateMobileTokenResponse
 
     /** Retrieves a paged list of commissions earned by a participant. */
     fun listCommissions(
@@ -524,44 +490,6 @@ interface ParticipantService {
             params: ParticipantAddParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<Participant>
-
-        /**
-         * Returns a raw HTTP response for `post
-         * /campaign/{id}/participant/{participantIdOrEmail}/mobile-token`, but is otherwise the
-         * same as [ParticipantService.createMobileToken].
-         */
-        @MustBeClosed
-        fun createMobileToken(
-            participantIdOrEmail: String,
-            params: ParticipantCreateMobileTokenParams,
-        ): HttpResponseFor<ParticipantCreateMobileTokenResponse> =
-            createMobileToken(participantIdOrEmail, params, RequestOptions.none())
-
-        /** @see createMobileToken */
-        @MustBeClosed
-        fun createMobileToken(
-            participantIdOrEmail: String,
-            params: ParticipantCreateMobileTokenParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ParticipantCreateMobileTokenResponse> =
-            createMobileToken(
-                params.toBuilder().participantIdOrEmail(participantIdOrEmail).build(),
-                requestOptions,
-            )
-
-        /** @see createMobileToken */
-        @MustBeClosed
-        fun createMobileToken(
-            params: ParticipantCreateMobileTokenParams
-        ): HttpResponseFor<ParticipantCreateMobileTokenResponse> =
-            createMobileToken(params, RequestOptions.none())
-
-        /** @see createMobileToken */
-        @MustBeClosed
-        fun createMobileToken(
-            params: ParticipantCreateMobileTokenParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ParticipantCreateMobileTokenResponse>
 
         /**
          * Returns a raw HTTP response for `get
