@@ -62,6 +62,7 @@ internal class CampaignServiceTest {
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                                     .build()
                             )
+                            .mobileInstanceId("mobileInstanceId")
                             .referralStatus(Create.ReferralStatus.CREDIT_PENDING)
                             .referredBy("referredBy")
                             .build()

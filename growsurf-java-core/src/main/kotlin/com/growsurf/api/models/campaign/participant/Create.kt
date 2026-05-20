@@ -28,6 +28,7 @@ private constructor(
     private val ipAddress: JsonField<String>,
     private val lastName: JsonField<String>,
     private val metadata: JsonField<Metadata>,
+    private val mobileInstanceId: JsonField<String>,
     private val referralStatus: JsonField<ReferralStatus>,
     private val referredBy: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
@@ -43,6 +44,9 @@ private constructor(
         @JsonProperty("ipAddress") @ExcludeMissing ipAddress: JsonField<String> = JsonMissing.of(),
         @JsonProperty("lastName") @ExcludeMissing lastName: JsonField<String> = JsonMissing.of(),
         @JsonProperty("metadata") @ExcludeMissing metadata: JsonField<Metadata> = JsonMissing.of(),
+        @JsonProperty("mobileInstanceId")
+        @ExcludeMissing
+        mobileInstanceId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("referralStatus")
         @ExcludeMissing
         referralStatus: JsonField<ReferralStatus> = JsonMissing.of(),
@@ -54,6 +58,7 @@ private constructor(
         ipAddress,
         lastName,
         metadata,
+        mobileInstanceId,
         referralStatus,
         referredBy,
         mutableMapOf(),
@@ -96,6 +101,15 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun metadata(): Optional<Metadata> = metadata.getOptional("metadata")
+
+    /**
+     * Optional app-install scoped identifier for native mobile anti-fraud. Recommended for mobile
+     * participant creation and mobile participant token flows.
+     *
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun mobileInstanceId(): Optional<String> = mobileInstanceId.getOptional("mobileInstanceId")
 
     /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -154,6 +168,16 @@ private constructor(
     @JsonProperty("metadata") @ExcludeMissing fun _metadata(): JsonField<Metadata> = metadata
 
     /**
+     * Returns the raw JSON value of [mobileInstanceId].
+     *
+     * Unlike [mobileInstanceId], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("mobileInstanceId")
+    @ExcludeMissing
+    fun _mobileInstanceId(): JsonField<String> = mobileInstanceId
+
+    /**
      * Returns the raw JSON value of [referralStatus].
      *
      * Unlike [referralStatus], this method doesn't throw if the JSON field has an unexpected type.
@@ -203,6 +227,7 @@ private constructor(
         private var ipAddress: JsonField<String> = JsonMissing.of()
         private var lastName: JsonField<String> = JsonMissing.of()
         private var metadata: JsonField<Metadata> = JsonMissing.of()
+        private var mobileInstanceId: JsonField<String> = JsonMissing.of()
         private var referralStatus: JsonField<ReferralStatus> = JsonMissing.of()
         private var referredBy: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -215,6 +240,7 @@ private constructor(
             ipAddress = create.ipAddress
             lastName = create.lastName
             metadata = create.metadata
+            mobileInstanceId = create.mobileInstanceId
             referralStatus = create.referralStatus
             referredBy = create.referredBy
             additionalProperties = create.additionalProperties.toMutableMap()
@@ -285,6 +311,24 @@ private constructor(
          */
         fun metadata(metadata: JsonField<Metadata>) = apply { this.metadata = metadata }
 
+        /**
+         * Optional app-install scoped identifier for native mobile anti-fraud. Recommended for
+         * mobile participant creation and mobile participant token flows.
+         */
+        fun mobileInstanceId(mobileInstanceId: String) =
+            mobileInstanceId(JsonField.of(mobileInstanceId))
+
+        /**
+         * Sets [Builder.mobileInstanceId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.mobileInstanceId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun mobileInstanceId(mobileInstanceId: JsonField<String>) = apply {
+            this.mobileInstanceId = mobileInstanceId
+        }
+
         fun referralStatus(referralStatus: ReferralStatus) =
             referralStatus(JsonField.of(referralStatus))
 
@@ -350,6 +394,7 @@ private constructor(
                 ipAddress,
                 lastName,
                 metadata,
+                mobileInstanceId,
                 referralStatus,
                 referredBy,
                 additionalProperties.toMutableMap(),
@@ -377,6 +422,7 @@ private constructor(
         ipAddress()
         lastName()
         metadata().ifPresent { it.validate() }
+        mobileInstanceId()
         referralStatus().ifPresent { it.validate() }
         referredBy()
         validated = true
@@ -403,6 +449,7 @@ private constructor(
             (if (ipAddress.asKnown().isPresent) 1 else 0) +
             (if (lastName.asKnown().isPresent) 1 else 0) +
             (metadata.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (mobileInstanceId.asKnown().isPresent) 1 else 0) +
             (referralStatus.asKnown().getOrNull()?.validity() ?: 0) +
             (if (referredBy.asKnown().isPresent) 1 else 0)
 
@@ -667,6 +714,7 @@ private constructor(
             ipAddress == other.ipAddress &&
             lastName == other.lastName &&
             metadata == other.metadata &&
+            mobileInstanceId == other.mobileInstanceId &&
             referralStatus == other.referralStatus &&
             referredBy == other.referredBy &&
             additionalProperties == other.additionalProperties
@@ -680,6 +728,7 @@ private constructor(
             ipAddress,
             lastName,
             metadata,
+            mobileInstanceId,
             referralStatus,
             referredBy,
             additionalProperties,
@@ -689,5 +738,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Create{email=$email, fingerprint=$fingerprint, firstName=$firstName, ipAddress=$ipAddress, lastName=$lastName, metadata=$metadata, referralStatus=$referralStatus, referredBy=$referredBy, additionalProperties=$additionalProperties}"
+        "Create{email=$email, fingerprint=$fingerprint, firstName=$firstName, ipAddress=$ipAddress, lastName=$lastName, metadata=$metadata, mobileInstanceId=$mobileInstanceId, referralStatus=$referralStatus, referredBy=$referredBy, additionalProperties=$additionalProperties}"
 }

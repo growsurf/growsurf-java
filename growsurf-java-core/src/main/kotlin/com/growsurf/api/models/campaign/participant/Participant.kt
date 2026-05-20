@@ -43,6 +43,7 @@ private constructor(
     private val isWinner: JsonField<Boolean>,
     private val lastName: JsonField<String>,
     private val metadata: JsonField<Metadata>,
+    private val mobileInstanceId: JsonField<String>,
     private val monthlyReferrals: JsonField<List<String>>,
     private val notes: JsonField<String>,
     private val paypalEmailAddress: JsonField<String>,
@@ -105,6 +106,9 @@ private constructor(
         @JsonProperty("isWinner") @ExcludeMissing isWinner: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("lastName") @ExcludeMissing lastName: JsonField<String> = JsonMissing.of(),
         @JsonProperty("metadata") @ExcludeMissing metadata: JsonField<Metadata> = JsonMissing.of(),
+        @JsonProperty("mobileInstanceId")
+        @ExcludeMissing
+        mobileInstanceId: JsonField<String> = JsonMissing.of(),
         @JsonProperty("monthlyReferrals")
         @ExcludeMissing
         monthlyReferrals: JsonField<List<String>> = JsonMissing.of(),
@@ -171,6 +175,7 @@ private constructor(
         isWinner,
         lastName,
         metadata,
+        mobileInstanceId,
         monthlyReferrals,
         notes,
         paypalEmailAddress,
@@ -318,6 +323,15 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun metadata(): Optional<Metadata> = metadata.getOptional("metadata")
+
+    /**
+     * App-install scoped mobile identifier used for anti-fraud matching when provided by native
+     * mobile apps. Not stored when strict GDPR/CCPA mode is enabled.
+     *
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun mobileInstanceId(): Optional<String> = mobileInstanceId.getOptional("mobileInstanceId")
 
     /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -584,6 +598,16 @@ private constructor(
     @JsonProperty("metadata") @ExcludeMissing fun _metadata(): JsonField<Metadata> = metadata
 
     /**
+     * Returns the raw JSON value of [mobileInstanceId].
+     *
+     * Unlike [mobileInstanceId], this method doesn't throw if the JSON field has an unexpected
+     * type.
+     */
+    @JsonProperty("mobileInstanceId")
+    @ExcludeMissing
+    fun _mobileInstanceId(): JsonField<String> = mobileInstanceId
+
+    /**
      * Returns the raw JSON value of [monthlyReferrals].
      *
      * Unlike [monthlyReferrals], this method doesn't throw if the JSON field has an unexpected
@@ -781,6 +805,7 @@ private constructor(
         private var isWinner: JsonField<Boolean> = JsonMissing.of()
         private var lastName: JsonField<String> = JsonMissing.of()
         private var metadata: JsonField<Metadata> = JsonMissing.of()
+        private var mobileInstanceId: JsonField<String> = JsonMissing.of()
         private var monthlyReferrals: JsonField<MutableList<String>>? = null
         private var notes: JsonField<String> = JsonMissing.of()
         private var paypalEmailAddress: JsonField<String> = JsonMissing.of()
@@ -822,6 +847,7 @@ private constructor(
             isWinner = participant.isWinner
             lastName = participant.lastName
             metadata = participant.metadata
+            mobileInstanceId = participant.mobileInstanceId
             monthlyReferrals = participant.monthlyReferrals.map { it.toMutableList() }
             notes = participant.notes
             paypalEmailAddress = participant.paypalEmailAddress
@@ -1120,6 +1146,28 @@ private constructor(
          * value.
          */
         fun metadata(metadata: JsonField<Metadata>) = apply { this.metadata = metadata }
+
+        /**
+         * App-install scoped mobile identifier used for anti-fraud matching when provided by native
+         * mobile apps. Not stored when strict GDPR/CCPA mode is enabled.
+         */
+        fun mobileInstanceId(mobileInstanceId: String?) =
+            mobileInstanceId(JsonField.ofNullable(mobileInstanceId))
+
+        /** Alias for calling [Builder.mobileInstanceId] with `mobileInstanceId.orElse(null)`. */
+        fun mobileInstanceId(mobileInstanceId: Optional<String>) =
+            mobileInstanceId(mobileInstanceId.getOrNull())
+
+        /**
+         * Sets [Builder.mobileInstanceId] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.mobileInstanceId] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun mobileInstanceId(mobileInstanceId: JsonField<String>) = apply {
+            this.mobileInstanceId = mobileInstanceId
+        }
 
         fun monthlyReferrals(monthlyReferrals: List<String>) =
             monthlyReferrals(JsonField.of(monthlyReferrals))
@@ -1431,6 +1479,7 @@ private constructor(
                 isWinner,
                 lastName,
                 metadata,
+                mobileInstanceId,
                 (monthlyReferrals ?: JsonMissing.of()).map { it.toImmutable() },
                 notes,
                 paypalEmailAddress,
@@ -1487,6 +1536,7 @@ private constructor(
         isWinner()
         lastName()
         metadata().ifPresent { it.validate() }
+        mobileInstanceId()
         monthlyReferrals()
         notes()
         paypalEmailAddress()
@@ -1542,6 +1592,7 @@ private constructor(
             (if (isWinner.asKnown().isPresent) 1 else 0) +
             (if (lastName.asKnown().isPresent) 1 else 0) +
             (metadata.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (mobileInstanceId.asKnown().isPresent) 1 else 0) +
             (monthlyReferrals.asKnown().getOrNull()?.size ?: 0) +
             (if (notes.asKnown().isPresent) 1 else 0) +
             (if (paypalEmailAddress.asKnown().isPresent) 1 else 0) +
@@ -3363,6 +3414,7 @@ private constructor(
             isWinner == other.isWinner &&
             lastName == other.lastName &&
             metadata == other.metadata &&
+            mobileInstanceId == other.mobileInstanceId &&
             monthlyReferrals == other.monthlyReferrals &&
             notes == other.notes &&
             paypalEmailAddress == other.paypalEmailAddress &&
@@ -3405,6 +3457,7 @@ private constructor(
             isWinner,
             lastName,
             metadata,
+            mobileInstanceId,
             monthlyReferrals,
             notes,
             paypalEmailAddress,
@@ -3428,5 +3481,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Participant{id=$id, email=$email, monthlyRank=$monthlyRank, monthlyReferralCount=$monthlyReferralCount, rank=$rank, referralCount=$referralCount, rewards=$rewards, shareUrl=$shareUrl, allMatchingFraudsters=$allMatchingFraudsters, createdAt=$createdAt, fingerprint=$fingerprint, firstName=$firstName, fraudReasonCode=$fraudReasonCode, fraudRiskLevel=$fraudRiskLevel, impressionCount=$impressionCount, inviteCount=$inviteCount, ipAddress=$ipAddress, isNew=$isNew, isWinner=$isWinner, lastName=$lastName, metadata=$metadata, monthlyReferrals=$monthlyReferrals, notes=$notes, paypalEmailAddress=$paypalEmailAddress, prevMonthlyRank=$prevMonthlyRank, prevMonthlyReferralCount=$prevMonthlyReferralCount, referrals=$referrals, referralSource=$referralSource, referralStatus=$referralStatus, referredBy=$referredBy, referrer=$referrer, shareCount=$shareCount, uniqueImpressionCount=$uniqueImpressionCount, unreadCommissionsCount=$unreadCommissionsCount, unreadPayoutsCount=$unreadPayoutsCount, unsubscribed=$unsubscribed, vanityKeys=$vanityKeys, additionalProperties=$additionalProperties}"
+        "Participant{id=$id, email=$email, monthlyRank=$monthlyRank, monthlyReferralCount=$monthlyReferralCount, rank=$rank, referralCount=$referralCount, rewards=$rewards, shareUrl=$shareUrl, allMatchingFraudsters=$allMatchingFraudsters, createdAt=$createdAt, fingerprint=$fingerprint, firstName=$firstName, fraudReasonCode=$fraudReasonCode, fraudRiskLevel=$fraudRiskLevel, impressionCount=$impressionCount, inviteCount=$inviteCount, ipAddress=$ipAddress, isNew=$isNew, isWinner=$isWinner, lastName=$lastName, metadata=$metadata, mobileInstanceId=$mobileInstanceId, monthlyReferrals=$monthlyReferrals, notes=$notes, paypalEmailAddress=$paypalEmailAddress, prevMonthlyRank=$prevMonthlyRank, prevMonthlyReferralCount=$prevMonthlyReferralCount, referrals=$referrals, referralSource=$referralSource, referralStatus=$referralStatus, referredBy=$referredBy, referrer=$referrer, shareCount=$shareCount, uniqueImpressionCount=$uniqueImpressionCount, unreadCommissionsCount=$unreadCommissionsCount, unreadPayoutsCount=$unreadPayoutsCount, unsubscribed=$unsubscribed, vanityKeys=$vanityKeys, additionalProperties=$additionalProperties}"
 }
