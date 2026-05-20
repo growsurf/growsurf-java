@@ -24,6 +24,7 @@ internal class CreateTest {
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )
+                .mobileInstanceId("mobileInstanceId")
                 .referralStatus(Create.ReferralStatus.CREDIT_PENDING)
                 .referredBy("referredBy")
                 .build()
@@ -39,6 +40,7 @@ internal class CreateTest {
                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                     .build()
             )
+        assertThat(create.mobileInstanceId()).contains("mobileInstanceId")
         assertThat(create.referralStatus()).contains(Create.ReferralStatus.CREDIT_PENDING)
         assertThat(create.referredBy()).contains("referredBy")
     }
@@ -58,6 +60,7 @@ internal class CreateTest {
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
                         .build()
                 )
+                .mobileInstanceId("mobileInstanceId")
                 .referralStatus(Create.ReferralStatus.CREDIT_PENDING)
                 .referredBy("referredBy")
                 .build()
