@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.0 (2026-05-20)
+
+Full Changelog: [v0.4.0...v0.5.0](https://github.com/growsurf/growsurf-java/compare/v0.4.0...v0.5.0)
+
+### Features
+
+* **api:** Add Participant.mobileInstanceId ([f1ce447](https://github.com/growsurf/growsurf-java/commit/f1ce447331f21eca35c164b4acb337955dc8d687))
+
 ## 0.4.0 (2026-05-19)
 
 Full Changelog: [v0.3.0...v0.4.0](https://github.com/growsurf/growsurf-java/compare/v0.3.0...v0.4.0)
