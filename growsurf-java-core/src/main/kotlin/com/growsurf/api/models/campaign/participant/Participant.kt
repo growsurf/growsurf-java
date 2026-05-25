@@ -326,7 +326,8 @@ private constructor(
 
     /**
      * App-install scoped mobile identifier used for anti-fraud matching when provided by native
-     * mobile apps. Not stored when strict GDPR/CCPA mode is enabled.
+     * mobile apps. The official mobile SDKs generate this as a lowercase UUID. Not stored when
+     * strict GDPR/CCPA mode is enabled.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -1149,7 +1150,8 @@ private constructor(
 
         /**
          * App-install scoped mobile identifier used for anti-fraud matching when provided by native
-         * mobile apps. Not stored when strict GDPR/CCPA mode is enabled.
+         * mobile apps. The official mobile SDKs generate this as a lowercase UUID. Not stored when
+         * strict GDPR/CCPA mode is enabled.
          */
         fun mobileInstanceId(mobileInstanceId: String?) =
             mobileInstanceId(JsonField.ofNullable(mobileInstanceId))

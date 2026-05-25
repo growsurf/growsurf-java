@@ -104,7 +104,8 @@ private constructor(
 
     /**
      * Optional app-install scoped identifier for native mobile anti-fraud. Recommended for mobile
-     * participant creation and mobile participant token flows.
+     * participant creation and mobile participant token flows. The official mobile SDKs generate
+     * this as a lowercase UUID.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -313,7 +314,8 @@ private constructor(
 
         /**
          * Optional app-install scoped identifier for native mobile anti-fraud. Recommended for
-         * mobile participant creation and mobile participant token flows.
+         * mobile participant creation and mobile participant token flows. The official mobile SDKs
+         * generate this as a lowercase UUID.
          */
         fun mobileInstanceId(mobileInstanceId: String) =
             mobileInstanceId(JsonField.of(mobileInstanceId))
