@@ -93,6 +93,13 @@ internal class CampaignCreateMobileParticipantTokenResponseTest {
                         .mobileInstanceId("mobileInstanceId")
                         .addMonthlyReferral("string")
                         .notes("notes")
+                        .payoutSettings(
+                            Participant.PayoutSettings.builder()
+                                .addRequiredAction(
+                                    Participant.PayoutSettings.RequiredAction.PAYPAL_EMAIL
+                                )
+                                .build()
+                        )
                         .paypalEmailAddress("dev@stainless.com")
                         .prevMonthlyRank(0L)
                         .prevMonthlyReferralCount(0L)
@@ -229,6 +236,13 @@ internal class CampaignCreateMobileParticipantTokenResponseTest {
                     .mobileInstanceId("mobileInstanceId")
                     .addMonthlyReferral("string")
                     .notes("notes")
+                    .payoutSettings(
+                        Participant.PayoutSettings.builder()
+                            .addRequiredAction(
+                                Participant.PayoutSettings.RequiredAction.PAYPAL_EMAIL
+                            )
+                            .build()
+                    )
                     .paypalEmailAddress("dev@stainless.com")
                     .prevMonthlyRank(0L)
                     .prevMonthlyReferralCount(0L)
@@ -370,6 +384,13 @@ internal class CampaignCreateMobileParticipantTokenResponseTest {
                         .mobileInstanceId("mobileInstanceId")
                         .addMonthlyReferral("string")
                         .notes("notes")
+                        .payoutSettings(
+                            Participant.PayoutSettings.builder()
+                                .addRequiredAction(
+                                    Participant.PayoutSettings.RequiredAction.PAYPAL_EMAIL
+                                )
+                                .build()
+                        )
                         .paypalEmailAddress("dev@stainless.com")
                         .prevMonthlyRank(0L)
                         .prevMonthlyReferralCount(0L)
