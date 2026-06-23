@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter
 import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.growsurf.api.core.Enum
 import com.growsurf.api.core.ExcludeMissing
 import com.growsurf.api.core.JsonField
 import com.growsurf.api.core.JsonMissing
@@ -47,7 +46,6 @@ private constructor(
     private val mobileInstanceId: JsonField<String>,
     private val monthlyReferrals: JsonField<List<String>>,
     private val notes: JsonField<String>,
-    private val payoutSettings: JsonField<PayoutSettings>,
     private val paypalEmailAddress: JsonField<String>,
     private val prevMonthlyRank: JsonField<Long>,
     private val prevMonthlyReferralCount: JsonField<Long>,
@@ -115,9 +113,6 @@ private constructor(
         @ExcludeMissing
         monthlyReferrals: JsonField<List<String>> = JsonMissing.of(),
         @JsonProperty("notes") @ExcludeMissing notes: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("payoutSettings")
-        @ExcludeMissing
-        payoutSettings: JsonField<PayoutSettings> = JsonMissing.of(),
         @JsonProperty("paypalEmailAddress")
         @ExcludeMissing
         paypalEmailAddress: JsonField<String> = JsonMissing.of(),
@@ -183,7 +178,6 @@ private constructor(
         mobileInstanceId,
         monthlyReferrals,
         notes,
-        payoutSettings,
         paypalEmailAddress,
         prevMonthlyRank,
         prevMonthlyReferralCount,
@@ -352,16 +346,6 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun notes(): Optional<String> = notes.getOptional("notes")
-
-    /**
-     * Payout-related actions the participant must complete before a payout can be released (e.g.
-     * confirming a PayPal email or submitting a W-9/W-8 tax form). Always present; the
-     * requiredActions array is empty when no action is required.
-     *
-     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
-    fun payoutSettings(): Optional<PayoutSettings> = payoutSettings.getOptional("payoutSettings")
 
     /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -642,15 +626,6 @@ private constructor(
     @JsonProperty("notes") @ExcludeMissing fun _notes(): JsonField<String> = notes
 
     /**
-     * Returns the raw JSON value of [payoutSettings].
-     *
-     * Unlike [payoutSettings], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("payoutSettings")
-    @ExcludeMissing
-    fun _payoutSettings(): JsonField<PayoutSettings> = payoutSettings
-
-    /**
      * Returns the raw JSON value of [paypalEmailAddress].
      *
      * Unlike [paypalEmailAddress], this method doesn't throw if the JSON field has an unexpected
@@ -834,7 +809,6 @@ private constructor(
         private var mobileInstanceId: JsonField<String> = JsonMissing.of()
         private var monthlyReferrals: JsonField<MutableList<String>>? = null
         private var notes: JsonField<String> = JsonMissing.of()
-        private var payoutSettings: JsonField<PayoutSettings> = JsonMissing.of()
         private var paypalEmailAddress: JsonField<String> = JsonMissing.of()
         private var prevMonthlyRank: JsonField<Long> = JsonMissing.of()
         private var prevMonthlyReferralCount: JsonField<Long> = JsonMissing.of()
@@ -877,7 +851,6 @@ private constructor(
             mobileInstanceId = participant.mobileInstanceId
             monthlyReferrals = participant.monthlyReferrals.map { it.toMutableList() }
             notes = participant.notes
-            payoutSettings = participant.payoutSettings
             paypalEmailAddress = participant.paypalEmailAddress
             prevMonthlyRank = participant.prevMonthlyRank
             prevMonthlyReferralCount = participant.prevMonthlyReferralCount
@@ -1237,25 +1210,6 @@ private constructor(
          */
         fun notes(notes: JsonField<String>) = apply { this.notes = notes }
 
-        /**
-         * Payout-related actions the participant must complete before a payout can be released
-         * (e.g. confirming a PayPal email or submitting a W-9/W-8 tax form). Always present; the
-         * requiredActions array is empty when no action is required.
-         */
-        fun payoutSettings(payoutSettings: PayoutSettings) =
-            payoutSettings(JsonField.of(payoutSettings))
-
-        /**
-         * Sets [Builder.payoutSettings] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.payoutSettings] with a well-typed [PayoutSettings] value
-         * instead. This method is primarily for setting the field to an undocumented or not yet
-         * supported value.
-         */
-        fun payoutSettings(payoutSettings: JsonField<PayoutSettings>) = apply {
-            this.payoutSettings = payoutSettings
-        }
-
         fun paypalEmailAddress(paypalEmailAddress: String) =
             paypalEmailAddress(JsonField.of(paypalEmailAddress))
 
@@ -1530,7 +1484,6 @@ private constructor(
                 mobileInstanceId,
                 (monthlyReferrals ?: JsonMissing.of()).map { it.toImmutable() },
                 notes,
-                payoutSettings,
                 paypalEmailAddress,
                 prevMonthlyRank,
                 prevMonthlyReferralCount,
@@ -1588,7 +1541,6 @@ private constructor(
         mobileInstanceId()
         monthlyReferrals()
         notes()
-        payoutSettings().ifPresent { it.validate() }
         paypalEmailAddress()
         prevMonthlyRank()
         prevMonthlyReferralCount()
@@ -1645,7 +1597,6 @@ private constructor(
             (if (mobileInstanceId.asKnown().isPresent) 1 else 0) +
             (monthlyReferrals.asKnown().getOrNull()?.size ?: 0) +
             (if (notes.asKnown().isPresent) 1 else 0) +
-            (payoutSettings.asKnown().getOrNull()?.validity() ?: 0) +
             (if (paypalEmailAddress.asKnown().isPresent) 1 else 0) +
             (if (prevMonthlyRank.asKnown().isPresent) 1 else 0) +
             (if (prevMonthlyReferralCount.asKnown().isPresent) 1 else 0) +
@@ -1878,330 +1829,6 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() = "Metadata{additionalProperties=$additionalProperties}"
-    }
-
-    /**
-     * Payout-related actions the participant must complete before a payout can be released (e.g.
-     * confirming a PayPal email or submitting a W-9/W-8 tax form). Always present; the
-     * requiredActions array is empty when no action is required.
-     */
-    class PayoutSettings
-    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
-    private constructor(
-        private val requiredActions: JsonField<List<RequiredAction>>,
-        private val additionalProperties: MutableMap<String, JsonValue>,
-    ) {
-
-        @JsonCreator
-        private constructor(
-            @JsonProperty("requiredActions")
-            @ExcludeMissing
-            requiredActions: JsonField<List<RequiredAction>> = JsonMissing.of()
-        ) : this(requiredActions, mutableMapOf())
-
-        /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun requiredActions(): Optional<List<RequiredAction>> =
-            requiredActions.getOptional("requiredActions")
-
-        /**
-         * Returns the raw JSON value of [requiredActions].
-         *
-         * Unlike [requiredActions], this method doesn't throw if the JSON field has an unexpected
-         * type.
-         */
-        @JsonProperty("requiredActions")
-        @ExcludeMissing
-        fun _requiredActions(): JsonField<List<RequiredAction>> = requiredActions
-
-        @JsonAnySetter
-        private fun putAdditionalProperty(key: String, value: JsonValue) {
-            additionalProperties.put(key, value)
-        }
-
-        @JsonAnyGetter
-        @ExcludeMissing
-        fun _additionalProperties(): Map<String, JsonValue> =
-            Collections.unmodifiableMap(additionalProperties)
-
-        fun toBuilder() = Builder().from(this)
-
-        companion object {
-
-            /** Returns a mutable builder for constructing an instance of [PayoutSettings]. */
-            @JvmStatic fun builder() = Builder()
-        }
-
-        /** A builder for [PayoutSettings]. */
-        class Builder internal constructor() {
-
-            private var requiredActions: JsonField<MutableList<RequiredAction>>? = null
-            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
-
-            @JvmSynthetic
-            internal fun from(payoutSettings: PayoutSettings) = apply {
-                requiredActions = payoutSettings.requiredActions.map { it.toMutableList() }
-                additionalProperties = payoutSettings.additionalProperties.toMutableMap()
-            }
-
-            fun requiredActions(requiredActions: List<RequiredAction>) =
-                requiredActions(JsonField.of(requiredActions))
-
-            /**
-             * Sets [Builder.requiredActions] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.requiredActions] with a well-typed
-             * `List<RequiredAction>` value instead. This method is primarily for setting the field
-             * to an undocumented or not yet supported value.
-             */
-            fun requiredActions(requiredActions: JsonField<List<RequiredAction>>) = apply {
-                this.requiredActions = requiredActions.map { it.toMutableList() }
-            }
-
-            /**
-             * Adds a single [RequiredAction] to [requiredActions].
-             *
-             * @throws IllegalStateException if the field was previously set to a non-list.
-             */
-            fun addRequiredAction(requiredAction: RequiredAction) = apply {
-                requiredActions =
-                    (requiredActions ?: JsonField.of(mutableListOf())).also {
-                        checkKnown("requiredActions", it).add(requiredAction)
-                    }
-            }
-
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                putAllAdditionalProperties(additionalProperties)
-            }
-
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                additionalProperties.put(key, value)
-            }
-
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
-
-            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
-
-            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                keys.forEach(::removeAdditionalProperty)
-            }
-
-            /**
-             * Returns an immutable instance of [PayoutSettings].
-             *
-             * Further updates to this [Builder] will not mutate the returned instance.
-             */
-            fun build(): PayoutSettings =
-                PayoutSettings(
-                    (requiredActions ?: JsonMissing.of()).map { it.toImmutable() },
-                    additionalProperties.toMutableMap(),
-                )
-        }
-
-        private var validated: Boolean = false
-
-        /**
-         * Validates that the types of all values in this object match their expected types
-         * recursively.
-         *
-         * This method is _not_ forwards compatible with new types from the API for existing fields.
-         *
-         * @throws GrowsurfInvalidDataException if any value type in this object doesn't match its
-         *   expected type.
-         */
-        fun validate(): PayoutSettings = apply {
-            if (validated) {
-                return@apply
-            }
-
-            requiredActions().ifPresent { it.forEach { it.validate() } }
-            validated = true
-        }
-
-        fun isValid(): Boolean =
-            try {
-                validate()
-                true
-            } catch (e: GrowsurfInvalidDataException) {
-                false
-            }
-
-        /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
-         *
-         * Used for best match union deserialization.
-         */
-        @JvmSynthetic
-        internal fun validity(): Int =
-            (requiredActions.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
-
-        /**
-         * A payout-related action the participant must complete before a payout can be released.
-         */
-        class RequiredAction
-        @JsonCreator
-        private constructor(private val value: JsonField<String>) : Enum {
-
-            /**
-             * Returns this class instance's raw value.
-             *
-             * This is usually only useful if this instance was deserialized from data that doesn't
-             * match any known member, and you want to know that value. For example, if the SDK is
-             * on an older version than the API, then the API may respond with new members that the
-             * SDK is unaware of.
-             */
-            @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
-
-            companion object {
-
-                @JvmField val PAYPAL_EMAIL = of("PAYPAL_EMAIL")
-
-                @JvmField val TAX_INFO = of("TAX_INFO")
-
-                @JvmStatic fun of(value: String) = RequiredAction(JsonField.of(value))
-            }
-
-            /** An enum containing [RequiredAction]'s known values. */
-            enum class Known {
-                PAYPAL_EMAIL,
-                TAX_INFO,
-            }
-
-            /**
-             * An enum containing [RequiredAction]'s known values, as well as an [_UNKNOWN] member.
-             *
-             * An instance of [RequiredAction] can contain an unknown value in a couple of cases:
-             * - It was deserialized from data that doesn't match any known member. For example, if
-             *   the SDK is on an older version than the API, then the API may respond with new
-             *   members that the SDK is unaware of.
-             * - It was constructed with an arbitrary value using the [of] method.
-             */
-            enum class Value {
-                PAYPAL_EMAIL,
-                TAX_INFO,
-                /**
-                 * An enum member indicating that [RequiredAction] was instantiated with an unknown
-                 * value.
-                 */
-                _UNKNOWN,
-            }
-
-            /**
-             * Returns an enum member corresponding to this class instance's value, or
-             * [Value._UNKNOWN] if the class was instantiated with an unknown value.
-             *
-             * Use the [known] method instead if you're certain the value is always known or if you
-             * want to throw for the unknown case.
-             */
-            fun value(): Value =
-                when (this) {
-                    PAYPAL_EMAIL -> Value.PAYPAL_EMAIL
-                    TAX_INFO -> Value.TAX_INFO
-                    else -> Value._UNKNOWN
-                }
-
-            /**
-             * Returns an enum member corresponding to this class instance's value.
-             *
-             * Use the [value] method instead if you're uncertain the value is always known and
-             * don't want to throw for the unknown case.
-             *
-             * @throws GrowsurfInvalidDataException if this class instance's value is a not a known
-             *   member.
-             */
-            fun known(): Known =
-                when (this) {
-                    PAYPAL_EMAIL -> Known.PAYPAL_EMAIL
-                    TAX_INFO -> Known.TAX_INFO
-                    else -> throw GrowsurfInvalidDataException("Unknown RequiredAction: $value")
-                }
-
-            /**
-             * Returns this class instance's primitive wire representation.
-             *
-             * This differs from the [toString] method because that method is primarily for
-             * debugging and generally doesn't throw.
-             *
-             * @throws GrowsurfInvalidDataException if this class instance's value does not have the
-             *   expected primitive type.
-             */
-            fun asString(): String =
-                _value().asString().orElseThrow {
-                    GrowsurfInvalidDataException("Value is not a String")
-                }
-
-            private var validated: Boolean = false
-
-            /**
-             * Validates that the types of all values in this object match their expected types
-             * recursively.
-             *
-             * This method is _not_ forwards compatible with new types from the API for existing
-             * fields.
-             *
-             * @throws GrowsurfInvalidDataException if any value type in this object doesn't match
-             *   its expected type.
-             */
-            fun validate(): RequiredAction = apply {
-                if (validated) {
-                    return@apply
-                }
-
-                known()
-                validated = true
-            }
-
-            fun isValid(): Boolean =
-                try {
-                    validate()
-                    true
-                } catch (e: GrowsurfInvalidDataException) {
-                    false
-                }
-
-            /**
-             * Returns a score indicating how many valid values are contained in this object
-             * recursively.
-             *
-             * Used for best match union deserialization.
-             */
-            @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
-
-            override fun equals(other: Any?): Boolean {
-                if (this === other) {
-                    return true
-                }
-
-                return other is RequiredAction && value == other.value
-            }
-
-            override fun hashCode() = value.hashCode()
-
-            override fun toString() = value.toString()
-        }
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-
-            return other is PayoutSettings &&
-                requiredActions == other.requiredActions &&
-                additionalProperties == other.additionalProperties
-        }
-
-        private val hashCode: Int by lazy { Objects.hash(requiredActions, additionalProperties) }
-
-        override fun hashCode(): Int = hashCode
-
-        override fun toString() =
-            "PayoutSettings{requiredActions=$requiredActions, additionalProperties=$additionalProperties}"
     }
 
     class Referrer
@@ -3792,7 +3419,6 @@ private constructor(
             mobileInstanceId == other.mobileInstanceId &&
             monthlyReferrals == other.monthlyReferrals &&
             notes == other.notes &&
-            payoutSettings == other.payoutSettings &&
             paypalEmailAddress == other.paypalEmailAddress &&
             prevMonthlyRank == other.prevMonthlyRank &&
             prevMonthlyReferralCount == other.prevMonthlyReferralCount &&
@@ -3836,7 +3462,6 @@ private constructor(
             mobileInstanceId,
             monthlyReferrals,
             notes,
-            payoutSettings,
             paypalEmailAddress,
             prevMonthlyRank,
             prevMonthlyReferralCount,
@@ -3858,5 +3483,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Participant{id=$id, email=$email, monthlyRank=$monthlyRank, monthlyReferralCount=$monthlyReferralCount, rank=$rank, referralCount=$referralCount, rewards=$rewards, shareUrl=$shareUrl, allMatchingFraudsters=$allMatchingFraudsters, createdAt=$createdAt, fingerprint=$fingerprint, firstName=$firstName, fraudReasonCode=$fraudReasonCode, fraudRiskLevel=$fraudRiskLevel, impressionCount=$impressionCount, inviteCount=$inviteCount, ipAddress=$ipAddress, isNew=$isNew, isWinner=$isWinner, lastName=$lastName, metadata=$metadata, mobileInstanceId=$mobileInstanceId, monthlyReferrals=$monthlyReferrals, notes=$notes, payoutSettings=$payoutSettings, paypalEmailAddress=$paypalEmailAddress, prevMonthlyRank=$prevMonthlyRank, prevMonthlyReferralCount=$prevMonthlyReferralCount, referrals=$referrals, referralSource=$referralSource, referralStatus=$referralStatus, referredBy=$referredBy, referrer=$referrer, shareCount=$shareCount, uniqueImpressionCount=$uniqueImpressionCount, unreadCommissionsCount=$unreadCommissionsCount, unreadPayoutsCount=$unreadPayoutsCount, unsubscribed=$unsubscribed, vanityKeys=$vanityKeys, additionalProperties=$additionalProperties}"
+        "Participant{id=$id, email=$email, monthlyRank=$monthlyRank, monthlyReferralCount=$monthlyReferralCount, rank=$rank, referralCount=$referralCount, rewards=$rewards, shareUrl=$shareUrl, allMatchingFraudsters=$allMatchingFraudsters, createdAt=$createdAt, fingerprint=$fingerprint, firstName=$firstName, fraudReasonCode=$fraudReasonCode, fraudRiskLevel=$fraudRiskLevel, impressionCount=$impressionCount, inviteCount=$inviteCount, ipAddress=$ipAddress, isNew=$isNew, isWinner=$isWinner, lastName=$lastName, metadata=$metadata, mobileInstanceId=$mobileInstanceId, monthlyReferrals=$monthlyReferrals, notes=$notes, paypalEmailAddress=$paypalEmailAddress, prevMonthlyRank=$prevMonthlyRank, prevMonthlyReferralCount=$prevMonthlyReferralCount, referrals=$referrals, referralSource=$referralSource, referralStatus=$referralStatus, referredBy=$referredBy, referrer=$referrer, shareCount=$shareCount, uniqueImpressionCount=$uniqueImpressionCount, unreadCommissionsCount=$unreadCommissionsCount, unreadPayoutsCount=$unreadPayoutsCount, unsubscribed=$unsubscribed, vanityKeys=$vanityKeys, additionalProperties=$additionalProperties}"
 }
