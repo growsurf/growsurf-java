@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7.0 (2026-06-23)
+
+Full Changelog: [v0.6.0...v0.7.0](https://github.com/growsurf/growsurf-java/compare/v0.6.0...v0.7.0)
+
+### Features
+
+* **api:** add payoutSettings to Participant ([93dc2fd](https://github.com/growsurf/growsurf-java/commit/93dc2fd2cdb55857d9e489c4076da589d7395a12))
+* **api:** manual updates ([556ab4c](https://github.com/growsurf/growsurf-java/commit/556ab4c48837baadbea4b90b4ef970a9f96c931f))
+
 ## 0.6.0 (2026-05-25)
 
 Full Changelog: [v0.5.0...v0.6.0](https://github.com/growsurf/growsurf-java/compare/v0.5.0...v0.6.0)
