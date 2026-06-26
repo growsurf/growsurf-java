@@ -33,7 +33,9 @@ val proguardJar by tasks.registering(proguard.gradle.ProGuardTask::class) {
     dependsOn(tasks.shadowJar)
     notCompatibleWithConfigurationCache("ProGuard")
 
-    injars(tasks.shadowJar)
+    // Pass the shadow jar's output FILE (not the ShadowJar task object) so no Task reference is
+    // serialized into the configuration cache. Ordering is guaranteed by dependsOn(tasks.shadowJar).
+    injars(tasks.shadowJar.flatMap { it.archiveFile })
     outjars(proguardJarPath)
     printmapping("${layout.buildDirectory.get()}/proguard-mapping.txt")
 
