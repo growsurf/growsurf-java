@@ -34,6 +34,12 @@ tasks.named<Jar>("jar") {
 tasks.withType<Test>().configureEach {
     useJUnitPlatform()
 
+    // JDK 21+ prints "WARNING: A Java agent has been loaded dynamically" when Mockito/ByteBuddy
+    // attaches its agent at runtime. On CI that warning can leak into a test's captured console
+    // output (e.g. LoggingHttpClientTest) and break exact-output assertions. Pre-authorizing dynamic
+    // agent loading silences the warning so it never pollutes captured output.
+    jvmArgs("-XX:+EnableDynamicAgentLoading")
+
     // Run tests in parallel to some degree.
     maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).coerceAtLeast(1)
     forkEvery = 100
