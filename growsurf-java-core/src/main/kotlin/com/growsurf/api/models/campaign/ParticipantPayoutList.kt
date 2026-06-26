@@ -302,7 +302,9 @@ private constructor(
             @JsonProperty("failedAt") @ExcludeMissing failedAt: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("fxError") @ExcludeMissing fxError: JsonField<String> = JsonMissing.of(),
             @JsonProperty("issuedAt") @ExcludeMissing issuedAt: JsonField<Long> = JsonMissing.of(),
-            @JsonProperty("provider") @ExcludeMissing provider: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("provider")
+            @ExcludeMissing
+            provider: JsonField<String> = JsonMissing.of(),
             @JsonProperty("queuedAt") @ExcludeMissing queuedAt: JsonField<Long> = JsonMissing.of(),
         ) : this(
             id,

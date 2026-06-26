@@ -637,13 +637,12 @@ private constructor(
         /**
          * Returns the raw JSON value of [saleAmountInCampaignCurrency].
          *
-         * Unlike [saleAmountInCampaignCurrency], this method doesn't throw if the JSON field
-         * has an unexpected type.
+         * Unlike [saleAmountInCampaignCurrency], this method doesn't throw if the JSON field has an
+         * unexpected type.
          */
         @JsonProperty("saleAmountInCampaignCurrency")
         @ExcludeMissing
-        fun _saleAmountInCampaignCurrency(): JsonField<Long> =
-            saleAmountInCampaignCurrency
+        fun _saleAmountInCampaignCurrency(): JsonField<Long> = saleAmountInCampaignCurrency
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -1023,9 +1022,7 @@ private constructor(
             fun reversedAt(reversedAt: JsonField<Long>) = apply { this.reversedAt = reversedAt }
 
             fun saleAmountInCampaignCurrency(saleAmountInCampaignCurrency: Long?) =
-                saleAmountInCampaignCurrency(
-                    JsonField.ofNullable(saleAmountInCampaignCurrency)
-                )
+                saleAmountInCampaignCurrency(JsonField.ofNullable(saleAmountInCampaignCurrency))
 
             /**
              * Alias for [Builder.saleAmountInCampaignCurrency].
@@ -1039,22 +1036,20 @@ private constructor(
              * Alias for calling [Builder.saleAmountInCampaignCurrency] with
              * `saleAmountInCampaignCurrency.orElse(null)`.
              */
-            fun saleAmountInCampaignCurrency(
-                saleAmountInCampaignCurrency: Optional<Long>
-            ) = saleAmountInCampaignCurrency(saleAmountInCampaignCurrency.getOrNull())
+            fun saleAmountInCampaignCurrency(saleAmountInCampaignCurrency: Optional<Long>) =
+                saleAmountInCampaignCurrency(saleAmountInCampaignCurrency.getOrNull())
 
             /**
              * Sets [Builder.saleAmountInCampaignCurrency] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.saleAmountInCampaignCurrency] with a
-             * well-typed [Long] value instead. This method is primarily for setting the field to an
+             * You should usually call [Builder.saleAmountInCampaignCurrency] with a well-typed
+             * [Long] value instead. This method is primarily for setting the field to an
              * undocumented or not yet supported value.
              */
-            fun saleAmountInCampaignCurrency(
-                saleAmountInCampaignCurrency: JsonField<Long>
-            ) = apply {
-                this.saleAmountInCampaignCurrency = saleAmountInCampaignCurrency
-            }
+            fun saleAmountInCampaignCurrency(saleAmountInCampaignCurrency: JsonField<Long>) =
+                apply {
+                    this.saleAmountInCampaignCurrency = saleAmountInCampaignCurrency
+                }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
