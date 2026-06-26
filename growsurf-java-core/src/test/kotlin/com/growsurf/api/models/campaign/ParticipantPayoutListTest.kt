@@ -32,6 +32,7 @@ internal class ParticipantPayoutListTest {
                         .fxError("fxError")
                         .issuedAt(0L)
                         .provider("provider")
+                        .queuedAt(0L)
                         .build()
                 )
                 .build()
@@ -56,6 +57,7 @@ internal class ParticipantPayoutListTest {
                     .fxError("fxError")
                     .issuedAt(0L)
                     .provider("provider")
+                    .queuedAt(0L)
                     .build()
             )
     }
@@ -84,6 +86,7 @@ internal class ParticipantPayoutListTest {
                         .fxError("fxError")
                         .issuedAt(0L)
                         .provider("provider")
+                        .queuedAt(0L)
                         .build()
                 )
                 .build()

@@ -266,6 +266,7 @@ private constructor(
         private val fxError: JsonField<String>,
         private val issuedAt: JsonField<Long>,
         private val provider: JsonField<String>,
+        private val queuedAt: JsonField<Long>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -302,6 +303,7 @@ private constructor(
             @JsonProperty("fxError") @ExcludeMissing fxError: JsonField<String> = JsonMissing.of(),
             @JsonProperty("issuedAt") @ExcludeMissing issuedAt: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("provider") @ExcludeMissing provider: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("queuedAt") @ExcludeMissing queuedAt: JsonField<Long> = JsonMissing.of(),
         ) : this(
             id,
             amount,
@@ -318,6 +320,7 @@ private constructor(
             fxError,
             issuedAt,
             provider,
+            queuedAt,
             mutableMapOf(),
         )
 
@@ -412,6 +415,12 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun provider(): Optional<String> = provider.getOptional("provider")
+
+        /**
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun queuedAt(): Optional<Long> = queuedAt.getOptional("queuedAt")
 
         /**
          * Returns the raw JSON value of [id].
@@ -538,6 +547,13 @@ private constructor(
          */
         @JsonProperty("provider") @ExcludeMissing fun _provider(): JsonField<String> = provider
 
+        /**
+         * Returns the raw JSON value of [queuedAt].
+         *
+         * Unlike [queuedAt], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("queuedAt") @ExcludeMissing fun _queuedAt(): JsonField<Long> = queuedAt
+
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
             additionalProperties.put(key, value)
@@ -587,6 +603,7 @@ private constructor(
             private var fxError: JsonField<String> = JsonMissing.of()
             private var issuedAt: JsonField<Long> = JsonMissing.of()
             private var provider: JsonField<String> = JsonMissing.of()
+            private var queuedAt: JsonField<Long> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -606,6 +623,7 @@ private constructor(
                 fxError = payout.fxError
                 issuedAt = payout.issuedAt
                 provider = payout.provider
+                queuedAt = payout.queuedAt
                 additionalProperties = payout.additionalProperties.toMutableMap()
             }
 
@@ -843,6 +861,27 @@ private constructor(
              */
             fun provider(provider: JsonField<String>) = apply { this.provider = provider }
 
+            fun queuedAt(queuedAt: Long?) = queuedAt(JsonField.ofNullable(queuedAt))
+
+            /**
+             * Alias for [Builder.queuedAt].
+             *
+             * This unboxed primitive overload exists for backwards compatibility.
+             */
+            fun queuedAt(queuedAt: Long) = queuedAt(queuedAt as Long?)
+
+            /** Alias for calling [Builder.queuedAt] with `queuedAt.orElse(null)`. */
+            fun queuedAt(queuedAt: Optional<Long>) = queuedAt(queuedAt.getOrNull())
+
+            /**
+             * Sets [Builder.queuedAt] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.queuedAt] with a well-typed [Long] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun queuedAt(queuedAt: JsonField<Long>) = apply { this.queuedAt = queuedAt }
+
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
                 putAllAdditionalProperties(additionalProperties)
@@ -897,6 +936,7 @@ private constructor(
                     fxError,
                     issuedAt,
                     provider,
+                    queuedAt,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -932,6 +972,7 @@ private constructor(
             fxError()
             issuedAt()
             provider()
+            queuedAt()
             validated = true
         }
 
@@ -965,7 +1006,8 @@ private constructor(
                 (if (failedAt.asKnown().isPresent) 1 else 0) +
                 (if (fxError.asKnown().isPresent) 1 else 0) +
                 (if (issuedAt.asKnown().isPresent) 1 else 0) +
-                (if (provider.asKnown().isPresent) 1 else 0)
+                (if (provider.asKnown().isPresent) 1 else 0) +
+                (if (queuedAt.asKnown().isPresent) 1 else 0)
 
         class Status @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
@@ -1139,6 +1181,7 @@ private constructor(
                 fxError == other.fxError &&
                 issuedAt == other.issuedAt &&
                 provider == other.provider &&
+                queuedAt == other.queuedAt &&
                 additionalProperties == other.additionalProperties
         }
 
@@ -1159,6 +1202,7 @@ private constructor(
                 fxError,
                 issuedAt,
                 provider,
+                queuedAt,
                 additionalProperties,
             )
         }
@@ -1166,7 +1210,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Payout{id=$id, amount=$amount, commissionIds=$commissionIds, createdAt=$createdAt, currencyIso=$currencyIso, participantId=$participantId, status=$status, amountInCampaignCurrency=$amountInCampaignCurrency, campaignCurrencyIso=$campaignCurrencyIso, exchangeRate=$exchangeRate, exchangeRateAt=$exchangeRateAt, failedAt=$failedAt, fxError=$fxError, issuedAt=$issuedAt, provider=$provider, additionalProperties=$additionalProperties}"
+            "Payout{id=$id, amount=$amount, commissionIds=$commissionIds, createdAt=$createdAt, currencyIso=$currencyIso, participantId=$participantId, status=$status, amountInCampaignCurrency=$amountInCampaignCurrency, campaignCurrencyIso=$campaignCurrencyIso, exchangeRate=$exchangeRate, exchangeRateAt=$exchangeRateAt, failedAt=$failedAt, fxError=$fxError, issuedAt=$issuedAt, provider=$provider, queuedAt=$queuedAt, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

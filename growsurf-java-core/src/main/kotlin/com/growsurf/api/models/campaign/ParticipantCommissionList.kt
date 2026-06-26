@@ -274,7 +274,7 @@ private constructor(
         private val payoutQueuedAt: JsonField<Long>,
         private val provider: JsonField<String>,
         private val reversedAt: JsonField<Long>,
-        private val saleAmountAmountInCampaignCurrency: JsonField<Long>,
+        private val saleAmountInCampaignCurrency: JsonField<Long>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -327,9 +327,9 @@ private constructor(
             @JsonProperty("reversedAt")
             @ExcludeMissing
             reversedAt: JsonField<Long> = JsonMissing.of(),
-            @JsonProperty("saleAmountAmountInCampaignCurrency")
+            @JsonProperty("saleAmountInCampaignCurrency")
             @ExcludeMissing
-            saleAmountAmountInCampaignCurrency: JsonField<Long> = JsonMissing.of(),
+            saleAmountInCampaignCurrency: JsonField<Long> = JsonMissing.of(),
         ) : this(
             id,
             amount,
@@ -350,7 +350,7 @@ private constructor(
             payoutQueuedAt,
             provider,
             reversedAt,
-            saleAmountAmountInCampaignCurrency,
+            saleAmountInCampaignCurrency,
             mutableMapOf(),
         )
 
@@ -361,10 +361,10 @@ private constructor(
         fun id(): String = id.getRequired("id")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
-        fun amount(): Long = amount.getRequired("amount")
+        fun amount(): Optional<Long> = amount.getOptional("amount")
 
         /**
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
@@ -391,10 +391,10 @@ private constructor(
         fun referrerId(): String = referrerId.getRequired("referrerId")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
-        fun saleAmount(): Long = saleAmount.getRequired("saleAmount")
+        fun saleAmount(): Optional<Long> = saleAmount.getOptional("saleAmount")
 
         /**
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
@@ -474,8 +474,8 @@ private constructor(
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun saleAmountAmountInCampaignCurrency(): Optional<Long> =
-            saleAmountAmountInCampaignCurrency.getOptional("saleAmountAmountInCampaignCurrency")
+        fun saleAmountInCampaignCurrency(): Optional<Long> =
+            saleAmountInCampaignCurrency.getOptional("saleAmountInCampaignCurrency")
 
         /**
          * Returns the raw JSON value of [id].
@@ -635,15 +635,15 @@ private constructor(
         @JsonProperty("reversedAt") @ExcludeMissing fun _reversedAt(): JsonField<Long> = reversedAt
 
         /**
-         * Returns the raw JSON value of [saleAmountAmountInCampaignCurrency].
+         * Returns the raw JSON value of [saleAmountInCampaignCurrency].
          *
-         * Unlike [saleAmountAmountInCampaignCurrency], this method doesn't throw if the JSON field
+         * Unlike [saleAmountInCampaignCurrency], this method doesn't throw if the JSON field
          * has an unexpected type.
          */
-        @JsonProperty("saleAmountAmountInCampaignCurrency")
+        @JsonProperty("saleAmountInCampaignCurrency")
         @ExcludeMissing
-        fun _saleAmountAmountInCampaignCurrency(): JsonField<Long> =
-            saleAmountAmountInCampaignCurrency
+        fun _saleAmountInCampaignCurrency(): JsonField<Long> =
+            saleAmountInCampaignCurrency
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -699,7 +699,7 @@ private constructor(
             private var payoutQueuedAt: JsonField<Long> = JsonMissing.of()
             private var provider: JsonField<String> = JsonMissing.of()
             private var reversedAt: JsonField<Long> = JsonMissing.of()
-            private var saleAmountAmountInCampaignCurrency: JsonField<Long> = JsonMissing.of()
+            private var saleAmountInCampaignCurrency: JsonField<Long> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -723,7 +723,7 @@ private constructor(
                 payoutQueuedAt = commission.payoutQueuedAt
                 provider = commission.provider
                 reversedAt = commission.reversedAt
-                saleAmountAmountInCampaignCurrency = commission.saleAmountAmountInCampaignCurrency
+                saleAmountInCampaignCurrency = commission.saleAmountInCampaignCurrency
                 additionalProperties = commission.additionalProperties.toMutableMap()
             }
 
@@ -738,7 +738,17 @@ private constructor(
              */
             fun id(id: JsonField<String>) = apply { this.id = id }
 
-            fun amount(amount: Long) = amount(JsonField.of(amount))
+            fun amount(amount: Long?) = amount(JsonField.ofNullable(amount))
+
+            /**
+             * Alias for [Builder.amount].
+             *
+             * This unboxed primitive overload exists for backwards compatibility.
+             */
+            fun amount(amount: Long) = amount(amount as Long?)
+
+            /** Alias for calling [Builder.amount] with `amount.orElse(null)`. */
+            fun amount(amount: Optional<Long>) = amount(amount.getOrNull())
 
             /**
              * Sets [Builder.amount] to an arbitrary JSON value.
@@ -795,7 +805,17 @@ private constructor(
              */
             fun referrerId(referrerId: JsonField<String>) = apply { this.referrerId = referrerId }
 
-            fun saleAmount(saleAmount: Long) = saleAmount(JsonField.of(saleAmount))
+            fun saleAmount(saleAmount: Long?) = saleAmount(JsonField.ofNullable(saleAmount))
+
+            /**
+             * Alias for [Builder.saleAmount].
+             *
+             * This unboxed primitive overload exists for backwards compatibility.
+             */
+            fun saleAmount(saleAmount: Long) = saleAmount(saleAmount as Long?)
+
+            /** Alias for calling [Builder.saleAmount] with `saleAmount.orElse(null)`. */
+            fun saleAmount(saleAmount: Optional<Long>) = saleAmount(saleAmount.getOrNull())
 
             /**
              * Sets [Builder.saleAmount] to an arbitrary JSON value.
@@ -1002,38 +1022,38 @@ private constructor(
              */
             fun reversedAt(reversedAt: JsonField<Long>) = apply { this.reversedAt = reversedAt }
 
-            fun saleAmountAmountInCampaignCurrency(saleAmountAmountInCampaignCurrency: Long?) =
-                saleAmountAmountInCampaignCurrency(
-                    JsonField.ofNullable(saleAmountAmountInCampaignCurrency)
+            fun saleAmountInCampaignCurrency(saleAmountInCampaignCurrency: Long?) =
+                saleAmountInCampaignCurrency(
+                    JsonField.ofNullable(saleAmountInCampaignCurrency)
                 )
 
             /**
-             * Alias for [Builder.saleAmountAmountInCampaignCurrency].
+             * Alias for [Builder.saleAmountInCampaignCurrency].
              *
              * This unboxed primitive overload exists for backwards compatibility.
              */
-            fun saleAmountAmountInCampaignCurrency(saleAmountAmountInCampaignCurrency: Long) =
-                saleAmountAmountInCampaignCurrency(saleAmountAmountInCampaignCurrency as Long?)
+            fun saleAmountInCampaignCurrency(saleAmountInCampaignCurrency: Long) =
+                saleAmountInCampaignCurrency(saleAmountInCampaignCurrency as Long?)
 
             /**
-             * Alias for calling [Builder.saleAmountAmountInCampaignCurrency] with
-             * `saleAmountAmountInCampaignCurrency.orElse(null)`.
+             * Alias for calling [Builder.saleAmountInCampaignCurrency] with
+             * `saleAmountInCampaignCurrency.orElse(null)`.
              */
-            fun saleAmountAmountInCampaignCurrency(
-                saleAmountAmountInCampaignCurrency: Optional<Long>
-            ) = saleAmountAmountInCampaignCurrency(saleAmountAmountInCampaignCurrency.getOrNull())
+            fun saleAmountInCampaignCurrency(
+                saleAmountInCampaignCurrency: Optional<Long>
+            ) = saleAmountInCampaignCurrency(saleAmountInCampaignCurrency.getOrNull())
 
             /**
-             * Sets [Builder.saleAmountAmountInCampaignCurrency] to an arbitrary JSON value.
+             * Sets [Builder.saleAmountInCampaignCurrency] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.saleAmountAmountInCampaignCurrency] with a
+             * You should usually call [Builder.saleAmountInCampaignCurrency] with a
              * well-typed [Long] value instead. This method is primarily for setting the field to an
              * undocumented or not yet supported value.
              */
-            fun saleAmountAmountInCampaignCurrency(
-                saleAmountAmountInCampaignCurrency: JsonField<Long>
+            fun saleAmountInCampaignCurrency(
+                saleAmountInCampaignCurrency: JsonField<Long>
             ) = apply {
-                this.saleAmountAmountInCampaignCurrency = saleAmountAmountInCampaignCurrency
+                this.saleAmountInCampaignCurrency = saleAmountInCampaignCurrency
             }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
@@ -1095,7 +1115,7 @@ private constructor(
                     payoutQueuedAt,
                     provider,
                     reversedAt,
-                    saleAmountAmountInCampaignCurrency,
+                    saleAmountInCampaignCurrency,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -1135,7 +1155,7 @@ private constructor(
             payoutQueuedAt()
             provider()
             reversedAt()
-            saleAmountAmountInCampaignCurrency()
+            saleAmountInCampaignCurrency()
             validated = true
         }
 
@@ -1174,7 +1194,7 @@ private constructor(
                 (if (payoutQueuedAt.asKnown().isPresent) 1 else 0) +
                 (if (provider.asKnown().isPresent) 1 else 0) +
                 (if (reversedAt.asKnown().isPresent) 1 else 0) +
-                (if (saleAmountAmountInCampaignCurrency.asKnown().isPresent) 1 else 0)
+                (if (saleAmountInCampaignCurrency.asKnown().isPresent) 1 else 0)
 
         class Status @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
@@ -1358,7 +1378,7 @@ private constructor(
                 payoutQueuedAt == other.payoutQueuedAt &&
                 provider == other.provider &&
                 reversedAt == other.reversedAt &&
-                saleAmountAmountInCampaignCurrency == other.saleAmountAmountInCampaignCurrency &&
+                saleAmountInCampaignCurrency == other.saleAmountInCampaignCurrency &&
                 additionalProperties == other.additionalProperties
         }
 
@@ -1383,7 +1403,7 @@ private constructor(
                 payoutQueuedAt,
                 provider,
                 reversedAt,
-                saleAmountAmountInCampaignCurrency,
+                saleAmountInCampaignCurrency,
                 additionalProperties,
             )
         }
@@ -1391,7 +1411,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Commission{id=$id, amount=$amount, createdAt=$createdAt, currencyIso=$currencyIso, referredId=$referredId, referrerId=$referrerId, saleAmount=$saleAmount, status=$status, amountInCampaignCurrency=$amountInCampaignCurrency, approvedAt=$approvedAt, campaignCurrencyIso=$campaignCurrencyIso, exchangeRate=$exchangeRate, exchangeRateAt=$exchangeRateAt, fxError=$fxError, holdDuration=$holdDuration, paidAt=$paidAt, payoutQueuedAt=$payoutQueuedAt, provider=$provider, reversedAt=$reversedAt, saleAmountAmountInCampaignCurrency=$saleAmountAmountInCampaignCurrency, additionalProperties=$additionalProperties}"
+            "Commission{id=$id, amount=$amount, createdAt=$createdAt, currencyIso=$currencyIso, referredId=$referredId, referrerId=$referrerId, saleAmount=$saleAmount, status=$status, amountInCampaignCurrency=$amountInCampaignCurrency, approvedAt=$approvedAt, campaignCurrencyIso=$campaignCurrencyIso, exchangeRate=$exchangeRate, exchangeRateAt=$exchangeRateAt, fxError=$fxError, holdDuration=$holdDuration, paidAt=$paidAt, payoutQueuedAt=$payoutQueuedAt, provider=$provider, reversedAt=$reversedAt, saleAmountInCampaignCurrency=$saleAmountInCampaignCurrency, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
