@@ -2,12 +2,20 @@
 
 package com.growsurf.api.models.campaign.participant
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.growsurf.api.core.ExcludeMissing
+import com.growsurf.api.core.JsonField
+import com.growsurf.api.core.JsonMissing
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.Params
 import com.growsurf.api.core.checkRequired
 import com.growsurf.api.core.http.Headers
 import com.growsurf.api.core.http.QueryParams
-import com.growsurf.api.core.toImmutable
+import com.growsurf.api.errors.GrowsurfInvalidDataException
+import java.util.Collections
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
@@ -20,17 +28,32 @@ class ParticipantTriggerReferralParams
 private constructor(
     private val id: String,
     private val participantIdOrEmail: String?,
+    private val body: Body,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
-    private val additionalBodyProperties: Map<String, JsonValue>,
 ) : Params {
 
     fun id(): String = id
 
     fun participantIdOrEmail(): Optional<String> = Optional.ofNullable(participantIdOrEmail)
 
-    /** Additional body properties to send with the request. */
-    fun _additionalBodyProperties(): Map<String, JsonValue> = additionalBodyProperties
+    /**
+     * Number of whole days to hold referral credit before it is awarded. Useful for honoring a
+     * refund window before crediting a referrer. Omit this field to award credit immediately.
+     *
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun delayInDays(): Optional<Long> = body.delayInDays()
+
+    /**
+     * Returns the raw JSON value of [delayInDays].
+     *
+     * Unlike [delayInDays], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _delayInDays(): JsonField<Long> = body._delayInDays()
+
+    fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -59,20 +82,19 @@ private constructor(
 
         private var id: String? = null
         private var participantIdOrEmail: String? = null
+        private var body: Body.Builder = Body.builder()
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
-        private var additionalBodyProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(participantTriggerReferralParams: ParticipantTriggerReferralParams) =
             apply {
                 id = participantTriggerReferralParams.id
                 participantIdOrEmail = participantTriggerReferralParams.participantIdOrEmail
+                body = participantTriggerReferralParams.body.toBuilder()
                 additionalHeaders = participantTriggerReferralParams.additionalHeaders.toBuilder()
                 additionalQueryParams =
                     participantTriggerReferralParams.additionalQueryParams.toBuilder()
-                additionalBodyProperties =
-                    participantTriggerReferralParams.additionalBodyProperties.toMutableMap()
             }
 
         fun id(id: String) = apply { this.id = id }
@@ -87,6 +109,48 @@ private constructor(
          */
         fun participantIdOrEmail(participantIdOrEmail: Optional<String>) =
             participantIdOrEmail(participantIdOrEmail.getOrNull())
+
+        /**
+         * Sets the entire request body.
+         *
+         * This is generally only useful if you are already constructing the body separately.
+         * Otherwise, it's more convenient to use the top-level setters instead:
+         * - [delayInDays]
+         */
+        fun body(body: Body) = apply { this.body = body.toBuilder() }
+
+        /**
+         * Number of whole days to hold referral credit before it is awarded. Useful for honoring a
+         * refund window before crediting a referrer. Omit this field to award credit immediately.
+         */
+        fun delayInDays(delayInDays: Long) = apply { body.delayInDays(delayInDays) }
+
+        /**
+         * Sets [Builder.delayInDays] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.delayInDays] with a well-typed [Long] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun delayInDays(delayInDays: JsonField<Long>) = apply { body.delayInDays(delayInDays) }
+
+        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
+            body.additionalProperties(additionalBodyProperties)
+        }
+
+        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
+            body.putAdditionalProperty(key, value)
+        }
+
+        fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
+            apply {
+                body.putAllAdditionalProperties(additionalBodyProperties)
+            }
+
+        fun removeAdditionalBodyProperty(key: String) = apply { body.removeAdditionalProperty(key) }
+
+        fun removeAllAdditionalBodyProperties(keys: Set<String>) = apply {
+            body.removeAllAdditionalProperties(keys)
+        }
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -186,28 +250,6 @@ private constructor(
             additionalQueryParams.removeAll(keys)
         }
 
-        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
-            this.additionalBodyProperties.clear()
-            putAllAdditionalBodyProperties(additionalBodyProperties)
-        }
-
-        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
-            additionalBodyProperties.put(key, value)
-        }
-
-        fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
-            apply {
-                this.additionalBodyProperties.putAll(additionalBodyProperties)
-            }
-
-        fun removeAdditionalBodyProperty(key: String) = apply {
-            additionalBodyProperties.remove(key)
-        }
-
-        fun removeAllAdditionalBodyProperties(keys: Set<String>) = apply {
-            keys.forEach(::removeAdditionalBodyProperty)
-        }
-
         /**
          * Returns an immutable instance of [ParticipantTriggerReferralParams].
          *
@@ -224,14 +266,13 @@ private constructor(
             ParticipantTriggerReferralParams(
                 checkRequired("id", id),
                 participantIdOrEmail,
+                body.build(),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
-                additionalBodyProperties.toImmutable(),
             )
     }
 
-    fun _body(): Optional<Map<String, JsonValue>> =
-        Optional.ofNullable(additionalBodyProperties.ifEmpty { null })
+    fun _body(): Body = body
 
     fun _pathParam(index: Int): String =
         when (index) {
@@ -244,6 +285,167 @@ private constructor(
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
+    /** Optional body for a referral trigger. Omit it (or send an empty object) to award credit immediately. */
+    class Body
+    @JsonCreator(mode = JsonCreator.Mode.DISABLED)
+    private constructor(
+        private val delayInDays: JsonField<Long>,
+        private val additionalProperties: MutableMap<String, JsonValue>,
+    ) {
+
+        @JsonCreator
+        private constructor(
+            @JsonProperty("delayInDays")
+            @ExcludeMissing
+            delayInDays: JsonField<Long> = JsonMissing.of()
+        ) : this(delayInDays, mutableMapOf())
+
+        /**
+         * Number of whole days to hold referral credit before it is awarded. Useful for honoring a
+         * refund window before crediting a referrer. Omit this field to award credit immediately.
+         *
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun delayInDays(): Optional<Long> = delayInDays.getOptional("delayInDays")
+
+        /**
+         * Returns the raw JSON value of [delayInDays].
+         *
+         * Unlike [delayInDays], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("delayInDays")
+        @ExcludeMissing
+        fun _delayInDays(): JsonField<Long> = delayInDays
+
+        @JsonAnySetter
+        private fun putAdditionalProperty(key: String, value: JsonValue) {
+            additionalProperties.put(key, value)
+        }
+
+        @JsonAnyGetter
+        @ExcludeMissing
+        fun _additionalProperties(): Map<String, JsonValue> =
+            Collections.unmodifiableMap(additionalProperties)
+
+        fun toBuilder() = Builder().from(this)
+
+        companion object {
+
+            /** Returns a mutable builder for constructing an instance of [Body]. */
+            @JvmStatic fun builder() = Builder()
+        }
+
+        /** A builder for [Body]. */
+        class Builder internal constructor() {
+
+            private var delayInDays: JsonField<Long> = JsonMissing.of()
+            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
+
+            @JvmSynthetic
+            internal fun from(body: Body) = apply {
+                delayInDays = body.delayInDays
+                additionalProperties = body.additionalProperties.toMutableMap()
+            }
+
+            /**
+             * Number of whole days to hold referral credit before it is awarded. Useful for
+             * honoring a refund window before crediting a referrer. Omit this field to award credit
+             * immediately.
+             */
+            fun delayInDays(delayInDays: Long) = delayInDays(JsonField.of(delayInDays))
+
+            /**
+             * Sets [Builder.delayInDays] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.delayInDays] with a well-typed [Long] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun delayInDays(delayInDays: JsonField<Long>) = apply { this.delayInDays = delayInDays }
+
+            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.clear()
+                putAllAdditionalProperties(additionalProperties)
+            }
+
+            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
+                additionalProperties.put(key, value)
+            }
+
+            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
+                this.additionalProperties.putAll(additionalProperties)
+            }
+
+            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
+
+            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
+                keys.forEach(::removeAdditionalProperty)
+            }
+
+            /**
+             * Returns an immutable instance of [Body].
+             *
+             * Further updates to this [Builder] will not mutate the returned instance.
+             */
+            fun build(): Body = Body(delayInDays, additionalProperties.toMutableMap())
+        }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws GrowsurfInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Body = apply {
+            if (validated) {
+                return@apply
+            }
+
+            delayInDays()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: GrowsurfInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic
+        internal fun validity(): Int = (if (delayInDays.asKnown().isPresent) 1 else 0)
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Body &&
+                delayInDays == other.delayInDays &&
+                additionalProperties == other.additionalProperties
+        }
+
+        private val hashCode: Int by lazy { Objects.hash(delayInDays, additionalProperties) }
+
+        override fun hashCode(): Int = hashCode
+
+        override fun toString() =
+            "Body{delayInDays=$delayInDays, additionalProperties=$additionalProperties}"
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
@@ -252,20 +454,14 @@ private constructor(
         return other is ParticipantTriggerReferralParams &&
             id == other.id &&
             participantIdOrEmail == other.participantIdOrEmail &&
+            body == other.body &&
             additionalHeaders == other.additionalHeaders &&
-            additionalQueryParams == other.additionalQueryParams &&
-            additionalBodyProperties == other.additionalBodyProperties
+            additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(
-            id,
-            participantIdOrEmail,
-            additionalHeaders,
-            additionalQueryParams,
-            additionalBodyProperties,
-        )
+        Objects.hash(id, participantIdOrEmail, body, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "ParticipantTriggerReferralParams{id=$id, participantIdOrEmail=$participantIdOrEmail, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams, additionalBodyProperties=$additionalBodyProperties}"
+        "ParticipantTriggerReferralParams{id=$id, participantIdOrEmail=$participantIdOrEmail, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

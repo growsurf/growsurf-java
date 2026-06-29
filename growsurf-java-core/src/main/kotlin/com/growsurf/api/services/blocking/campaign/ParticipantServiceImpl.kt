@@ -21,6 +21,8 @@ import com.growsurf.api.models.campaign.ParticipantPayoutList
 import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.models.campaign.participant.Participant
 import com.growsurf.api.models.campaign.participant.ParticipantAddParams
+import com.growsurf.api.models.campaign.participant.ParticipantCancelDelayedReferralParams
+import com.growsurf.api.models.campaign.participant.ParticipantCancelDelayedReferralResponse
 import com.growsurf.api.models.campaign.participant.ParticipantDeleteParams
 import com.growsurf.api.models.campaign.participant.ParticipantDeleteResponse
 import com.growsurf.api.models.campaign.participant.ParticipantListCommissionsParams
@@ -30,6 +32,8 @@ import com.growsurf.api.models.campaign.participant.ParticipantListRewardsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListRewardsResponse
 import com.growsurf.api.models.campaign.participant.ParticipantRecordTransactionParams
 import com.growsurf.api.models.campaign.participant.ParticipantRecordTransactionResponse
+import com.growsurf.api.models.campaign.participant.ParticipantRefundTransactionParams
+import com.growsurf.api.models.campaign.participant.ParticipantRefundTransactionResponse
 import com.growsurf.api.models.campaign.participant.ParticipantRetrieveParams
 import com.growsurf.api.models.campaign.participant.ParticipantSendInvitesParams
 import com.growsurf.api.models.campaign.participant.ParticipantSendInvitesResponse
@@ -111,6 +115,13 @@ class ParticipantServiceImpl internal constructor(private val clientOptions: Cli
         // post /campaign/{id}/participant/{participantIdOrEmail}/transaction
         withRawResponse().recordTransaction(params, requestOptions).parse()
 
+    override fun refundTransaction(
+        params: ParticipantRefundTransactionParams,
+        requestOptions: RequestOptions,
+    ): ParticipantRefundTransactionResponse =
+        // post /campaign/{id}/participant/{participantIdOrEmail}/transaction/refund
+        withRawResponse().refundTransaction(params, requestOptions).parse()
+
     override fun sendInvites(
         params: ParticipantSendInvitesParams,
         requestOptions: RequestOptions,
@@ -124,6 +135,13 @@ class ParticipantServiceImpl internal constructor(private val clientOptions: Cli
     ): ParticipantTriggerReferralResponse =
         // post /campaign/{id}/participant/{participantIdOrEmail}/ref
         withRawResponse().triggerReferral(params, requestOptions).parse()
+
+    override fun cancelDelayedReferral(
+        params: ParticipantCancelDelayedReferralParams,
+        requestOptions: RequestOptions,
+    ): ParticipantCancelDelayedReferralResponse =
+        // delete /campaign/{id}/participant/{participantIdOrEmail}/ref
+        withRawResponse().cancelDelayedReferral(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         ParticipantService.WithRawResponse {
@@ -457,6 +475,44 @@ class ParticipantServiceImpl internal constructor(private val clientOptions: Cli
             }
         }
 
+        private val refundTransactionHandler: Handler<ParticipantRefundTransactionResponse> =
+            jsonHandler<ParticipantRefundTransactionResponse>(clientOptions.jsonMapper)
+
+        override fun refundTransaction(
+            params: ParticipantRefundTransactionParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<ParticipantRefundTransactionResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("participantIdOrEmail", params.participantIdOrEmail().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "campaign",
+                        params._pathParam(0),
+                        "participant",
+                        params._pathParam(1),
+                        "transaction",
+                        "refund",
+                    )
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { refundTransactionHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
         private val sendInvitesHandler: Handler<ParticipantSendInvitesResponse> =
             jsonHandler<ParticipantSendInvitesResponse>(clientOptions.jsonMapper)
 
@@ -515,7 +571,7 @@ class ParticipantServiceImpl internal constructor(private val clientOptions: Cli
                         params._pathParam(1),
                         "ref",
                     )
-                    .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
+                    .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -523,6 +579,44 @@ class ParticipantServiceImpl internal constructor(private val clientOptions: Cli
             return errorHandler.handle(response).parseable {
                 response
                     .use { triggerReferralHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val cancelDelayedReferralHandler:
+            Handler<ParticipantCancelDelayedReferralResponse> =
+            jsonHandler<ParticipantCancelDelayedReferralResponse>(clientOptions.jsonMapper)
+
+        override fun cancelDelayedReferral(
+            params: ParticipantCancelDelayedReferralParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<ParticipantCancelDelayedReferralResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("participantIdOrEmail", params.participantIdOrEmail().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.DELETE)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "campaign",
+                        params._pathParam(0),
+                        "participant",
+                        params._pathParam(1),
+                        "ref",
+                    )
+                    .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { cancelDelayedReferralHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

@@ -11,6 +11,8 @@ import com.growsurf.api.models.campaign.ParticipantPayoutList
 import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.models.campaign.participant.Participant
 import com.growsurf.api.models.campaign.participant.ParticipantAddParams
+import com.growsurf.api.models.campaign.participant.ParticipantCancelDelayedReferralParams
+import com.growsurf.api.models.campaign.participant.ParticipantCancelDelayedReferralResponse
 import com.growsurf.api.models.campaign.participant.ParticipantDeleteParams
 import com.growsurf.api.models.campaign.participant.ParticipantDeleteResponse
 import com.growsurf.api.models.campaign.participant.ParticipantListCommissionsParams
@@ -20,6 +22,8 @@ import com.growsurf.api.models.campaign.participant.ParticipantListRewardsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListRewardsResponse
 import com.growsurf.api.models.campaign.participant.ParticipantRecordTransactionParams
 import com.growsurf.api.models.campaign.participant.ParticipantRecordTransactionResponse
+import com.growsurf.api.models.campaign.participant.ParticipantRefundTransactionParams
+import com.growsurf.api.models.campaign.participant.ParticipantRefundTransactionResponse
 import com.growsurf.api.models.campaign.participant.ParticipantRetrieveParams
 import com.growsurf.api.models.campaign.participant.ParticipantSendInvitesParams
 import com.growsurf.api.models.campaign.participant.ParticipantSendInvitesResponse
@@ -283,6 +287,39 @@ interface ParticipantService {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): ParticipantRecordTransactionResponse
 
+    /**
+     * Records an amendment (refund, partial refund, refund cancellation, or chargeback) against a
+     * previously recorded transaction and reverses or adjusts the referrer's commission. The
+     * inverse of Record Affiliate Transaction.
+     */
+    fun refundTransaction(
+        participantIdOrEmail: String,
+        params: ParticipantRefundTransactionParams,
+    ): ParticipantRefundTransactionResponse =
+        refundTransaction(participantIdOrEmail, params, RequestOptions.none())
+
+    /** @see refundTransaction */
+    fun refundTransaction(
+        participantIdOrEmail: String,
+        params: ParticipantRefundTransactionParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ParticipantRefundTransactionResponse =
+        refundTransaction(
+            params.toBuilder().participantIdOrEmail(participantIdOrEmail).build(),
+            requestOptions,
+        )
+
+    /** @see refundTransaction */
+    fun refundTransaction(
+        params: ParticipantRefundTransactionParams
+    ): ParticipantRefundTransactionResponse = refundTransaction(params, RequestOptions.none())
+
+    /** @see refundTransaction */
+    fun refundTransaction(
+        params: ParticipantRefundTransactionParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ParticipantRefundTransactionResponse
+
     /** Sends email invites on behalf of a participant to a list of email addresses. */
     fun sendInvites(
         participantIdOrEmail: String,
@@ -342,6 +379,39 @@ interface ParticipantService {
         params: ParticipantTriggerReferralParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): ParticipantTriggerReferralResponse
+
+    /**
+     * Cancels a pending delayed referral trigger for a participant by GrowSurf participant ID or
+     * email address.
+     */
+    fun cancelDelayedReferral(
+        participantIdOrEmail: String,
+        params: ParticipantCancelDelayedReferralParams,
+    ): ParticipantCancelDelayedReferralResponse =
+        cancelDelayedReferral(participantIdOrEmail, params, RequestOptions.none())
+
+    /** @see cancelDelayedReferral */
+    fun cancelDelayedReferral(
+        participantIdOrEmail: String,
+        params: ParticipantCancelDelayedReferralParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ParticipantCancelDelayedReferralResponse =
+        cancelDelayedReferral(
+            params.toBuilder().participantIdOrEmail(participantIdOrEmail).build(),
+            requestOptions,
+        )
+
+    /** @see cancelDelayedReferral */
+    fun cancelDelayedReferral(
+        params: ParticipantCancelDelayedReferralParams
+    ): ParticipantCancelDelayedReferralResponse =
+        cancelDelayedReferral(params, RequestOptions.none())
+
+    /** @see cancelDelayedReferral */
+    fun cancelDelayedReferral(
+        params: ParticipantCancelDelayedReferralParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ParticipantCancelDelayedReferralResponse
 
     /**
      * A view of [ParticipantService] that provides access to raw HTTP responses for each method.
@@ -680,6 +750,44 @@ interface ParticipantService {
 
         /**
          * Returns a raw HTTP response for `post
+         * /campaign/{id}/participant/{participantIdOrEmail}/transaction/refund`, but is otherwise the
+         * same as [ParticipantService.refundTransaction].
+         */
+        @MustBeClosed
+        fun refundTransaction(
+            participantIdOrEmail: String,
+            params: ParticipantRefundTransactionParams,
+        ): HttpResponseFor<ParticipantRefundTransactionResponse> =
+            refundTransaction(participantIdOrEmail, params, RequestOptions.none())
+
+        /** @see refundTransaction */
+        @MustBeClosed
+        fun refundTransaction(
+            participantIdOrEmail: String,
+            params: ParticipantRefundTransactionParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ParticipantRefundTransactionResponse> =
+            refundTransaction(
+                params.toBuilder().participantIdOrEmail(participantIdOrEmail).build(),
+                requestOptions,
+            )
+
+        /** @see refundTransaction */
+        @MustBeClosed
+        fun refundTransaction(
+            params: ParticipantRefundTransactionParams
+        ): HttpResponseFor<ParticipantRefundTransactionResponse> =
+            refundTransaction(params, RequestOptions.none())
+
+        /** @see refundTransaction */
+        @MustBeClosed
+        fun refundTransaction(
+            params: ParticipantRefundTransactionParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ParticipantRefundTransactionResponse>
+
+        /**
+         * Returns a raw HTTP response for `post
          * /campaign/{id}/participant/{participantIdOrEmail}/invites`, but is otherwise the same as
          * [ParticipantService.sendInvites].
          */
@@ -753,5 +861,43 @@ interface ParticipantService {
             params: ParticipantTriggerReferralParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<ParticipantTriggerReferralResponse>
+
+        /**
+         * Returns a raw HTTP response for `delete
+         * /campaign/{id}/participant/{participantIdOrEmail}/ref`, but is otherwise the same as
+         * [ParticipantService.cancelDelayedReferral].
+         */
+        @MustBeClosed
+        fun cancelDelayedReferral(
+            participantIdOrEmail: String,
+            params: ParticipantCancelDelayedReferralParams,
+        ): HttpResponseFor<ParticipantCancelDelayedReferralResponse> =
+            cancelDelayedReferral(participantIdOrEmail, params, RequestOptions.none())
+
+        /** @see cancelDelayedReferral */
+        @MustBeClosed
+        fun cancelDelayedReferral(
+            participantIdOrEmail: String,
+            params: ParticipantCancelDelayedReferralParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ParticipantCancelDelayedReferralResponse> =
+            cancelDelayedReferral(
+                params.toBuilder().participantIdOrEmail(participantIdOrEmail).build(),
+                requestOptions,
+            )
+
+        /** @see cancelDelayedReferral */
+        @MustBeClosed
+        fun cancelDelayedReferral(
+            params: ParticipantCancelDelayedReferralParams
+        ): HttpResponseFor<ParticipantCancelDelayedReferralResponse> =
+            cancelDelayedReferral(params, RequestOptions.none())
+
+        /** @see cancelDelayedReferral */
+        @MustBeClosed
+        fun cancelDelayedReferral(
+            params: ParticipantCancelDelayedReferralParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ParticipantCancelDelayedReferralResponse>
     }
 }

@@ -10,6 +10,7 @@ import com.growsurf.api.models.campaign.Campaign
 import com.growsurf.api.models.campaign.CommissionStructure
 import com.growsurf.api.models.campaign.participant.FraudRiskLevel
 import com.growsurf.api.models.campaign.participant.ParticipantRecordTransactionResponse
+import com.growsurf.api.models.campaign.participant.ParticipantRefundTransactionResponse
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.jvm.javaMethod
 import org.assertj.core.api.Assertions.assertThat
@@ -146,6 +147,32 @@ internal class ProGuardCompatibilityTest {
 
         assertThat(roundtrippedParticipantRecordTransactionResponse)
             .isEqualTo(participantRecordTransactionResponse)
+    }
+
+    @Test
+    fun participantRefundTransactionResponseRoundtrip() {
+        val jsonMapper = jsonMapper()
+        val participantRefundTransactionResponse =
+            ParticipantRefundTransactionResponse.builder()
+                .adjusted(0L)
+                .amendmentType(ParticipantRefundTransactionResponse.AmendmentType.REFUND)
+                .deleted(0L)
+                .matched(0L)
+                .addMatchingCommissionId("string")
+                .message("message")
+                .reversed(0L)
+                .success(true)
+                .notFound(true)
+                .build()
+
+        val roundtrippedParticipantRefundTransactionResponse =
+            jsonMapper.readValue(
+                jsonMapper.writeValueAsString(participantRefundTransactionResponse),
+                jacksonTypeRef<ParticipantRefundTransactionResponse>(),
+            )
+
+        assertThat(roundtrippedParticipantRefundTransactionResponse)
+            .isEqualTo(participantRefundTransactionResponse)
     }
 
     @Test

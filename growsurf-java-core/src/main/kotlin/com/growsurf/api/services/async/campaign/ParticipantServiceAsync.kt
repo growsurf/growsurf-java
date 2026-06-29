@@ -10,6 +10,8 @@ import com.growsurf.api.models.campaign.ParticipantPayoutList
 import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.models.campaign.participant.Participant
 import com.growsurf.api.models.campaign.participant.ParticipantAddParams
+import com.growsurf.api.models.campaign.participant.ParticipantCancelDelayedReferralParams
+import com.growsurf.api.models.campaign.participant.ParticipantCancelDelayedReferralResponse
 import com.growsurf.api.models.campaign.participant.ParticipantDeleteParams
 import com.growsurf.api.models.campaign.participant.ParticipantDeleteResponse
 import com.growsurf.api.models.campaign.participant.ParticipantListCommissionsParams
@@ -19,6 +21,8 @@ import com.growsurf.api.models.campaign.participant.ParticipantListRewardsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListRewardsResponse
 import com.growsurf.api.models.campaign.participant.ParticipantRecordTransactionParams
 import com.growsurf.api.models.campaign.participant.ParticipantRecordTransactionResponse
+import com.growsurf.api.models.campaign.participant.ParticipantRefundTransactionParams
+import com.growsurf.api.models.campaign.participant.ParticipantRefundTransactionResponse
 import com.growsurf.api.models.campaign.participant.ParticipantRetrieveParams
 import com.growsurf.api.models.campaign.participant.ParticipantSendInvitesParams
 import com.growsurf.api.models.campaign.participant.ParticipantSendInvitesResponse
@@ -298,6 +302,40 @@ interface ParticipantServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<ParticipantRecordTransactionResponse>
 
+    /**
+     * Records an amendment (refund, partial refund, refund cancellation, or chargeback) against a
+     * previously recorded transaction and reverses or adjusts the referrer's commission. The
+     * inverse of Record Affiliate Transaction.
+     */
+    fun refundTransaction(
+        participantIdOrEmail: String,
+        params: ParticipantRefundTransactionParams,
+    ): CompletableFuture<ParticipantRefundTransactionResponse> =
+        refundTransaction(participantIdOrEmail, params, RequestOptions.none())
+
+    /** @see refundTransaction */
+    fun refundTransaction(
+        participantIdOrEmail: String,
+        params: ParticipantRefundTransactionParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<ParticipantRefundTransactionResponse> =
+        refundTransaction(
+            params.toBuilder().participantIdOrEmail(participantIdOrEmail).build(),
+            requestOptions,
+        )
+
+    /** @see refundTransaction */
+    fun refundTransaction(
+        params: ParticipantRefundTransactionParams
+    ): CompletableFuture<ParticipantRefundTransactionResponse> =
+        refundTransaction(params, RequestOptions.none())
+
+    /** @see refundTransaction */
+    fun refundTransaction(
+        params: ParticipantRefundTransactionParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<ParticipantRefundTransactionResponse>
+
     /** Sends email invites on behalf of a participant to a list of email addresses. */
     fun sendInvites(
         participantIdOrEmail: String,
@@ -360,6 +398,39 @@ interface ParticipantServiceAsync {
         params: ParticipantTriggerReferralParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<ParticipantTriggerReferralResponse>
+
+    /**
+     * Cancels a pending delayed referral trigger for a participant by GrowSurf participant ID or
+     * email address.
+     */
+    fun cancelDelayedReferral(
+        participantIdOrEmail: String,
+        params: ParticipantCancelDelayedReferralParams,
+    ): CompletableFuture<ParticipantCancelDelayedReferralResponse> =
+        cancelDelayedReferral(participantIdOrEmail, params, RequestOptions.none())
+
+    /** @see cancelDelayedReferral */
+    fun cancelDelayedReferral(
+        participantIdOrEmail: String,
+        params: ParticipantCancelDelayedReferralParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<ParticipantCancelDelayedReferralResponse> =
+        cancelDelayedReferral(
+            params.toBuilder().participantIdOrEmail(participantIdOrEmail).build(),
+            requestOptions,
+        )
+
+    /** @see cancelDelayedReferral */
+    fun cancelDelayedReferral(
+        params: ParticipantCancelDelayedReferralParams
+    ): CompletableFuture<ParticipantCancelDelayedReferralResponse> =
+        cancelDelayedReferral(params, RequestOptions.none())
+
+    /** @see cancelDelayedReferral */
+    fun cancelDelayedReferral(
+        params: ParticipantCancelDelayedReferralParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<ParticipantCancelDelayedReferralResponse>
 
     /**
      * A view of [ParticipantServiceAsync] that provides access to raw HTTP responses for each
@@ -673,6 +744,40 @@ interface ParticipantServiceAsync {
 
         /**
          * Returns a raw HTTP response for `post
+         * /campaign/{id}/participant/{participantIdOrEmail}/transaction/refund`, but is otherwise the
+         * same as [ParticipantServiceAsync.refundTransaction].
+         */
+        fun refundTransaction(
+            participantIdOrEmail: String,
+            params: ParticipantRefundTransactionParams,
+        ): CompletableFuture<HttpResponseFor<ParticipantRefundTransactionResponse>> =
+            refundTransaction(participantIdOrEmail, params, RequestOptions.none())
+
+        /** @see refundTransaction */
+        fun refundTransaction(
+            participantIdOrEmail: String,
+            params: ParticipantRefundTransactionParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ParticipantRefundTransactionResponse>> =
+            refundTransaction(
+                params.toBuilder().participantIdOrEmail(participantIdOrEmail).build(),
+                requestOptions,
+            )
+
+        /** @see refundTransaction */
+        fun refundTransaction(
+            params: ParticipantRefundTransactionParams
+        ): CompletableFuture<HttpResponseFor<ParticipantRefundTransactionResponse>> =
+            refundTransaction(params, RequestOptions.none())
+
+        /** @see refundTransaction */
+        fun refundTransaction(
+            params: ParticipantRefundTransactionParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ParticipantRefundTransactionResponse>>
+
+        /**
+         * Returns a raw HTTP response for `post
          * /campaign/{id}/participant/{participantIdOrEmail}/invites`, but is otherwise the same as
          * [ParticipantServiceAsync.sendInvites].
          */
@@ -738,5 +843,39 @@ interface ParticipantServiceAsync {
             params: ParticipantTriggerReferralParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<ParticipantTriggerReferralResponse>>
+
+        /**
+         * Returns a raw HTTP response for `delete
+         * /campaign/{id}/participant/{participantIdOrEmail}/ref`, but is otherwise the same as
+         * [ParticipantServiceAsync.cancelDelayedReferral].
+         */
+        fun cancelDelayedReferral(
+            participantIdOrEmail: String,
+            params: ParticipantCancelDelayedReferralParams,
+        ): CompletableFuture<HttpResponseFor<ParticipantCancelDelayedReferralResponse>> =
+            cancelDelayedReferral(participantIdOrEmail, params, RequestOptions.none())
+
+        /** @see cancelDelayedReferral */
+        fun cancelDelayedReferral(
+            participantIdOrEmail: String,
+            params: ParticipantCancelDelayedReferralParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ParticipantCancelDelayedReferralResponse>> =
+            cancelDelayedReferral(
+                params.toBuilder().participantIdOrEmail(participantIdOrEmail).build(),
+                requestOptions,
+            )
+
+        /** @see cancelDelayedReferral */
+        fun cancelDelayedReferral(
+            params: ParticipantCancelDelayedReferralParams
+        ): CompletableFuture<HttpResponseFor<ParticipantCancelDelayedReferralResponse>> =
+            cancelDelayedReferral(params, RequestOptions.none())
+
+        /** @see cancelDelayedReferral */
+        fun cancelDelayedReferral(
+            params: ParticipantCancelDelayedReferralParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ParticipantCancelDelayedReferralResponse>>
     }
 }

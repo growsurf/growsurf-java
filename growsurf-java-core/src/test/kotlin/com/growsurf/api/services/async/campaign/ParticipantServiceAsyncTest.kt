@@ -6,12 +6,14 @@ import com.growsurf.api.client.okhttp.GrowsurfOkHttpClientAsync
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.models.campaign.participant.Create
 import com.growsurf.api.models.campaign.participant.ParticipantAddParams
+import com.growsurf.api.models.campaign.participant.ParticipantCancelDelayedReferralParams
 import com.growsurf.api.models.campaign.participant.ParticipantDeleteParams
 import com.growsurf.api.models.campaign.participant.ParticipantListCommissionsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListPayoutsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListReferralsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListRewardsParams
 import com.growsurf.api.models.campaign.participant.ParticipantRecordTransactionParams
+import com.growsurf.api.models.campaign.participant.ParticipantRefundTransactionParams
 import com.growsurf.api.models.campaign.participant.ParticipantRetrieveParams
 import com.growsurf.api.models.campaign.participant.ParticipantSendInvitesParams
 import com.growsurf.api.models.campaign.participant.ParticipantTriggerReferralParams
@@ -262,6 +264,39 @@ internal class ParticipantServiceAsyncTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
+    fun refundTransaction() {
+        val client = GrowsurfOkHttpClientAsync.builder().apiKey("My API Key").build()
+        val participantServiceAsync = client.campaign().participant()
+
+        val responseFuture =
+            participantServiceAsync.refundTransaction(
+                ParticipantRefundTransactionParams.builder()
+                    .id("id")
+                    .participantIdOrEmail("participantIdOrEmail")
+                    .amendmentType(ParticipantRefundTransactionParams.AmendmentType.REFUND)
+                    .amount(1L)
+                    .amountRefunded(9900L)
+                    .chargeId("chargeId")
+                    .currency("xxx")
+                    .description("Customer refunded the Pro subscription")
+                    .externalId("externalId")
+                    .invoiceId("invoice_54")
+                    .orderId("orderId")
+                    .paymentId("paymentId")
+                    .paymentIntentId("paymentIntentId")
+                    .refundAmount(0L)
+                    .refundId("refundId")
+                    .refundStatus("refundStatus")
+                    .transactionId("transactionId")
+                    .build()
+            )
+
+        val response = responseFuture.get()
+        response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
     fun sendInvites() {
         val client = GrowsurfOkHttpClientAsync.builder().apiKey("My API Key").build()
         val participantServiceAsync = client.campaign().participant()
@@ -290,6 +325,25 @@ internal class ParticipantServiceAsyncTest {
         val responseFuture =
             participantServiceAsync.triggerReferral(
                 ParticipantTriggerReferralParams.builder()
+                    .id("id")
+                    .participantIdOrEmail("participantIdOrEmail")
+                    .delayInDays(14L)
+                    .build()
+            )
+
+        val response = responseFuture.get()
+        response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun cancelDelayedReferral() {
+        val client = GrowsurfOkHttpClientAsync.builder().apiKey("My API Key").build()
+        val participantServiceAsync = client.campaign().participant()
+
+        val responseFuture =
+            participantServiceAsync.cancelDelayedReferral(
+                ParticipantCancelDelayedReferralParams.builder()
                     .id("id")
                     .participantIdOrEmail("participantIdOrEmail")
                     .build()
