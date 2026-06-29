@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.8.0 (2026-06-29)
+
+Full Changelog: [v0.7.1...v0.8.0](https://github.com/growsurf/growsurf-java/compare/v0.7.1...v0.8.0)
+
+### Features
+
+* **api:** support delayed referral rewards and affiliate refunds ([8579218](https://github.com/growsurf/growsurf-java/commit/857921862545973e60128be16aba53cd8be9039a))
+
+
+### Styles
+
+* format generated Kotlin with ktfmt ([5d17270](https://github.com/growsurf/growsurf-java/commit/5d17270eaca5f1bc3c1a29c3cda26bc39db71089))
+
 ## 0.7.1 (2026-06-26)
 
 Full Changelog: [v0.7.0...v0.7.1](https://github.com/growsurf/growsurf-java/compare/v0.7.0...v0.7.1)
