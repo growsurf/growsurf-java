@@ -128,8 +128,9 @@ private constructor(
         /**
          * Sets [Builder.delayInDays] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.delayInDays] with a well-typed [Long] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
+         * You should usually call [Builder.delayInDays] with a well-typed [Long] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
          */
         fun delayInDays(delayInDays: JsonField<Long>) = apply { body.delayInDays(delayInDays) }
 
@@ -285,7 +286,10 @@ private constructor(
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
-    /** Optional body for a referral trigger. Omit it (or send an empty object) to award credit immediately. */
+    /**
+     * Optional body for a referral trigger. Omit it (or send an empty object) to award credit
+     * immediately.
+     */
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
@@ -359,8 +363,8 @@ private constructor(
              * Sets [Builder.delayInDays] to an arbitrary JSON value.
              *
              * You should usually call [Builder.delayInDays] with a well-typed [Long] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
             fun delayInDays(delayInDays: JsonField<Long>) = apply { this.delayInDays = delayInDays }
 
@@ -425,8 +429,7 @@ private constructor(
          *
          * Used for best match union deserialization.
          */
-        @JvmSynthetic
-        internal fun validity(): Int = (if (delayInDays.asKnown().isPresent) 1 else 0)
+        @JvmSynthetic internal fun validity(): Int = (if (delayInDays.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {

@@ -272,8 +272,7 @@ private constructor(
          */
         fun adjusted(adjusted: JsonField<Long>) = apply { this.adjusted = adjusted }
 
-        fun amendmentType(amendmentType: AmendmentType) =
-            amendmentType(JsonField.of(amendmentType))
+        fun amendmentType(amendmentType: AmendmentType) = amendmentType(JsonField.of(amendmentType))
 
         /**
          * Sets [Builder.amendmentType] to an arbitrary JSON value.

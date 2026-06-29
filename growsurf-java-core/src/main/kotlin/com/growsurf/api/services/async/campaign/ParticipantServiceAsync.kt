@@ -744,8 +744,8 @@ interface ParticipantServiceAsync {
 
         /**
          * Returns a raw HTTP response for `post
-         * /campaign/{id}/participant/{participantIdOrEmail}/transaction/refund`, but is otherwise the
-         * same as [ParticipantServiceAsync.refundTransaction].
+         * /campaign/{id}/participant/{participantIdOrEmail}/transaction/refund`, but is otherwise
+         * the same as [ParticipantServiceAsync.refundTransaction].
          */
         fun refundTransaction(
             participantIdOrEmail: String,

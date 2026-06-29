@@ -750,8 +750,8 @@ interface ParticipantService {
 
         /**
          * Returns a raw HTTP response for `post
-         * /campaign/{id}/participant/{participantIdOrEmail}/transaction/refund`, but is otherwise the
-         * same as [ParticipantService.refundTransaction].
+         * /campaign/{id}/participant/{participantIdOrEmail}/transaction/refund`, but is otherwise
+         * the same as [ParticipantService.refundTransaction].
          */
         @MustBeClosed
         fun refundTransaction(

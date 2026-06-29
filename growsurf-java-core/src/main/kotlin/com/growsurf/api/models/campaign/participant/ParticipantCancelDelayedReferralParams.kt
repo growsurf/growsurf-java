@@ -12,7 +12,10 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Cancels a pending delayed referral trigger for a participant by GrowSurf participant ID or email address. */
+/**
+ * Cancels a pending delayed referral trigger for a participant by GrowSurf participant ID or email
+ * address.
+ */
 class ParticipantCancelDelayedReferralParams
 private constructor(
     private val id: String,

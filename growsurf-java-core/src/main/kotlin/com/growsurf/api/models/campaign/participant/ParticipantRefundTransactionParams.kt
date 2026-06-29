@@ -58,8 +58,8 @@ private constructor(
     fun amount(): Optional<Long> = body.amount()
 
     /**
-     * Cumulative amount refunded so far, in the currency's minor unit. Omit for a full refund. For a
-     * partial refund send the running total, not the per-refund delta.
+     * Cumulative amount refunded so far, in the currency's minor unit. Omit for a full refund. For
+     * a partial refund send the running total, not the per-refund delta.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -328,7 +328,9 @@ private constructor(
          * REFUND covers full refunds, partial refunds, and refund cancellations; CHARGEBACK is
          * always a full reversal.
          */
-        fun amendmentType(amendmentType: AmendmentType) = apply { body.amendmentType(amendmentType) }
+        fun amendmentType(amendmentType: AmendmentType) = apply {
+            body.amendmentType(amendmentType)
+        }
 
         /**
          * Sets [Builder.amendmentType] to an arbitrary JSON value.
@@ -957,7 +959,8 @@ private constructor(
         /**
          * Returns the raw JSON value of [refundAmount].
          *
-         * Unlike [refundAmount], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [refundAmount], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
         @JsonProperty("refundAmount")
         @ExcludeMissing
@@ -973,7 +976,8 @@ private constructor(
         /**
          * Returns the raw JSON value of [refundStatus].
          *
-         * Unlike [refundStatus], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [refundStatus], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
         @JsonProperty("refundStatus")
         @ExcludeMissing
