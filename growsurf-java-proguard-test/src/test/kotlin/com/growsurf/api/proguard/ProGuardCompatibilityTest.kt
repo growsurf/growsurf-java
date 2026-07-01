@@ -11,6 +11,9 @@ import com.growsurf.api.models.campaign.CommissionStructure
 import com.growsurf.api.models.campaign.participant.FraudRiskLevel
 import com.growsurf.api.models.campaign.participant.ParticipantRecordTransactionResponse
 import com.growsurf.api.models.campaign.participant.ParticipantRefundTransactionResponse
+import com.growsurf.api.models.campaign.rewards.CampaignRewardListResponse
+import com.growsurf.api.models.campaign.rewards.DeleteRewardResponse
+import com.growsurf.api.models.campaign.rewards.Reward
 import kotlin.reflect.full.memberFunctions
 import kotlin.reflect.jvm.javaMethod
 import org.assertj.core.api.Assertions.assertThat
@@ -53,6 +56,139 @@ internal class ProGuardCompatibilityTest {
 
         assertThat(client).isNotNull()
         assertThat(client.campaign()).isNotNull()
+    }
+
+    @Test
+    fun rewardRoundtrip() {
+        val jsonMapper = jsonMapper()
+        val reward =
+            Reward.builder()
+                .id("id")
+                .isUnlimited(true)
+                .metadata(
+                    Reward.Metadata.builder()
+                        .putAdditionalProperty("foo", JsonValue.from("bar"))
+                        .build()
+                )
+                .type(Reward.Type.SINGLE_SIDED)
+                .commissionStructure(
+                    CommissionStructure.builder()
+                        .amount(0L)
+                        .approvalRequired(true)
+                        .duration("duration")
+                        .durationInMonths(0L)
+                        .event("event")
+                        .hasIntro(true)
+                        .hasMaxAmount(true)
+                        .holdDuration(0L)
+                        .introAmount(0L)
+                        .introAmountIso("introAmountISO")
+                        .introDuration("introDuration")
+                        .introDurationInMonths(0L)
+                        .introPercent(0.0)
+                        .introType("introType")
+                        .maxAmount(0L)
+                        .maxAmountIso("maxAmountISO")
+                        .minPaidReferrals(0L)
+                        .percent(0.0)
+                        .type(CommissionStructure.Type.PERCENT)
+                        .build()
+                )
+                .conversionsRequired(0L)
+                .couponCode("couponCode")
+                .description("description")
+                .imageUrl("imageUrl")
+                .limit(0L)
+                .limitDuration(Reward.LimitDuration.IN_TOTAL)
+                .nextMilestonePrefix("nextMilestonePrefix")
+                .nextMilestoneSuffix("nextMilestoneSuffix")
+                .numberOfWinners(0L)
+                .order(0L)
+                .referralDescription("referralDescription")
+                .referredRewardUpfront(true)
+                .build()
+
+        val roundtrippedReward =
+            jsonMapper.readValue(jsonMapper.writeValueAsString(reward), jacksonTypeRef<Reward>())
+
+        assertThat(roundtrippedReward).isEqualTo(reward)
+    }
+
+    @Test
+    fun campaignRewardListResponseRoundtrip() {
+        val jsonMapper = jsonMapper()
+        val campaignRewardListResponse =
+            CampaignRewardListResponse.builder()
+                .addReward(
+                    Reward.builder()
+                        .id("id")
+                        .isUnlimited(true)
+                        .metadata(
+                            Reward.Metadata.builder()
+                                .putAdditionalProperty("foo", JsonValue.from("bar"))
+                                .build()
+                        )
+                        .type(Reward.Type.SINGLE_SIDED)
+                        .commissionStructure(
+                            CommissionStructure.builder()
+                                .amount(0L)
+                                .approvalRequired(true)
+                                .duration("duration")
+                                .durationInMonths(0L)
+                                .event("event")
+                                .hasIntro(true)
+                                .hasMaxAmount(true)
+                                .holdDuration(0L)
+                                .introAmount(0L)
+                                .introAmountIso("introAmountISO")
+                                .introDuration("introDuration")
+                                .introDurationInMonths(0L)
+                                .introPercent(0.0)
+                                .introType("introType")
+                                .maxAmount(0L)
+                                .maxAmountIso("maxAmountISO")
+                                .minPaidReferrals(0L)
+                                .percent(0.0)
+                                .type(CommissionStructure.Type.PERCENT)
+                                .build()
+                        )
+                        .conversionsRequired(0L)
+                        .couponCode("couponCode")
+                        .description("description")
+                        .imageUrl("imageUrl")
+                        .limit(0L)
+                        .limitDuration(Reward.LimitDuration.IN_TOTAL)
+                        .nextMilestonePrefix("nextMilestonePrefix")
+                        .nextMilestoneSuffix("nextMilestoneSuffix")
+                        .numberOfWinners(0L)
+                        .order(0L)
+                        .referralDescription("referralDescription")
+                        .referredRewardUpfront(true)
+                        .build()
+                )
+                .build()
+
+        val roundtrippedCampaignRewardListResponse =
+            jsonMapper.readValue(
+                jsonMapper.writeValueAsString(campaignRewardListResponse),
+                jacksonTypeRef<CampaignRewardListResponse>(),
+            )
+
+        assertThat(roundtrippedCampaignRewardListResponse).isEqualTo(campaignRewardListResponse)
+    }
+
+    @Test
+    fun deleteRewardResponseRoundtrip() {
+        val jsonMapper = jsonMapper()
+        val deleteRewardResponse = DeleteRewardResponse.builder().id("id").success(true).build()
+
+        val roundtrippedDeleteRewardResponse =
+            jsonMapper.readValue(
+                jsonMapper.writeValueAsString(deleteRewardResponse),
+                jacksonTypeRef<DeleteRewardResponse>(),
+            )
+
+        assertThat(roundtrippedDeleteRewardResponse).isEqualTo(deleteRewardResponse)
     }
 
     @Test

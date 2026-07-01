@@ -17,8 +17,10 @@ import com.growsurf.api.core.http.json
 import com.growsurf.api.core.http.parseable
 import com.growsurf.api.core.prepare
 import com.growsurf.api.models.campaign.Campaign
+import com.growsurf.api.models.campaign.CampaignCloneParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenResponse
+import com.growsurf.api.models.campaign.CampaignCreateParams
 import com.growsurf.api.models.campaign.CampaignListCommissionsParams
 import com.growsurf.api.models.campaign.CampaignListLeaderboardParams
 import com.growsurf.api.models.campaign.CampaignListParams
@@ -29,6 +31,7 @@ import com.growsurf.api.models.campaign.CampaignListResponse
 import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsParams
 import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsResponse
 import com.growsurf.api.models.campaign.CampaignRetrieveParams
+import com.growsurf.api.models.campaign.CampaignUpdateParams
 import com.growsurf.api.models.campaign.ParticipantCommissionList
 import com.growsurf.api.models.campaign.ParticipantList
 import com.growsurf.api.models.campaign.ParticipantPayoutList
@@ -39,6 +42,8 @@ import com.growsurf.api.services.blocking.campaign.ParticipantService
 import com.growsurf.api.services.blocking.campaign.ParticipantServiceImpl
 import com.growsurf.api.services.blocking.campaign.RewardService
 import com.growsurf.api.services.blocking.campaign.RewardServiceImpl
+import com.growsurf.api.services.blocking.campaign.RewardsService
+import com.growsurf.api.services.blocking.campaign.RewardsServiceImpl
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -55,6 +60,8 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
 
     private val commission: CommissionService by lazy { CommissionServiceImpl(clientOptions) }
 
+    private val rewards: RewardsService by lazy { RewardsServiceImpl(clientOptions) }
+
     override fun withRawResponse(): CampaignService.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): CampaignService =
@@ -67,6 +74,21 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
 
     /** Affiliate transaction, commission, and payout operations. */
     override fun commission(): CommissionService = commission
+
+    /** Program reward (`CampaignReward`) configuration operations. */
+    override fun rewards(): RewardsService = rewards
+
+    override fun create(params: CampaignCreateParams, requestOptions: RequestOptions): Campaign =
+        // post /campaigns
+        withRawResponse().create(params, requestOptions).parse()
+
+    override fun update(params: CampaignUpdateParams, requestOptions: RequestOptions): Campaign =
+        // patch /campaign/{id}
+        withRawResponse().update(params, requestOptions).parse()
+
+    override fun clone(params: CampaignCloneParams, requestOptions: RequestOptions): Campaign =
+        // post /campaign/{id}/clone
+        withRawResponse().clone(params, requestOptions).parse()
 
     override fun retrieve(
         params: CampaignRetrieveParams,
@@ -149,6 +171,10 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
             CommissionServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val rewards: RewardsService.WithRawResponse by lazy {
+            RewardsServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): CampaignService.WithRawResponse =
@@ -163,6 +189,99 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
 
         /** Affiliate transaction, commission, and payout operations. */
         override fun commission(): CommissionService.WithRawResponse = commission
+
+        /** Program reward (`CampaignReward`) configuration operations. */
+        override fun rewards(): RewardsService.WithRawResponse = rewards
+
+        private val createHandler: Handler<Campaign> =
+            jsonHandler<Campaign>(clientOptions.jsonMapper)
+
+        override fun create(
+            params: CampaignCreateParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<Campaign> {
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("campaigns")
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { createHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val updateHandler: Handler<Campaign> =
+            jsonHandler<Campaign>(clientOptions.jsonMapper)
+
+        override fun update(
+            params: CampaignUpdateParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<Campaign> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("id", params.id().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.PATCH)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("campaign", params._pathParam(0))
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { updateHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val cloneHandler: Handler<Campaign> =
+            jsonHandler<Campaign>(clientOptions.jsonMapper)
+
+        override fun clone(
+            params: CampaignCloneParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<Campaign> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("id", params.id().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("campaign", params._pathParam(0), "clone")
+                    .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { cloneHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
 
         private val retrieveHandler: Handler<Campaign> =
             jsonHandler<Campaign>(clientOptions.jsonMapper)

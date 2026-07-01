@@ -5,6 +5,7 @@ package com.growsurf.api.services.async
 import com.growsurf.api.client.okhttp.GrowsurfOkHttpClientAsync
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenParams
+import com.growsurf.api.models.campaign.CampaignCreateParams
 import com.growsurf.api.models.campaign.CampaignListCommissionsParams
 import com.growsurf.api.models.campaign.CampaignListLeaderboardParams
 import com.growsurf.api.models.campaign.CampaignListParticipantsParams
@@ -40,6 +41,45 @@ internal class CampaignServiceAsyncTest {
 
         val campaigns = campaignsFuture.get()
         campaigns.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun create() {
+        val client = GrowsurfOkHttpClientAsync.builder().apiKey("My API Key").build()
+        val campaignServiceAsync = client.campaign()
+
+        val campaignFuture =
+            campaignServiceAsync.create(
+                CampaignCreateParams.builder().type(CampaignCreateParams.Type.REFERRAL).build()
+            )
+
+        val campaign = campaignFuture.get()
+        campaign.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun update() {
+        val client = GrowsurfOkHttpClientAsync.builder().apiKey("My API Key").build()
+        val campaignServiceAsync = client.campaign()
+
+        val campaignFuture = campaignServiceAsync.update("id")
+
+        val campaign = campaignFuture.get()
+        campaign.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun clone() {
+        val client = GrowsurfOkHttpClientAsync.builder().apiKey("My API Key").build()
+        val campaignServiceAsync = client.campaign()
+
+        val campaignFuture = campaignServiceAsync.clone("id")
+
+        val campaign = campaignFuture.get()
+        campaign.validate()
     }
 
     @Disabled("Mock server tests are disabled")

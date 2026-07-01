@@ -6,8 +6,10 @@ import com.growsurf.api.core.ClientOptions
 import com.growsurf.api.core.RequestOptions
 import com.growsurf.api.core.http.HttpResponseFor
 import com.growsurf.api.models.campaign.Campaign
+import com.growsurf.api.models.campaign.CampaignCloneParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenResponse
+import com.growsurf.api.models.campaign.CampaignCreateParams
 import com.growsurf.api.models.campaign.CampaignListCommissionsParams
 import com.growsurf.api.models.campaign.CampaignListLeaderboardParams
 import com.growsurf.api.models.campaign.CampaignListParams
@@ -18,6 +20,7 @@ import com.growsurf.api.models.campaign.CampaignListResponse
 import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsParams
 import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsResponse
 import com.growsurf.api.models.campaign.CampaignRetrieveParams
+import com.growsurf.api.models.campaign.CampaignUpdateParams
 import com.growsurf.api.models.campaign.ParticipantCommissionList
 import com.growsurf.api.models.campaign.ParticipantList
 import com.growsurf.api.models.campaign.ParticipantPayoutList
@@ -25,6 +28,7 @@ import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.services.async.campaign.CommissionServiceAsync
 import com.growsurf.api.services.async.campaign.ParticipantServiceAsync
 import com.growsurf.api.services.async.campaign.RewardServiceAsync
+import com.growsurf.api.services.async.campaign.RewardsServiceAsync
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -49,6 +53,91 @@ interface CampaignServiceAsync {
 
     /** Affiliate transaction, commission, and payout operations. */
     fun commission(): CommissionServiceAsync
+
+    /** Program reward (`CampaignReward`) configuration operations. */
+    fun rewards(): RewardsServiceAsync
+
+    /**
+     * Creates a new program pre-populated with type-appropriate defaults, plus any optional inline
+     * rewards. The new program is created in `DRAFT` status and owned by the API key's account.
+     * Requires a verified account email and a paid plan (referral) or a payment source on file
+     * (affiliate); subject to your plan's program limit.
+     */
+    fun create(params: CampaignCreateParams): CompletableFuture<Campaign> =
+        create(params, RequestOptions.none())
+
+    /** @see create */
+    fun create(
+        params: CampaignCreateParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<Campaign>
+
+    /**
+     * Updates a program's configuration and/or status. Only the fields you send are changed. `type`
+     * and `urlId` are immutable. Status changes are validated against the allowed transitions; the
+     * program cannot be deleted via this endpoint.
+     */
+    fun update(id: String): CompletableFuture<Campaign> = update(id, CampaignUpdateParams.none())
+
+    /** @see update */
+    fun update(
+        id: String,
+        params: CampaignUpdateParams = CampaignUpdateParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<Campaign> = update(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see update */
+    fun update(
+        id: String,
+        params: CampaignUpdateParams = CampaignUpdateParams.none(),
+    ): CompletableFuture<Campaign> = update(id, params, RequestOptions.none())
+
+    /** @see update */
+    fun update(
+        params: CampaignUpdateParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<Campaign>
+
+    /** @see update */
+    fun update(params: CampaignUpdateParams): CompletableFuture<Campaign> =
+        update(params, RequestOptions.none())
+
+    /** @see update */
+    fun update(id: String, requestOptions: RequestOptions): CompletableFuture<Campaign> =
+        update(id, CampaignUpdateParams.none(), requestOptions)
+
+    /**
+     * Clones an existing program into a new `DRAFT` program. Integrations and credentials are not
+     * copied; active rewards are cloned.
+     */
+    fun clone(id: String): CompletableFuture<Campaign> = clone(id, CampaignCloneParams.none())
+
+    /** @see clone */
+    fun clone(
+        id: String,
+        params: CampaignCloneParams = CampaignCloneParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<Campaign> = clone(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see clone */
+    fun clone(
+        id: String,
+        params: CampaignCloneParams = CampaignCloneParams.none(),
+    ): CompletableFuture<Campaign> = clone(id, params, RequestOptions.none())
+
+    /** @see clone */
+    fun clone(
+        params: CampaignCloneParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<Campaign>
+
+    /** @see clone */
+    fun clone(params: CampaignCloneParams): CompletableFuture<Campaign> =
+        clone(params, RequestOptions.none())
+
+    /** @see clone */
+    fun clone(id: String, requestOptions: RequestOptions): CompletableFuture<Campaign> =
+        clone(id, CampaignCloneParams.none(), requestOptions)
 
     /** Retrieves a program for the given program ID. */
     fun retrieve(id: String): CompletableFuture<Campaign> =
@@ -365,6 +454,98 @@ interface CampaignServiceAsync {
 
         /** Affiliate transaction, commission, and payout operations. */
         fun commission(): CommissionServiceAsync.WithRawResponse
+
+        /** Program reward (`CampaignReward`) configuration operations. */
+        fun rewards(): RewardsServiceAsync.WithRawResponse
+
+        /**
+         * Returns a raw HTTP response for `post /campaigns`, but is otherwise the same as
+         * [CampaignServiceAsync.create].
+         */
+        fun create(params: CampaignCreateParams): CompletableFuture<HttpResponseFor<Campaign>> =
+            create(params, RequestOptions.none())
+
+        /** @see create */
+        fun create(
+            params: CampaignCreateParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<Campaign>>
+
+        /**
+         * Returns a raw HTTP response for `patch /campaign/{id}`, but is otherwise the same as
+         * [CampaignServiceAsync.update].
+         */
+        fun update(id: String): CompletableFuture<HttpResponseFor<Campaign>> =
+            update(id, CampaignUpdateParams.none())
+
+        /** @see update */
+        fun update(
+            id: String,
+            params: CampaignUpdateParams = CampaignUpdateParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<Campaign>> =
+            update(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see update */
+        fun update(
+            id: String,
+            params: CampaignUpdateParams = CampaignUpdateParams.none(),
+        ): CompletableFuture<HttpResponseFor<Campaign>> = update(id, params, RequestOptions.none())
+
+        /** @see update */
+        fun update(
+            params: CampaignUpdateParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<Campaign>>
+
+        /** @see update */
+        fun update(params: CampaignUpdateParams): CompletableFuture<HttpResponseFor<Campaign>> =
+            update(params, RequestOptions.none())
+
+        /** @see update */
+        fun update(
+            id: String,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<Campaign>> =
+            update(id, CampaignUpdateParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `post /campaign/{id}/clone`, but is otherwise the same as
+         * [CampaignServiceAsync.clone].
+         */
+        fun clone(id: String): CompletableFuture<HttpResponseFor<Campaign>> =
+            clone(id, CampaignCloneParams.none())
+
+        /** @see clone */
+        fun clone(
+            id: String,
+            params: CampaignCloneParams = CampaignCloneParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<Campaign>> =
+            clone(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see clone */
+        fun clone(
+            id: String,
+            params: CampaignCloneParams = CampaignCloneParams.none(),
+        ): CompletableFuture<HttpResponseFor<Campaign>> = clone(id, params, RequestOptions.none())
+
+        /** @see clone */
+        fun clone(
+            params: CampaignCloneParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<Campaign>>
+
+        /** @see clone */
+        fun clone(params: CampaignCloneParams): CompletableFuture<HttpResponseFor<Campaign>> =
+            clone(params, RequestOptions.none())
+
+        /** @see clone */
+        fun clone(
+            id: String,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<Campaign>> =
+            clone(id, CampaignCloneParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /campaign/{id}`, but is otherwise the same as

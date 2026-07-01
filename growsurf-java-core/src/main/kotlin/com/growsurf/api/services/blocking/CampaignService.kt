@@ -7,8 +7,10 @@ import com.growsurf.api.core.ClientOptions
 import com.growsurf.api.core.RequestOptions
 import com.growsurf.api.core.http.HttpResponseFor
 import com.growsurf.api.models.campaign.Campaign
+import com.growsurf.api.models.campaign.CampaignCloneParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenResponse
+import com.growsurf.api.models.campaign.CampaignCreateParams
 import com.growsurf.api.models.campaign.CampaignListCommissionsParams
 import com.growsurf.api.models.campaign.CampaignListLeaderboardParams
 import com.growsurf.api.models.campaign.CampaignListParams
@@ -19,6 +21,7 @@ import com.growsurf.api.models.campaign.CampaignListResponse
 import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsParams
 import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsResponse
 import com.growsurf.api.models.campaign.CampaignRetrieveParams
+import com.growsurf.api.models.campaign.CampaignUpdateParams
 import com.growsurf.api.models.campaign.ParticipantCommissionList
 import com.growsurf.api.models.campaign.ParticipantList
 import com.growsurf.api.models.campaign.ParticipantPayoutList
@@ -26,6 +29,7 @@ import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.services.blocking.campaign.CommissionService
 import com.growsurf.api.services.blocking.campaign.ParticipantService
 import com.growsurf.api.services.blocking.campaign.RewardService
+import com.growsurf.api.services.blocking.campaign.RewardsService
 import java.util.function.Consumer
 
 interface CampaignService {
@@ -49,6 +53,84 @@ interface CampaignService {
 
     /** Affiliate transaction, commission, and payout operations. */
     fun commission(): CommissionService
+
+    /** Program reward (`CampaignReward`) configuration operations. */
+    fun rewards(): RewardsService
+
+    /**
+     * Creates a new program pre-populated with type-appropriate defaults, plus any optional inline
+     * rewards. The new program is created in `DRAFT` status and owned by the API key's account.
+     * Requires a verified account email and a paid plan (referral) or a payment source on file
+     * (affiliate); subject to your plan's program limit.
+     */
+    fun create(params: CampaignCreateParams): Campaign = create(params, RequestOptions.none())
+
+    /** @see create */
+    fun create(
+        params: CampaignCreateParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): Campaign
+
+    /**
+     * Updates a program's configuration and/or status. Only the fields you send are changed. `type`
+     * and `urlId` are immutable. Status changes are validated against the allowed transitions; the
+     * program cannot be deleted via this endpoint.
+     */
+    fun update(id: String): Campaign = update(id, CampaignUpdateParams.none())
+
+    /** @see update */
+    fun update(
+        id: String,
+        params: CampaignUpdateParams = CampaignUpdateParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): Campaign = update(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see update */
+    fun update(id: String, params: CampaignUpdateParams = CampaignUpdateParams.none()): Campaign =
+        update(id, params, RequestOptions.none())
+
+    /** @see update */
+    fun update(
+        params: CampaignUpdateParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): Campaign
+
+    /** @see update */
+    fun update(params: CampaignUpdateParams): Campaign = update(params, RequestOptions.none())
+
+    /** @see update */
+    fun update(id: String, requestOptions: RequestOptions): Campaign =
+        update(id, CampaignUpdateParams.none(), requestOptions)
+
+    /**
+     * Clones an existing program into a new `DRAFT` program. Integrations and credentials are not
+     * copied; active rewards are cloned.
+     */
+    fun clone(id: String): Campaign = clone(id, CampaignCloneParams.none())
+
+    /** @see clone */
+    fun clone(
+        id: String,
+        params: CampaignCloneParams = CampaignCloneParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): Campaign = clone(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see clone */
+    fun clone(id: String, params: CampaignCloneParams = CampaignCloneParams.none()): Campaign =
+        clone(id, params, RequestOptions.none())
+
+    /** @see clone */
+    fun clone(
+        params: CampaignCloneParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): Campaign
+
+    /** @see clone */
+    fun clone(params: CampaignCloneParams): Campaign = clone(params, RequestOptions.none())
+
+    /** @see clone */
+    fun clone(id: String, requestOptions: RequestOptions): Campaign =
+        clone(id, CampaignCloneParams.none(), requestOptions)
 
     /** Retrieves a program for the given program ID. */
     fun retrieve(id: String): Campaign = retrieve(id, CampaignRetrieveParams.none())
@@ -337,6 +419,102 @@ interface CampaignService {
 
         /** Affiliate transaction, commission, and payout operations. */
         fun commission(): CommissionService.WithRawResponse
+
+        /** Program reward (`CampaignReward`) configuration operations. */
+        fun rewards(): RewardsService.WithRawResponse
+
+        /**
+         * Returns a raw HTTP response for `post /campaigns`, but is otherwise the same as
+         * [CampaignService.create].
+         */
+        @MustBeClosed
+        fun create(params: CampaignCreateParams): HttpResponseFor<Campaign> =
+            create(params, RequestOptions.none())
+
+        /** @see create */
+        @MustBeClosed
+        fun create(
+            params: CampaignCreateParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<Campaign>
+
+        /**
+         * Returns a raw HTTP response for `patch /campaign/{id}`, but is otherwise the same as
+         * [CampaignService.update].
+         */
+        @MustBeClosed
+        fun update(id: String): HttpResponseFor<Campaign> = update(id, CampaignUpdateParams.none())
+
+        /** @see update */
+        @MustBeClosed
+        fun update(
+            id: String,
+            params: CampaignUpdateParams = CampaignUpdateParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<Campaign> = update(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see update */
+        @MustBeClosed
+        fun update(
+            id: String,
+            params: CampaignUpdateParams = CampaignUpdateParams.none(),
+        ): HttpResponseFor<Campaign> = update(id, params, RequestOptions.none())
+
+        /** @see update */
+        @MustBeClosed
+        fun update(
+            params: CampaignUpdateParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<Campaign>
+
+        /** @see update */
+        @MustBeClosed
+        fun update(params: CampaignUpdateParams): HttpResponseFor<Campaign> =
+            update(params, RequestOptions.none())
+
+        /** @see update */
+        @MustBeClosed
+        fun update(id: String, requestOptions: RequestOptions): HttpResponseFor<Campaign> =
+            update(id, CampaignUpdateParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `post /campaign/{id}/clone`, but is otherwise the same as
+         * [CampaignService.clone].
+         */
+        @MustBeClosed
+        fun clone(id: String): HttpResponseFor<Campaign> = clone(id, CampaignCloneParams.none())
+
+        /** @see clone */
+        @MustBeClosed
+        fun clone(
+            id: String,
+            params: CampaignCloneParams = CampaignCloneParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<Campaign> = clone(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see clone */
+        @MustBeClosed
+        fun clone(
+            id: String,
+            params: CampaignCloneParams = CampaignCloneParams.none(),
+        ): HttpResponseFor<Campaign> = clone(id, params, RequestOptions.none())
+
+        /** @see clone */
+        @MustBeClosed
+        fun clone(
+            params: CampaignCloneParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<Campaign>
+
+        /** @see clone */
+        @MustBeClosed
+        fun clone(params: CampaignCloneParams): HttpResponseFor<Campaign> =
+            clone(params, RequestOptions.none())
+
+        /** @see clone */
+        @MustBeClosed
+        fun clone(id: String, requestOptions: RequestOptions): HttpResponseFor<Campaign> =
+            clone(id, CampaignCloneParams.none(), requestOptions)
 
         /**
          * Returns a raw HTTP response for `get /campaign/{id}`, but is otherwise the same as
