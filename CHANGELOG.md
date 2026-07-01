@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/growsurf/growsurf-java/compare/v0.8.0...v0.9.0) (2026-07-01)
+
+
+### Features
+
+* **api:** add campaign create/update/clone and program-reward CRUD ([1ee33f5](https://github.com/growsurf/growsurf-java/commit/1ee33f5fadef3c4019e1c6e19a9b20e49a3aa61a))
+
 ## 0.8.0 (2026-06-29)
 
 Full Changelog: [v0.7.1...v0.8.0](https://github.com/growsurf/growsurf-java/compare/v0.7.1...v0.8.0)
