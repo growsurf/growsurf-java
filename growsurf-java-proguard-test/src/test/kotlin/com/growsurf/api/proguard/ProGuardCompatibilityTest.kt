@@ -8,6 +8,7 @@ import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.jsonMapper
 import com.growsurf.api.models.campaign.Campaign
 import com.growsurf.api.models.campaign.CommissionStructure
+import com.growsurf.api.models.campaign.RewardTaxValuation
 import com.growsurf.api.models.campaign.participant.FraudRiskLevel
 import com.growsurf.api.models.campaign.participant.ParticipantRecordTransactionResponse
 import com.growsurf.api.models.campaign.participant.ParticipantRefundTransactionResponse
@@ -104,8 +105,21 @@ internal class ProGuardCompatibilityTest {
                 .nextMilestoneSuffix("nextMilestoneSuffix")
                 .numberOfWinners(0L)
                 .order(0L)
+                .referralCouponCode("referralCouponCode")
                 .referralDescription("referralDescription")
                 .referredRewardUpfront(true)
+                .referredValue(
+                    RewardTaxValuation.builder()
+                        .fairMarketValueUsd(0.0)
+                        .isTaxReportable(true)
+                        .build()
+                )
+                .value(
+                    RewardTaxValuation.builder()
+                        .fairMarketValueUsd(0.0)
+                        .isTaxReportable(true)
+                        .build()
+                )
                 .build()
 
         val roundtrippedReward =
@@ -162,8 +176,21 @@ internal class ProGuardCompatibilityTest {
                         .nextMilestoneSuffix("nextMilestoneSuffix")
                         .numberOfWinners(0L)
                         .order(0L)
+                        .referralCouponCode("referralCouponCode")
                         .referralDescription("referralDescription")
                         .referredRewardUpfront(true)
+                        .referredValue(
+                            RewardTaxValuation.builder()
+                                .fairMarketValueUsd(0.0)
+                                .isTaxReportable(true)
+                                .build()
+                        )
+                        .value(
+                            RewardTaxValuation.builder()
+                                .fairMarketValueUsd(0.0)
+                                .isTaxReportable(true)
+                                .build()
+                        )
                         .build()
                 )
                 .build()
@@ -245,8 +272,21 @@ internal class ProGuardCompatibilityTest {
                         .nextMilestoneSuffix("nextMilestoneSuffix")
                         .numberOfWinners(0L)
                         .order(0L)
+                        .referralCouponCode("referralCouponCode")
                         .referralDescription("referralDescription")
                         .referredRewardUpfront(true)
+                        .referredValue(
+                            RewardTaxValuation.builder()
+                                .fairMarketValueUsd(0.0)
+                                .isTaxReportable(true)
+                                .build()
+                        )
+                        .value(
+                            RewardTaxValuation.builder()
+                                .fairMarketValueUsd(0.0)
+                                .isTaxReportable(true)
+                                .build()
+                        )
                         .build()
                 )
                 .status(Campaign.Status.DRAFT)
