@@ -335,8 +335,8 @@ private constructor(
 
     /**
      * Request body for updating a program's identity and lifecycle. Only the fields you send are
-     * changed. `type`, `urlId`, and `currencyISO` are immutable. Editor-tab configuration (design, emails, options,
-     * installation) is edited via the dedicated config sub-resources, not here.
+     * changed. `type`, `urlId`, and `currencyISO` are immutable. Editor-tab configuration (design,
+     * emails, options, installation) is edited via the dedicated config sub-resources, not here.
      */
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
@@ -598,13 +598,7 @@ private constructor(
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(
-                name,
-                companyName,
-                companyLogoImageUrl,
-                status,
-                additionalProperties,
-            )
+            Objects.hash(name, companyName, companyLogoImageUrl, status, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode

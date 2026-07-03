@@ -25,6 +25,14 @@
 -keep @com.fasterxml.jackson.databind.annotation.JsonSerialize class com.growsurf.api.** { *; }
 -keep @com.fasterxml.jackson.databind.annotation.JsonDeserialize class com.growsurf.api.** { *; }
 
+# @ExcludeMissing is a @JacksonAnnotationsInside bundling annotation whose @JsonInclude value filter
+# (JsonField.IsMissing) tells Jackson to omit JsonMissing properties from serialized output. Shrinking
+# doesn't treat the bundling annotation or its class-literal value filter as a use, so keep both —
+# otherwise the filter is dropped, a JsonMissing value reaches the serializer, and serialization throws
+# "JsonMissing cannot be serialized" for any unset property.
+-keep @interface com.growsurf.api.core.ExcludeMissing { *; }
+-keep class com.growsurf.api.core.JsonField$IsMissing { *; }
+
 # Jackson uses reflection to serialize and deserialize our classes based on their constructors and annotated members.
 -keepclassmembers class com.growsurf.api.** {
     <init>(...);
