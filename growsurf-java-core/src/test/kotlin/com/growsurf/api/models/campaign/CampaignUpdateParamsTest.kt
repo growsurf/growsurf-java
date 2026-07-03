@@ -2,7 +2,6 @@
 
 package com.growsurf.api.models.campaign
 
-import com.growsurf.api.core.JsonValue
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -15,34 +14,7 @@ internal class CampaignUpdateParamsTest {
             .name("name")
             .companyName("companyName")
             .companyLogoImageUrl("companyLogoImageUrl")
-            .currencyIso("currencyISO")
-            .goal("goal")
             .status(CampaignUpdateParams.Status.DRAFT)
-            .design(
-                CampaignUpdateParams.Design.builder()
-                    .putAdditionalProperty("foo", JsonValue.from("bar"))
-                    .build()
-            )
-            .emails(
-                CampaignUpdateParams.Emails.builder()
-                    .putAdditionalProperty("foo", JsonValue.from("bar"))
-                    .build()
-            )
-            .options(
-                CampaignUpdateParams.Options.builder()
-                    .putAdditionalProperty("foo", JsonValue.from("bar"))
-                    .build()
-            )
-            .notifications(
-                CampaignUpdateParams.Notifications.builder()
-                    .putAdditionalProperty("foo", JsonValue.from("bar"))
-                    .build()
-            )
-            .installation(
-                CampaignUpdateParams.Installation.builder()
-                    .putAdditionalProperty("foo", JsonValue.from("bar"))
-                    .build()
-            )
             .build()
     }
 
@@ -61,14 +33,12 @@ internal class CampaignUpdateParamsTest {
             CampaignUpdateParams.builder()
                 .id("id")
                 .name("name")
-                .goal("goal")
                 .status(CampaignUpdateParams.Status.IN_PROGRESS)
                 .build()
 
         val body = params._body()
 
         assertThat(body.name()).contains("name")
-        assertThat(body.goal()).contains("goal")
         assertThat(body.status()).contains(CampaignUpdateParams.Status.IN_PROGRESS)
     }
 

@@ -3,6 +3,7 @@
 package com.growsurf.api.models.campaign.rewards
 
 import com.growsurf.api.core.JsonValue
+import com.growsurf.api.models.campaign.RewardTaxValuation
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -34,6 +35,12 @@ internal class RewardCreateParamsTest {
                 RewardCreateParams.Metadata.builder()
                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                     .build()
+            )
+            .value(
+                RewardTaxValuation.builder().fairMarketValueUsd(0.0).isTaxReportable(true).build()
+            )
+            .referredValue(
+                RewardTaxValuation.builder().fairMarketValueUsd(0.0).isTaxReportable(true).build()
             )
             .build()
     }

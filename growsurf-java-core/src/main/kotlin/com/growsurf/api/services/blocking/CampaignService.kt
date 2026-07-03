@@ -27,6 +27,10 @@ import com.growsurf.api.models.campaign.ParticipantList
 import com.growsurf.api.models.campaign.ParticipantPayoutList
 import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.services.blocking.campaign.CommissionService
+import com.growsurf.api.services.blocking.campaign.DesignService
+import com.growsurf.api.services.blocking.campaign.EmailsService
+import com.growsurf.api.services.blocking.campaign.InstallationService
+import com.growsurf.api.services.blocking.campaign.OptionsService
 import com.growsurf.api.services.blocking.campaign.ParticipantService
 import com.growsurf.api.services.blocking.campaign.RewardService
 import com.growsurf.api.services.blocking.campaign.RewardsService
@@ -54,8 +58,20 @@ interface CampaignService {
     /** Affiliate transaction, commission, and payout operations. */
     fun commission(): CommissionService
 
-    /** Program reward (`CampaignReward`) configuration operations. */
+    /** Campaign reward (`CampaignReward`) configuration operations. */
     fun rewards(): RewardsService
+
+    /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
+    fun design(): DesignService
+
+    /** Program Editor Emails tab (`CampaignEmails`) configuration operations. */
+    fun emails(): EmailsService
+
+    /** Program Editor Options tab (`CampaignOptions`) configuration operations. */
+    fun options(): OptionsService
+
+    /** Program Editor Installation tab (`CampaignInstallation`) configuration operations. */
+    fun installation(): InstallationService
 
     /**
      * Creates a new program pre-populated with type-appropriate defaults, plus any optional inline
@@ -420,8 +436,20 @@ interface CampaignService {
         /** Affiliate transaction, commission, and payout operations. */
         fun commission(): CommissionService.WithRawResponse
 
-        /** Program reward (`CampaignReward`) configuration operations. */
+        /** Campaign reward (`CampaignReward`) configuration operations. */
         fun rewards(): RewardsService.WithRawResponse
+
+        /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
+        fun design(): DesignService.WithRawResponse
+
+        /** Program Editor Emails tab (`CampaignEmails`) configuration operations. */
+        fun emails(): EmailsService.WithRawResponse
+
+        /** Program Editor Options tab (`CampaignOptions`) configuration operations. */
+        fun options(): OptionsService.WithRawResponse
+
+        /** Program Editor Installation tab (`CampaignInstallation`) configuration operations. */
+        fun installation(): InstallationService.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `post /campaigns`, but is otherwise the same as

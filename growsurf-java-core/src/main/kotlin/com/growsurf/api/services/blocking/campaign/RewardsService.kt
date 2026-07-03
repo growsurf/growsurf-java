@@ -15,7 +15,7 @@ import com.growsurf.api.models.campaign.rewards.RewardListParams
 import com.growsurf.api.models.campaign.rewards.RewardUpdateParams
 import java.util.function.Consumer
 
-/** Program reward (`CampaignReward`) configuration operations. */
+/** Campaign reward (`CampaignReward`) configuration operations. */
 interface RewardsService {
 
     /**
@@ -31,7 +31,7 @@ interface RewardsService {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): RewardsService
 
     /**
-     * Creates a new program reward (`CampaignReward`) with a server-generated ID. The reward type
+     * Creates a new campaign reward (`CampaignReward`) with a server-generated ID. The reward type
      * must be compatible with the program type (affiliate programs support only `AFFILIATE`
      * rewards; referral programs support all other types). Enabling an active reward of a type
      * automatically enables that reward type on the program.
@@ -56,18 +56,19 @@ interface RewardsService {
     ): Reward
 
     /**
-     * Updates an existing program reward (`CampaignReward`). The reward `type` is immutable and
+     * Updates an existing campaign reward (`CampaignReward`). The reward `type` is immutable and
      * cannot be changed.
      */
-    fun update(rewardId: String, params: RewardUpdateParams): Reward =
-        update(rewardId, params, RequestOptions.none())
+    fun update(campaignRewardId: String, params: RewardUpdateParams): Reward =
+        update(campaignRewardId, params, RequestOptions.none())
 
     /** @see update */
     fun update(
-        rewardId: String,
+        campaignRewardId: String,
         params: RewardUpdateParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): Reward = update(params.toBuilder().rewardId(rewardId).build(), requestOptions)
+    ): Reward =
+        update(params.toBuilder().campaignRewardId(campaignRewardId).build(), requestOptions)
 
     /** @see update */
     fun update(params: RewardUpdateParams): Reward = update(params, RequestOptions.none())
@@ -113,18 +114,19 @@ interface RewardsService {
         list(id, RewardListParams.none(), requestOptions)
 
     /**
-     * Deletes a program reward (`CampaignReward`). The reward is deactivated, removed from the
+     * Deletes a campaign reward (`CampaignReward`). The reward is deactivated, removed from the
      * program's reward set, and any connected upfront-discount coupons are cleaned up.
      */
-    fun delete(rewardId: String, params: RewardDeleteParams): DeleteRewardResponse =
-        delete(rewardId, params, RequestOptions.none())
+    fun delete(campaignRewardId: String, params: RewardDeleteParams): DeleteRewardResponse =
+        delete(campaignRewardId, params, RequestOptions.none())
 
     /** @see delete */
     fun delete(
-        rewardId: String,
+        campaignRewardId: String,
         params: RewardDeleteParams,
         requestOptions: RequestOptions = RequestOptions.none(),
-    ): DeleteRewardResponse = delete(params.toBuilder().rewardId(rewardId).build(), requestOptions)
+    ): DeleteRewardResponse =
+        delete(params.toBuilder().campaignRewardId(campaignRewardId).build(), requestOptions)
 
     /** @see delete */
     fun delete(params: RewardDeleteParams): DeleteRewardResponse =
@@ -147,8 +149,8 @@ interface RewardsService {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): RewardsService.WithRawResponse
 
         /**
-         * Returns a raw HTTP response for `post /campaign/{id}/rewards`, but is otherwise the same
-         * as [RewardsService.create].
+         * Returns a raw HTTP response for `post /campaign/{id}/reward-configs`, but is otherwise
+         * the same as [RewardsService.create].
          */
         @MustBeClosed
         fun create(id: String, params: RewardCreateParams): HttpResponseFor<Reward> =
@@ -175,21 +177,21 @@ interface RewardsService {
         ): HttpResponseFor<Reward>
 
         /**
-         * Returns a raw HTTP response for `patch /campaign/{id}/rewards/{rewardId}`, but is
-         * otherwise the same as [RewardsService.update].
+         * Returns a raw HTTP response for `patch /campaign/{id}/reward-configs/{campaignRewardId}`,
+         * but is otherwise the same as [RewardsService.update].
          */
         @MustBeClosed
-        fun update(rewardId: String, params: RewardUpdateParams): HttpResponseFor<Reward> =
-            update(rewardId, params, RequestOptions.none())
+        fun update(campaignRewardId: String, params: RewardUpdateParams): HttpResponseFor<Reward> =
+            update(campaignRewardId, params, RequestOptions.none())
 
         /** @see update */
         @MustBeClosed
         fun update(
-            rewardId: String,
+            campaignRewardId: String,
             params: RewardUpdateParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<Reward> =
-            update(params.toBuilder().rewardId(rewardId).build(), requestOptions)
+            update(params.toBuilder().campaignRewardId(campaignRewardId).build(), requestOptions)
 
         /** @see update */
         @MustBeClosed
@@ -204,8 +206,8 @@ interface RewardsService {
         ): HttpResponseFor<Reward>
 
         /**
-         * Returns a raw HTTP response for `get /campaign/{id}/rewards`, but is otherwise the same
-         * as [RewardsService.list].
+         * Returns a raw HTTP response for `get /campaign/{id}/reward-configs`, but is otherwise the
+         * same as [RewardsService.list].
          */
         @MustBeClosed
         fun list(id: String): HttpResponseFor<CampaignRewardListResponse> =
@@ -248,23 +250,25 @@ interface RewardsService {
             list(id, RewardListParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `delete /campaign/{id}/rewards/{rewardId}`, but is
-         * otherwise the same as [RewardsService.delete].
+         * Returns a raw HTTP response for `delete
+         * /campaign/{id}/reward-configs/{campaignRewardId}`, but is otherwise the same as
+         * [RewardsService.delete].
          */
         @MustBeClosed
         fun delete(
-            rewardId: String,
+            campaignRewardId: String,
             params: RewardDeleteParams,
-        ): HttpResponseFor<DeleteRewardResponse> = delete(rewardId, params, RequestOptions.none())
+        ): HttpResponseFor<DeleteRewardResponse> =
+            delete(campaignRewardId, params, RequestOptions.none())
 
         /** @see delete */
         @MustBeClosed
         fun delete(
-            rewardId: String,
+            campaignRewardId: String,
             params: RewardDeleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<DeleteRewardResponse> =
-            delete(params.toBuilder().rewardId(rewardId).build(), requestOptions)
+            delete(params.toBuilder().campaignRewardId(campaignRewardId).build(), requestOptions)
 
         /** @see delete */
         @MustBeClosed

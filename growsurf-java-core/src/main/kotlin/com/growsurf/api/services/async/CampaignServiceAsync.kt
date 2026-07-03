@@ -26,6 +26,10 @@ import com.growsurf.api.models.campaign.ParticipantList
 import com.growsurf.api.models.campaign.ParticipantPayoutList
 import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.services.async.campaign.CommissionServiceAsync
+import com.growsurf.api.services.async.campaign.DesignServiceAsync
+import com.growsurf.api.services.async.campaign.EmailsServiceAsync
+import com.growsurf.api.services.async.campaign.InstallationServiceAsync
+import com.growsurf.api.services.async.campaign.OptionsServiceAsync
 import com.growsurf.api.services.async.campaign.ParticipantServiceAsync
 import com.growsurf.api.services.async.campaign.RewardServiceAsync
 import com.growsurf.api.services.async.campaign.RewardsServiceAsync
@@ -54,8 +58,20 @@ interface CampaignServiceAsync {
     /** Affiliate transaction, commission, and payout operations. */
     fun commission(): CommissionServiceAsync
 
-    /** Program reward (`CampaignReward`) configuration operations. */
+    /** Campaign reward (`CampaignReward`) configuration operations. */
     fun rewards(): RewardsServiceAsync
+
+    /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
+    fun design(): DesignServiceAsync
+
+    /** Program Editor Emails tab (`CampaignEmails`) configuration operations. */
+    fun emails(): EmailsServiceAsync
+
+    /** Program Editor Options tab (`CampaignOptions`) configuration operations. */
+    fun options(): OptionsServiceAsync
+
+    /** Program Editor Installation tab (`CampaignInstallation`) configuration operations. */
+    fun installation(): InstallationServiceAsync
 
     /**
      * Creates a new program pre-populated with type-appropriate defaults, plus any optional inline
@@ -455,8 +471,20 @@ interface CampaignServiceAsync {
         /** Affiliate transaction, commission, and payout operations. */
         fun commission(): CommissionServiceAsync.WithRawResponse
 
-        /** Program reward (`CampaignReward`) configuration operations. */
+        /** Campaign reward (`CampaignReward`) configuration operations. */
         fun rewards(): RewardsServiceAsync.WithRawResponse
+
+        /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
+        fun design(): DesignServiceAsync.WithRawResponse
+
+        /** Program Editor Emails tab (`CampaignEmails`) configuration operations. */
+        fun emails(): EmailsServiceAsync.WithRawResponse
+
+        /** Program Editor Options tab (`CampaignOptions`) configuration operations. */
+        fun options(): OptionsServiceAsync.WithRawResponse
+
+        /** Program Editor Installation tab (`CampaignInstallation`) configuration operations. */
+        fun installation(): InstallationServiceAsync.WithRawResponse
 
         /**
          * Returns a raw HTTP response for `post /campaigns`, but is otherwise the same as

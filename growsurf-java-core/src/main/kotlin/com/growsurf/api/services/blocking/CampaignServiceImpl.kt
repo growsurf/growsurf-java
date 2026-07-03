@@ -38,6 +38,14 @@ import com.growsurf.api.models.campaign.ParticipantPayoutList
 import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.services.blocking.campaign.CommissionService
 import com.growsurf.api.services.blocking.campaign.CommissionServiceImpl
+import com.growsurf.api.services.blocking.campaign.DesignService
+import com.growsurf.api.services.blocking.campaign.DesignServiceImpl
+import com.growsurf.api.services.blocking.campaign.EmailsService
+import com.growsurf.api.services.blocking.campaign.EmailsServiceImpl
+import com.growsurf.api.services.blocking.campaign.InstallationService
+import com.growsurf.api.services.blocking.campaign.InstallationServiceImpl
+import com.growsurf.api.services.blocking.campaign.OptionsService
+import com.growsurf.api.services.blocking.campaign.OptionsServiceImpl
 import com.growsurf.api.services.blocking.campaign.ParticipantService
 import com.growsurf.api.services.blocking.campaign.ParticipantServiceImpl
 import com.growsurf.api.services.blocking.campaign.RewardService
@@ -62,6 +70,14 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
 
     private val rewards: RewardsService by lazy { RewardsServiceImpl(clientOptions) }
 
+    private val design: DesignService by lazy { DesignServiceImpl(clientOptions) }
+
+    private val emails: EmailsService by lazy { EmailsServiceImpl(clientOptions) }
+
+    private val options: OptionsService by lazy { OptionsServiceImpl(clientOptions) }
+
+    private val installation: InstallationService by lazy { InstallationServiceImpl(clientOptions) }
+
     override fun withRawResponse(): CampaignService.WithRawResponse = withRawResponse
 
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): CampaignService =
@@ -75,8 +91,20 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
     /** Affiliate transaction, commission, and payout operations. */
     override fun commission(): CommissionService = commission
 
-    /** Program reward (`CampaignReward`) configuration operations. */
+    /** Campaign reward (`CampaignReward`) configuration operations. */
     override fun rewards(): RewardsService = rewards
+
+    /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
+    override fun design(): DesignService = design
+
+    /** Program Editor Emails tab (`CampaignEmails`) configuration operations. */
+    override fun emails(): EmailsService = emails
+
+    /** Program Editor Options tab (`CampaignOptions`) configuration operations. */
+    override fun options(): OptionsService = options
+
+    /** Program Editor Installation tab (`CampaignInstallation`) configuration operations. */
+    override fun installation(): InstallationService = installation
 
     override fun create(params: CampaignCreateParams, requestOptions: RequestOptions): Campaign =
         // post /campaigns
@@ -175,6 +203,22 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
             RewardsServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val design: DesignService.WithRawResponse by lazy {
+            DesignServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val emails: EmailsService.WithRawResponse by lazy {
+            EmailsServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val options: OptionsService.WithRawResponse by lazy {
+            OptionsServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val installation: InstallationService.WithRawResponse by lazy {
+            InstallationServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): CampaignService.WithRawResponse =
@@ -190,8 +234,20 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
         /** Affiliate transaction, commission, and payout operations. */
         override fun commission(): CommissionService.WithRawResponse = commission
 
-        /** Program reward (`CampaignReward`) configuration operations. */
+        /** Campaign reward (`CampaignReward`) configuration operations. */
         override fun rewards(): RewardsService.WithRawResponse = rewards
+
+        /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
+        override fun design(): DesignService.WithRawResponse = design
+
+        /** Program Editor Emails tab (`CampaignEmails`) configuration operations. */
+        override fun emails(): EmailsService.WithRawResponse = emails
+
+        /** Program Editor Options tab (`CampaignOptions`) configuration operations. */
+        override fun options(): OptionsService.WithRawResponse = options
+
+        /** Program Editor Installation tab (`CampaignInstallation`) configuration operations. */
+        override fun installation(): InstallationService.WithRawResponse = installation
 
         private val createHandler: Handler<Campaign> =
             jsonHandler<Campaign>(clientOptions.jsonMapper)

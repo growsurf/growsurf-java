@@ -39,25 +39,25 @@ class RewardsServiceImpl internal constructor(private val clientOptions: ClientO
         RewardsServiceImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
     override fun create(params: RewardCreateParams, requestOptions: RequestOptions): Reward =
-        // post /campaign/{id}/rewards
+        // post /campaign/{id}/reward-configs
         withRawResponse().create(params, requestOptions).parse()
 
     override fun update(params: RewardUpdateParams, requestOptions: RequestOptions): Reward =
-        // patch /campaign/{id}/rewards/{rewardId}
+        // patch /campaign/{id}/reward-configs/{campaignRewardId}
         withRawResponse().update(params, requestOptions).parse()
 
     override fun list(
         params: RewardListParams,
         requestOptions: RequestOptions,
     ): CampaignRewardListResponse =
-        // get /campaign/{id}/rewards
+        // get /campaign/{id}/reward-configs
         withRawResponse().list(params, requestOptions).parse()
 
     override fun delete(
         params: RewardDeleteParams,
         requestOptions: RequestOptions,
     ): DeleteRewardResponse =
-        // delete /campaign/{id}/rewards/{rewardId}
+        // delete /campaign/{id}/reward-configs/{campaignRewardId}
         withRawResponse().delete(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -86,7 +86,7 @@ class RewardsServiceImpl internal constructor(private val clientOptions: ClientO
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("campaign", params._pathParam(0), "rewards")
+                    .addPathSegments("campaign", params._pathParam(0), "reward-configs")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepare(clientOptions, params)
@@ -111,7 +111,7 @@ class RewardsServiceImpl internal constructor(private val clientOptions: ClientO
         ): HttpResponseFor<Reward> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
-            checkRequired("rewardId", params.rewardId().getOrNull())
+            checkRequired("campaignRewardId", params.campaignRewardId().getOrNull())
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.PATCH)
@@ -119,7 +119,7 @@ class RewardsServiceImpl internal constructor(private val clientOptions: ClientO
                     .addPathSegments(
                         "campaign",
                         params._pathParam(0),
-                        "rewards",
+                        "reward-configs",
                         params._pathParam(1),
                     )
                     .body(json(clientOptions.jsonMapper, params._body()))
@@ -152,7 +152,7 @@ class RewardsServiceImpl internal constructor(private val clientOptions: ClientO
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("campaign", params._pathParam(0), "rewards")
+                    .addPathSegments("campaign", params._pathParam(0), "reward-configs")
                     .build()
                     .prepare(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -177,7 +177,7 @@ class RewardsServiceImpl internal constructor(private val clientOptions: ClientO
         ): HttpResponseFor<DeleteRewardResponse> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
-            checkRequired("rewardId", params.rewardId().getOrNull())
+            checkRequired("campaignRewardId", params.campaignRewardId().getOrNull())
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.DELETE)
@@ -185,7 +185,7 @@ class RewardsServiceImpl internal constructor(private val clientOptions: ClientO
                     .addPathSegments(
                         "campaign",
                         params._pathParam(0),
-                        "rewards",
+                        "reward-configs",
                         params._pathParam(1),
                     )
                     .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }

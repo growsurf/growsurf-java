@@ -3,6 +3,7 @@
 package com.growsurf.api.models.campaign.rewards
 
 import com.growsurf.api.core.JsonValue
+import com.growsurf.api.models.campaign.RewardTaxValuation
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -12,7 +13,7 @@ internal class RewardUpdateParamsTest {
     fun create() {
         RewardUpdateParams.builder()
             .id("id")
-            .rewardId("rewardId")
+            .campaignRewardId("campaignRewardId")
             .title("title")
             .description("description")
             .referralDescription("referralDescription")
@@ -35,15 +36,22 @@ internal class RewardUpdateParamsTest {
                     .putAdditionalProperty("foo", JsonValue.from("bar"))
                     .build()
             )
+            .value(
+                RewardTaxValuation.builder().fairMarketValueUsd(0.0).isTaxReportable(true).build()
+            )
+            .referredValue(
+                RewardTaxValuation.builder().fairMarketValueUsd(0.0).isTaxReportable(true).build()
+            )
             .build()
     }
 
     @Test
     fun pathParams() {
-        val params = RewardUpdateParams.builder().id("id").rewardId("rewardId").build()
+        val params =
+            RewardUpdateParams.builder().id("id").campaignRewardId("campaignRewardId").build()
 
         assertThat(params._pathParam(0)).isEqualTo("id")
-        assertThat(params._pathParam(1)).isEqualTo("rewardId")
+        assertThat(params._pathParam(1)).isEqualTo("campaignRewardId")
         // out-of-bound path param
         assertThat(params._pathParam(2)).isEqualTo("")
     }
@@ -53,7 +61,7 @@ internal class RewardUpdateParamsTest {
         val params =
             RewardUpdateParams.builder()
                 .id("id")
-                .rewardId("rewardId")
+                .campaignRewardId("campaignRewardId")
                 .title("title")
                 .isActive(false)
                 .build()
@@ -66,7 +74,8 @@ internal class RewardUpdateParamsTest {
 
     @Test
     fun bodyWithoutOptionalFields() {
-        val params = RewardUpdateParams.builder().id("id").rewardId("rewardId").build()
+        val params =
+            RewardUpdateParams.builder().id("id").campaignRewardId("campaignRewardId").build()
 
         val body = params._body()
     }

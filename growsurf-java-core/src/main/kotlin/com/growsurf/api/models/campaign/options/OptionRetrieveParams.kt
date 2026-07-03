@@ -1,36 +1,23 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.growsurf.api.models.campaign.rewards
+package com.growsurf.api.models.campaign.options
 
-import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.Params
-import com.growsurf.api.core.checkRequired
 import com.growsurf.api.core.http.Headers
 import com.growsurf.api.core.http.QueryParams
-import com.growsurf.api.core.toImmutable
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/**
- * Deletes a campaign reward (`CampaignReward`). The reward is deactivated, removed from the
- * program's reward set, and any connected upfront-discount coupons are cleaned up.
- */
-class RewardDeleteParams
+/** Retrieves a program's Options configuration (the dashboard Program Editor's Options tab). */
+class OptionRetrieveParams
 private constructor(
-    private val id: String,
-    private val campaignRewardId: String?,
+    private val id: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
-    private val additionalBodyProperties: Map<String, JsonValue>,
 ) : Params {
 
-    fun id(): String = id
-
-    fun campaignRewardId(): Optional<String> = Optional.ofNullable(campaignRewardId)
-
-    /** Additional body properties to send with the request. */
-    fun _additionalBodyProperties(): Map<String, JsonValue> = additionalBodyProperties
+    fun id(): Optional<String> = Optional.ofNullable(id)
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -42,44 +29,30 @@ private constructor(
 
     companion object {
 
-        /**
-         * Returns a mutable builder for constructing an instance of [RewardDeleteParams].
-         *
-         * The following fields are required:
-         * ```java
-         * .id()
-         * ```
-         */
+        @JvmStatic fun none(): OptionRetrieveParams = builder().build()
+
+        /** Returns a mutable builder for constructing an instance of [OptionRetrieveParams]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [RewardDeleteParams]. */
+    /** A builder for [OptionRetrieveParams]. */
     class Builder internal constructor() {
 
         private var id: String? = null
-        private var campaignRewardId: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
-        private var additionalBodyProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(rewardDeleteParams: RewardDeleteParams) = apply {
-            id = rewardDeleteParams.id
-            campaignRewardId = rewardDeleteParams.campaignRewardId
-            additionalHeaders = rewardDeleteParams.additionalHeaders.toBuilder()
-            additionalQueryParams = rewardDeleteParams.additionalQueryParams.toBuilder()
-            additionalBodyProperties = rewardDeleteParams.additionalBodyProperties.toMutableMap()
+        internal fun from(optionRetrieveParams: OptionRetrieveParams) = apply {
+            id = optionRetrieveParams.id
+            additionalHeaders = optionRetrieveParams.additionalHeaders.toBuilder()
+            additionalQueryParams = optionRetrieveParams.additionalQueryParams.toBuilder()
         }
 
-        fun id(id: String) = apply { this.id = id }
+        fun id(id: String?) = apply { this.id = id }
 
-        fun campaignRewardId(campaignRewardId: String?) = apply {
-            this.campaignRewardId = campaignRewardId
-        }
-
-        /** Alias for calling [Builder.campaignRewardId] with `campaignRewardId.orElse(null)`. */
-        fun campaignRewardId(campaignRewardId: Optional<String>) =
-            campaignRewardId(campaignRewardId.getOrNull())
+        /** Alias for calling [Builder.id] with `id.orElse(null)`. */
+        fun id(id: Optional<String>) = id(id.getOrNull())
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -179,57 +152,18 @@ private constructor(
             additionalQueryParams.removeAll(keys)
         }
 
-        fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
-            this.additionalBodyProperties.clear()
-            putAllAdditionalBodyProperties(additionalBodyProperties)
-        }
-
-        fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
-            additionalBodyProperties.put(key, value)
-        }
-
-        fun putAllAdditionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) =
-            apply {
-                this.additionalBodyProperties.putAll(additionalBodyProperties)
-            }
-
-        fun removeAdditionalBodyProperty(key: String) = apply {
-            additionalBodyProperties.remove(key)
-        }
-
-        fun removeAllAdditionalBodyProperties(keys: Set<String>) = apply {
-            keys.forEach(::removeAdditionalBodyProperty)
-        }
-
         /**
-         * Returns an immutable instance of [RewardDeleteParams].
+         * Returns an immutable instance of [OptionRetrieveParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
-         *
-         * The following fields are required:
-         * ```java
-         * .id()
-         * ```
-         *
-         * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): RewardDeleteParams =
-            RewardDeleteParams(
-                checkRequired("id", id),
-                campaignRewardId,
-                additionalHeaders.build(),
-                additionalQueryParams.build(),
-                additionalBodyProperties.toImmutable(),
-            )
+        fun build(): OptionRetrieveParams =
+            OptionRetrieveParams(id, additionalHeaders.build(), additionalQueryParams.build())
     }
-
-    fun _body(): Optional<Map<String, JsonValue>> =
-        Optional.ofNullable(additionalBodyProperties.ifEmpty { null })
 
     fun _pathParam(index: Int): String =
         when (index) {
-            0 -> id
-            1 -> campaignRewardId ?: ""
+            0 -> id ?: ""
             else -> ""
         }
 
@@ -242,23 +176,14 @@ private constructor(
             return true
         }
 
-        return other is RewardDeleteParams &&
+        return other is OptionRetrieveParams &&
             id == other.id &&
-            campaignRewardId == other.campaignRewardId &&
             additionalHeaders == other.additionalHeaders &&
-            additionalQueryParams == other.additionalQueryParams &&
-            additionalBodyProperties == other.additionalBodyProperties
+            additionalQueryParams == other.additionalQueryParams
     }
 
-    override fun hashCode(): Int =
-        Objects.hash(
-            id,
-            campaignRewardId,
-            additionalHeaders,
-            additionalQueryParams,
-            additionalBodyProperties,
-        )
+    override fun hashCode(): Int = Objects.hash(id, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "RewardDeleteParams{id=$id, campaignRewardId=$campaignRewardId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams, additionalBodyProperties=$additionalBodyProperties}"
+        "OptionRetrieveParams{id=$id, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

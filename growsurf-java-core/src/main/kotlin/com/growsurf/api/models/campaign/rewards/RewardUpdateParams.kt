@@ -18,19 +18,20 @@ import com.growsurf.api.core.http.QueryParams
 import com.growsurf.api.core.toImmutable
 import com.growsurf.api.errors.GrowsurfInvalidDataException
 import com.growsurf.api.models.campaign.CommissionStructure
+import com.growsurf.api.models.campaign.RewardTaxValuation
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Updates an existing program reward (`CampaignReward`). The reward `type` is immutable and cannot
+ * Updates an existing campaign reward (`CampaignReward`). The reward `type` is immutable and cannot
  * be changed.
  */
 class RewardUpdateParams
 private constructor(
     private val id: String,
-    private val rewardId: String?,
+    private val campaignRewardId: String?,
     private val body: Body,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
@@ -38,7 +39,7 @@ private constructor(
 
     fun id(): String = id
 
-    fun rewardId(): Optional<String> = Optional.ofNullable(rewardId)
+    fun campaignRewardId(): Optional<String> = Optional.ofNullable(campaignRewardId)
 
     /**
      * The reward title (internal label).
@@ -185,6 +186,24 @@ private constructor(
     fun commissionStructure(): Optional<CommissionStructure> = body.commissionStructure()
 
     /**
+     * Tax valuation for the reward (the referrer's side of a double-sided reward). Used by tax
+     * documentation / 1099 reporting.
+     *
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun value(): Optional<RewardTaxValuation> = body.value()
+
+    /**
+     * Tax valuation for the referred friend's side of a double-sided reward. Defaults to not
+     * tax-reportable (a purchase rebate).
+     *
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun referredValue(): Optional<RewardTaxValuation> = body.referredValue()
+
+    /**
      * Returns the raw JSON value of [title].
      *
      * Unlike [title], this method doesn't throw if the JSON field has an unexpected type.
@@ -324,6 +343,20 @@ private constructor(
      */
     fun _commissionStructure(): JsonField<CommissionStructure> = body._commissionStructure()
 
+    /**
+     * Returns the raw JSON value of [value].
+     *
+     * Unlike [value], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _value(): JsonField<RewardTaxValuation> = body._value()
+
+    /**
+     * Returns the raw JSON value of [referredValue].
+     *
+     * Unlike [referredValue], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _referredValue(): JsonField<RewardTaxValuation> = body._referredValue()
+
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
     /** Additional headers to send with the request. */
@@ -351,7 +384,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var id: String? = null
-        private var rewardId: String? = null
+        private var campaignRewardId: String? = null
         private var body: Body.Builder = Body.builder()
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
@@ -359,7 +392,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(rewardUpdateParams: RewardUpdateParams) = apply {
             id = rewardUpdateParams.id
-            rewardId = rewardUpdateParams.rewardId
+            campaignRewardId = rewardUpdateParams.campaignRewardId
             body = rewardUpdateParams.body.toBuilder()
             additionalHeaders = rewardUpdateParams.additionalHeaders.toBuilder()
             additionalQueryParams = rewardUpdateParams.additionalQueryParams.toBuilder()
@@ -367,10 +400,13 @@ private constructor(
 
         fun id(id: String) = apply { this.id = id }
 
-        fun rewardId(rewardId: String?) = apply { this.rewardId = rewardId }
+        fun campaignRewardId(campaignRewardId: String?) = apply {
+            this.campaignRewardId = campaignRewardId
+        }
 
-        /** Alias for calling [Builder.rewardId] with `rewardId.orElse(null)`. */
-        fun rewardId(rewardId: Optional<String>) = rewardId(rewardId.getOrNull())
+        /** Alias for calling [Builder.campaignRewardId] with `campaignRewardId.orElse(null)`. */
+        fun campaignRewardId(campaignRewardId: Optional<String>) =
+            campaignRewardId(campaignRewardId.getOrNull())
 
         /**
          * Sets the entire request body.
@@ -670,6 +706,40 @@ private constructor(
             body.commissionStructure(commissionStructure)
         }
 
+        /**
+         * Tax valuation for the reward (the referrer's side of a double-sided reward). Used by tax
+         * documentation / 1099 reporting.
+         */
+        fun value(value: RewardTaxValuation) = apply { body.value(value) }
+
+        /**
+         * Sets [Builder.value] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.value] with a well-typed [RewardTaxValuation] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun value(value: JsonField<RewardTaxValuation>) = apply { body.value(value) }
+
+        /**
+         * Tax valuation for the referred friend's side of a double-sided reward. Defaults to not
+         * tax-reportable (a purchase rebate).
+         */
+        fun referredValue(referredValue: RewardTaxValuation) = apply {
+            body.referredValue(referredValue)
+        }
+
+        /**
+         * Sets [Builder.referredValue] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.referredValue] with a well-typed [RewardTaxValuation]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun referredValue(referredValue: JsonField<RewardTaxValuation>) = apply {
+            body.referredValue(referredValue)
+        }
+
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
         }
@@ -802,7 +872,7 @@ private constructor(
         fun build(): RewardUpdateParams =
             RewardUpdateParams(
                 checkRequired("id", id),
-                rewardId,
+                campaignRewardId,
                 body.build(),
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -814,7 +884,7 @@ private constructor(
     fun _pathParam(index: Int): String =
         when (index) {
             0 -> id
-            1 -> rewardId ?: ""
+            1 -> campaignRewardId ?: ""
             else -> ""
         }
 
@@ -822,7 +892,7 @@ private constructor(
 
     override fun _queryParams(): QueryParams = additionalQueryParams
 
-    /** The writable fields shared by the create and update program-reward requests. */
+    /** The writable fields shared by the create and update campaign reward requests. */
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
@@ -845,6 +915,8 @@ private constructor(
         private val referralCouponCode: JsonField<String>,
         private val metadata: JsonField<Metadata>,
         private val commissionStructure: JsonField<CommissionStructure>,
+        private val value: JsonField<RewardTaxValuation>,
+        private val referredValue: JsonField<RewardTaxValuation>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -901,6 +973,12 @@ private constructor(
             @JsonProperty("commissionStructure")
             @ExcludeMissing
             commissionStructure: JsonField<CommissionStructure> = JsonMissing.of(),
+            @JsonProperty("value")
+            @ExcludeMissing
+            value: JsonField<RewardTaxValuation> = JsonMissing.of(),
+            @JsonProperty("referredValue")
+            @ExcludeMissing
+            referredValue: JsonField<RewardTaxValuation> = JsonMissing.of(),
         ) : this(
             title,
             description,
@@ -921,6 +999,8 @@ private constructor(
             referralCouponCode,
             metadata,
             commissionStructure,
+            value,
+            referredValue,
             mutableMapOf(),
         )
 
@@ -1074,6 +1154,25 @@ private constructor(
          */
         fun commissionStructure(): Optional<CommissionStructure> =
             commissionStructure.getOptional("commissionStructure")
+
+        /**
+         * Tax valuation for the reward (the referrer's side of a double-sided reward). Used by tax
+         * documentation / 1099 reporting.
+         *
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun value(): Optional<RewardTaxValuation> = value.getOptional("value")
+
+        /**
+         * Tax valuation for the referred friend's side of a double-sided reward. Defaults to not
+         * tax-reportable (a purchase rebate).
+         *
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun referredValue(): Optional<RewardTaxValuation> =
+            referredValue.getOptional("referredValue")
 
         /**
          * Returns the raw JSON value of [title].
@@ -1241,6 +1340,23 @@ private constructor(
         @ExcludeMissing
         fun _commissionStructure(): JsonField<CommissionStructure> = commissionStructure
 
+        /**
+         * Returns the raw JSON value of [value].
+         *
+         * Unlike [value], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("value") @ExcludeMissing fun _value(): JsonField<RewardTaxValuation> = value
+
+        /**
+         * Returns the raw JSON value of [referredValue].
+         *
+         * Unlike [referredValue], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("referredValue")
+        @ExcludeMissing
+        fun _referredValue(): JsonField<RewardTaxValuation> = referredValue
+
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
             additionalProperties.put(key, value)
@@ -1281,6 +1397,8 @@ private constructor(
             private var referralCouponCode: JsonField<String> = JsonMissing.of()
             private var metadata: JsonField<Metadata> = JsonMissing.of()
             private var commissionStructure: JsonField<CommissionStructure> = JsonMissing.of()
+            private var value: JsonField<RewardTaxValuation> = JsonMissing.of()
+            private var referredValue: JsonField<RewardTaxValuation> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -1304,6 +1422,8 @@ private constructor(
                 referralCouponCode = body.referralCouponCode
                 metadata = body.metadata
                 commissionStructure = body.commissionStructure
+                value = body.value
+                referredValue = body.referredValue
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
@@ -1600,6 +1720,39 @@ private constructor(
                 this.commissionStructure = commissionStructure
             }
 
+            /**
+             * Tax valuation for the reward (the referrer's side of a double-sided reward). Used by
+             * tax documentation / 1099 reporting.
+             */
+            fun value(value: RewardTaxValuation) = value(JsonField.of(value))
+
+            /**
+             * Sets [Builder.value] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.value] with a well-typed [RewardTaxValuation] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun value(value: JsonField<RewardTaxValuation>) = apply { this.value = value }
+
+            /**
+             * Tax valuation for the referred friend's side of a double-sided reward. Defaults to
+             * not tax-reportable (a purchase rebate).
+             */
+            fun referredValue(referredValue: RewardTaxValuation) =
+                referredValue(JsonField.of(referredValue))
+
+            /**
+             * Sets [Builder.referredValue] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.referredValue] with a well-typed
+             * [RewardTaxValuation] value instead. This method is primarily for setting the field to
+             * an undocumented or not yet supported value.
+             */
+            fun referredValue(referredValue: JsonField<RewardTaxValuation>) = apply {
+                this.referredValue = referredValue
+            }
+
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
                 putAllAdditionalProperties(additionalProperties)
@@ -1645,6 +1798,8 @@ private constructor(
                     referralCouponCode,
                     metadata,
                     commissionStructure,
+                    value,
+                    referredValue,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -1684,6 +1839,8 @@ private constructor(
             referralCouponCode()
             metadata().ifPresent { it.validate() }
             commissionStructure().ifPresent { it.validate() }
+            value().ifPresent { it.validate() }
+            referredValue().ifPresent { it.validate() }
             validated = true
         }
 
@@ -1721,7 +1878,9 @@ private constructor(
                 (if (couponCode.asKnown().isPresent) 1 else 0) +
                 (if (referralCouponCode.asKnown().isPresent) 1 else 0) +
                 (metadata.asKnown().getOrNull()?.validity() ?: 0) +
-                (commissionStructure.asKnown().getOrNull()?.validity() ?: 0)
+                (commissionStructure.asKnown().getOrNull()?.validity() ?: 0) +
+                (value.asKnown().getOrNull()?.validity() ?: 0) +
+                (referredValue.asKnown().getOrNull()?.validity() ?: 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -1748,6 +1907,8 @@ private constructor(
                 referralCouponCode == other.referralCouponCode &&
                 metadata == other.metadata &&
                 commissionStructure == other.commissionStructure &&
+                value == other.value &&
+                referredValue == other.referredValue &&
                 additionalProperties == other.additionalProperties
         }
 
@@ -1772,6 +1933,8 @@ private constructor(
                 referralCouponCode,
                 metadata,
                 commissionStructure,
+                value,
+                referredValue,
                 additionalProperties,
             )
         }
@@ -1779,7 +1942,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{title=$title, description=$description, referralDescription=$referralDescription, imageUrl=$imageUrl, isActive=$isActive, isVisible=$isVisible, isUnlimited=$isUnlimited, referredRewardUpfront=$referredRewardUpfront, limit=$limit, conversionsRequired=$conversionsRequired, numberOfWinners=$numberOfWinners, order=$order, limitDuration=$limitDuration, nextMilestonePrefix=$nextMilestonePrefix, nextMilestoneSuffix=$nextMilestoneSuffix, couponCode=$couponCode, referralCouponCode=$referralCouponCode, metadata=$metadata, commissionStructure=$commissionStructure, additionalProperties=$additionalProperties}"
+            "Body{title=$title, description=$description, referralDescription=$referralDescription, imageUrl=$imageUrl, isActive=$isActive, isVisible=$isVisible, isUnlimited=$isUnlimited, referredRewardUpfront=$referredRewardUpfront, limit=$limit, conversionsRequired=$conversionsRequired, numberOfWinners=$numberOfWinners, order=$order, limitDuration=$limitDuration, nextMilestonePrefix=$nextMilestonePrefix, nextMilestoneSuffix=$nextMilestoneSuffix, couponCode=$couponCode, referralCouponCode=$referralCouponCode, metadata=$metadata, commissionStructure=$commissionStructure, value=$value, referredValue=$referredValue, additionalProperties=$additionalProperties}"
     }
 
     /** Custom key/value metadata (single-level; values are stored as strings). */
@@ -2045,15 +2208,15 @@ private constructor(
 
         return other is RewardUpdateParams &&
             id == other.id &&
-            rewardId == other.rewardId &&
+            campaignRewardId == other.campaignRewardId &&
             body == other.body &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(id, rewardId, body, additionalHeaders, additionalQueryParams)
+        Objects.hash(id, campaignRewardId, body, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "RewardUpdateParams{id=$id, rewardId=$rewardId, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "RewardUpdateParams{id=$id, campaignRewardId=$campaignRewardId, body=$body, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

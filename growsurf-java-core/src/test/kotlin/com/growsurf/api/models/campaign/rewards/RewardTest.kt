@@ -5,6 +5,7 @@ package com.growsurf.api.models.campaign.rewards
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.jsonMapper
+import com.growsurf.api.models.campaign.RewardTaxValuation
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -32,8 +33,21 @@ internal class RewardTest {
                 .nextMilestoneSuffix("nextMilestoneSuffix")
                 .numberOfWinners(0L)
                 .order(0L)
+                .referralCouponCode("referralCouponCode")
                 .referralDescription("referralDescription")
                 .referredRewardUpfront(true)
+                .referredValue(
+                    RewardTaxValuation.builder()
+                        .fairMarketValueUsd(0.0)
+                        .isTaxReportable(true)
+                        .build()
+                )
+                .value(
+                    RewardTaxValuation.builder()
+                        .fairMarketValueUsd(0.0)
+                        .isTaxReportable(true)
+                        .build()
+                )
                 .build()
 
         assertThat(reward.id()).isEqualTo("id")
@@ -55,8 +69,17 @@ internal class RewardTest {
         assertThat(reward.nextMilestoneSuffix()).contains("nextMilestoneSuffix")
         assertThat(reward.numberOfWinners()).contains(0L)
         assertThat(reward.order()).contains(0L)
+        assertThat(reward.referralCouponCode()).contains("referralCouponCode")
         assertThat(reward.referralDescription()).contains("referralDescription")
         assertThat(reward.referredRewardUpfront()).contains(true)
+        assertThat(reward.referredValue())
+            .contains(
+                RewardTaxValuation.builder().fairMarketValueUsd(0.0).isTaxReportable(true).build()
+            )
+        assertThat(reward.value())
+            .contains(
+                RewardTaxValuation.builder().fairMarketValueUsd(0.0).isTaxReportable(true).build()
+            )
     }
 
     @Test
@@ -82,8 +105,21 @@ internal class RewardTest {
                 .nextMilestoneSuffix("nextMilestoneSuffix")
                 .numberOfWinners(0L)
                 .order(0L)
+                .referralCouponCode("referralCouponCode")
                 .referralDescription("referralDescription")
                 .referredRewardUpfront(true)
+                .referredValue(
+                    RewardTaxValuation.builder()
+                        .fairMarketValueUsd(0.0)
+                        .isTaxReportable(true)
+                        .build()
+                )
+                .value(
+                    RewardTaxValuation.builder()
+                        .fairMarketValueUsd(0.0)
+                        .isTaxReportable(true)
+                        .build()
+                )
                 .build()
 
         val roundtrippedReward =

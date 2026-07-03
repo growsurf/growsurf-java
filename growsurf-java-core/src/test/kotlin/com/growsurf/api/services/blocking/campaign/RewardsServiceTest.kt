@@ -36,7 +36,7 @@ internal class RewardsServiceTest {
 
         val reward =
             rewardsService.update(
-                RewardUpdateParams.builder().id("id").rewardId("rewardId").build()
+                RewardUpdateParams.builder().id("id").campaignRewardId("campaignRewardId").build()
             )
 
         reward.validate()
@@ -61,7 +61,7 @@ internal class RewardsServiceTest {
 
         val response =
             rewardsService.delete(
-                RewardDeleteParams.builder().id("id").rewardId("rewardId").build()
+                RewardDeleteParams.builder().id("id").campaignRewardId("campaignRewardId").build()
             )
 
         response.validate()

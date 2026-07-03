@@ -37,7 +37,7 @@ internal class RewardsServiceAsyncTest {
 
         val rewardFuture =
             rewardsServiceAsync.update(
-                RewardUpdateParams.builder().id("id").rewardId("rewardId").build()
+                RewardUpdateParams.builder().id("id").campaignRewardId("campaignRewardId").build()
             )
 
         val reward = rewardFuture.get()
@@ -64,7 +64,7 @@ internal class RewardsServiceAsyncTest {
 
         val responseFuture =
             rewardsServiceAsync.delete(
-                RewardDeleteParams.builder().id("id").rewardId("rewardId").build()
+                RewardDeleteParams.builder().id("id").campaignRewardId("campaignRewardId").build()
             )
 
         val response = responseFuture.get()

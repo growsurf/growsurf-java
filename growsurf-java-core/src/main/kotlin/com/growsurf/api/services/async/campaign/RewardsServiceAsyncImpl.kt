@@ -43,28 +43,28 @@ class RewardsServiceAsyncImpl internal constructor(private val clientOptions: Cl
         params: RewardCreateParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<Reward> =
-        // post /campaign/{id}/rewards
+        // post /campaign/{id}/reward-configs
         withRawResponse().create(params, requestOptions).thenApply { it.parse() }
 
     override fun update(
         params: RewardUpdateParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<Reward> =
-        // patch /campaign/{id}/rewards/{rewardId}
+        // patch /campaign/{id}/reward-configs/{campaignRewardId}
         withRawResponse().update(params, requestOptions).thenApply { it.parse() }
 
     override fun list(
         params: RewardListParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<CampaignRewardListResponse> =
-        // get /campaign/{id}/rewards
+        // get /campaign/{id}/reward-configs
         withRawResponse().list(params, requestOptions).thenApply { it.parse() }
 
     override fun delete(
         params: RewardDeleteParams,
         requestOptions: RequestOptions,
     ): CompletableFuture<DeleteRewardResponse> =
-        // delete /campaign/{id}/rewards/{rewardId}
+        // delete /campaign/{id}/reward-configs/{campaignRewardId}
         withRawResponse().delete(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
@@ -93,7 +93,7 @@ class RewardsServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("campaign", params._pathParam(0), "rewards")
+                    .addPathSegments("campaign", params._pathParam(0), "reward-configs")
                     .body(json(clientOptions.jsonMapper, params._body()))
                     .build()
                     .prepareAsync(clientOptions, params)
@@ -121,7 +121,7 @@ class RewardsServiceAsyncImpl internal constructor(private val clientOptions: Cl
         ): CompletableFuture<HttpResponseFor<Reward>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
-            checkRequired("rewardId", params.rewardId().getOrNull())
+            checkRequired("campaignRewardId", params.campaignRewardId().getOrNull())
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.PATCH)
@@ -129,7 +129,7 @@ class RewardsServiceAsyncImpl internal constructor(private val clientOptions: Cl
                     .addPathSegments(
                         "campaign",
                         params._pathParam(0),
-                        "rewards",
+                        "reward-configs",
                         params._pathParam(1),
                     )
                     .body(json(clientOptions.jsonMapper, params._body()))
@@ -165,7 +165,7 @@ class RewardsServiceAsyncImpl internal constructor(private val clientOptions: Cl
                 HttpRequest.builder()
                     .method(HttpMethod.GET)
                     .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("campaign", params._pathParam(0), "rewards")
+                    .addPathSegments("campaign", params._pathParam(0), "reward-configs")
                     .build()
                     .prepareAsync(clientOptions, params)
             val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
@@ -193,7 +193,7 @@ class RewardsServiceAsyncImpl internal constructor(private val clientOptions: Cl
         ): CompletableFuture<HttpResponseFor<DeleteRewardResponse>> {
             // We check here instead of in the params builder because this can be specified
             // positionally or in the params class.
-            checkRequired("rewardId", params.rewardId().getOrNull())
+            checkRequired("campaignRewardId", params.campaignRewardId().getOrNull())
             val request =
                 HttpRequest.builder()
                     .method(HttpMethod.DELETE)
@@ -201,7 +201,7 @@ class RewardsServiceAsyncImpl internal constructor(private val clientOptions: Cl
                     .addPathSegments(
                         "campaign",
                         params._pathParam(0),
-                        "rewards",
+                        "reward-configs",
                         params._pathParam(1),
                     )
                     .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }

@@ -65,26 +65,13 @@ private constructor(
     fun companyLogoImageUrl(): Optional<String> = body.companyLogoImageUrl()
 
     /**
-     * ISO 4217 currency code. Defaults to USD.
+     * ISO 4217 currency code. Defaults to USD. Chosen when the program is created and immutable
+     * afterward — it cannot be changed on update.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun currencyIso(): Optional<String> = body.currencyIso()
-
-    /**
-     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
-    fun goal(): Optional<String> = body.goal()
-
-    /**
-     * A curated subset of program options to shallow-merge onto the defaults.
-     *
-     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
-    fun options(): Optional<Options> = body.options()
 
     /**
      * Optional inline rewards to create with the program.
@@ -129,20 +116,6 @@ private constructor(
      * Unlike [currencyIso], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _currencyIso(): JsonField<String> = body._currencyIso()
-
-    /**
-     * Returns the raw JSON value of [goal].
-     *
-     * Unlike [goal], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _goal(): JsonField<String> = body._goal()
-
-    /**
-     * Returns the raw JSON value of [options].
-     *
-     * Unlike [options], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _options(): JsonField<Options> = body._options()
 
     /**
      * Returns the raw JSON value of [rewards].
@@ -250,7 +223,10 @@ private constructor(
             body.companyLogoImageUrl(companyLogoImageUrl)
         }
 
-        /** ISO 4217 currency code. Defaults to USD. */
+        /**
+         * ISO 4217 currency code. Defaults to USD. Chosen when the program is created and immutable
+         * afterward — it cannot be changed on update.
+         */
         fun currencyIso(currencyIso: String) = apply { body.currencyIso(currencyIso) }
 
         /**
@@ -261,27 +237,6 @@ private constructor(
          * value.
          */
         fun currencyIso(currencyIso: JsonField<String>) = apply { body.currencyIso(currencyIso) }
-
-        fun goal(goal: String) = apply { body.goal(goal) }
-
-        /**
-         * Sets [Builder.goal] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.goal] with a well-typed [String] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun goal(goal: JsonField<String>) = apply { body.goal(goal) }
-
-        /** A curated subset of program options to shallow-merge onto the defaults. */
-        fun options(options: Options) = apply { body.options(options) }
-
-        /**
-         * Sets [Builder.options] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.options] with a well-typed [Options] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun options(options: JsonField<Options>) = apply { body.options(options) }
 
         /** Optional inline rewards to create with the program. */
         fun rewards(rewards: List<Reward>) = apply { body.rewards(rewards) }
@@ -457,8 +412,6 @@ private constructor(
         private val companyName: JsonField<String>,
         private val companyLogoImageUrl: JsonField<String>,
         private val currencyIso: JsonField<String>,
-        private val goal: JsonField<String>,
-        private val options: JsonField<Options>,
         private val rewards: JsonField<List<Reward>>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -476,22 +429,10 @@ private constructor(
             @JsonProperty("currencyISO")
             @ExcludeMissing
             currencyIso: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("goal") @ExcludeMissing goal: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("options") @ExcludeMissing options: JsonField<Options> = JsonMissing.of(),
             @JsonProperty("rewards")
             @ExcludeMissing
             rewards: JsonField<List<Reward>> = JsonMissing.of(),
-        ) : this(
-            type,
-            name,
-            companyName,
-            companyLogoImageUrl,
-            currencyIso,
-            goal,
-            options,
-            rewards,
-            mutableMapOf(),
-        )
+        ) : this(type, name, companyName, companyLogoImageUrl, currencyIso, rewards, mutableMapOf())
 
         /**
          * The program type. Immutable after creation.
@@ -523,26 +464,13 @@ private constructor(
             companyLogoImageUrl.getOptional("companyLogoImageUrl")
 
         /**
-         * ISO 4217 currency code. Defaults to USD.
+         * ISO 4217 currency code. Defaults to USD. Chosen when the program is created and immutable
+         * afterward — it cannot be changed on update.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun currencyIso(): Optional<String> = currencyIso.getOptional("currencyISO")
-
-        /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun goal(): Optional<String> = goal.getOptional("goal")
-
-        /**
-         * A curated subset of program options to shallow-merge onto the defaults.
-         *
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun options(): Optional<Options> = options.getOptional("options")
 
         /**
          * Optional inline rewards to create with the program.
@@ -595,20 +523,6 @@ private constructor(
         fun _currencyIso(): JsonField<String> = currencyIso
 
         /**
-         * Returns the raw JSON value of [goal].
-         *
-         * Unlike [goal], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("goal") @ExcludeMissing fun _goal(): JsonField<String> = goal
-
-        /**
-         * Returns the raw JSON value of [options].
-         *
-         * Unlike [options], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("options") @ExcludeMissing fun _options(): JsonField<Options> = options
-
-        /**
          * Returns the raw JSON value of [rewards].
          *
          * Unlike [rewards], this method doesn't throw if the JSON field has an unexpected type.
@@ -648,8 +562,6 @@ private constructor(
             private var companyName: JsonField<String> = JsonMissing.of()
             private var companyLogoImageUrl: JsonField<String> = JsonMissing.of()
             private var currencyIso: JsonField<String> = JsonMissing.of()
-            private var goal: JsonField<String> = JsonMissing.of()
-            private var options: JsonField<Options> = JsonMissing.of()
             private var rewards: JsonField<MutableList<Reward>>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -660,8 +572,6 @@ private constructor(
                 companyName = body.companyName
                 companyLogoImageUrl = body.companyLogoImageUrl
                 currencyIso = body.currencyIso
-                goal = body.goal
-                options = body.options
                 rewards = body.rewards.map { it.toMutableList() }
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
@@ -717,7 +627,10 @@ private constructor(
                 this.companyLogoImageUrl = companyLogoImageUrl
             }
 
-            /** ISO 4217 currency code. Defaults to USD. */
+            /**
+             * ISO 4217 currency code. Defaults to USD. Chosen when the program is created and
+             * immutable afterward — it cannot be changed on update.
+             */
             fun currencyIso(currencyIso: String) = currencyIso(JsonField.of(currencyIso))
 
             /**
@@ -730,29 +643,6 @@ private constructor(
             fun currencyIso(currencyIso: JsonField<String>) = apply {
                 this.currencyIso = currencyIso
             }
-
-            fun goal(goal: String) = goal(JsonField.of(goal))
-
-            /**
-             * Sets [Builder.goal] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.goal] with a well-typed [String] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
-             */
-            fun goal(goal: JsonField<String>) = apply { this.goal = goal }
-
-            /** A curated subset of program options to shallow-merge onto the defaults. */
-            fun options(options: Options) = options(JsonField.of(options))
-
-            /**
-             * Sets [Builder.options] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.options] with a well-typed [Options] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun options(options: JsonField<Options>) = apply { this.options = options }
 
             /** Optional inline rewards to create with the program. */
             fun rewards(rewards: List<Reward>) = rewards(JsonField.of(rewards))
@@ -818,8 +708,6 @@ private constructor(
                     companyName,
                     companyLogoImageUrl,
                     currencyIso,
-                    goal,
-                    options,
                     (rewards ?: JsonMissing.of()).map { it.toImmutable() },
                     additionalProperties.toMutableMap(),
                 )
@@ -846,8 +734,6 @@ private constructor(
             companyName()
             companyLogoImageUrl()
             currencyIso()
-            goal()
-            options().ifPresent { it.validate() }
             rewards().ifPresent { it.forEach { it.validate() } }
             validated = true
         }
@@ -873,8 +759,6 @@ private constructor(
                 (if (companyName.asKnown().isPresent) 1 else 0) +
                 (if (companyLogoImageUrl.asKnown().isPresent) 1 else 0) +
                 (if (currencyIso.asKnown().isPresent) 1 else 0) +
-                (if (goal.asKnown().isPresent) 1 else 0) +
-                (options.asKnown().getOrNull()?.validity() ?: 0) +
                 (rewards.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
 
         override fun equals(other: Any?): Boolean {
@@ -888,8 +772,6 @@ private constructor(
                 companyName == other.companyName &&
                 companyLogoImageUrl == other.companyLogoImageUrl &&
                 currencyIso == other.currencyIso &&
-                goal == other.goal &&
-                options == other.options &&
                 rewards == other.rewards &&
                 additionalProperties == other.additionalProperties
         }
@@ -901,8 +783,6 @@ private constructor(
                 companyName,
                 companyLogoImageUrl,
                 currencyIso,
-                goal,
-                options,
                 rewards,
                 additionalProperties,
             )
@@ -911,7 +791,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{type=$type, name=$name, companyName=$companyName, companyLogoImageUrl=$companyLogoImageUrl, currencyIso=$currencyIso, goal=$goal, options=$options, rewards=$rewards, additionalProperties=$additionalProperties}"
+            "Body{type=$type, name=$name, companyName=$companyName, companyLogoImageUrl=$companyLogoImageUrl, currencyIso=$currencyIso, rewards=$rewards, additionalProperties=$additionalProperties}"
     }
 
     /** The program type. Immutable after creation. */
@@ -1051,117 +931,8 @@ private constructor(
         override fun toString() = value.toString()
     }
 
-    /** A curated subset of program options to shallow-merge onto the defaults. */
-    class Options
-    @JsonCreator
-    private constructor(
-        @com.fasterxml.jackson.annotation.JsonValue
-        private val additionalProperties: Map<String, JsonValue>
-    ) {
-
-        @JsonAnyGetter
-        @ExcludeMissing
-        fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
-
-        fun toBuilder() = Builder().from(this)
-
-        companion object {
-
-            /** Returns a mutable builder for constructing an instance of [Options]. */
-            @JvmStatic fun builder() = Builder()
-        }
-
-        /** A builder for [Options]. */
-        class Builder internal constructor() {
-
-            private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
-
-            @JvmSynthetic
-            internal fun from(options: Options) = apply {
-                additionalProperties = options.additionalProperties.toMutableMap()
-            }
-
-            fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.clear()
-                putAllAdditionalProperties(additionalProperties)
-            }
-
-            fun putAdditionalProperty(key: String, value: JsonValue) = apply {
-                additionalProperties.put(key, value)
-            }
-
-            fun putAllAdditionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
-                this.additionalProperties.putAll(additionalProperties)
-            }
-
-            fun removeAdditionalProperty(key: String) = apply { additionalProperties.remove(key) }
-
-            fun removeAllAdditionalProperties(keys: Set<String>) = apply {
-                keys.forEach(::removeAdditionalProperty)
-            }
-
-            /**
-             * Returns an immutable instance of [Options].
-             *
-             * Further updates to this [Builder] will not mutate the returned instance.
-             */
-            fun build(): Options = Options(additionalProperties.toImmutable())
-        }
-
-        private var validated: Boolean = false
-
-        /**
-         * Validates that the types of all values in this object match their expected types
-         * recursively.
-         *
-         * This method is _not_ forwards compatible with new types from the API for existing fields.
-         *
-         * @throws GrowsurfInvalidDataException if any value type in this object doesn't match its
-         *   expected type.
-         */
-        fun validate(): Options = apply {
-            if (validated) {
-                return@apply
-            }
-
-            validated = true
-        }
-
-        fun isValid(): Boolean =
-            try {
-                validate()
-                true
-            } catch (e: GrowsurfInvalidDataException) {
-                false
-            }
-
-        /**
-         * Returns a score indicating how many valid values are contained in this object
-         * recursively.
-         *
-         * Used for best match union deserialization.
-         */
-        @JvmSynthetic
-        internal fun validity(): Int =
-            additionalProperties.count { (_, value) -> !value.isNull() && !value.isMissing() }
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-
-            return other is Options && additionalProperties == other.additionalProperties
-        }
-
-        private val hashCode: Int by lazy { Objects.hash(additionalProperties) }
-
-        override fun hashCode(): Int = hashCode
-
-        override fun toString() = "Options{additionalProperties=$additionalProperties}"
-    }
-
     /**
-     * Request body for creating a program reward. `type` is required and must be compatible with
+     * Request body for creating a campaign reward. `type` is required and must be compatible with
      * the program type.
      */
     class Reward
@@ -1187,6 +958,8 @@ private constructor(
         private val referralCouponCode: JsonField<String>,
         private val metadata: JsonField<Metadata>,
         private val commissionStructure: JsonField<CommissionStructure>,
+        private val value: JsonField<RewardTaxValuation>,
+        private val referredValue: JsonField<RewardTaxValuation>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -1244,6 +1017,12 @@ private constructor(
             @JsonProperty("commissionStructure")
             @ExcludeMissing
             commissionStructure: JsonField<CommissionStructure> = JsonMissing.of(),
+            @JsonProperty("value")
+            @ExcludeMissing
+            value: JsonField<RewardTaxValuation> = JsonMissing.of(),
+            @JsonProperty("referredValue")
+            @ExcludeMissing
+            referredValue: JsonField<RewardTaxValuation> = JsonMissing.of(),
         ) : this(
             type,
             title,
@@ -1265,6 +1044,8 @@ private constructor(
             referralCouponCode,
             metadata,
             commissionStructure,
+            value,
+            referredValue,
             mutableMapOf(),
         )
 
@@ -1426,6 +1207,25 @@ private constructor(
          */
         fun commissionStructure(): Optional<CommissionStructure> =
             commissionStructure.getOptional("commissionStructure")
+
+        /**
+         * Tax valuation for the reward (the referrer's side of a double-sided reward). Used by tax
+         * documentation / 1099 reporting.
+         *
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun value(): Optional<RewardTaxValuation> = value.getOptional("value")
+
+        /**
+         * Tax valuation for the referred friend's side of a double-sided reward. Defaults to not
+         * tax-reportable (a purchase rebate).
+         *
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun referredValue(): Optional<RewardTaxValuation> =
+            referredValue.getOptional("referredValue")
 
         /**
          * Returns the raw JSON value of [type].
@@ -1600,6 +1400,23 @@ private constructor(
         @ExcludeMissing
         fun _commissionStructure(): JsonField<CommissionStructure> = commissionStructure
 
+        /**
+         * Returns the raw JSON value of [value].
+         *
+         * Unlike [value], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("value") @ExcludeMissing fun _value(): JsonField<RewardTaxValuation> = value
+
+        /**
+         * Returns the raw JSON value of [referredValue].
+         *
+         * Unlike [referredValue], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("referredValue")
+        @ExcludeMissing
+        fun _referredValue(): JsonField<RewardTaxValuation> = referredValue
+
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
             additionalProperties.put(key, value)
@@ -1648,6 +1465,8 @@ private constructor(
             private var referralCouponCode: JsonField<String> = JsonMissing.of()
             private var metadata: JsonField<Metadata> = JsonMissing.of()
             private var commissionStructure: JsonField<CommissionStructure> = JsonMissing.of()
+            private var value: JsonField<RewardTaxValuation> = JsonMissing.of()
+            private var referredValue: JsonField<RewardTaxValuation> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -1672,6 +1491,8 @@ private constructor(
                 referralCouponCode = reward.referralCouponCode
                 metadata = reward.metadata
                 commissionStructure = reward.commissionStructure
+                value = reward.value
+                referredValue = reward.referredValue
                 additionalProperties = reward.additionalProperties.toMutableMap()
             }
 
@@ -1980,6 +1801,39 @@ private constructor(
                 this.commissionStructure = commissionStructure
             }
 
+            /**
+             * Tax valuation for the reward (the referrer's side of a double-sided reward). Used by
+             * tax documentation / 1099 reporting.
+             */
+            fun value(value: RewardTaxValuation) = value(JsonField.of(value))
+
+            /**
+             * Sets [Builder.value] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.value] with a well-typed [RewardTaxValuation] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun value(value: JsonField<RewardTaxValuation>) = apply { this.value = value }
+
+            /**
+             * Tax valuation for the referred friend's side of a double-sided reward. Defaults to
+             * not tax-reportable (a purchase rebate).
+             */
+            fun referredValue(referredValue: RewardTaxValuation) =
+                referredValue(JsonField.of(referredValue))
+
+            /**
+             * Sets [Builder.referredValue] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.referredValue] with a well-typed
+             * [RewardTaxValuation] value instead. This method is primarily for setting the field to
+             * an undocumented or not yet supported value.
+             */
+            fun referredValue(referredValue: JsonField<RewardTaxValuation>) = apply {
+                this.referredValue = referredValue
+            }
+
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
                 putAllAdditionalProperties(additionalProperties)
@@ -2033,6 +1887,8 @@ private constructor(
                     referralCouponCode,
                     metadata,
                     commissionStructure,
+                    value,
+                    referredValue,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -2073,6 +1929,8 @@ private constructor(
             referralCouponCode()
             metadata().ifPresent { it.validate() }
             commissionStructure().ifPresent { it.validate() }
+            value().ifPresent { it.validate() }
+            referredValue().ifPresent { it.validate() }
             validated = true
         }
 
@@ -2111,7 +1969,9 @@ private constructor(
                 (if (couponCode.asKnown().isPresent) 1 else 0) +
                 (if (referralCouponCode.asKnown().isPresent) 1 else 0) +
                 (metadata.asKnown().getOrNull()?.validity() ?: 0) +
-                (commissionStructure.asKnown().getOrNull()?.validity() ?: 0)
+                (commissionStructure.asKnown().getOrNull()?.validity() ?: 0) +
+                (value.asKnown().getOrNull()?.validity() ?: 0) +
+                (referredValue.asKnown().getOrNull()?.validity() ?: 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -2139,6 +1999,8 @@ private constructor(
                 referralCouponCode == other.referralCouponCode &&
                 metadata == other.metadata &&
                 commissionStructure == other.commissionStructure &&
+                value == other.value &&
+                referredValue == other.referredValue &&
                 additionalProperties == other.additionalProperties
         }
 
@@ -2164,6 +2026,8 @@ private constructor(
                 referralCouponCode,
                 metadata,
                 commissionStructure,
+                value,
+                referredValue,
                 additionalProperties,
             )
         }
@@ -2171,7 +2035,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Reward{type=$type, title=$title, description=$description, referralDescription=$referralDescription, imageUrl=$imageUrl, isActive=$isActive, isVisible=$isVisible, isUnlimited=$isUnlimited, referredRewardUpfront=$referredRewardUpfront, limit=$limit, conversionsRequired=$conversionsRequired, numberOfWinners=$numberOfWinners, order=$order, limitDuration=$limitDuration, nextMilestonePrefix=$nextMilestonePrefix, nextMilestoneSuffix=$nextMilestoneSuffix, couponCode=$couponCode, referralCouponCode=$referralCouponCode, metadata=$metadata, commissionStructure=$commissionStructure, additionalProperties=$additionalProperties}"
+            "Reward{type=$type, title=$title, description=$description, referralDescription=$referralDescription, imageUrl=$imageUrl, isActive=$isActive, isVisible=$isVisible, isUnlimited=$isUnlimited, referredRewardUpfront=$referredRewardUpfront, limit=$limit, conversionsRequired=$conversionsRequired, numberOfWinners=$numberOfWinners, order=$order, limitDuration=$limitDuration, nextMilestonePrefix=$nextMilestonePrefix, nextMilestoneSuffix=$nextMilestoneSuffix, couponCode=$couponCode, referralCouponCode=$referralCouponCode, metadata=$metadata, commissionStructure=$commissionStructure, value=$value, referredValue=$referredValue, additionalProperties=$additionalProperties}"
 
         /** The reward type. Immutable after creation. */
         class Type @JsonCreator private constructor(private val value: JsonField<String>) : Enum {

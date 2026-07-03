@@ -9,15 +9,16 @@ internal class RewardDeleteParamsTest {
 
     @Test
     fun create() {
-        RewardDeleteParams.builder().id("id").rewardId("rewardId").build()
+        RewardDeleteParams.builder().id("id").campaignRewardId("campaignRewardId").build()
     }
 
     @Test
     fun pathParams() {
-        val params = RewardDeleteParams.builder().id("id").rewardId("rewardId").build()
+        val params =
+            RewardDeleteParams.builder().id("id").campaignRewardId("campaignRewardId").build()
 
         assertThat(params._pathParam(0)).isEqualTo("id")
-        assertThat(params._pathParam(1)).isEqualTo("rewardId")
+        assertThat(params._pathParam(1)).isEqualTo("campaignRewardId")
         // out-of-bound path param
         assertThat(params._pathParam(2)).isEqualTo("")
     }
