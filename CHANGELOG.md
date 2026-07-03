@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.0.0](https://github.com/growsurf/growsurf-java/compare/v0.9.0...v1.0.0) (2026-07-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* campaign create no longer accepts `options`, and campaign update no longer accepts the design / emails / options / notifications / installation config blobs — edit those via the new config sub-resources. Reward-config CRUD moved from /campaign/{id}/rewards to /campaign/{id}/reward-configs[/{campaignRewardId}].
+
+### Features
+
+* add campaign management endpoints; drop deprecated create/update config blobs ([b48e7b8](https://github.com/growsurf/growsurf-java/commit/b48e7b84d46fc9be44ddd72129c76d5821388363))
+
+
+### Bug Fixes
+
+* **proguard:** keep @ExcludeMissing + IsMissing so unset fields serialize under R8 ([7be85b6](https://github.com/growsurf/growsurf-java/commit/7be85b6f175dde3d2ddcef2a60dd966480670e09))
+
 ## [0.9.0](https://github.com/growsurf/growsurf-java/compare/v0.8.0...v0.9.0) (2026-07-01)
 
 
