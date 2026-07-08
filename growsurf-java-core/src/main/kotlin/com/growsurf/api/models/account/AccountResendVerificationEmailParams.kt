@@ -25,7 +25,10 @@ private constructor(
 
         @JvmStatic fun none(): AccountResendVerificationEmailParams = builder().build()
 
-        /** Returns a mutable builder for constructing an instance of [AccountResendVerificationEmailParams]. */
+        /**
+         * Returns a mutable builder for constructing an instance of
+         * [AccountResendVerificationEmailParams].
+         */
         @JvmStatic fun builder() = Builder()
     }
 
@@ -36,9 +39,12 @@ private constructor(
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
-        internal fun from(accountResendVerificationEmailParams: AccountResendVerificationEmailParams) = apply {
+        internal fun from(
+            accountResendVerificationEmailParams: AccountResendVerificationEmailParams
+        ) = apply {
             additionalHeaders = accountResendVerificationEmailParams.additionalHeaders.toBuilder()
-            additionalQueryParams = accountResendVerificationEmailParams.additionalQueryParams.toBuilder()
+            additionalQueryParams =
+                accountResendVerificationEmailParams.additionalQueryParams.toBuilder()
         }
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
@@ -145,7 +151,10 @@ private constructor(
          * Further updates to this [Builder] will not mutate the returned instance.
          */
         fun build(): AccountResendVerificationEmailParams =
-            AccountResendVerificationEmailParams(additionalHeaders.build(), additionalQueryParams.build())
+            AccountResendVerificationEmailParams(
+                additionalHeaders.build(),
+                additionalQueryParams.build(),
+            )
     }
 
     override fun _headers(): Headers = additionalHeaders

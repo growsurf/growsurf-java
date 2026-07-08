@@ -56,9 +56,7 @@ interface AccountService {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CreateAccountResponse
 
-    /**
-     * Retrieves your GrowSurf account — profile and GrowSurf-team verification state.
-     */
+    /** Retrieves your GrowSurf account — profile and GrowSurf-team verification state. */
     fun retrieve(): Account = retrieve(AccountRetrieveParams.none())
 
     /** @see retrieve */
@@ -76,9 +74,9 @@ interface AccountService {
         retrieve(AccountRetrieveParams.none(), requestOptions)
 
     /**
-     * Updates your own account profile (`firstName`, `lastName`, `company`). Any property not listed in the
-     * request is rejected with a `400` — in particular, the account `email` cannot be changed via
-     * the API, and billing/subscription is not editable here.
+     * Updates your own account profile (`firstName`, `lastName`, `company`). Any property not
+     * listed in the request is rejected with a `400` — in particular, the account `email` cannot be
+     * changed via the API, and billing/subscription is not editable here.
      */
     fun update(): Account = update(AccountUpdateParams.none())
 
@@ -97,9 +95,10 @@ interface AccountService {
         update(AccountUpdateParams.none(), requestOptions)
 
     /**
-     * Generates a new API key and immediately revokes the old one. The key used to make this request
-     * stops working as soon as the response is returned — update every integration that used the old
-     * key with the new one. The account owner is notified by email whenever the key is rotated.
+     * Generates a new API key and immediately revokes the old one. The key used to make this
+     * request stops working as soon as the response is returned — update every integration that
+     * used the old key with the new one. The account owner is notified by email whenever the key is
+     * rotated.
      */
     fun rotateApiKey(): RotateApiKeyResponse = rotateApiKey(AccountRotateApiKeyParams.none())
 
@@ -219,8 +218,7 @@ interface AccountService {
          * Returns a raw HTTP response for `patch /account`, but is otherwise the same as
          * [AccountService.update].
          */
-        @MustBeClosed
-        fun update(): HttpResponseFor<Account> = update(AccountUpdateParams.none())
+        @MustBeClosed fun update(): HttpResponseFor<Account> = update(AccountUpdateParams.none())
 
         /** @see update */
         @MustBeClosed
@@ -267,8 +265,8 @@ interface AccountService {
             rotateApiKey(AccountRotateApiKeyParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `post /account/verification-request`, but is otherwise the
-         * same as [AccountService.requestVerification].
+         * Returns a raw HTTP response for `post /account/verification-request`, but is otherwise
+         * the same as [AccountService.requestVerification].
          */
         @MustBeClosed
         fun requestVerification(): HttpResponseFor<Account> =

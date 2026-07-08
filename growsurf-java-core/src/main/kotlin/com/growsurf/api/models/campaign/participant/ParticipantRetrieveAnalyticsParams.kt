@@ -44,9 +44,7 @@ private constructor(
     /** Set to `series` to also return this participant's own activity per period. */
     fun include(): Optional<Include> = Optional.ofNullable(include)
 
-    /**
-     * Bucket size for the `series` (only used with `include=series`). Defaults to `day`.
-     */
+    /** Bucket size for the `series` (only used with `include=series`). Defaults to `day`. */
     fun interval(): Optional<Interval> = Optional.ofNullable(interval)
 
     /**
@@ -153,9 +151,7 @@ private constructor(
         /** Alias for calling [Builder.include] with `include.orElse(null)`. */
         fun include(include: Optional<Include>) = include(include.getOrNull())
 
-        /**
-         * Bucket size for the `series` (only used with `include=series`). Defaults to `day`.
-         */
+        /** Bucket size for the `series` (only used with `include=series`). Defaults to `day`. */
         fun interval(interval: Interval?) = apply { this.interval = interval }
 
         /** Alias for calling [Builder.interval] with `interval.orElse(null)`. */
@@ -328,9 +324,10 @@ private constructor(
         /**
          * Returns this class instance's raw value.
          *
-         * This is usually only useful if this instance was deserialized from data that doesn't match
-         * any known member, and you want to know that value. For example, if the SDK is on an older
-         * version than the API, then the API may respond with new members that the SDK is unaware of.
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
          */
         @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
 
@@ -399,7 +396,9 @@ private constructor(
          *   expected primitive type.
          */
         fun asString(): String =
-            _value().asString().orElseThrow { GrowsurfInvalidDataException("Value is not a String") }
+            _value().asString().orElseThrow {
+                GrowsurfInvalidDataException("Value is not a String")
+            }
 
         private var validated: Boolean = false
 
@@ -441,9 +440,10 @@ private constructor(
         /**
          * Returns this class instance's raw value.
          *
-         * This is usually only useful if this instance was deserialized from data that doesn't match
-         * any known member, and you want to know that value. For example, if the SDK is on an older
-         * version than the API, then the API may respond with new members that the SDK is unaware of.
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
          */
         @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
 
@@ -524,7 +524,9 @@ private constructor(
          *   expected primitive type.
          */
         fun asString(): String =
-            _value().asString().orElseThrow { GrowsurfInvalidDataException("Value is not a String") }
+            _value().asString().orElseThrow {
+                GrowsurfInvalidDataException("Value is not a String")
+            }
 
         private var validated: Boolean = false
 

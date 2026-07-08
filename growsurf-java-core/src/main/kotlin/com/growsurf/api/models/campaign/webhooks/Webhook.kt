@@ -48,9 +48,7 @@ private constructor(
         @JsonProperty("lastFailureAt")
         @ExcludeMissing
         lastFailureAt: JsonField<Long> = JsonMissing.of(),
-        @JsonProperty("payloadUrl")
-        @ExcludeMissing
-        payloadUrl: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("payloadUrl") @ExcludeMissing payloadUrl: JsonField<String> = JsonMissing.of(),
     ) : this(
         autoDisabledDueToFailures,
         events,
@@ -130,9 +128,7 @@ private constructor(
      *
      * Unlike [events], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("events")
-    @ExcludeMissing
-    fun _events(): JsonField<List<WebhookEvent>> = events
+    @JsonProperty("events") @ExcludeMissing fun _events(): JsonField<List<WebhookEvent>> = events
 
     /**
      * Returns the raw JSON value of [failureCount].
@@ -278,9 +274,7 @@ private constructor(
          * This method is primarily for setting the field to an undocumented or not yet supported
          * value.
          */
-        fun failureCount(failureCount: JsonField<Long>) = apply {
-            this.failureCount = failureCount
-        }
+        fun failureCount(failureCount: JsonField<Long>) = apply { this.failureCount = failureCount }
 
         /** The webhook id (`primary` for the program's primary webhook). */
         fun id(id: String) = id(JsonField.of(id))

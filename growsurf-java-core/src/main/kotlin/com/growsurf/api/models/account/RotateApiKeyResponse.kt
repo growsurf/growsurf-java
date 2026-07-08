@@ -122,7 +122,10 @@ private constructor(
          * @throws IllegalStateException if any required field is unset.
          */
         fun build(): RotateApiKeyResponse =
-            RotateApiKeyResponse(checkRequired("apiKey", apiKey), additionalProperties.toMutableMap())
+            RotateApiKeyResponse(
+                checkRequired("apiKey", apiKey),
+                additionalProperties.toMutableMap(),
+            )
     }
 
     private var validated: Boolean = false

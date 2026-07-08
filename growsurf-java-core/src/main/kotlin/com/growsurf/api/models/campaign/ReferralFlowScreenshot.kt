@@ -232,7 +232,9 @@ private constructor(
             additionalProperties == other.additionalProperties
     }
 
-    private val hashCode: Int by lazy { Objects.hash(view, url, width, height, additionalProperties) }
+    private val hashCode: Int by lazy {
+        Objects.hash(view, url, width, height, additionalProperties)
+    }
 
     override fun hashCode(): Int = hashCode
 

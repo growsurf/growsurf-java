@@ -830,8 +830,8 @@ private constructor(
              * Sets [Builder.notes] to an arbitrary JSON value.
              *
              * You should usually call [Builder.notes] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
             fun notes(notes: JsonField<String>) = apply { this.notes = notes }
 

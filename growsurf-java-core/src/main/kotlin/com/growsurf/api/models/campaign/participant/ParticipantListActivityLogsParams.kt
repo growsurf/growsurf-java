@@ -70,8 +70,7 @@ private constructor(
                 participantIdOrEmail = participantListActivityLogsParams.participantIdOrEmail
                 limit = participantListActivityLogsParams.limit
                 offset = participantListActivityLogsParams.offset
-                additionalHeaders =
-                    participantListActivityLogsParams.additionalHeaders.toBuilder()
+                additionalHeaders = participantListActivityLogsParams.additionalHeaders.toBuilder()
                 additionalQueryParams =
                     participantListActivityLogsParams.additionalQueryParams.toBuilder()
             }

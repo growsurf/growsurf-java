@@ -292,8 +292,8 @@ private constructor(
          * The event to simulate. When omitted, the webhook's first enabled event is used (`400` if
          * the webhook has no enabled events).
          *
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun event(): Optional<WebhookEvent> = event.getOptional("event")
 
@@ -335,8 +335,8 @@ private constructor(
             }
 
             /**
-             * The event to simulate. When omitted, the webhook's first enabled event is used
-             * (`400` if the webhook has no enabled events).
+             * The event to simulate. When omitted, the webhook's first enabled event is used (`400`
+             * if the webhook has no enabled events).
              */
             fun event(event: WebhookEvent) = event(JsonField.of(event))
 
@@ -395,8 +395,7 @@ private constructor(
                 false
             }
 
-        @JvmSynthetic
-        internal fun validity(): Int = (event.asKnown().getOrNull()?.validity() ?: 0)
+        @JvmSynthetic internal fun validity(): Int = (event.asKnown().getOrNull()?.validity() ?: 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {

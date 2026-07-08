@@ -124,8 +124,8 @@ private constructor(
 
     /**
      * The number of winners. Only applies to `LEADERBOARD` rewards: when `limitDuration` is
-     * `PER_MONTH` this many top referrers win each month, otherwise this many win in total. Defaults
-     * to `3` when omitted.
+     * `PER_MONTH` this many top referrers win each month, otherwise this many win in total.
+     * Defaults to `3` when omitted.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -1642,9 +1642,9 @@ private constructor(
             }
 
             /**
-             * The number of winners. Only applies to `LEADERBOARD` rewards: when `limitDuration`
-             * is `PER_MONTH` this many top referrers win each month, otherwise this many win in
-             * total. Defaults to `3` when omitted.
+             * The number of winners. Only applies to `LEADERBOARD` rewards: when `limitDuration` is
+             * `PER_MONTH` this many top referrers win each month, otherwise this many win in total.
+             * Defaults to `3` when omitted.
              */
             fun numberOfWinners(numberOfWinners: Long) =
                 numberOfWinners(JsonField.of(numberOfWinners))

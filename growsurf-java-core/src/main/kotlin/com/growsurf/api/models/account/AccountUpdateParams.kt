@@ -294,20 +294,20 @@ private constructor(
         ) : this(company, firstName, lastName, mutableMapOf())
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun company(): Optional<String> = company.getOptional("company")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun firstName(): Optional<String> = firstName.getOptional("firstName")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun lastName(): Optional<String> = lastName.getOptional("lastName")
 
@@ -372,8 +372,8 @@ private constructor(
              * Sets [Builder.company] to an arbitrary JSON value.
              *
              * You should usually call [Builder.company] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
             fun company(company: JsonField<String>) = apply { this.company = company }
 
@@ -383,8 +383,8 @@ private constructor(
              * Sets [Builder.firstName] to an arbitrary JSON value.
              *
              * You should usually call [Builder.firstName] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
             fun firstName(firstName: JsonField<String>) = apply { this.firstName = firstName }
 
@@ -394,8 +394,8 @@ private constructor(
              * Sets [Builder.lastName] to an arbitrary JSON value.
              *
              * You should usually call [Builder.lastName] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
             fun lastName(lastName: JsonField<String>) = apply { this.lastName = lastName }
 

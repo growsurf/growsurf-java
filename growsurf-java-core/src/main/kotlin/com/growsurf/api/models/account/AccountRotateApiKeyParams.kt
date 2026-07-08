@@ -25,7 +25,9 @@ private constructor(
 
         @JvmStatic fun none(): AccountRotateApiKeyParams = builder().build()
 
-        /** Returns a mutable builder for constructing an instance of [AccountRotateApiKeyParams]. */
+        /**
+         * Returns a mutable builder for constructing an instance of [AccountRotateApiKeyParams].
+         */
         @JvmStatic fun builder() = Builder()
     }
 

@@ -380,28 +380,28 @@ private constructor(
         ) : this(events, isEnabled, payloadUrl, secret, mutableMapOf())
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun events(): Optional<List<WebhookEvent>> = events.getOptional("events")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun isEnabled(): Optional<Boolean> = isEnabled.getOptional("isEnabled")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun payloadUrl(): Optional<String> = payloadUrl.getOptional("payloadUrl")
 
         /**
          * Write-only.
          *
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun secret(): Optional<String> = secret.getOptional("secret")
 
@@ -527,8 +527,8 @@ private constructor(
              * Sets [Builder.secret] to an arbitrary JSON value.
              *
              * You should usually call [Builder.secret] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
             fun secret(secret: JsonField<String>) = apply { this.secret = secret }
 

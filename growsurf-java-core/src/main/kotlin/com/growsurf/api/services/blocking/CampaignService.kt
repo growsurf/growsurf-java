@@ -26,8 +26,8 @@ import com.growsurf.api.models.campaign.CampaignUpdateParams
 import com.growsurf.api.models.campaign.ParticipantCommissionList
 import com.growsurf.api.models.campaign.ParticipantList
 import com.growsurf.api.models.campaign.ParticipantPayoutList
-import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.models.campaign.ReferralFlowScreenshotsResponse
+import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.services.blocking.campaign.CommissionService
 import com.growsurf.api.services.blocking.campaign.DesignService
 import com.growsurf.api.services.blocking.campaign.EmailsService
@@ -221,7 +221,8 @@ interface CampaignService {
         id: String,
         params: CampaignGetReferralFlowScreenshotsParams =
             CampaignGetReferralFlowScreenshotsParams.none(),
-    ): ReferralFlowScreenshotsResponse = getReferralFlowScreenshots(id, params, RequestOptions.none())
+    ): ReferralFlowScreenshotsResponse =
+        getReferralFlowScreenshots(id, params, RequestOptions.none())
 
     /** @see getReferralFlowScreenshots */
     fun getReferralFlowScreenshots(
@@ -668,7 +669,9 @@ interface CampaignService {
          * otherwise the same as [CampaignService.getReferralFlowScreenshots].
          */
         @MustBeClosed
-        fun getReferralFlowScreenshots(id: String): HttpResponseFor<ReferralFlowScreenshotsResponse> =
+        fun getReferralFlowScreenshots(
+            id: String
+        ): HttpResponseFor<ReferralFlowScreenshotsResponse> =
             getReferralFlowScreenshots(id, CampaignGetReferralFlowScreenshotsParams.none())
 
         /** @see getReferralFlowScreenshots */

@@ -75,7 +75,9 @@ internal class WebhooksServiceTest {
         val webhooksService = client.campaign().webhooks()
 
         val response =
-            webhooksService.test(WebhookTestParams.builder().id("id").webhookId("webhookId").build())
+            webhooksService.test(
+                WebhookTestParams.builder().id("id").webhookId("webhookId").build()
+            )
 
         response.validate()
     }

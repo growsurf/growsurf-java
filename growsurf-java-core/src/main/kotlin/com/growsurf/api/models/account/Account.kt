@@ -109,8 +109,8 @@ private constructor(
         verificationRequestedAt.getOptional("verificationRequestedAt")
 
     /**
-     * GrowSurf-team verification state. `VERIFIED` is required before a program can send participant
-     * emails.
+     * GrowSurf-team verification state. `VERIFIED` is required before a program can send
+     * participant emails.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -461,18 +461,20 @@ private constructor(
             (verificationStatus.asKnown().getOrNull()?.validity() ?: 0)
 
     /**
-     * GrowSurf-team verification state. `VERIFIED` is required before a program can send participant
-     * emails.
+     * GrowSurf-team verification state. `VERIFIED` is required before a program can send
+     * participant emails.
      */
-    class VerificationStatus @JsonCreator private constructor(private val value: JsonField<String>) :
-        Enum {
+    class VerificationStatus
+    @JsonCreator
+    private constructor(private val value: JsonField<String>) : Enum {
 
         /**
          * Returns this class instance's raw value.
          *
-         * This is usually only useful if this instance was deserialized from data that doesn't match
-         * any known member, and you want to know that value. For example, if the SDK is on an older
-         * version than the API, then the API may respond with new members that the SDK is unaware of.
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
          */
         @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
 
@@ -556,7 +558,9 @@ private constructor(
          *   expected primitive type.
          */
         fun asString(): String =
-            _value().asString().orElseThrow { GrowsurfInvalidDataException("Value is not a String") }
+            _value().asString().orElseThrow {
+                GrowsurfInvalidDataException("Value is not a String")
+            }
 
         private var validated: Boolean = false
 

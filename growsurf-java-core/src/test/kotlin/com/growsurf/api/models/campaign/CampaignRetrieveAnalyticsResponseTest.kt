@@ -76,10 +76,12 @@ internal class CampaignRetrieveAnalyticsResponseTest {
                                 .build()
                         )
                         .commissionStatus(
-                            CampaignRetrieveAnalyticsResponse.StatusCounts.CommissionStatus.builder()
+                            CampaignRetrieveAnalyticsResponse.StatusCounts.CommissionStatus
+                                .builder()
                                 .approved(
                                     CampaignRetrieveAnalyticsResponse.StatusCounts.CommissionStatus
-                                        .CommissionStatusMetric.builder()
+                                        .CommissionStatusMetric
+                                        .builder()
                                         .count(3L)
                                         .totalAmount(7500L)
                                         .totalRevenue(30000L)
@@ -87,7 +89,8 @@ internal class CampaignRetrieveAnalyticsResponseTest {
                                 )
                                 .paid(
                                     CampaignRetrieveAnalyticsResponse.StatusCounts.CommissionStatus
-                                        .CommissionStatusMetric.builder()
+                                        .CommissionStatusMetric
+                                        .builder()
                                         .count(0L)
                                         .totalAmount(0L)
                                         .totalRevenue(0L)
@@ -95,7 +98,8 @@ internal class CampaignRetrieveAnalyticsResponseTest {
                                 )
                                 .pending(
                                     CampaignRetrieveAnalyticsResponse.StatusCounts.CommissionStatus
-                                        .CommissionStatusMetric.builder()
+                                        .CommissionStatusMetric
+                                        .builder()
                                         .count(1L)
                                         .totalAmount(2500L)
                                         .totalRevenue(10000L)
@@ -103,7 +107,8 @@ internal class CampaignRetrieveAnalyticsResponseTest {
                                 )
                                 .reversed(
                                     CampaignRetrieveAnalyticsResponse.StatusCounts.CommissionStatus
-                                        .CommissionStatusMetric.builder()
+                                        .CommissionStatusMetric
+                                        .builder()
                                         .count(0L)
                                         .totalAmount(0L)
                                         .totalRevenue(0L)
@@ -116,28 +121,32 @@ internal class CampaignRetrieveAnalyticsResponseTest {
                             CampaignRetrieveAnalyticsResponse.StatusCounts.PayoutStatus.builder()
                                 .failed(
                                     CampaignRetrieveAnalyticsResponse.StatusCounts.PayoutStatus
-                                        .PayoutStatusMetric.builder()
+                                        .PayoutStatusMetric
+                                        .builder()
                                         .count(0L)
                                         .totalAmount(0L)
                                         .build()
                                 )
                                 .issued(
                                     CampaignRetrieveAnalyticsResponse.StatusCounts.PayoutStatus
-                                        .PayoutStatusMetric.builder()
+                                        .PayoutStatusMetric
+                                        .builder()
                                         .count(5L)
                                         .totalAmount(5000L)
                                         .build()
                                 )
                                 .queued(
                                     CampaignRetrieveAnalyticsResponse.StatusCounts.PayoutStatus
-                                        .PayoutStatusMetric.builder()
+                                        .PayoutStatusMetric
+                                        .builder()
                                         .count(0L)
                                         .totalAmount(0L)
                                         .build()
                                 )
                                 .upcoming(
                                     CampaignRetrieveAnalyticsResponse.StatusCounts.PayoutStatus
-                                        .PayoutStatusMetric.builder()
+                                        .PayoutStatusMetric
+                                        .builder()
                                         .count(0L)
                                         .totalAmount(0L)
                                         .build()
@@ -260,10 +269,12 @@ internal class CampaignRetrieveAnalyticsResponseTest {
                                 .build()
                         )
                         .commissionStatus(
-                            CampaignRetrieveAnalyticsResponse.StatusCounts.CommissionStatus.builder()
+                            CampaignRetrieveAnalyticsResponse.StatusCounts.CommissionStatus
+                                .builder()
                                 .approved(
                                     CampaignRetrieveAnalyticsResponse.StatusCounts.CommissionStatus
-                                        .CommissionStatusMetric.builder()
+                                        .CommissionStatusMetric
+                                        .builder()
                                         .count(3L)
                                         .totalAmount(7500L)
                                         .totalRevenue(30000L)
@@ -276,7 +287,8 @@ internal class CampaignRetrieveAnalyticsResponseTest {
                             CampaignRetrieveAnalyticsResponse.StatusCounts.PayoutStatus.builder()
                                 .issued(
                                     CampaignRetrieveAnalyticsResponse.StatusCounts.PayoutStatus
-                                        .PayoutStatusMetric.builder()
+                                        .PayoutStatusMetric
+                                        .builder()
                                         .count(5L)
                                         .totalAmount(5000L)
                                         .build()

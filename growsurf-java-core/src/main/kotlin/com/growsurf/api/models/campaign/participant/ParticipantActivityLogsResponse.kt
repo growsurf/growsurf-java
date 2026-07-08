@@ -116,13 +116,15 @@ private constructor(
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(participantActivityLogsResponse: ParticipantActivityLogsResponse) = apply {
-            activityLogs = participantActivityLogsResponse.activityLogs.map { it.toMutableList() }
-            limit = participantActivityLogsResponse.limit
-            offset = participantActivityLogsResponse.offset
-            additionalProperties =
-                participantActivityLogsResponse.additionalProperties.toMutableMap()
-        }
+        internal fun from(participantActivityLogsResponse: ParticipantActivityLogsResponse) =
+            apply {
+                activityLogs =
+                    participantActivityLogsResponse.activityLogs.map { it.toMutableList() }
+                limit = participantActivityLogsResponse.limit
+                offset = participantActivityLogsResponse.offset
+                additionalProperties =
+                    participantActivityLogsResponse.additionalProperties.toMutableMap()
+            }
 
         fun activityLogs(activityLogs: List<ParticipantActivityLog>) =
             activityLogs(JsonField.of(activityLogs))

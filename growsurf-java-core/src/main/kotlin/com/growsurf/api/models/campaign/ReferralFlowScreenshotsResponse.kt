@@ -71,9 +71,7 @@ private constructor(
     fun _referredFriend(): JsonField<ReferralFlowScreenshot> = referredFriend
 
     /** Returns the raw JSON value of [generatedAt]. */
-    @JsonProperty("generatedAt")
-    @ExcludeMissing
-    fun _generatedAt(): JsonField<Long> = generatedAt
+    @JsonProperty("generatedAt") @ExcludeMissing fun _generatedAt(): JsonField<Long> = generatedAt
 
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {

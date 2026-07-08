@@ -25,8 +25,8 @@ import com.growsurf.api.models.campaign.CampaignUpdateParams
 import com.growsurf.api.models.campaign.ParticipantCommissionList
 import com.growsurf.api.models.campaign.ParticipantList
 import com.growsurf.api.models.campaign.ParticipantPayoutList
-import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.models.campaign.ReferralFlowScreenshotsResponse
+import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.services.async.campaign.CommissionServiceAsync
 import com.growsurf.api.services.async.campaign.DesignServiceAsync
 import com.growsurf.api.services.async.campaign.EmailsServiceAsync

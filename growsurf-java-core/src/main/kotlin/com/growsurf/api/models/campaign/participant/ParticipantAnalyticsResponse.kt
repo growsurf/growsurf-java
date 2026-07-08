@@ -38,9 +38,7 @@ private constructor(
         analytics: JsonField<Analytics> = JsonMissing.of(),
         @JsonProperty("endDate") @ExcludeMissing endDate: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("ranks") @ExcludeMissing ranks: JsonField<Ranks> = JsonMissing.of(),
-        @JsonProperty("series")
-        @ExcludeMissing
-        series: JsonField<List<Series>> = JsonMissing.of(),
+        @JsonProperty("series") @ExcludeMissing series: JsonField<List<Series>> = JsonMissing.of(),
         @JsonProperty("shareCount")
         @ExcludeMissing
         shareCount: JsonField<ShareCount> = JsonMissing.of(),
@@ -125,7 +123,9 @@ private constructor(
      *
      * Unlike [shareCount], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("shareCount") @ExcludeMissing fun _shareCount(): JsonField<ShareCount> = shareCount
+    @JsonProperty("shareCount")
+    @ExcludeMissing
+    fun _shareCount(): JsonField<ShareCount> = shareCount
 
     /**
      * Returns the raw JSON value of [startDate].
@@ -439,44 +439,44 @@ private constructor(
         )
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun currencyIso(): Optional<String> = currencyIso.getOptional("currencyISO")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun expiredReferrals(): Optional<Long> = expiredReferrals.getOptional("expiredReferrals")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun impressions(): Optional<Long> = impressions.getOptional("impressions")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun invitesSent(): Optional<Long> = invitesSent.getOptional("invitesSent")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun leads(): Optional<Long> = leads.getOptional("leads")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun monthlyReferrals(): Optional<Long> = monthlyReferrals.getOptional("monthlyReferrals")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun pendingRewards(): Optional<Long> = pendingRewards.getOptional("pendingRewards")
 
@@ -484,50 +484,50 @@ private constructor(
          * Affiliate only. Revenue attributed to this participant's referrals, in minor currency
          * units.
          *
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun referralRevenue(): Optional<Long> = referralRevenue.getOptional("referralRevenue")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun referrals(): Optional<Long> = referrals.getOptional("referrals")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun rewardsEarned(): Optional<Long> = rewardsEarned.getOptional("rewardsEarned")
 
         /**
          * Affiliate only. Total commissions earned, in minor currency units.
          *
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun totalCommissions(): Optional<Long> = totalCommissions.getOptional("totalCommissions")
 
         /**
          * Affiliate only. Total paid out, in minor currency units.
          *
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun totalPaidOut(): Optional<Long> = totalPaidOut.getOptional("totalPaidOut")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun uniqueImpressions(): Optional<Long> = uniqueImpressions.getOptional("uniqueImpressions")
 
         /**
          * Affiliate only. Approved commissions ready to pay, in minor currency units.
          *
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun upcomingPayout(): Optional<Long> = upcomingPayout.getOptional("upcomingPayout")
 
@@ -635,7 +635,8 @@ private constructor(
         /**
          * Returns the raw JSON value of [totalPaidOut].
          *
-         * Unlike [totalPaidOut], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [totalPaidOut], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
         @JsonProperty("totalPaidOut")
         @ExcludeMissing
@@ -750,12 +751,10 @@ private constructor(
              * Sets [Builder.impressions] to an arbitrary JSON value.
              *
              * You should usually call [Builder.impressions] with a well-typed [Long] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun impressions(impressions: JsonField<Long>) = apply {
-                this.impressions = impressions
-            }
+            fun impressions(impressions: JsonField<Long>) = apply { this.impressions = impressions }
 
             fun invitesSent(invitesSent: Long) = invitesSent(JsonField.of(invitesSent))
 
@@ -763,12 +762,10 @@ private constructor(
              * Sets [Builder.invitesSent] to an arbitrary JSON value.
              *
              * You should usually call [Builder.invitesSent] with a well-typed [Long] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun invitesSent(invitesSent: JsonField<Long>) = apply {
-                this.invitesSent = invitesSent
-            }
+            fun invitesSent(invitesSent: JsonField<Long>) = apply { this.invitesSent = invitesSent }
 
             fun leads(leads: Long) = leads(JsonField.of(leads))
 
@@ -795,8 +792,7 @@ private constructor(
                 this.monthlyReferrals = monthlyReferrals
             }
 
-            fun pendingRewards(pendingRewards: Long) =
-                pendingRewards(JsonField.of(pendingRewards))
+            fun pendingRewards(pendingRewards: Long) = pendingRewards(JsonField.of(pendingRewards))
 
             /**
              * Sets [Builder.pendingRewards] to an arbitrary JSON value.
@@ -833,8 +829,8 @@ private constructor(
              * Sets [Builder.referrals] to an arbitrary JSON value.
              *
              * You should usually call [Builder.referrals] with a well-typed [Long] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
             fun referrals(referrals: JsonField<Long>) = apply { this.referrals = referrals }
 
@@ -895,8 +891,7 @@ private constructor(
             }
 
             /** Affiliate only. Approved commissions ready to pay, in minor currency units. */
-            fun upcomingPayout(upcomingPayout: Long) =
-                upcomingPayout(JsonField.of(upcomingPayout))
+            fun upcomingPayout(upcomingPayout: Long) = upcomingPayout(JsonField.of(upcomingPayout))
 
             /**
              * Sets [Builder.upcomingPayout] to an arbitrary JSON value.
@@ -1072,22 +1067,22 @@ private constructor(
         ) : this(monthlyRank, prevMonthlyRank, rank, mutableMapOf())
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun monthlyRank(): Optional<Long> = monthlyRank.getOptional("monthlyRank")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun prevMonthlyRank(): Optional<Long> = prevMonthlyRank.getOptional("prevMonthlyRank")
 
         /**
          * All-time rank (1-indexed), or null when unranked.
          *
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun rank(): Optional<Long> = rank.getOptional("rank")
 
@@ -1167,12 +1162,10 @@ private constructor(
              * Sets [Builder.monthlyRank] to an arbitrary JSON value.
              *
              * You should usually call [Builder.monthlyRank] with a well-typed [Long] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun monthlyRank(monthlyRank: JsonField<Long>) = apply {
-                this.monthlyRank = monthlyRank
-            }
+            fun monthlyRank(monthlyRank: JsonField<Long>) = apply { this.monthlyRank = monthlyRank }
 
             fun prevMonthlyRank(prevMonthlyRank: Long?) =
                 prevMonthlyRank(JsonField.ofNullable(prevMonthlyRank))
@@ -1447,9 +1440,7 @@ private constructor(
             @JsonProperty("impressions")
             @ExcludeMissing
             impressions: JsonField<Long> = JsonMissing.of(),
-            @JsonProperty("invites")
-            @ExcludeMissing
-            invites: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("invites") @ExcludeMissing invites: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("iosNativeShares")
             @ExcludeMissing
             iosNativeShares: JsonField<Long> = JsonMissing.of(),
@@ -1550,191 +1541,196 @@ private constructor(
         )
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
-        fun androidNativeShares(): Optional<Long> = androidNativeShares.getOptional("androidNativeShares")
+        fun androidNativeShares(): Optional<Long> =
+            androidNativeShares.getOptional("androidNativeShares")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun blueskyShares(): Optional<Long> = blueskyShares.getOptional("blueskyShares")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun copyRefLinkShares(): Optional<Long> = copyRefLinkShares.getOptional("copyRefLinkShares")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun emailShares(): Optional<Long> = emailShares.getOptional("emailShares")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun facebookShares(): Optional<Long> = facebookShares.getOptional("facebookShares")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun impressions(): Optional<Long> = impressions.getOptional("impressions")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun invites(): Optional<Long> = invites.getOptional("invites")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun iosNativeShares(): Optional<Long> = iosNativeShares.getOptional("iosNativeShares")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun linkedInShares(): Optional<Long> = linkedInShares.getOptional("linkedInShares")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun messengerShares(): Optional<Long> = messengerShares.getOptional("messengerShares")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun participants(): Optional<Long> = participants.getOptional("participants")
 
         /**
          * Start of the period, as a Unix timestamp in milliseconds (UTC).
          *
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun periodStart(): Optional<Long> = periodStart.getOptional("periodStart")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun pinterestShares(): Optional<Long> = pinterestShares.getOptional("pinterestShares")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun qrcodeShares(): Optional<Long> = qrcodeShares.getOptional("qrcodeShares")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun redditShares(): Optional<Long> = redditShares.getOptional("redditShares")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
-        fun referralCreditExpireds(): Optional<Long> = referralCreditExpireds.getOptional("referralCreditExpireds")
+        fun referralCreditExpireds(): Optional<Long> =
+            referralCreditExpireds.getOptional("referralCreditExpireds")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
-        fun referralCreditPendings(): Optional<Long> = referralCreditPendings.getOptional("referralCreditPendings")
+        fun referralCreditPendings(): Optional<Long> =
+            referralCreditPendings.getOptional("referralCreditPendings")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun referrals(): Optional<Long> = referrals.getOptional("referrals")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun smsShares(): Optional<Long> = smsShares.getOptional("smsShares")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun telegramShares(): Optional<Long> = telegramShares.getOptional("telegramShares")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun threadsShares(): Optional<Long> = threadsShares.getOptional("threadsShares")
 
         /**
          * Affiliate programs only. Number of commission records.
          *
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
-        fun totalCommissionCount(): Optional<Long> = totalCommissionCount.getOptional("totalCommissionCount")
+        fun totalCommissionCount(): Optional<Long> =
+            totalCommissionCount.getOptional("totalCommissionCount")
 
         /**
          * Affiliate programs only. Commissions in the smallest unit of the program currency.
          *
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun totalCommissions(): Optional<Long> = totalCommissions.getOptional("totalCommissions")
 
         /**
          * Affiliate programs only. Revenue in the smallest unit of the program currency.
          *
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun totalRevenue(): Optional<Long> = totalRevenue.getOptional("totalRevenue")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun tumblrShares(): Optional<Long> = tumblrShares.getOptional("tumblrShares")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun twitterShares(): Optional<Long> = twitterShares.getOptional("twitterShares")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun uniqueImpressions(): Optional<Long> = uniqueImpressions.getOptional("uniqueImpressions")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun wechatShares(): Optional<Long> = wechatShares.getOptional("wechatShares")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun whatsAppShares(): Optional<Long> = whatsAppShares.getOptional("whatsAppShares")
 
         /**
          * Returns the raw JSON value of [androidNativeShares].
          *
-         * Unlike [androidNativeShares], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [androidNativeShares], this method doesn't throw if the JSON field has an
+         * unexpected type.
          */
         @JsonProperty("androidNativeShares")
         @ExcludeMissing
@@ -1743,7 +1739,8 @@ private constructor(
         /**
          * Returns the raw JSON value of [blueskyShares].
          *
-         * Unlike [blueskyShares], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [blueskyShares], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
         @JsonProperty("blueskyShares")
         @ExcludeMissing
@@ -1752,7 +1749,8 @@ private constructor(
         /**
          * Returns the raw JSON value of [copyRefLinkShares].
          *
-         * Unlike [copyRefLinkShares], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [copyRefLinkShares], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
         @JsonProperty("copyRefLinkShares")
         @ExcludeMissing
@@ -1770,7 +1768,8 @@ private constructor(
         /**
          * Returns the raw JSON value of [facebookShares].
          *
-         * Unlike [facebookShares], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [facebookShares], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
         @JsonProperty("facebookShares")
         @ExcludeMissing
@@ -1790,14 +1789,13 @@ private constructor(
          *
          * Unlike [invites], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("invites")
-        @ExcludeMissing
-        fun _invites(): JsonField<Long> = invites
+        @JsonProperty("invites") @ExcludeMissing fun _invites(): JsonField<Long> = invites
 
         /**
          * Returns the raw JSON value of [iosNativeShares].
          *
-         * Unlike [iosNativeShares], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [iosNativeShares], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
         @JsonProperty("iosNativeShares")
         @ExcludeMissing
@@ -1806,7 +1804,8 @@ private constructor(
         /**
          * Returns the raw JSON value of [linkedInShares].
          *
-         * Unlike [linkedInShares], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [linkedInShares], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
         @JsonProperty("linkedInShares")
         @ExcludeMissing
@@ -1815,7 +1814,8 @@ private constructor(
         /**
          * Returns the raw JSON value of [messengerShares].
          *
-         * Unlike [messengerShares], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [messengerShares], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
         @JsonProperty("messengerShares")
         @ExcludeMissing
@@ -1824,7 +1824,8 @@ private constructor(
         /**
          * Returns the raw JSON value of [participants].
          *
-         * Unlike [participants], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [participants], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
         @JsonProperty("participants")
         @ExcludeMissing
@@ -1842,7 +1843,8 @@ private constructor(
         /**
          * Returns the raw JSON value of [pinterestShares].
          *
-         * Unlike [pinterestShares], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [pinterestShares], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
         @JsonProperty("pinterestShares")
         @ExcludeMissing
@@ -1851,7 +1853,8 @@ private constructor(
         /**
          * Returns the raw JSON value of [qrcodeShares].
          *
-         * Unlike [qrcodeShares], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [qrcodeShares], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
         @JsonProperty("qrcodeShares")
         @ExcludeMissing
@@ -1860,7 +1863,8 @@ private constructor(
         /**
          * Returns the raw JSON value of [redditShares].
          *
-         * Unlike [redditShares], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [redditShares], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
         @JsonProperty("redditShares")
         @ExcludeMissing
@@ -1869,7 +1873,8 @@ private constructor(
         /**
          * Returns the raw JSON value of [referralCreditExpireds].
          *
-         * Unlike [referralCreditExpireds], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [referralCreditExpireds], this method doesn't throw if the JSON field has an
+         * unexpected type.
          */
         @JsonProperty("referralCreditExpireds")
         @ExcludeMissing
@@ -1878,7 +1883,8 @@ private constructor(
         /**
          * Returns the raw JSON value of [referralCreditPendings].
          *
-         * Unlike [referralCreditPendings], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [referralCreditPendings], this method doesn't throw if the JSON field has an
+         * unexpected type.
          */
         @JsonProperty("referralCreditPendings")
         @ExcludeMissing
@@ -1889,23 +1895,20 @@ private constructor(
          *
          * Unlike [referrals], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("referrals")
-        @ExcludeMissing
-        fun _referrals(): JsonField<Long> = referrals
+        @JsonProperty("referrals") @ExcludeMissing fun _referrals(): JsonField<Long> = referrals
 
         /**
          * Returns the raw JSON value of [smsShares].
          *
          * Unlike [smsShares], this method doesn't throw if the JSON field has an unexpected type.
          */
-        @JsonProperty("smsShares")
-        @ExcludeMissing
-        fun _smsShares(): JsonField<Long> = smsShares
+        @JsonProperty("smsShares") @ExcludeMissing fun _smsShares(): JsonField<Long> = smsShares
 
         /**
          * Returns the raw JSON value of [telegramShares].
          *
-         * Unlike [telegramShares], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [telegramShares], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
         @JsonProperty("telegramShares")
         @ExcludeMissing
@@ -1914,7 +1917,8 @@ private constructor(
         /**
          * Returns the raw JSON value of [threadsShares].
          *
-         * Unlike [threadsShares], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [threadsShares], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
         @JsonProperty("threadsShares")
         @ExcludeMissing
@@ -1923,7 +1927,8 @@ private constructor(
         /**
          * Returns the raw JSON value of [totalCommissionCount].
          *
-         * Unlike [totalCommissionCount], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [totalCommissionCount], this method doesn't throw if the JSON field has an
+         * unexpected type.
          */
         @JsonProperty("totalCommissionCount")
         @ExcludeMissing
@@ -1932,7 +1937,8 @@ private constructor(
         /**
          * Returns the raw JSON value of [totalCommissions].
          *
-         * Unlike [totalCommissions], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [totalCommissions], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
         @JsonProperty("totalCommissions")
         @ExcludeMissing
@@ -1941,7 +1947,8 @@ private constructor(
         /**
          * Returns the raw JSON value of [totalRevenue].
          *
-         * Unlike [totalRevenue], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [totalRevenue], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
         @JsonProperty("totalRevenue")
         @ExcludeMissing
@@ -1950,7 +1957,8 @@ private constructor(
         /**
          * Returns the raw JSON value of [tumblrShares].
          *
-         * Unlike [tumblrShares], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [tumblrShares], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
         @JsonProperty("tumblrShares")
         @ExcludeMissing
@@ -1959,7 +1967,8 @@ private constructor(
         /**
          * Returns the raw JSON value of [twitterShares].
          *
-         * Unlike [twitterShares], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [twitterShares], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
         @JsonProperty("twitterShares")
         @ExcludeMissing
@@ -1968,7 +1977,8 @@ private constructor(
         /**
          * Returns the raw JSON value of [uniqueImpressions].
          *
-         * Unlike [uniqueImpressions], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [uniqueImpressions], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
         @JsonProperty("uniqueImpressions")
         @ExcludeMissing
@@ -1977,7 +1987,8 @@ private constructor(
         /**
          * Returns the raw JSON value of [wechatShares].
          *
-         * Unlike [wechatShares], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [wechatShares], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
         @JsonProperty("wechatShares")
         @ExcludeMissing
@@ -1986,7 +1997,8 @@ private constructor(
         /**
          * Returns the raw JSON value of [whatsAppShares].
          *
-         * Unlike [whatsAppShares], this method doesn't throw if the JSON field has an unexpected type.
+         * Unlike [whatsAppShares], this method doesn't throw if the JSON field has an unexpected
+         * type.
          */
         @JsonProperty("whatsAppShares")
         @ExcludeMissing
@@ -2078,47 +2090,55 @@ private constructor(
                 additionalProperties = series.additionalProperties.toMutableMap()
             }
 
-            fun androidNativeShares(androidNativeShares: Long) = androidNativeShares(JsonField.of(androidNativeShares))
+            fun androidNativeShares(androidNativeShares: Long) =
+                androidNativeShares(JsonField.of(androidNativeShares))
 
             /**
              * Sets [Builder.androidNativeShares] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.androidNativeShares] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.androidNativeShares] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun androidNativeShares(androidNativeShares: JsonField<Long>) = apply { this.androidNativeShares = androidNativeShares }
+            fun androidNativeShares(androidNativeShares: JsonField<Long>) = apply {
+                this.androidNativeShares = androidNativeShares
+            }
 
             fun blueskyShares(blueskyShares: Long) = blueskyShares(JsonField.of(blueskyShares))
 
             /**
              * Sets [Builder.blueskyShares] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.blueskyShares] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.blueskyShares] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun blueskyShares(blueskyShares: JsonField<Long>) = apply { this.blueskyShares = blueskyShares }
+            fun blueskyShares(blueskyShares: JsonField<Long>) = apply {
+                this.blueskyShares = blueskyShares
+            }
 
-            fun copyRefLinkShares(copyRefLinkShares: Long) = copyRefLinkShares(JsonField.of(copyRefLinkShares))
+            fun copyRefLinkShares(copyRefLinkShares: Long) =
+                copyRefLinkShares(JsonField.of(copyRefLinkShares))
 
             /**
              * Sets [Builder.copyRefLinkShares] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.copyRefLinkShares] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.copyRefLinkShares] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun copyRefLinkShares(copyRefLinkShares: JsonField<Long>) = apply { this.copyRefLinkShares = copyRefLinkShares }
+            fun copyRefLinkShares(copyRefLinkShares: JsonField<Long>) = apply {
+                this.copyRefLinkShares = copyRefLinkShares
+            }
 
             fun emailShares(emailShares: Long) = emailShares(JsonField.of(emailShares))
 
             /**
              * Sets [Builder.emailShares] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.emailShares] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.emailShares] with a well-typed [Long] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
             fun emailShares(emailShares: JsonField<Long>) = apply { this.emailShares = emailShares }
 
@@ -2127,20 +2147,22 @@ private constructor(
             /**
              * Sets [Builder.facebookShares] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.facebookShares] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.facebookShares] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun facebookShares(facebookShares: JsonField<Long>) = apply { this.facebookShares = facebookShares }
+            fun facebookShares(facebookShares: JsonField<Long>) = apply {
+                this.facebookShares = facebookShares
+            }
 
             fun impressions(impressions: Long) = impressions(JsonField.of(impressions))
 
             /**
              * Sets [Builder.impressions] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.impressions] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.impressions] with a well-typed [Long] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
             fun impressions(impressions: JsonField<Long>) = apply { this.impressions = impressions }
 
@@ -2149,55 +2171,65 @@ private constructor(
             /**
              * Sets [Builder.invites] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.invites] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.invites] with a well-typed [Long] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
             fun invites(invites: JsonField<Long>) = apply { this.invites = invites }
 
-            fun iosNativeShares(iosNativeShares: Long) = iosNativeShares(JsonField.of(iosNativeShares))
+            fun iosNativeShares(iosNativeShares: Long) =
+                iosNativeShares(JsonField.of(iosNativeShares))
 
             /**
              * Sets [Builder.iosNativeShares] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.iosNativeShares] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.iosNativeShares] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun iosNativeShares(iosNativeShares: JsonField<Long>) = apply { this.iosNativeShares = iosNativeShares }
+            fun iosNativeShares(iosNativeShares: JsonField<Long>) = apply {
+                this.iosNativeShares = iosNativeShares
+            }
 
             fun linkedInShares(linkedInShares: Long) = linkedInShares(JsonField.of(linkedInShares))
 
             /**
              * Sets [Builder.linkedInShares] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.linkedInShares] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.linkedInShares] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun linkedInShares(linkedInShares: JsonField<Long>) = apply { this.linkedInShares = linkedInShares }
+            fun linkedInShares(linkedInShares: JsonField<Long>) = apply {
+                this.linkedInShares = linkedInShares
+            }
 
-            fun messengerShares(messengerShares: Long) = messengerShares(JsonField.of(messengerShares))
+            fun messengerShares(messengerShares: Long) =
+                messengerShares(JsonField.of(messengerShares))
 
             /**
              * Sets [Builder.messengerShares] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.messengerShares] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.messengerShares] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun messengerShares(messengerShares: JsonField<Long>) = apply { this.messengerShares = messengerShares }
+            fun messengerShares(messengerShares: JsonField<Long>) = apply {
+                this.messengerShares = messengerShares
+            }
 
             fun participants(participants: Long) = participants(JsonField.of(participants))
 
             /**
              * Sets [Builder.participants] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.participants] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.participants] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun participants(participants: JsonField<Long>) = apply { this.participants = participants }
+            fun participants(participants: JsonField<Long>) = apply {
+                this.participants = participants
+            }
 
             /** Start of the period, as a Unix timestamp in milliseconds (UTC). */
             fun periodStart(periodStart: Long) = periodStart(JsonField.of(periodStart))
@@ -2205,75 +2237,88 @@ private constructor(
             /**
              * Sets [Builder.periodStart] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.periodStart] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.periodStart] with a well-typed [Long] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
             fun periodStart(periodStart: JsonField<Long>) = apply { this.periodStart = periodStart }
 
-            fun pinterestShares(pinterestShares: Long) = pinterestShares(JsonField.of(pinterestShares))
+            fun pinterestShares(pinterestShares: Long) =
+                pinterestShares(JsonField.of(pinterestShares))
 
             /**
              * Sets [Builder.pinterestShares] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.pinterestShares] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.pinterestShares] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun pinterestShares(pinterestShares: JsonField<Long>) = apply { this.pinterestShares = pinterestShares }
+            fun pinterestShares(pinterestShares: JsonField<Long>) = apply {
+                this.pinterestShares = pinterestShares
+            }
 
             fun qrcodeShares(qrcodeShares: Long) = qrcodeShares(JsonField.of(qrcodeShares))
 
             /**
              * Sets [Builder.qrcodeShares] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.qrcodeShares] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.qrcodeShares] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun qrcodeShares(qrcodeShares: JsonField<Long>) = apply { this.qrcodeShares = qrcodeShares }
+            fun qrcodeShares(qrcodeShares: JsonField<Long>) = apply {
+                this.qrcodeShares = qrcodeShares
+            }
 
             fun redditShares(redditShares: Long) = redditShares(JsonField.of(redditShares))
 
             /**
              * Sets [Builder.redditShares] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.redditShares] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.redditShares] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun redditShares(redditShares: JsonField<Long>) = apply { this.redditShares = redditShares }
+            fun redditShares(redditShares: JsonField<Long>) = apply {
+                this.redditShares = redditShares
+            }
 
-            fun referralCreditExpireds(referralCreditExpireds: Long) = referralCreditExpireds(JsonField.of(referralCreditExpireds))
+            fun referralCreditExpireds(referralCreditExpireds: Long) =
+                referralCreditExpireds(JsonField.of(referralCreditExpireds))
 
             /**
              * Sets [Builder.referralCreditExpireds] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.referralCreditExpireds] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.referralCreditExpireds] with a well-typed [Long]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
              */
-            fun referralCreditExpireds(referralCreditExpireds: JsonField<Long>) = apply { this.referralCreditExpireds = referralCreditExpireds }
+            fun referralCreditExpireds(referralCreditExpireds: JsonField<Long>) = apply {
+                this.referralCreditExpireds = referralCreditExpireds
+            }
 
-            fun referralCreditPendings(referralCreditPendings: Long) = referralCreditPendings(JsonField.of(referralCreditPendings))
+            fun referralCreditPendings(referralCreditPendings: Long) =
+                referralCreditPendings(JsonField.of(referralCreditPendings))
 
             /**
              * Sets [Builder.referralCreditPendings] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.referralCreditPendings] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.referralCreditPendings] with a well-typed [Long]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
              */
-            fun referralCreditPendings(referralCreditPendings: JsonField<Long>) = apply { this.referralCreditPendings = referralCreditPendings }
+            fun referralCreditPendings(referralCreditPendings: JsonField<Long>) = apply {
+                this.referralCreditPendings = referralCreditPendings
+            }
 
             fun referrals(referrals: Long) = referrals(JsonField.of(referrals))
 
             /**
              * Sets [Builder.referrals] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.referrals] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.referrals] with a well-typed [Long] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
             fun referrals(referrals: JsonField<Long>) = apply { this.referrals = referrals }
 
@@ -2282,9 +2327,9 @@ private constructor(
             /**
              * Sets [Builder.smsShares] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.smsShares] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.smsShares] with a well-typed [Long] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
             fun smsShares(smsShares: JsonField<Long>) = apply { this.smsShares = smsShares }
 
@@ -2293,46 +2338,58 @@ private constructor(
             /**
              * Sets [Builder.telegramShares] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.telegramShares] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.telegramShares] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun telegramShares(telegramShares: JsonField<Long>) = apply { this.telegramShares = telegramShares }
+            fun telegramShares(telegramShares: JsonField<Long>) = apply {
+                this.telegramShares = telegramShares
+            }
 
             fun threadsShares(threadsShares: Long) = threadsShares(JsonField.of(threadsShares))
 
             /**
              * Sets [Builder.threadsShares] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.threadsShares] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.threadsShares] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun threadsShares(threadsShares: JsonField<Long>) = apply { this.threadsShares = threadsShares }
+            fun threadsShares(threadsShares: JsonField<Long>) = apply {
+                this.threadsShares = threadsShares
+            }
 
             /** Affiliate programs only. Number of commission records. */
-            fun totalCommissionCount(totalCommissionCount: Long) = totalCommissionCount(JsonField.of(totalCommissionCount))
+            fun totalCommissionCount(totalCommissionCount: Long) =
+                totalCommissionCount(JsonField.of(totalCommissionCount))
 
             /**
              * Sets [Builder.totalCommissionCount] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.totalCommissionCount] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.totalCommissionCount] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun totalCommissionCount(totalCommissionCount: JsonField<Long>) = apply { this.totalCommissionCount = totalCommissionCount }
+            fun totalCommissionCount(totalCommissionCount: JsonField<Long>) = apply {
+                this.totalCommissionCount = totalCommissionCount
+            }
 
-            /** Affiliate programs only. Commissions in the smallest unit of the program currency. */
-            fun totalCommissions(totalCommissions: Long) = totalCommissions(JsonField.of(totalCommissions))
+            /**
+             * Affiliate programs only. Commissions in the smallest unit of the program currency.
+             */
+            fun totalCommissions(totalCommissions: Long) =
+                totalCommissions(JsonField.of(totalCommissions))
 
             /**
              * Sets [Builder.totalCommissions] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.totalCommissions] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.totalCommissions] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun totalCommissions(totalCommissions: JsonField<Long>) = apply { this.totalCommissions = totalCommissions }
+            fun totalCommissions(totalCommissions: JsonField<Long>) = apply {
+                this.totalCommissions = totalCommissions
+            }
 
             /** Affiliate programs only. Revenue in the smallest unit of the program currency. */
             fun totalRevenue(totalRevenue: Long) = totalRevenue(JsonField.of(totalRevenue))
@@ -2340,66 +2397,79 @@ private constructor(
             /**
              * Sets [Builder.totalRevenue] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.totalRevenue] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.totalRevenue] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun totalRevenue(totalRevenue: JsonField<Long>) = apply { this.totalRevenue = totalRevenue }
+            fun totalRevenue(totalRevenue: JsonField<Long>) = apply {
+                this.totalRevenue = totalRevenue
+            }
 
             fun tumblrShares(tumblrShares: Long) = tumblrShares(JsonField.of(tumblrShares))
 
             /**
              * Sets [Builder.tumblrShares] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.tumblrShares] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.tumblrShares] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun tumblrShares(tumblrShares: JsonField<Long>) = apply { this.tumblrShares = tumblrShares }
+            fun tumblrShares(tumblrShares: JsonField<Long>) = apply {
+                this.tumblrShares = tumblrShares
+            }
 
             fun twitterShares(twitterShares: Long) = twitterShares(JsonField.of(twitterShares))
 
             /**
              * Sets [Builder.twitterShares] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.twitterShares] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.twitterShares] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun twitterShares(twitterShares: JsonField<Long>) = apply { this.twitterShares = twitterShares }
+            fun twitterShares(twitterShares: JsonField<Long>) = apply {
+                this.twitterShares = twitterShares
+            }
 
-            fun uniqueImpressions(uniqueImpressions: Long) = uniqueImpressions(JsonField.of(uniqueImpressions))
+            fun uniqueImpressions(uniqueImpressions: Long) =
+                uniqueImpressions(JsonField.of(uniqueImpressions))
 
             /**
              * Sets [Builder.uniqueImpressions] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.uniqueImpressions] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.uniqueImpressions] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun uniqueImpressions(uniqueImpressions: JsonField<Long>) = apply { this.uniqueImpressions = uniqueImpressions }
+            fun uniqueImpressions(uniqueImpressions: JsonField<Long>) = apply {
+                this.uniqueImpressions = uniqueImpressions
+            }
 
             fun wechatShares(wechatShares: Long) = wechatShares(JsonField.of(wechatShares))
 
             /**
              * Sets [Builder.wechatShares] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.wechatShares] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.wechatShares] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun wechatShares(wechatShares: JsonField<Long>) = apply { this.wechatShares = wechatShares }
+            fun wechatShares(wechatShares: JsonField<Long>) = apply {
+                this.wechatShares = wechatShares
+            }
 
             fun whatsAppShares(whatsAppShares: Long) = whatsAppShares(JsonField.of(whatsAppShares))
 
             /**
              * Sets [Builder.whatsAppShares] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.whatsAppShares] with a well-typed [Long] value instead. This
-             * method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * You should usually call [Builder.whatsAppShares] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
-            fun whatsAppShares(whatsAppShares: JsonField<Long>) = apply { this.whatsAppShares = whatsAppShares }
+            fun whatsAppShares(whatsAppShares: JsonField<Long>) = apply {
+                this.whatsAppShares = whatsAppShares
+            }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()

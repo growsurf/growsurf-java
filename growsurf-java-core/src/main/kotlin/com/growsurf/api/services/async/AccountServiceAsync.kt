@@ -57,9 +57,7 @@ interface AccountServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<CreateAccountResponse>
 
-    /**
-     * Retrieves your GrowSurf account — profile and GrowSurf-team verification state.
-     */
+    /** Retrieves your GrowSurf account — profile and GrowSurf-team verification state. */
     fun retrieve(): CompletableFuture<Account> = retrieve(AccountRetrieveParams.none())
 
     /** @see retrieve */
@@ -78,9 +76,9 @@ interface AccountServiceAsync {
         retrieve(AccountRetrieveParams.none(), requestOptions)
 
     /**
-     * Updates your own account profile (`firstName`, `lastName`, `company`). Any property not listed in the
-     * request is rejected with a `400` — in particular, the account `email` cannot be changed via
-     * the API, and billing/subscription is not editable here.
+     * Updates your own account profile (`firstName`, `lastName`, `company`). Any property not
+     * listed in the request is rejected with a `400` — in particular, the account `email` cannot be
+     * changed via the API, and billing/subscription is not editable here.
      */
     fun update(): CompletableFuture<Account> = update(AccountUpdateParams.none())
 
@@ -100,9 +98,10 @@ interface AccountServiceAsync {
         update(AccountUpdateParams.none(), requestOptions)
 
     /**
-     * Generates a new API key and immediately revokes the old one. The key used to make this request
-     * stops working as soon as the response is returned — update every integration that used the old
-     * key with the new one. The account owner is notified by email whenever the key is rotated.
+     * Generates a new API key and immediately revokes the old one. The key used to make this
+     * request stops working as soon as the response is returned — update every integration that
+     * used the old key with the new one. The account owner is notified by email whenever the key is
+     * rotated.
      */
     fun rotateApiKey(): CompletableFuture<RotateApiKeyResponse> =
         rotateApiKey(AccountRotateApiKeyParams.none())
@@ -119,9 +118,7 @@ interface AccountServiceAsync {
     ): CompletableFuture<RotateApiKeyResponse> = rotateApiKey(params, RequestOptions.none())
 
     /** @see rotateApiKey */
-    fun rotateApiKey(
-        requestOptions: RequestOptions
-    ): CompletableFuture<RotateApiKeyResponse> =
+    fun rotateApiKey(requestOptions: RequestOptions): CompletableFuture<RotateApiKeyResponse> =
         rotateApiKey(AccountRotateApiKeyParams.none(), requestOptions)
 
     /**
@@ -228,9 +225,7 @@ interface AccountServiceAsync {
 
         /** @see retrieve */
         @MustBeClosed
-        fun retrieve(
-            requestOptions: RequestOptions
-        ): CompletableFuture<HttpResponseFor<Account>> =
+        fun retrieve(requestOptions: RequestOptions): CompletableFuture<HttpResponseFor<Account>> =
             retrieve(AccountRetrieveParams.none(), requestOptions)
 
         /**
@@ -289,8 +284,8 @@ interface AccountServiceAsync {
             rotateApiKey(AccountRotateApiKeyParams.none(), requestOptions)
 
         /**
-         * Returns a raw HTTP response for `post /account/verification-request`, but is otherwise the
-         * same as [AccountServiceAsync.requestVerification].
+         * Returns a raw HTTP response for `post /account/verification-request`, but is otherwise
+         * the same as [AccountServiceAsync.requestVerification].
          */
         @MustBeClosed
         fun requestVerification(): CompletableFuture<HttpResponseFor<Account>> =
@@ -322,7 +317,8 @@ interface AccountServiceAsync {
          * same as [AccountServiceAsync.resendVerificationEmail].
          */
         @MustBeClosed
-        fun resendVerificationEmail(): CompletableFuture<HttpResponseFor<VerificationEmailResponse>> =
+        fun resendVerificationEmail():
+            CompletableFuture<HttpResponseFor<VerificationEmailResponse>> =
             resendVerificationEmail(AccountResendVerificationEmailParams.none())
 
         /** @see resendVerificationEmail */

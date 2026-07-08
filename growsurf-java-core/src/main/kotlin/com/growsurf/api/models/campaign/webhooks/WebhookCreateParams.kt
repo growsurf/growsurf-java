@@ -393,14 +393,14 @@ private constructor(
          * The events this webhook is subscribed to. When omitted, the webhook is subscribed to no
          * events.
          *
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun events(): Optional<List<WebhookEvent>> = events.getOptional("events")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun isEnabled(): Optional<Boolean> = isEnabled.getOptional("isEnabled")
 
@@ -408,8 +408,8 @@ private constructor(
          * Write-only. Used to sign deliveries (the `GrowSurf-Signature` HMAC header). Never
          * returned.
          *
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun secret(): Optional<String> = secret.getOptional("secret")
 
@@ -550,8 +550,8 @@ private constructor(
              * Sets [Builder.secret] to an arbitrary JSON value.
              *
              * You should usually call [Builder.secret] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
             fun secret(secret: JsonField<String>) = apply { this.secret = secret }
 

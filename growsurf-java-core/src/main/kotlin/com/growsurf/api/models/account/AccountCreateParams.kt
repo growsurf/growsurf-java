@@ -18,20 +18,20 @@ import com.growsurf.api.errors.GrowsurfInvalidDataException
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
-import kotlin.jvm.optionals.getOrNull
 
 /**
  * Creates a new GrowSurf account. This is the only endpoint that does not require an API key. The
- * response includes an API key for the new account, but the key is locked until the account's
- * email address is verified: authenticated endpoints outside the `Accounts` group return a `403`
- * with error code `EMAIL_NOT_VERIFIED_ERROR` until then (resend the email via
- * `POST /account/verification-email`, then retry). A welcome email is sent to the address with the
+ * response includes an API key for the new account, but the key is locked until the account's email
+ * address is verified: authenticated endpoints outside the `Accounts` group return a `403` with
+ * error code `EMAIL_NOT_VERIFIED_ERROR` until then (resend the email via `POST
+ * /account/verification-email`, then retry). A welcome email is sent to the address with the
  * verification link and a set-password link for dashboard access. Accounts whose email is never
  * verified are deleted automatically after 7 days. For security, the API key is rotated the first
  * time the account owner signs in to the GrowSurf dashboard. Some actions (such as emailing
  * participants) additionally require the GrowSurf team to verify the account first. By creating an
  * account you agree, on behalf of the account holder, to GrowSurf's
- * [Terms of Service](https://growsurf.com/terms) and [Privacy Policy](https://growsurf.com/privacy).
+ * [Terms of Service](https://growsurf.com/terms) and
+ * [Privacy Policy](https://growsurf.com/privacy).
  */
 class AccountCreateParams
 private constructor(
@@ -41,7 +41,8 @@ private constructor(
 ) : Params {
 
     /**
-     * The email address for the new account. Personal emails and disposable email addresses are not accepted.
+     * The email address for the new account. Personal emails and disposable email addresses are not
+     * accepted.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -144,7 +145,8 @@ private constructor(
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
         /**
-         * The email address for the new account. Personal emails and disposable email addresses are not accepted.
+         * The email address for the new account. Personal emails and disposable email addresses are
+         * not accepted.
          */
         fun email(email: String) = apply { body.email(email) }
 
@@ -351,7 +353,8 @@ private constructor(
         ) : this(email, company, firstName, lastName, mutableMapOf())
 
         /**
-         * The email address for the new account. Personal emails and disposable email addresses are not accepted.
+         * The email address for the new account. Personal emails and disposable email addresses are
+         * not accepted.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -359,20 +362,20 @@ private constructor(
         fun email(): String = email.getRequired("email")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun company(): Optional<String> = company.getOptional("company")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun firstName(): Optional<String> = firstName.getOptional("firstName")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun lastName(): Optional<String> = lastName.getOptional("lastName")
 
@@ -448,7 +451,8 @@ private constructor(
             }
 
             /**
-             * The email address for the new account. Personal emails and disposable email addresses are not accepted.
+             * The email address for the new account. Personal emails and disposable email addresses
+             * are not accepted.
              */
             fun email(email: String) = email(JsonField.of(email))
 
@@ -456,8 +460,8 @@ private constructor(
              * Sets [Builder.email] to an arbitrary JSON value.
              *
              * You should usually call [Builder.email] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
             fun email(email: JsonField<String>) = apply { this.email = email }
 
@@ -467,8 +471,8 @@ private constructor(
              * Sets [Builder.company] to an arbitrary JSON value.
              *
              * You should usually call [Builder.company] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
             fun company(company: JsonField<String>) = apply { this.company = company }
 
@@ -478,8 +482,8 @@ private constructor(
              * Sets [Builder.firstName] to an arbitrary JSON value.
              *
              * You should usually call [Builder.firstName] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
             fun firstName(firstName: JsonField<String>) = apply { this.firstName = firstName }
 
@@ -489,8 +493,8 @@ private constructor(
              * Sets [Builder.lastName] to an arbitrary JSON value.
              *
              * You should usually call [Builder.lastName] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
             fun lastName(lastName: JsonField<String>) = apply { this.lastName = lastName }
 

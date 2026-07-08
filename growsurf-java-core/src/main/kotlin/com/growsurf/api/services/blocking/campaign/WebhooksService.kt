@@ -248,10 +248,7 @@ interface WebhooksService {
 
         /** @see list */
         @MustBeClosed
-        fun list(
-            id: String,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<WebhookListResponse> =
+        fun list(id: String, requestOptions: RequestOptions): HttpResponseFor<WebhookListResponse> =
             list(id, WebhookListParams.none(), requestOptions)
 
         /**
@@ -262,8 +259,7 @@ interface WebhooksService {
         fun delete(
             webhookId: String,
             params: WebhookDeleteParams,
-        ): HttpResponseFor<DeleteWebhookResponse> =
-            delete(webhookId, params, RequestOptions.none())
+        ): HttpResponseFor<DeleteWebhookResponse> = delete(webhookId, params, RequestOptions.none())
 
         /** @see delete */
         @MustBeClosed

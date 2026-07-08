@@ -105,18 +105,14 @@ interface WebhooksServiceAsync {
         list(params, RequestOptions.none())
 
     /** @see list */
-    fun list(
-        id: String,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<WebhookListResponse> =
+    fun list(id: String, requestOptions: RequestOptions): CompletableFuture<WebhookListResponse> =
         list(id, WebhookListParams.none(), requestOptions)
 
     /** Removes a webhook by id. */
     fun delete(
         webhookId: String,
         params: WebhookDeleteParams,
-    ): CompletableFuture<DeleteWebhookResponse> =
-        delete(webhookId, params, RequestOptions.none())
+    ): CompletableFuture<DeleteWebhookResponse> = delete(webhookId, params, RequestOptions.none())
 
     /** @see delete */
     fun delete(

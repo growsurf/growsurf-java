@@ -39,9 +39,9 @@ private constructor(
 
     /**
      * Comma-separated list of optional enrichments (opt-in to keep the default response lean):
-     * `previousPeriod` adds totals for the equal-length window immediately before the requested one;
-     * `statusCounts` adds reward (and, for affiliate programs, affiliate/commission/payout) status
-     * breakdowns; `rates` adds derived referral rates.
+     * `previousPeriod` adds totals for the equal-length window immediately before the requested
+     * one; `statusCounts` adds reward (and, for affiliate programs, affiliate/commission/payout)
+     * status breakdowns; `rates` adds derived referral rates.
      */
     fun include(): Optional<String> = Optional.ofNullable(include)
 
@@ -139,8 +139,8 @@ private constructor(
         /**
          * Comma-separated list of optional enrichments (opt-in to keep the default response lean):
          * `previousPeriod` adds totals for the equal-length window immediately before the requested
-         * one; `statusCounts` adds reward (and, for affiliate programs, affiliate/commission/payout)
-         * status breakdowns; `rates` adds derived referral rates.
+         * one; `statusCounts` adds reward (and, for affiliate programs,
+         * affiliate/commission/payout) status breakdowns; `rates` adds derived referral rates.
          */
         fun include(include: String?) = apply { this.include = include }
 
@@ -317,9 +317,10 @@ private constructor(
         /**
          * Returns this class instance's raw value.
          *
-         * This is usually only useful if this instance was deserialized from data that doesn't match
-         * any known member, and you want to know that value. For example, if the SDK is on an older
-         * version than the API, then the API may respond with new members that the SDK is unaware of.
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
          */
         @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
 
@@ -406,7 +407,9 @@ private constructor(
          *   expected primitive type.
          */
         fun asString(): String =
-            _value().asString().orElseThrow { GrowsurfInvalidDataException("Value is not a String") }
+            _value().asString().orElseThrow {
+                GrowsurfInvalidDataException("Value is not a String")
+            }
 
         private var validated: Boolean = false
 

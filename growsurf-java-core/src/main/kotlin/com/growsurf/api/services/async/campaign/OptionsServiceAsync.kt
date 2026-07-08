@@ -60,8 +60,8 @@ interface OptionsServiceAsync {
         retrieve(id, OptionRetrieveParams.none(), requestOptions)
 
     /**
-     * Updates a program's Options configuration. Only the fields you send are changed; anything
-     * you leave out is untouched.
+     * Updates a program's Options configuration. Only the fields you send are changed; anything you
+     * leave out is untouched.
      */
     fun update(id: String, params: OptionUpdateParams): CompletableFuture<CampaignOptions> =
         update(id, params, RequestOptions.none())

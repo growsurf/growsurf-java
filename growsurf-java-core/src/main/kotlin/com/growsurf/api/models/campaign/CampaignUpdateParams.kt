@@ -56,7 +56,8 @@ private constructor(
     fun companyLogoImageUrl(): Optional<String> = body.companyLogoImageUrl()
 
     /**
-     * The requested program status. `IN_PROGRESS` publishes or resumes the program; `COMPLETE` ends it.
+     * The requested program status. `IN_PROGRESS` publishes or resumes the program; `COMPLETE` ends
+     * it.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -179,7 +180,10 @@ private constructor(
             body.companyLogoImageUrl(companyLogoImageUrl)
         }
 
-        /** The requested program status. `IN_PROGRESS` publishes or resumes the program; `COMPLETE` ends it. */
+        /**
+         * The requested program status. `IN_PROGRESS` publishes or resumes the program; `COMPLETE`
+         * ends it.
+         */
         fun status(status: Status) = apply { body.status(status) }
 
         /**
@@ -380,7 +384,8 @@ private constructor(
             companyLogoImageUrl.getOptional("companyLogoImageUrl")
 
         /**
-         * The requested program status. `IN_PROGRESS` publishes or resumes the program; `COMPLETE` ends it.
+         * The requested program status. `IN_PROGRESS` publishes or resumes the program; `COMPLETE`
+         * ends it.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -494,7 +499,10 @@ private constructor(
                 this.companyLogoImageUrl = companyLogoImageUrl
             }
 
-            /** The requested program status. `IN_PROGRESS` publishes or resumes the program; `COMPLETE` ends it. */
+            /**
+             * The requested program status. `IN_PROGRESS` publishes or resumes the program;
+             * `COMPLETE` ends it.
+             */
             fun status(status: Status) = status(JsonField.of(status))
 
             /**
@@ -607,7 +615,10 @@ private constructor(
             "Body{name=$name, companyName=$companyName, companyLogoImageUrl=$companyLogoImageUrl, status=$status, additionalProperties=$additionalProperties}"
     }
 
-    /** The requested program status. `IN_PROGRESS` publishes or resumes the program; `COMPLETE` ends it. */
+    /**
+     * The requested program status. `IN_PROGRESS` publishes or resumes the program; `COMPLETE` ends
+     * it.
+     */
     class Status @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
         /**

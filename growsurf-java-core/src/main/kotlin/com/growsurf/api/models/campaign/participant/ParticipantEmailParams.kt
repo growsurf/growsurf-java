@@ -45,9 +45,9 @@ private constructor(
     fun body(): Optional<String> = body.body()
 
     /**
-     * The program email template to trigger (template mode). Valid template types differ by
-     * program type: referral programs and affiliate programs each expose their own set. Send the
-     * camelCase key. The template's `isEnabled` setting only controls automatic sends. Referral programs:
+     * The program email template to trigger (template mode). Valid template types differ by program
+     * type: referral programs and affiliate programs each expose their own set. Send the camelCase
+     * key. The template's `isEnabled` setting only controls automatic sends. Referral programs:
      * welcomeNonReferred, referralLinkViewedFirstTime, referralLinkUsed, referredSignup,
      * welcomeReferred, goalAchieved, campaignEndedWinners, campaignEndedNonWinners,
      * progressUpdateMonthly. Affiliate programs: welcomeNonReferred, referralLinkViewedFirstTime,
@@ -68,8 +68,8 @@ private constructor(
     fun preheader(): Optional<String> = body.preheader()
 
     /**
-     * Subject line for a free-form email. Supports dynamic text (`{{...}}` tokens),
-     * the same as the body.
+     * Subject line for a free-form email. Supports dynamic text (`{{...}}` tokens), the same as the
+     * body.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -181,10 +181,10 @@ private constructor(
         /**
          * The program email template to trigger (template mode). Valid template types differ by
          * program type: referral programs and affiliate programs each expose their own set. Send
-         * the camelCase key. The template's `isEnabled` setting only controls automatic sends. Referral programs:
-         * welcomeNonReferred, referralLinkViewedFirstTime, referralLinkUsed, referredSignup,
-         * welcomeReferred, goalAchieved, campaignEndedWinners, campaignEndedNonWinners,
-         * progressUpdateMonthly. Affiliate programs: welcomeNonReferred,
+         * the camelCase key. The template's `isEnabled` setting only controls automatic sends.
+         * Referral programs: welcomeNonReferred, referralLinkViewedFirstTime, referralLinkUsed,
+         * referredSignup, welcomeReferred, goalAchieved, campaignEndedWinners,
+         * campaignEndedNonWinners, progressUpdateMonthly. Affiliate programs: welcomeNonReferred,
          * referralLinkViewedFirstTime, referredSignup, commissionGenerated, commissionAdjusted,
          * payoutPending, payoutSentSuccess, progressUpdateMonthly.
          */
@@ -212,8 +212,8 @@ private constructor(
         fun preheader(preheader: JsonField<String>) = apply { body.preheader(preheader) }
 
         /**
-         * Subject line for a free-form email. Supports dynamic text (`{{...}}` tokens),
-         * the same as the body.
+         * Subject line for a free-form email. Supports dynamic text (`{{...}}` tokens), the same as
+         * the body.
          */
         fun subject(subject: String) = apply { body.subject(subject) }
 
@@ -407,40 +407,40 @@ private constructor(
          * `{{...}}` tokens like `{{firstName}}` or `{{shareUrl}}`. See
          * [Guide to using dynamic text in GrowSurf emails](https://support.growsurf.com/article/213-guide-to-using-dynamic-text-in-growsurf-emails).
          *
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun body(): Optional<String> = body.getOptional("body")
 
         /**
          * The program email template to trigger (template mode). Valid template types differ by
          * program type: referral programs and affiliate programs each expose their own set. Send
-         * the camelCase key. The template's `isEnabled` setting only controls automatic sends. Referral programs:
-         * welcomeNonReferred, referralLinkViewedFirstTime, referralLinkUsed, referredSignup,
-         * welcomeReferred, goalAchieved, campaignEndedWinners, campaignEndedNonWinners,
-         * progressUpdateMonthly. Affiliate programs: welcomeNonReferred,
+         * the camelCase key. The template's `isEnabled` setting only controls automatic sends.
+         * Referral programs: welcomeNonReferred, referralLinkViewedFirstTime, referralLinkUsed,
+         * referredSignup, welcomeReferred, goalAchieved, campaignEndedWinners,
+         * campaignEndedNonWinners, progressUpdateMonthly. Affiliate programs: welcomeNonReferred,
          * referralLinkViewedFirstTime, referredSignup, commissionGenerated, commissionAdjusted,
          * payoutPending, payoutSentSuccess, progressUpdateMonthly.
          *
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun emailType(): Optional<String> = emailType.getOptional("emailType")
 
         /**
          * Optional preheader text for a free-form email.
          *
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun preheader(): Optional<String> = preheader.getOptional("preheader")
 
         /**
-         * Subject line for a free-form email. Supports dynamic text (`{{...}}` tokens),
-         * the same as the body.
+         * Subject line for a free-form email. Supports dynamic text (`{{...}}` tokens), the same as
+         * the body.
          *
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun subject(): Optional<String> = subject.getOptional("subject")
 
@@ -509,8 +509,8 @@ private constructor(
             }
 
             /**
-             * HTML body for a free-form email. You can personalize it with dynamic text,
-             * inserting `{{...}}` tokens like `{{firstName}}` or `{{shareUrl}}`. See
+             * HTML body for a free-form email. You can personalize it with dynamic text, inserting
+             * `{{...}}` tokens like `{{firstName}}` or `{{shareUrl}}`. See
              * [Guide to using dynamic text in GrowSurf emails](https://support.growsurf.com/article/213-guide-to-using-dynamic-text-in-growsurf-emails).
              */
             fun body(body: String) = body(JsonField.of(body))
@@ -525,14 +525,15 @@ private constructor(
             fun body(body: JsonField<String>) = apply { this.body = body }
 
             /**
-             * The program email template to trigger (template mode). Valid template types differ
-             * by program type: referral programs and affiliate programs each expose their own set.
-             * Send the camelCase key. The template's `isEnabled` setting only controls automatic sends. Referral
-             * programs: welcomeNonReferred, referralLinkViewedFirstTime, referralLinkUsed,
-             * referredSignup, welcomeReferred, goalAchieved, campaignEndedWinners,
-             * campaignEndedNonWinners, progressUpdateMonthly. Affiliate programs:
-             * welcomeNonReferred, referralLinkViewedFirstTime, referredSignup, commissionGenerated,
-             * commissionAdjusted, payoutPending, payoutSentSuccess, progressUpdateMonthly.
+             * The program email template to trigger (template mode). Valid template types differ by
+             * program type: referral programs and affiliate programs each expose their own set.
+             * Send the camelCase key. The template's `isEnabled` setting only controls automatic
+             * sends. Referral programs: welcomeNonReferred, referralLinkViewedFirstTime,
+             * referralLinkUsed, referredSignup, welcomeReferred, goalAchieved,
+             * campaignEndedWinners, campaignEndedNonWinners, progressUpdateMonthly. Affiliate
+             * programs: welcomeNonReferred, referralLinkViewedFirstTime, referredSignup,
+             * commissionGenerated, commissionAdjusted, payoutPending, payoutSentSuccess,
+             * progressUpdateMonthly.
              */
             fun emailType(emailType: String) = emailType(JsonField.of(emailType))
 
@@ -540,8 +541,8 @@ private constructor(
              * Sets [Builder.emailType] to an arbitrary JSON value.
              *
              * You should usually call [Builder.emailType] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
             fun emailType(emailType: JsonField<String>) = apply { this.emailType = emailType }
 
@@ -552,14 +553,14 @@ private constructor(
              * Sets [Builder.preheader] to an arbitrary JSON value.
              *
              * You should usually call [Builder.preheader] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
             fun preheader(preheader: JsonField<String>) = apply { this.preheader = preheader }
 
             /**
-             * Subject line for a free-form email. Supports dynamic text (`{{...}}` tokens),
-             * the same as the body.
+             * Subject line for a free-form email. Supports dynamic text (`{{...}}` tokens), the
+             * same as the body.
              */
             fun subject(subject: String) = subject(JsonField.of(subject))
 
@@ -567,8 +568,8 @@ private constructor(
              * Sets [Builder.subject] to an arbitrary JSON value.
              *
              * You should usually call [Builder.subject] with a well-typed [String] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
             fun subject(subject: JsonField<String>) = apply { this.subject = subject }
 

@@ -339,14 +339,14 @@ private constructor(
         ) : this(msg, statusCode, mutableMapOf())
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun msg(): Optional<String> = msg.getOptional("msg")
 
         /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-         *   server responded with an unexpected value).
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
          */
         fun statusCode(): Optional<Long> = statusCode.getOptional("statusCode")
 
@@ -413,8 +413,8 @@ private constructor(
              * Sets [Builder.statusCode] to an arbitrary JSON value.
              *
              * You should usually call [Builder.statusCode] with a well-typed [Long] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet supported
-             * value.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
              */
             fun statusCode(statusCode: JsonField<Long>) = apply { this.statusCode = statusCode }
 
@@ -442,8 +442,7 @@ private constructor(
              *
              * Further updates to this [Builder] will not mutate the returned instance.
              */
-            fun build(): Response =
-                Response(msg, statusCode, additionalProperties.toMutableMap())
+            fun build(): Response = Response(msg, statusCode, additionalProperties.toMutableMap())
         }
 
         private var validated: Boolean = false
@@ -468,8 +467,7 @@ private constructor(
 
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (msg.asKnown().isPresent) 1 else 0) +
-                (if (statusCode.asKnown().isPresent) 1 else 0)
+            (if (msg.asKnown().isPresent) 1 else 0) + (if (statusCode.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
