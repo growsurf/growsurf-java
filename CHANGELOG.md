@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/growsurf/growsurf-java/compare/v1.0.0...v1.1.0) (2026-07-08)
+
+
+### Features
+
+* add account webhook and participant APIs ([40c13fa](https://github.com/growsurf/growsurf-java/commit/40c13fade973ad4860717b2657d6fee37599cc40))
+
+
+### Bug Fixes
+
+* format Java SDK Kotlin sources ([346c959](https://github.com/growsurf/growsurf-java/commit/346c95918dbd4081911106b66c8596d2d161dd86))
+
 ## [1.0.0](https://github.com/growsurf/growsurf-java/compare/v0.9.0...v1.0.0) (2026-07-03)
 
 
