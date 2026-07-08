@@ -14,7 +14,7 @@ internal class CampaignUpdateParamsTest {
             .name("name")
             .companyName("companyName")
             .companyLogoImageUrl("companyLogoImageUrl")
-            .status(CampaignUpdateParams.Status.DRAFT)
+            .status(CampaignUpdateParams.Status.IN_PROGRESS)
             .build()
     }
 

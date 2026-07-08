@@ -26,8 +26,7 @@ import kotlin.jvm.optionals.getOrNull
 /**
  * Creates a new program pre-populated with type-appropriate defaults, plus any optional inline
  * rewards. The new program is created in `DRAFT` status and owned by the API key's account.
- * Requires a verified account email and a paid plan (referral) or a payment source on file
- * (affiliate); subject to your plan's program limit.
+ * Requires a verified account email.
  */
 class CampaignCreateParams
 private constructor(
@@ -943,7 +942,6 @@ private constructor(
         private val description: JsonField<String>,
         private val referralDescription: JsonField<String>,
         private val imageUrl: JsonField<String>,
-        private val isActive: JsonField<Boolean>,
         private val isVisible: JsonField<Boolean>,
         private val isUnlimited: JsonField<Boolean>,
         private val referredRewardUpfront: JsonField<Boolean>,
@@ -976,9 +974,6 @@ private constructor(
             @JsonProperty("imageUrl")
             @ExcludeMissing
             imageUrl: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("isActive")
-            @ExcludeMissing
-            isActive: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("isVisible")
             @ExcludeMissing
             isVisible: JsonField<Boolean> = JsonMissing.of(),
@@ -1029,7 +1024,6 @@ private constructor(
             description,
             referralDescription,
             imageUrl,
-            isActive,
             isVisible,
             isUnlimited,
             referredRewardUpfront,
@@ -1091,15 +1085,8 @@ private constructor(
         fun imageUrl(): Optional<String> = imageUrl.getOptional("imageUrl")
 
         /**
-         * Whether the reward is active (awardable).
-         *
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun isActive(): Optional<Boolean> = isActive.getOptional("isActive")
-
-        /**
-         * Whether the reward is visible.
+         * Whether the reward is enabled. When `false`, the reward is disabled: it is hidden from
+         * participants (including those who already earned it) and no longer awarded.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -1107,7 +1094,8 @@ private constructor(
         fun isVisible(): Optional<Boolean> = isVisible.getOptional("isVisible")
 
         /**
-         * Whether the reward can be earned an unlimited number of times.
+         * Whether the reward can be earned an unlimited number of times. Defaults to `true` except
+         * `MILESTONE` rewards, which can only be earned once.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -1141,7 +1129,9 @@ private constructor(
             conversionsRequired.getOptional("conversionsRequired")
 
         /**
-         * The maximum number of winners (LEADERBOARD rewards).
+         * The number of winners. Only applies to `LEADERBOARD` rewards: when `limitDuration` is
+         * `PER_MONTH` this many top referrers win each month, otherwise this many win in total.
+         * Defaults to `3` when omitted.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -1165,6 +1155,9 @@ private constructor(
         fun limitDuration(): Optional<LimitDuration> = limitDuration.getOptional("limitDuration")
 
         /**
+         * Text shown before a participant's referral count in milestone-progress copy (e.g. "You
+         * are only"). Applies to `MILESTONE` rewards.
+         *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -1172,6 +1165,9 @@ private constructor(
             nextMilestonePrefix.getOptional("nextMilestonePrefix")
 
         /**
+         * Text shown after a participant's referral count in milestone-progress copy (e.g.
+         * "referrals away from your next reward!"). Applies to `MILESTONE` rewards.
+         *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -1179,12 +1175,20 @@ private constructor(
             nextMilestoneSuffix.getOptional("nextMilestoneSuffix")
 
         /**
+         * Legacy static coupon code shown to the referrer in the reward-won email and webhook.
+         * Display text only (GrowSurf does not create or validate it); superseded by a connected
+         * billing integration's issued coupon when one exists.
+         *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun couponCode(): Optional<String> = couponCode.getOptional("couponCode")
 
         /**
+         * Legacy static coupon code shown to the referred friend in the reward-won email and
+         * webhook (double-sided rewards). Same caveats as `couponCode`: display text only,
+         * superseded by a connected billing integration's issued coupon when one exists.
+         *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -1266,13 +1270,6 @@ private constructor(
          * Unlike [imageUrl], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("imageUrl") @ExcludeMissing fun _imageUrl(): JsonField<String> = imageUrl
-
-        /**
-         * Returns the raw JSON value of [isActive].
-         *
-         * Unlike [isActive], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("isActive") @ExcludeMissing fun _isActive(): JsonField<Boolean> = isActive
 
         /**
          * Returns the raw JSON value of [isVisible].
@@ -1450,7 +1447,6 @@ private constructor(
             private var description: JsonField<String> = JsonMissing.of()
             private var referralDescription: JsonField<String> = JsonMissing.of()
             private var imageUrl: JsonField<String> = JsonMissing.of()
-            private var isActive: JsonField<Boolean> = JsonMissing.of()
             private var isVisible: JsonField<Boolean> = JsonMissing.of()
             private var isUnlimited: JsonField<Boolean> = JsonMissing.of()
             private var referredRewardUpfront: JsonField<Boolean> = JsonMissing.of()
@@ -1476,7 +1472,6 @@ private constructor(
                 description = reward.description
                 referralDescription = reward.referralDescription
                 imageUrl = reward.imageUrl
-                isActive = reward.isActive
                 isVisible = reward.isVisible
                 isUnlimited = reward.isUnlimited
                 referredRewardUpfront = reward.referredRewardUpfront
@@ -1571,19 +1566,10 @@ private constructor(
              */
             fun imageUrl(imageUrl: JsonField<String>) = apply { this.imageUrl = imageUrl }
 
-            /** Whether the reward is active (awardable). */
-            fun isActive(isActive: Boolean) = isActive(JsonField.of(isActive))
-
             /**
-             * Sets [Builder.isActive] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.isActive] with a well-typed [Boolean] value instead.
-             * This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
+             * Whether the reward is enabled. When `false`, the reward is disabled: it is hidden
+             * from participants (including those who already earned it) and no longer awarded.
              */
-            fun isActive(isActive: JsonField<Boolean>) = apply { this.isActive = isActive }
-
-            /** Whether the reward is visible. */
             fun isVisible(isVisible: Boolean) = isVisible(JsonField.of(isVisible))
 
             /**
@@ -1595,7 +1581,10 @@ private constructor(
              */
             fun isVisible(isVisible: JsonField<Boolean>) = apply { this.isVisible = isVisible }
 
-            /** Whether the reward can be earned an unlimited number of times. */
+            /**
+             * Whether the reward can be earned an unlimited number of times. Defaults to `true`
+             * except `MILESTONE` rewards, which can only be earned once.
+             */
             fun isUnlimited(isUnlimited: Boolean) = isUnlimited(JsonField.of(isUnlimited))
 
             /**
@@ -1655,7 +1644,11 @@ private constructor(
                 this.conversionsRequired = conversionsRequired
             }
 
-            /** The maximum number of winners (LEADERBOARD rewards). */
+            /**
+             * The number of winners. Only applies to `LEADERBOARD` rewards: when `limitDuration`
+             * is `PER_MONTH` this many top referrers win each month, otherwise this many win in
+             * total. Defaults to `3` when omitted.
+             */
             fun numberOfWinners(numberOfWinners: Long) =
                 numberOfWinners(JsonField.of(numberOfWinners))
 
@@ -1697,6 +1690,10 @@ private constructor(
                 this.limitDuration = limitDuration
             }
 
+            /**
+             * Text shown before a participant's referral count in milestone-progress copy (e.g.
+             * "You are only"). Applies to `MILESTONE` rewards.
+             */
             fun nextMilestonePrefix(nextMilestonePrefix: String?) =
                 nextMilestonePrefix(JsonField.ofNullable(nextMilestonePrefix))
 
@@ -1718,6 +1715,10 @@ private constructor(
                 this.nextMilestonePrefix = nextMilestonePrefix
             }
 
+            /**
+             * Text shown after a participant's referral count in milestone-progress copy (e.g.
+             * "referrals away from your next reward!"). Applies to `MILESTONE` rewards.
+             */
             fun nextMilestoneSuffix(nextMilestoneSuffix: String?) =
                 nextMilestoneSuffix(JsonField.ofNullable(nextMilestoneSuffix))
 
@@ -1739,6 +1740,11 @@ private constructor(
                 this.nextMilestoneSuffix = nextMilestoneSuffix
             }
 
+            /**
+             * Legacy static coupon code shown to the referrer in the reward-won email and webhook.
+             * Display text only (GrowSurf does not create or validate it); superseded by a
+             * connected billing integration's issued coupon when one exists.
+             */
             fun couponCode(couponCode: String?) = couponCode(JsonField.ofNullable(couponCode))
 
             /** Alias for calling [Builder.couponCode] with `couponCode.orElse(null)`. */
@@ -1753,6 +1759,11 @@ private constructor(
              */
             fun couponCode(couponCode: JsonField<String>) = apply { this.couponCode = couponCode }
 
+            /**
+             * Legacy static coupon code shown to the referred friend in the reward-won email and
+             * webhook (double-sided rewards). Same caveats as `couponCode`: display text only,
+             * superseded by a connected billing integration's issued coupon when one exists.
+             */
             fun referralCouponCode(referralCouponCode: String?) =
                 referralCouponCode(JsonField.ofNullable(referralCouponCode))
 
@@ -1872,7 +1883,6 @@ private constructor(
                     description,
                     referralDescription,
                     imageUrl,
-                    isActive,
                     isVisible,
                     isUnlimited,
                     referredRewardUpfront,
@@ -1914,7 +1924,6 @@ private constructor(
             description()
             referralDescription()
             imageUrl()
-            isActive()
             isVisible()
             isUnlimited()
             referredRewardUpfront()
@@ -1955,7 +1964,6 @@ private constructor(
                 (if (description.asKnown().isPresent) 1 else 0) +
                 (if (referralDescription.asKnown().isPresent) 1 else 0) +
                 (if (imageUrl.asKnown().isPresent) 1 else 0) +
-                (if (isActive.asKnown().isPresent) 1 else 0) +
                 (if (isVisible.asKnown().isPresent) 1 else 0) +
                 (if (isUnlimited.asKnown().isPresent) 1 else 0) +
                 (if (referredRewardUpfront.asKnown().isPresent) 1 else 0) +
@@ -1984,7 +1992,6 @@ private constructor(
                 description == other.description &&
                 referralDescription == other.referralDescription &&
                 imageUrl == other.imageUrl &&
-                isActive == other.isActive &&
                 isVisible == other.isVisible &&
                 isUnlimited == other.isUnlimited &&
                 referredRewardUpfront == other.referredRewardUpfront &&
@@ -2011,7 +2018,6 @@ private constructor(
                 description,
                 referralDescription,
                 imageUrl,
-                isActive,
                 isVisible,
                 isUnlimited,
                 referredRewardUpfront,
@@ -2035,7 +2041,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Reward{type=$type, title=$title, description=$description, referralDescription=$referralDescription, imageUrl=$imageUrl, isActive=$isActive, isVisible=$isVisible, isUnlimited=$isUnlimited, referredRewardUpfront=$referredRewardUpfront, limit=$limit, conversionsRequired=$conversionsRequired, numberOfWinners=$numberOfWinners, order=$order, limitDuration=$limitDuration, nextMilestonePrefix=$nextMilestonePrefix, nextMilestoneSuffix=$nextMilestoneSuffix, couponCode=$couponCode, referralCouponCode=$referralCouponCode, metadata=$metadata, commissionStructure=$commissionStructure, value=$value, referredValue=$referredValue, additionalProperties=$additionalProperties}"
+            "Reward{type=$type, title=$title, description=$description, referralDescription=$referralDescription, imageUrl=$imageUrl, isVisible=$isVisible, isUnlimited=$isUnlimited, referredRewardUpfront=$referredRewardUpfront, limit=$limit, conversionsRequired=$conversionsRequired, numberOfWinners=$numberOfWinners, order=$order, limitDuration=$limitDuration, nextMilestonePrefix=$nextMilestonePrefix, nextMilestoneSuffix=$nextMilestoneSuffix, couponCode=$couponCode, referralCouponCode=$referralCouponCode, metadata=$metadata, commissionStructure=$commissionStructure, value=$value, referredValue=$referredValue, additionalProperties=$additionalProperties}"
 
         /** The reward type. Immutable after creation. */
         class Type @JsonCreator private constructor(private val value: JsonField<String>) : Enum {

@@ -10,6 +10,7 @@ import com.growsurf.api.models.campaign.Campaign
 import com.growsurf.api.models.campaign.CommissionStructure
 import com.growsurf.api.models.campaign.RewardTaxValuation
 import com.growsurf.api.models.campaign.participant.FraudRiskLevel
+import com.growsurf.api.models.campaign.participant.ParticipantBulkDeleteResponse
 import com.growsurf.api.models.campaign.participant.ParticipantRecordTransactionResponse
 import com.growsurf.api.models.campaign.participant.ParticipantRefundTransactionResponse
 import com.growsurf.api.models.campaign.rewards.CampaignRewardListResponse
@@ -75,6 +76,7 @@ internal class ProGuardCompatibilityTest {
                 .commissionStructure(
                     CommissionStructure.builder()
                         .amount(0L)
+                        .amountIso("amountISO")
                         .approvalRequired(true)
                         .duration("duration")
                         .durationInMonths(0L)
@@ -146,6 +148,7 @@ internal class ProGuardCompatibilityTest {
                         .commissionStructure(
                             CommissionStructure.builder()
                                 .amount(0L)
+                                .amountIso("amountISO")
                                 .approvalRequired(true)
                                 .duration("duration")
                                 .durationInMonths(0L)
@@ -242,6 +245,7 @@ internal class ProGuardCompatibilityTest {
                         .commissionStructure(
                             CommissionStructure.builder()
                                 .amount(0L)
+                                .amountIso("amountISO")
                                 .approvalRequired(true)
                                 .duration("duration")
                                 .durationInMonths(0L)
@@ -349,6 +353,42 @@ internal class ProGuardCompatibilityTest {
 
         assertThat(roundtrippedParticipantRefundTransactionResponse)
             .isEqualTo(participantRefundTransactionResponse)
+    }
+
+    @Test
+    fun participantBulkDeleteResponseRoundtrip() {
+        val jsonMapper = jsonMapper()
+        val participantBulkDeleteResponse =
+            ParticipantBulkDeleteResponse.builder()
+                .summary(
+                    ParticipantBulkDeleteResponse.Summary.builder()
+                        .total(3L)
+                        .deletedCount(2L)
+                        .notFoundCount(1L)
+                        .duplicateCount(0L)
+                        .errorCount(0L)
+                        .build()
+                )
+                .addResult(
+                    ParticipantBulkDeleteResponse.Result.builder()
+                        .index(0L)
+                        .identifier("gavin@hooli.com")
+                        .status(ParticipantBulkDeleteResponse.Result.Status.DELETED)
+                        .participantId("f8g9nl")
+                        .email("gavin@hooli.com")
+                        .message("message")
+                        .build()
+                )
+                .build()
+
+        val roundtrippedParticipantBulkDeleteResponse =
+            jsonMapper.readValue(
+                jsonMapper.writeValueAsString(participantBulkDeleteResponse),
+                jacksonTypeRef<ParticipantBulkDeleteResponse>(),
+            )
+
+        assertThat(roundtrippedParticipantBulkDeleteResponse)
+            .isEqualTo(participantBulkDeleteResponse)
     }
 
     @Test

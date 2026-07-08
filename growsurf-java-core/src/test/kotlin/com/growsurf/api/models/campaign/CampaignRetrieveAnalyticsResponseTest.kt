@@ -3,6 +3,7 @@
 package com.growsurf.api.models.campaign
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.jsonMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -46,7 +47,111 @@ internal class CampaignRetrieveAnalyticsResponseTest {
                         .build()
                 )
                 .endDate(0L)
+                .previousPeriod(
+                    CampaignRetrieveAnalyticsResponse.PreviousPeriod.builder()
+                        .analytics(
+                            CampaignRetrieveAnalyticsResponse.Analytics.builder()
+                                .participants(0L)
+                                .referrals(0L)
+                                .build()
+                        )
+                        .endDate(1706745600000L)
+                        .startDate(1704067200000L)
+                        .build()
+                )
+                .rates(
+                    CampaignRetrieveAnalyticsResponse.Rates.builder()
+                        .participationRate(0.25)
+                        .referralConversionRate(0.15)
+                        .sharesPerParticipant(0.5)
+                        .build()
+                )
                 .startDate(0L)
+                .statusCounts(
+                    CampaignRetrieveAnalyticsResponse.StatusCounts.builder()
+                        .affiliateStatus(
+                            CampaignRetrieveAnalyticsResponse.StatusCounts.AffiliateStatus.builder()
+                                .putAdditionalProperty("APPROVED", JsonValue.from(42))
+                                .putAdditionalProperty("PENDING_APPROVAL", JsonValue.from(5))
+                                .build()
+                        )
+                        .commissionStatus(
+                            CampaignRetrieveAnalyticsResponse.StatusCounts.CommissionStatus.builder()
+                                .approved(
+                                    CampaignRetrieveAnalyticsResponse.StatusCounts.CommissionStatus
+                                        .CommissionStatusMetric.builder()
+                                        .count(3L)
+                                        .totalAmount(7500L)
+                                        .totalRevenue(30000L)
+                                        .build()
+                                )
+                                .paid(
+                                    CampaignRetrieveAnalyticsResponse.StatusCounts.CommissionStatus
+                                        .CommissionStatusMetric.builder()
+                                        .count(0L)
+                                        .totalAmount(0L)
+                                        .totalRevenue(0L)
+                                        .build()
+                                )
+                                .pending(
+                                    CampaignRetrieveAnalyticsResponse.StatusCounts.CommissionStatus
+                                        .CommissionStatusMetric.builder()
+                                        .count(1L)
+                                        .totalAmount(2500L)
+                                        .totalRevenue(10000L)
+                                        .build()
+                                )
+                                .reversed(
+                                    CampaignRetrieveAnalyticsResponse.StatusCounts.CommissionStatus
+                                        .CommissionStatusMetric.builder()
+                                        .count(0L)
+                                        .totalAmount(0L)
+                                        .totalRevenue(0L)
+                                        .build()
+                                )
+                                .build()
+                        )
+                        .currencyIso("USD")
+                        .payoutStatus(
+                            CampaignRetrieveAnalyticsResponse.StatusCounts.PayoutStatus.builder()
+                                .failed(
+                                    CampaignRetrieveAnalyticsResponse.StatusCounts.PayoutStatus
+                                        .PayoutStatusMetric.builder()
+                                        .count(0L)
+                                        .totalAmount(0L)
+                                        .build()
+                                )
+                                .issued(
+                                    CampaignRetrieveAnalyticsResponse.StatusCounts.PayoutStatus
+                                        .PayoutStatusMetric.builder()
+                                        .count(5L)
+                                        .totalAmount(5000L)
+                                        .build()
+                                )
+                                .queued(
+                                    CampaignRetrieveAnalyticsResponse.StatusCounts.PayoutStatus
+                                        .PayoutStatusMetric.builder()
+                                        .count(0L)
+                                        .totalAmount(0L)
+                                        .build()
+                                )
+                                .upcoming(
+                                    CampaignRetrieveAnalyticsResponse.StatusCounts.PayoutStatus
+                                        .PayoutStatusMetric.builder()
+                                        .count(0L)
+                                        .totalAmount(0L)
+                                        .build()
+                                )
+                                .build()
+                        )
+                        .rewardStatus(
+                            CampaignRetrieveAnalyticsResponse.StatusCounts.RewardStatus.builder()
+                                .approved(340L)
+                                .pending(12L)
+                                .build()
+                        )
+                        .build()
+                )
                 .build()
 
         assertThat(campaignRetrieveAnalyticsResponse.analytics())
@@ -83,7 +188,10 @@ internal class CampaignRetrieveAnalyticsResponseTest {
                     .build()
             )
         assertThat(campaignRetrieveAnalyticsResponse.endDate()).isEqualTo(0L)
+        assertThat(campaignRetrieveAnalyticsResponse.previousPeriod()).isPresent()
+        assertThat(campaignRetrieveAnalyticsResponse.rates()).isPresent()
         assertThat(campaignRetrieveAnalyticsResponse.startDate()).isEqualTo(0L)
+        assertThat(campaignRetrieveAnalyticsResponse.statusCounts()).isPresent()
     }
 
     @Test
@@ -124,7 +232,65 @@ internal class CampaignRetrieveAnalyticsResponseTest {
                         .build()
                 )
                 .endDate(0L)
+                .previousPeriod(
+                    CampaignRetrieveAnalyticsResponse.PreviousPeriod.builder()
+                        .analytics(
+                            CampaignRetrieveAnalyticsResponse.Analytics.builder()
+                                .participants(0L)
+                                .referrals(0L)
+                                .build()
+                        )
+                        .endDate(1706745600000L)
+                        .startDate(1704067200000L)
+                        .build()
+                )
+                .rates(
+                    CampaignRetrieveAnalyticsResponse.Rates.builder()
+                        .participationRate(0.25)
+                        .referralConversionRate(0.15)
+                        .sharesPerParticipant(0.5)
+                        .build()
+                )
                 .startDate(0L)
+                .statusCounts(
+                    CampaignRetrieveAnalyticsResponse.StatusCounts.builder()
+                        .affiliateStatus(
+                            CampaignRetrieveAnalyticsResponse.StatusCounts.AffiliateStatus.builder()
+                                .putAdditionalProperty("APPROVED", JsonValue.from(42))
+                                .build()
+                        )
+                        .commissionStatus(
+                            CampaignRetrieveAnalyticsResponse.StatusCounts.CommissionStatus.builder()
+                                .approved(
+                                    CampaignRetrieveAnalyticsResponse.StatusCounts.CommissionStatus
+                                        .CommissionStatusMetric.builder()
+                                        .count(3L)
+                                        .totalAmount(7500L)
+                                        .totalRevenue(30000L)
+                                        .build()
+                                )
+                                .build()
+                        )
+                        .currencyIso("USD")
+                        .payoutStatus(
+                            CampaignRetrieveAnalyticsResponse.StatusCounts.PayoutStatus.builder()
+                                .issued(
+                                    CampaignRetrieveAnalyticsResponse.StatusCounts.PayoutStatus
+                                        .PayoutStatusMetric.builder()
+                                        .count(5L)
+                                        .totalAmount(5000L)
+                                        .build()
+                                )
+                                .build()
+                        )
+                        .rewardStatus(
+                            CampaignRetrieveAnalyticsResponse.StatusCounts.RewardStatus.builder()
+                                .approved(340L)
+                                .pending(12L)
+                                .build()
+                        )
+                        .build()
+                )
                 .build()
 
         val roundtrippedCampaignRetrieveAnalyticsResponse =

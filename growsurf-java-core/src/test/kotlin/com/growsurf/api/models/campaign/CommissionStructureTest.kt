@@ -14,6 +14,7 @@ internal class CommissionStructureTest {
         val commissionStructure =
             CommissionStructure.builder()
                 .amount(0L)
+                .amountIso("amountISO")
                 .approvalRequired(true)
                 .duration("duration")
                 .durationInMonths(0L)
@@ -35,6 +36,7 @@ internal class CommissionStructureTest {
                 .build()
 
         assertThat(commissionStructure.amount()).contains(0L)
+        assertThat(commissionStructure.amountIso()).contains("amountISO")
         assertThat(commissionStructure.approvalRequired()).contains(true)
         assertThat(commissionStructure.duration()).contains("duration")
         assertThat(commissionStructure.durationInMonths()).contains(0L)
@@ -61,6 +63,7 @@ internal class CommissionStructureTest {
         val commissionStructure =
             CommissionStructure.builder()
                 .amount(0L)
+                .amountIso("amountISO")
                 .approvalRequired(true)
                 .duration("duration")
                 .durationInMonths(0L)

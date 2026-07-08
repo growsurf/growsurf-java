@@ -63,8 +63,8 @@ interface InstallationServiceAsync {
         retrieve(id, InstallationRetrieveParams.none(), requestOptions)
 
     /**
-     * Updates a program's Installation configuration. Only the fields you send are changed (a
-     * surgical merge); omitted fields are left untouched.
+     * Updates a program's Installation configuration. Only the fields you send are changed;
+     * anything you leave out is untouched.
      */
     fun update(
         id: String,

@@ -13,9 +13,10 @@ import java.util.Objects
 /**
  * Program Editor **Installation** tab configuration — the same surface as the dashboard. This is a
  * large, loosely-typed object modeled as free-form properties; the available fields depend on the
- * program type. See the [API reference](https://growsurf.com/settings#contact_support) for the full
- * field list (the referral trigger (referral programs only), signup tracking method, share URL and
- * whitelist, custom-form signup settings, and mobile SDK settings).
+ * program type (the referral trigger (referral programs only), signup tracking method, share URL
+ * and whitelist, custom-form signup settings, and mobile SDK settings). To see the full object with
+ * every field and its current value, retrieve the resource first, then send back only the fields
+ * you want to change.
  */
 class CampaignInstallation
 @JsonCreator

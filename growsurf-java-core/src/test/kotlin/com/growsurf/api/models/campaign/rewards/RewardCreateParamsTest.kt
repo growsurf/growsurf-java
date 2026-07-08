@@ -18,7 +18,6 @@ internal class RewardCreateParamsTest {
             .description("description")
             .referralDescription("referralDescription")
             .imageUrl("imageUrl")
-            .isActive(true)
             .isVisible(true)
             .isUnlimited(true)
             .referredRewardUpfront(true)

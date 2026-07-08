@@ -13,9 +13,9 @@ import java.util.Objects
 /**
  * Program Editor **Emails** tab configuration — the same surface as the dashboard. This is a large,
  * loosely-typed object modeled as free-form properties; the available fields depend on the program
- * type. See the [API reference](https://growsurf.com/settings#contact_support) for the full field
- * list (each editable email template (subject, preheader, body, isEnabled) plus the settings block
- * (sender, contact, and design)).
+ * type (each editable email template (subject, preheader, body, isEnabled) plus the settings block
+ * (sender, contact, and design)). To see the full object with every field and its current value,
+ * retrieve the resource first, then send back only the fields you want to change.
  */
 class CampaignEmails
 @JsonCreator

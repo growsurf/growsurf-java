@@ -18,14 +18,27 @@ import java.util.concurrent.CompletableFuture
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.parallel.ResourceLock
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.ValueSource
+import org.slf4j.LoggerFactory
 
 @ResourceLock("stderr")
 internal class LoggingHttpClientTest {
+
+    companion object {
+        @JvmStatic
+        @BeforeAll
+        fun forceSlf4jInitialization() {
+            // Force SLF4J's one-time initialization (and its potential "defaulting to NOP logger"
+            // warning) to complete before stderr is captured, so a concurrently running test class
+            // triggering it mid-capture can't pollute the captured output.
+            LoggerFactory.getILoggerFactory()
+        }
+    }
 
     private lateinit var originalErr: PrintStream
     private lateinit var errContent: ByteArrayOutputStream

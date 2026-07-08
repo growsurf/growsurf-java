@@ -32,7 +32,7 @@ private constructor(
     ) : this(rewards, mutableMapOf())
 
     /**
-     * The program's active, visible, and enabled rewards.
+     * The program's configured rewards.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -83,7 +83,7 @@ private constructor(
             additionalProperties = campaignRewardListResponse.additionalProperties.toMutableMap()
         }
 
-        /** The program's active, visible, and enabled rewards. */
+        /** The program's configured rewards. */
         fun rewards(rewards: List<Reward>) = rewards(JsonField.of(rewards))
 
         /**

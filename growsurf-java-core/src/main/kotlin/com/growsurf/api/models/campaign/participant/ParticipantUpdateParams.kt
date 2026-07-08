@@ -64,6 +64,22 @@ private constructor(
     fun metadata(): Optional<Metadata> = body.metadata()
 
     /**
+     * Freeform internal notes about the participant (internal only, never exposed to participants).
+     *
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun notes(): Optional<String> = body.notes()
+
+    /**
+     * The participant's PayPal email address, used for affiliate payouts.
+     *
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun paypalEmail(): Optional<String> = body.paypalEmail()
+
+    /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -114,6 +130,20 @@ private constructor(
      * Unlike [metadata], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _metadata(): JsonField<Metadata> = body._metadata()
+
+    /**
+     * Returns the raw JSON value of [notes].
+     *
+     * Unlike [notes], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _notes(): JsonField<String> = body._notes()
+
+    /**
+     * Returns the raw JSON value of [paypalEmail].
+     *
+     * Unlike [paypalEmail], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _paypalEmail(): JsonField<String> = body._paypalEmail()
 
     /**
      * Returns the raw JSON value of [referralStatus].
@@ -253,6 +283,32 @@ private constructor(
          * value.
          */
         fun metadata(metadata: JsonField<Metadata>) = apply { body.metadata(metadata) }
+
+        /**
+         * Freeform internal notes about the participant (internal only, never exposed to
+         * participants).
+         */
+        fun notes(notes: String) = apply { body.notes(notes) }
+
+        /**
+         * Sets [Builder.notes] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.notes] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun notes(notes: JsonField<String>) = apply { body.notes(notes) }
+
+        /** The participant's PayPal email address, used for affiliate payouts. */
+        fun paypalEmail(paypalEmail: String) = apply { body.paypalEmail(paypalEmail) }
+
+        /**
+         * Sets [Builder.paypalEmail] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.paypalEmail] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun paypalEmail(paypalEmail: JsonField<String>) = apply { body.paypalEmail(paypalEmail) }
 
         fun referralStatus(referralStatus: ReferralStatus) = apply {
             body.referralStatus(referralStatus)
@@ -470,6 +526,8 @@ private constructor(
         private val firstName: JsonField<String>,
         private val lastName: JsonField<String>,
         private val metadata: JsonField<Metadata>,
+        private val notes: JsonField<String>,
+        private val paypalEmail: JsonField<String>,
         private val referralStatus: JsonField<ReferralStatus>,
         private val referredBy: JsonField<String>,
         private val unsubscribed: JsonField<Boolean>,
@@ -489,6 +547,10 @@ private constructor(
             @JsonProperty("metadata")
             @ExcludeMissing
             metadata: JsonField<Metadata> = JsonMissing.of(),
+            @JsonProperty("notes") @ExcludeMissing notes: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("paypalEmail")
+            @ExcludeMissing
+            paypalEmail: JsonField<String> = JsonMissing.of(),
             @JsonProperty("referralStatus")
             @ExcludeMissing
             referralStatus: JsonField<ReferralStatus> = JsonMissing.of(),
@@ -506,6 +568,8 @@ private constructor(
             firstName,
             lastName,
             metadata,
+            notes,
+            paypalEmail,
             referralStatus,
             referredBy,
             unsubscribed,
@@ -538,6 +602,23 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun metadata(): Optional<Metadata> = metadata.getOptional("metadata")
+
+        /**
+         * Freeform internal notes about the participant (internal only, never exposed to
+         * participants).
+         *
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun notes(): Optional<String> = notes.getOptional("notes")
+
+        /**
+         * The participant's PayPal email address, used for affiliate payouts.
+         *
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun paypalEmail(): Optional<String> = paypalEmail.getOptional("paypalEmail")
 
         /**
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -591,6 +672,22 @@ private constructor(
          * Unlike [metadata], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("metadata") @ExcludeMissing fun _metadata(): JsonField<Metadata> = metadata
+
+        /**
+         * Returns the raw JSON value of [notes].
+         *
+         * Unlike [notes], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("notes") @ExcludeMissing fun _notes(): JsonField<String> = notes
+
+        /**
+         * Returns the raw JSON value of [paypalEmail].
+         *
+         * Unlike [paypalEmail], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("paypalEmail")
+        @ExcludeMissing
+        fun _paypalEmail(): JsonField<String> = paypalEmail
 
         /**
          * Returns the raw JSON value of [referralStatus].
@@ -655,6 +752,8 @@ private constructor(
             private var firstName: JsonField<String> = JsonMissing.of()
             private var lastName: JsonField<String> = JsonMissing.of()
             private var metadata: JsonField<Metadata> = JsonMissing.of()
+            private var notes: JsonField<String> = JsonMissing.of()
+            private var paypalEmail: JsonField<String> = JsonMissing.of()
             private var referralStatus: JsonField<ReferralStatus> = JsonMissing.of()
             private var referredBy: JsonField<String> = JsonMissing.of()
             private var unsubscribed: JsonField<Boolean> = JsonMissing.of()
@@ -667,6 +766,8 @@ private constructor(
                 firstName = body.firstName
                 lastName = body.lastName
                 metadata = body.metadata
+                notes = body.notes
+                paypalEmail = body.paypalEmail
                 referralStatus = body.referralStatus
                 referredBy = body.referredBy
                 unsubscribed = body.unsubscribed
@@ -718,6 +819,35 @@ private constructor(
              * supported value.
              */
             fun metadata(metadata: JsonField<Metadata>) = apply { this.metadata = metadata }
+
+            /**
+             * Freeform internal notes about the participant (internal only, never exposed to
+             * participants).
+             */
+            fun notes(notes: String) = notes(JsonField.of(notes))
+
+            /**
+             * Sets [Builder.notes] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.notes] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun notes(notes: JsonField<String>) = apply { this.notes = notes }
+
+            /** The participant's PayPal email address, used for affiliate payouts. */
+            fun paypalEmail(paypalEmail: String) = paypalEmail(JsonField.of(paypalEmail))
+
+            /**
+             * Sets [Builder.paypalEmail] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.paypalEmail] with a well-typed [String] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun paypalEmail(paypalEmail: JsonField<String>) = apply {
+                this.paypalEmail = paypalEmail
+            }
 
             fun referralStatus(referralStatus: ReferralStatus) =
                 referralStatus(JsonField.of(referralStatus))
@@ -812,6 +942,8 @@ private constructor(
                     firstName,
                     lastName,
                     metadata,
+                    notes,
+                    paypalEmail,
                     referralStatus,
                     referredBy,
                     unsubscribed,
@@ -840,6 +972,8 @@ private constructor(
             firstName()
             lastName()
             metadata().ifPresent { it.validate() }
+            notes()
+            paypalEmail()
             referralStatus().ifPresent { it.validate() }
             referredBy()
             unsubscribed()
@@ -867,6 +1001,8 @@ private constructor(
                 (if (firstName.asKnown().isPresent) 1 else 0) +
                 (if (lastName.asKnown().isPresent) 1 else 0) +
                 (metadata.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (notes.asKnown().isPresent) 1 else 0) +
+                (if (paypalEmail.asKnown().isPresent) 1 else 0) +
                 (referralStatus.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (referredBy.asKnown().isPresent) 1 else 0) +
                 (if (unsubscribed.asKnown().isPresent) 1 else 0) +
@@ -882,6 +1018,8 @@ private constructor(
                 firstName == other.firstName &&
                 lastName == other.lastName &&
                 metadata == other.metadata &&
+                notes == other.notes &&
+                paypalEmail == other.paypalEmail &&
                 referralStatus == other.referralStatus &&
                 referredBy == other.referredBy &&
                 unsubscribed == other.unsubscribed &&
@@ -895,6 +1033,8 @@ private constructor(
                 firstName,
                 lastName,
                 metadata,
+                notes,
+                paypalEmail,
                 referralStatus,
                 referredBy,
                 unsubscribed,
@@ -906,7 +1046,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{email=$email, firstName=$firstName, lastName=$lastName, metadata=$metadata, referralStatus=$referralStatus, referredBy=$referredBy, unsubscribed=$unsubscribed, vanityKeys=$vanityKeys, additionalProperties=$additionalProperties}"
+            "Body{email=$email, firstName=$firstName, lastName=$lastName, metadata=$metadata, notes=$notes, paypalEmail=$paypalEmail, referralStatus=$referralStatus, referredBy=$referredBy, unsubscribed=$unsubscribed, vanityKeys=$vanityKeys, additionalProperties=$additionalProperties}"
     }
 
     /** Shallow custom metadata object. */

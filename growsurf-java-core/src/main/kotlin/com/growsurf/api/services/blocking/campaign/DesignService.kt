@@ -57,8 +57,8 @@ interface DesignService {
         retrieve(id, DesignRetrieveParams.none(), requestOptions)
 
     /**
-     * Updates a program's Design configuration. Only the fields you send are changed (a surgical
-     * merge); omitted fields are left untouched.
+     * Updates a program's Design configuration. Only the fields you send are changed; anything you
+     * leave out is untouched (arrays such as `signup.fields` replace wholesale).
      */
     fun update(id: String, params: DesignUpdateParams): CampaignDesign =
         update(id, params, RequestOptions.none())

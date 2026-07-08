@@ -13,9 +13,10 @@ import java.util.Objects
 /**
  * Program Editor **Design** tab configuration — the same surface as the dashboard. This is a large,
  * loosely-typed object modeled as free-form properties; the available fields depend on the program
- * type. See the [API reference](https://growsurf.com/settings#contact_support) for the full field
- * list (the GrowSurf window layout, header, share channels, signup form, portal/landing pages,
- * theme styling, and the referral/affiliate summary + status sections).
+ * type (the GrowSurf window layout, header, share channels, signup form, portal/landing pages,
+ * theme styling, and the referral/affiliate summary + status sections). To see the full object with
+ * every field and its current value, retrieve the resource first, then send back only the fields
+ * you want to change.
  */
 class CampaignDesign
 @JsonCreator

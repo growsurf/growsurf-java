@@ -20,7 +20,6 @@ internal class CampaignCreateParamsTest {
                 CampaignCreateParams.Reward.builder()
                     .type(CampaignCreateParams.Reward.Type.SINGLE_SIDED)
                     .title("title")
-                    .isActive(true)
                     .build()
             )
             .build()

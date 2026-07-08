@@ -56,7 +56,7 @@ private constructor(
     fun companyLogoImageUrl(): Optional<String> = body.companyLogoImageUrl()
 
     /**
-     * The program status. Transitions are validated; DELETED is not allowed.
+     * The requested program status. `IN_PROGRESS` publishes or resumes the program; `COMPLETE` ends it.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -179,7 +179,7 @@ private constructor(
             body.companyLogoImageUrl(companyLogoImageUrl)
         }
 
-        /** The program status. Transitions are validated; DELETED is not allowed. */
+        /** The requested program status. `IN_PROGRESS` publishes or resumes the program; `COMPLETE` ends it. */
         fun status(status: Status) = apply { body.status(status) }
 
         /**
@@ -380,7 +380,7 @@ private constructor(
             companyLogoImageUrl.getOptional("companyLogoImageUrl")
 
         /**
-         * The program status. Transitions are validated; DELETED is not allowed.
+         * The requested program status. `IN_PROGRESS` publishes or resumes the program; `COMPLETE` ends it.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -494,7 +494,7 @@ private constructor(
                 this.companyLogoImageUrl = companyLogoImageUrl
             }
 
-            /** The program status. Transitions are validated; DELETED is not allowed. */
+            /** The requested program status. `IN_PROGRESS` publishes or resumes the program; `COMPLETE` ends it. */
             fun status(status: Status) = status(JsonField.of(status))
 
             /**
@@ -607,7 +607,7 @@ private constructor(
             "Body{name=$name, companyName=$companyName, companyLogoImageUrl=$companyLogoImageUrl, status=$status, additionalProperties=$additionalProperties}"
     }
 
-    /** The program status. Transitions are validated; DELETED is not allowed. */
+    /** The requested program status. `IN_PROGRESS` publishes or resumes the program; `COMPLETE` ends it. */
     class Status @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
         /**
@@ -622,26 +622,17 @@ private constructor(
 
         companion object {
 
-            @JvmField val DRAFT = of("DRAFT")
-
-            @JvmField val PENDING = of("PENDING")
-
             @JvmField val IN_PROGRESS = of("IN_PROGRESS")
 
             @JvmField val COMPLETE = of("COMPLETE")
-
-            @JvmField val CANCELLED = of("CANCELLED")
 
             @JvmStatic fun of(value: String) = Status(JsonField.of(value))
         }
 
         /** An enum containing [Status]'s known values. */
         enum class Known {
-            DRAFT,
-            PENDING,
             IN_PROGRESS,
             COMPLETE,
-            CANCELLED,
         }
 
         /**
@@ -654,11 +645,8 @@ private constructor(
          * - It was constructed with an arbitrary value using the [of] method.
          */
         enum class Value {
-            DRAFT,
-            PENDING,
             IN_PROGRESS,
             COMPLETE,
-            CANCELLED,
             /** An enum member indicating that [Status] was instantiated with an unknown value. */
             _UNKNOWN,
         }
@@ -672,11 +660,8 @@ private constructor(
          */
         fun value(): Value =
             when (this) {
-                DRAFT -> Value.DRAFT
-                PENDING -> Value.PENDING
                 IN_PROGRESS -> Value.IN_PROGRESS
                 COMPLETE -> Value.COMPLETE
-                CANCELLED -> Value.CANCELLED
                 else -> Value._UNKNOWN
             }
 
@@ -691,11 +676,8 @@ private constructor(
          */
         fun known(): Known =
             when (this) {
-                DRAFT -> Known.DRAFT
-                PENDING -> Known.PENDING
                 IN_PROGRESS -> Known.IN_PROGRESS
                 COMPLETE -> Known.COMPLETE
-                CANCELLED -> Known.CANCELLED
                 else -> throw GrowsurfInvalidDataException("Unknown Status: $value")
             }
 

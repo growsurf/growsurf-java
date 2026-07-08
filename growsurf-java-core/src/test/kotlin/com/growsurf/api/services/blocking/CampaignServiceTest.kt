@@ -79,6 +79,17 @@ internal class CampaignServiceTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
+    fun getReferralFlowScreenshots() {
+        val client = GrowsurfOkHttpClient.builder().apiKey("My API Key").build()
+        val campaignService = client.campaign()
+
+        val response = campaignService.getReferralFlowScreenshots("id")
+
+        response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
     fun createMobileParticipantToken() {
         val client = GrowsurfOkHttpClient.builder().apiKey("My API Key").build()
         val campaignService = client.campaign()

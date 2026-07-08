@@ -177,7 +177,9 @@ private constructor(
         conversionsRequired.getOptional("conversionsRequired")
 
     /**
-     * A coupon code.
+     * Legacy static coupon code shown to the referrer in the reward-won email and webhook. Display
+     * text only (GrowSurf does not create or validate it); superseded by a connected billing
+     * integration's issued coupon when one exists.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -239,9 +241,8 @@ private constructor(
         nextMilestoneSuffix.getOptional("nextMilestoneSuffix")
 
     /**
-     * The maximum number of participants that can earn this reward when `type` is `LEADERBOARD`. If
-     * `limitDuration` is `PER_MONTH`, the maximum number of participants who can earn the reward in
-     * a given month.
+     * The number of winners. Only applies to `LEADERBOARD` rewards: when `limitDuration` is
+     * `PER_MONTH` this many top referrers win each month, otherwise this many win in total.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -258,7 +259,9 @@ private constructor(
     fun order(): Optional<Long> = order.getOptional("order")
 
     /**
-     * The coupon code delivered to the referred friend (double-sided rewards).
+     * Legacy static coupon code shown to the referred friend in the reward-won email and webhook
+     * (double-sided rewards). Same caveats as `couponCode`: display text only, superseded by a
+     * connected billing integration's issued coupon when one exists.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -651,7 +654,11 @@ private constructor(
             this.conversionsRequired = conversionsRequired
         }
 
-        /** A coupon code. */
+        /**
+         * Legacy static coupon code shown to the referrer in the reward-won email and webhook.
+         * Display text only (GrowSurf does not create or validate it); superseded by a connected
+         * billing integration's issued coupon when one exists.
+         */
         fun couponCode(couponCode: String?) = couponCode(JsonField.ofNullable(couponCode))
 
         /** Alias for calling [Builder.couponCode] with `couponCode.orElse(null)`. */
@@ -788,9 +795,8 @@ private constructor(
         }
 
         /**
-         * The maximum number of participants that can earn this reward when `type` is
-         * `LEADERBOARD`. If `limitDuration` is `PER_MONTH`, the maximum number of participants who
-         * can earn the reward in a given month.
+         * The number of winners. Only applies to `LEADERBOARD` rewards: when `limitDuration` is
+         * `PER_MONTH` this many top referrers win each month, otherwise this many win in total.
          */
         fun numberOfWinners(numberOfWinners: Long?) =
             numberOfWinners(JsonField.ofNullable(numberOfWinners))
@@ -841,7 +847,11 @@ private constructor(
          */
         fun order(order: JsonField<Long>) = apply { this.order = order }
 
-        /** The coupon code delivered to the referred friend (double-sided rewards). */
+        /**
+         * Legacy static coupon code shown to the referred friend in the reward-won email and
+         * webhook (double-sided rewards). Same caveats as `couponCode`: display text only,
+         * superseded by a connected billing integration's issued coupon when one exists.
+         */
         fun referralCouponCode(referralCouponCode: String?) =
             referralCouponCode(JsonField.ofNullable(referralCouponCode))
 

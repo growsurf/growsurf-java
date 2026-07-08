@@ -9,11 +9,18 @@ import com.growsurf.api.models.campaign.ParticipantCommissionList
 import com.growsurf.api.models.campaign.ParticipantPayoutList
 import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.models.campaign.participant.Participant
+import com.growsurf.api.models.campaign.participant.ParticipantActivityLogsResponse
 import com.growsurf.api.models.campaign.participant.ParticipantAddParams
+import com.growsurf.api.models.campaign.participant.ParticipantAnalyticsResponse
+import com.growsurf.api.models.campaign.participant.ParticipantBulkDeleteParams
+import com.growsurf.api.models.campaign.participant.ParticipantBulkDeleteResponse
 import com.growsurf.api.models.campaign.participant.ParticipantCancelDelayedReferralParams
 import com.growsurf.api.models.campaign.participant.ParticipantCancelDelayedReferralResponse
 import com.growsurf.api.models.campaign.participant.ParticipantDeleteParams
 import com.growsurf.api.models.campaign.participant.ParticipantDeleteResponse
+import com.growsurf.api.models.campaign.participant.ParticipantEmailParams
+import com.growsurf.api.models.campaign.participant.ParticipantEmailResponse
+import com.growsurf.api.models.campaign.participant.ParticipantListActivityLogsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListCommissionsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListPayoutsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListReferralsParams
@@ -23,6 +30,7 @@ import com.growsurf.api.models.campaign.participant.ParticipantRecordTransaction
 import com.growsurf.api.models.campaign.participant.ParticipantRecordTransactionResponse
 import com.growsurf.api.models.campaign.participant.ParticipantRefundTransactionParams
 import com.growsurf.api.models.campaign.participant.ParticipantRefundTransactionResponse
+import com.growsurf.api.models.campaign.participant.ParticipantRetrieveAnalyticsParams
 import com.growsurf.api.models.campaign.participant.ParticipantRetrieveParams
 import com.growsurf.api.models.campaign.participant.ParticipantSendInvitesParams
 import com.growsurf.api.models.campaign.participant.ParticipantSendInvitesResponse
@@ -128,6 +136,39 @@ interface ParticipantServiceAsync {
         params: ParticipantDeleteParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<ParticipantDeleteResponse>
+
+    /**
+     * Deletes a list of participants from a program in one request. Each entry in `participants` is
+     * a GrowSurf participant ID or an email address (mixed lists are allowed). Up to `200` entries
+     * per request — chunk larger lists across multiple calls. The response reports a per-row
+     * `status` for every submitted entry, so a `200` can include rows that were `NOT_FOUND` or
+     * failed. Deletion is permanent and removes the participants' referrals, rewards, commissions,
+     * and payout records.
+     */
+    fun bulkDelete(
+        id: String,
+        params: ParticipantBulkDeleteParams,
+    ): CompletableFuture<ParticipantBulkDeleteResponse> =
+        bulkDelete(id, params, RequestOptions.none())
+
+    /** @see bulkDelete */
+    fun bulkDelete(
+        id: String,
+        params: ParticipantBulkDeleteParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<ParticipantBulkDeleteResponse> =
+        bulkDelete(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see bulkDelete */
+    fun bulkDelete(
+        params: ParticipantBulkDeleteParams
+    ): CompletableFuture<ParticipantBulkDeleteResponse> = bulkDelete(params, RequestOptions.none())
+
+    /** @see bulkDelete */
+    fun bulkDelete(
+        params: ParticipantBulkDeleteParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<ParticipantBulkDeleteResponse>
 
     /**
      * Adds a new participant to the program. If the email already exists, the existing participant
@@ -272,6 +313,12 @@ interface ParticipantServiceAsync {
     /**
      * Records a sale made by a referred customer and generates affiliate commissions for their
      * referrer when applicable.
+     *
+     * At least one transaction identifier is required: one of `externalId`, `transactionId`,
+     * `orderId`, `paymentId`, `invoiceId`, `paymentIntentId`, or `chargeId`. `customerId` and
+     * `subscriptionId` do not count, since they identify the customer or subscription rather than
+     * the specific transaction. Without an identifier, resending the same sale creates a duplicate
+     * commission and double-pays the referrer; the server rejects such requests with HTTP 400.
      */
     fun recordTransaction(
         participantIdOrEmail: String,
@@ -336,7 +383,11 @@ interface ParticipantServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<ParticipantRefundTransactionResponse>
 
-    /** Sends email invites on behalf of a participant to a list of email addresses. */
+    /**
+     * Sends email invites on behalf of a participant to a list of email addresses. Sending invites
+     * via the API requires a verified custom email domain on the program; the request fails until
+     * one is verified.
+     */
     fun sendInvites(
         participantIdOrEmail: String,
         params: ParticipantSendInvitesParams,
@@ -431,6 +482,100 @@ interface ParticipantServiceAsync {
         params: ParticipantCancelDelayedReferralParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<ParticipantCancelDelayedReferralResponse>
+
+    /**
+     * Sends an email to a participant. Provide EITHER `emailType` to trigger one of the program's
+     * configured email templates, OR `subject` + `body` for a free-form email. Sending requires the
+     * account to be verified by the GrowSurf team. Requires a verified custom email domain on the
+     * program (set up in Campaign Editor > 3. Emails > Email Settings). Returns `400` until one is
+     * verified. The email is accepted for delivery.
+     */
+    fun email(
+        participantIdOrEmail: String,
+        params: ParticipantEmailParams,
+    ): CompletableFuture<ParticipantEmailResponse> =
+        email(participantIdOrEmail, params, RequestOptions.none())
+
+    /** @see email */
+    fun email(
+        participantIdOrEmail: String,
+        params: ParticipantEmailParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<ParticipantEmailResponse> =
+        email(params.toBuilder().participantIdOrEmail(participantIdOrEmail).build(), requestOptions)
+
+    /** @see email */
+    fun email(params: ParticipantEmailParams): CompletableFuture<ParticipantEmailResponse> =
+        email(params, RequestOptions.none())
+
+    /** @see email */
+    fun email(
+        params: ParticipantEmailParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<ParticipantEmailResponse>
+
+    /** Returns a participant's activity logs, most recent first (offset/limit paginated). */
+    fun listActivityLogs(
+        participantIdOrEmail: String,
+        params: ParticipantListActivityLogsParams,
+    ): CompletableFuture<ParticipantActivityLogsResponse> =
+        listActivityLogs(participantIdOrEmail, params, RequestOptions.none())
+
+    /** @see listActivityLogs */
+    fun listActivityLogs(
+        participantIdOrEmail: String,
+        params: ParticipantListActivityLogsParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<ParticipantActivityLogsResponse> =
+        listActivityLogs(
+            params.toBuilder().participantIdOrEmail(participantIdOrEmail).build(),
+            requestOptions,
+        )
+
+    /** @see listActivityLogs */
+    fun listActivityLogs(
+        params: ParticipantListActivityLogsParams
+    ): CompletableFuture<ParticipantActivityLogsResponse> =
+        listActivityLogs(params, RequestOptions.none())
+
+    /** @see listActivityLogs */
+    fun listActivityLogs(
+        params: ParticipantListActivityLogsParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<ParticipantActivityLogsResponse>
+
+    /**
+     * Retrieves analytics for a single participant — all-time engagement counters, leaderboard
+     * ranks, and per-channel share counts (plus affiliate money metrics for affiliate programs).
+     */
+    fun retrieveAnalytics(
+        participantIdOrEmail: String,
+        params: ParticipantRetrieveAnalyticsParams,
+    ): CompletableFuture<ParticipantAnalyticsResponse> =
+        retrieveAnalytics(participantIdOrEmail, params, RequestOptions.none())
+
+    /** @see retrieveAnalytics */
+    fun retrieveAnalytics(
+        participantIdOrEmail: String,
+        params: ParticipantRetrieveAnalyticsParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<ParticipantAnalyticsResponse> =
+        retrieveAnalytics(
+            params.toBuilder().participantIdOrEmail(participantIdOrEmail).build(),
+            requestOptions,
+        )
+
+    /** @see retrieveAnalytics */
+    fun retrieveAnalytics(
+        params: ParticipantRetrieveAnalyticsParams
+    ): CompletableFuture<ParticipantAnalyticsResponse> =
+        retrieveAnalytics(params, RequestOptions.none())
+
+    /** @see retrieveAnalytics */
+    fun retrieveAnalytics(
+        params: ParticipantRetrieveAnalyticsParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<ParticipantAnalyticsResponse>
 
     /**
      * A view of [ParticipantServiceAsync] that provides access to raw HTTP responses for each
@@ -544,6 +689,36 @@ interface ParticipantServiceAsync {
             params: ParticipantDeleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<ParticipantDeleteResponse>>
+
+        /**
+         * Returns a raw HTTP response for `post /campaign/{id}/participants/bulk-delete`, but is
+         * otherwise the same as [ParticipantServiceAsync.bulkDelete].
+         */
+        fun bulkDelete(
+            id: String,
+            params: ParticipantBulkDeleteParams,
+        ): CompletableFuture<HttpResponseFor<ParticipantBulkDeleteResponse>> =
+            bulkDelete(id, params, RequestOptions.none())
+
+        /** @see bulkDelete */
+        fun bulkDelete(
+            id: String,
+            params: ParticipantBulkDeleteParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ParticipantBulkDeleteResponse>> =
+            bulkDelete(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see bulkDelete */
+        fun bulkDelete(
+            params: ParticipantBulkDeleteParams
+        ): CompletableFuture<HttpResponseFor<ParticipantBulkDeleteResponse>> =
+            bulkDelete(params, RequestOptions.none())
+
+        /** @see bulkDelete */
+        fun bulkDelete(
+            params: ParticipantBulkDeleteParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ParticipantBulkDeleteResponse>>
 
         /**
          * Returns a raw HTTP response for `post /campaign/{id}/participant`, but is otherwise the
@@ -877,5 +1052,107 @@ interface ParticipantServiceAsync {
             params: ParticipantCancelDelayedReferralParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): CompletableFuture<HttpResponseFor<ParticipantCancelDelayedReferralResponse>>
+
+        /**
+         * Returns a raw HTTP response for `post
+         * /campaign/{id}/participant/{participantIdOrEmail}/email`, but is otherwise the same as
+         * [ParticipantServiceAsync.email].
+         */
+        fun email(
+            participantIdOrEmail: String,
+            params: ParticipantEmailParams,
+        ): CompletableFuture<HttpResponseFor<ParticipantEmailResponse>> =
+            email(participantIdOrEmail, params, RequestOptions.none())
+
+        /** @see email */
+        fun email(
+            participantIdOrEmail: String,
+            params: ParticipantEmailParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ParticipantEmailResponse>> =
+            email(
+                params.toBuilder().participantIdOrEmail(participantIdOrEmail).build(),
+                requestOptions,
+            )
+
+        /** @see email */
+        fun email(
+            params: ParticipantEmailParams
+        ): CompletableFuture<HttpResponseFor<ParticipantEmailResponse>> =
+            email(params, RequestOptions.none())
+
+        /** @see email */
+        fun email(
+            params: ParticipantEmailParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ParticipantEmailResponse>>
+
+        /**
+         * Returns a raw HTTP response for `get
+         * /campaign/{id}/participant/{participantIdOrEmail}/activity-logs`, but is otherwise the
+         * same as [ParticipantServiceAsync.listActivityLogs].
+         */
+        fun listActivityLogs(
+            participantIdOrEmail: String,
+            params: ParticipantListActivityLogsParams,
+        ): CompletableFuture<HttpResponseFor<ParticipantActivityLogsResponse>> =
+            listActivityLogs(participantIdOrEmail, params, RequestOptions.none())
+
+        /** @see listActivityLogs */
+        fun listActivityLogs(
+            participantIdOrEmail: String,
+            params: ParticipantListActivityLogsParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ParticipantActivityLogsResponse>> =
+            listActivityLogs(
+                params.toBuilder().participantIdOrEmail(participantIdOrEmail).build(),
+                requestOptions,
+            )
+
+        /** @see listActivityLogs */
+        fun listActivityLogs(
+            params: ParticipantListActivityLogsParams
+        ): CompletableFuture<HttpResponseFor<ParticipantActivityLogsResponse>> =
+            listActivityLogs(params, RequestOptions.none())
+
+        /** @see listActivityLogs */
+        fun listActivityLogs(
+            params: ParticipantListActivityLogsParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ParticipantActivityLogsResponse>>
+
+        /**
+         * Returns a raw HTTP response for `get
+         * /campaign/{id}/participant/{participantIdOrEmail}/analytics`, but is otherwise the same
+         * as [ParticipantServiceAsync.retrieveAnalytics].
+         */
+        fun retrieveAnalytics(
+            participantIdOrEmail: String,
+            params: ParticipantRetrieveAnalyticsParams,
+        ): CompletableFuture<HttpResponseFor<ParticipantAnalyticsResponse>> =
+            retrieveAnalytics(participantIdOrEmail, params, RequestOptions.none())
+
+        /** @see retrieveAnalytics */
+        fun retrieveAnalytics(
+            participantIdOrEmail: String,
+            params: ParticipantRetrieveAnalyticsParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ParticipantAnalyticsResponse>> =
+            retrieveAnalytics(
+                params.toBuilder().participantIdOrEmail(participantIdOrEmail).build(),
+                requestOptions,
+            )
+
+        /** @see retrieveAnalytics */
+        fun retrieveAnalytics(
+            params: ParticipantRetrieveAnalyticsParams
+        ): CompletableFuture<HttpResponseFor<ParticipantAnalyticsResponse>> =
+            retrieveAnalytics(params, RequestOptions.none())
+
+        /** @see retrieveAnalytics */
+        fun retrieveAnalytics(
+            params: ParticipantRetrieveAnalyticsParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ParticipantAnalyticsResponse>>
     }
 }

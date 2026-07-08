@@ -113,6 +113,10 @@ private constructor(
     fun mobileInstanceId(): Optional<String> = mobileInstanceId.getOptional("mobileInstanceId")
 
     /**
+     * The referral credit status, only meaningful when `referredBy` resolves to a referrer. When
+     * omitted, it is derived from the program's referral trigger (`CREDIT_AWARDED`,
+     * `CREDIT_PENDING`, or `CREDIT_EXPIRED`); left unset when no referrer resolves.
+     *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -331,6 +335,11 @@ private constructor(
             this.mobileInstanceId = mobileInstanceId
         }
 
+        /**
+         * The referral credit status, only meaningful when `referredBy` resolves to a referrer.
+         * When omitted, it is derived from the program's referral trigger (`CREDIT_AWARDED`,
+         * `CREDIT_PENDING`, or `CREDIT_EXPIRED`); left unset when no referrer resolves.
+         */
         fun referralStatus(referralStatus: ReferralStatus) =
             referralStatus(JsonField.of(referralStatus))
 

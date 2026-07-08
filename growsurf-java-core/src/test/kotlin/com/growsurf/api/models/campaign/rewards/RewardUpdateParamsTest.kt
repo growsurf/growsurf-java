@@ -18,7 +18,6 @@ internal class RewardUpdateParamsTest {
             .description("description")
             .referralDescription("referralDescription")
             .imageUrl("imageUrl")
-            .isActive(true)
             .isVisible(true)
             .isUnlimited(true)
             .referredRewardUpfront(true)
@@ -63,13 +62,13 @@ internal class RewardUpdateParamsTest {
                 .id("id")
                 .campaignRewardId("campaignRewardId")
                 .title("title")
-                .isActive(false)
+                .isVisible(false)
                 .build()
 
         val body = params._body()
 
         assertThat(body.title()).contains("title")
-        assertThat(body.isActive()).contains(false)
+        assertThat(body.isVisible()).contains(false)
     }
 
     @Test

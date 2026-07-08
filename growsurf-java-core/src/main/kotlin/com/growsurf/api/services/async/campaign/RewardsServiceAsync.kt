@@ -83,9 +83,8 @@ interface RewardsServiceAsync {
     ): CompletableFuture<Reward>
 
     /**
-     * Retrieves the list of a program's configured rewards (`CampaignReward`s). Returns the active,
-     * visible, and enabled rewards — the same set embedded in the `rewards` array of the campaign
-     * response.
+     * Retrieves the list of a program's configured rewards (`CampaignReward`s), the same set
+     * embedded in the `rewards` array of the campaign response.
      */
     fun list(id: String): CompletableFuture<CampaignRewardListResponse> =
         list(id, RewardListParams.none())

@@ -14,6 +14,8 @@ internal class CampaignRetrieveAnalyticsParamsTest {
             .id("id")
             .days(1L)
             .endDate(0L)
+            .include("previousPeriod,statusCounts,rates")
+            .interval(CampaignRetrieveAnalyticsParams.Interval.DAY)
             .startDate(0L)
             .build()
     }
@@ -34,6 +36,8 @@ internal class CampaignRetrieveAnalyticsParamsTest {
                 .id("id")
                 .days(1L)
                 .endDate(0L)
+                .include("previousPeriod,statusCounts,rates")
+                .interval(CampaignRetrieveAnalyticsParams.Interval.DAY)
                 .startDate(0L)
                 .build()
 
@@ -44,6 +48,8 @@ internal class CampaignRetrieveAnalyticsParamsTest {
                 QueryParams.builder()
                     .put("days", "1")
                     .put("endDate", "0")
+                    .put("include", "previousPeriod,statusCounts,rates")
+                    .put("interval", "day")
                     .put("startDate", "0")
                     .build()
             )

@@ -13,10 +13,11 @@ import kotlin.jvm.optionals.getOrNull
 
 /**
  * Updates a program's Options configuration (the dashboard Program Editor's Options tab). Only the
- * fields you send are changed (a surgical merge); omitted fields are left untouched. The body is a
- * large, loosely-typed partial object modeled as free-form properties — set fields via
- * [Builder.putAdditionalBodyProperty] / [Builder.additionalBodyProperties]. See the
- * [API reference](https://growsurf.com/settings#contact_support) for the full field list.
+ * fields you send are changed; anything you leave out is untouched. The body is a large,
+ * loosely-typed partial object modeled as free-form properties — set fields via
+ * [Builder.putAdditionalBodyProperty] / [Builder.additionalBodyProperties]. To see the full object
+ * with every field and its current value, retrieve the resource first, then send back only the
+ * fields you want to change.
  */
 class OptionUpdateParams
 private constructor(

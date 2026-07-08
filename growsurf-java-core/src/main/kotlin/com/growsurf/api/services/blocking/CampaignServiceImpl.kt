@@ -21,6 +21,7 @@ import com.growsurf.api.models.campaign.CampaignCloneParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenResponse
 import com.growsurf.api.models.campaign.CampaignCreateParams
+import com.growsurf.api.models.campaign.CampaignGetReferralFlowScreenshotsParams
 import com.growsurf.api.models.campaign.CampaignListCommissionsParams
 import com.growsurf.api.models.campaign.CampaignListLeaderboardParams
 import com.growsurf.api.models.campaign.CampaignListParams
@@ -36,6 +37,7 @@ import com.growsurf.api.models.campaign.ParticipantCommissionList
 import com.growsurf.api.models.campaign.ParticipantList
 import com.growsurf.api.models.campaign.ParticipantPayoutList
 import com.growsurf.api.models.campaign.ReferralList
+import com.growsurf.api.models.campaign.ReferralFlowScreenshotsResponse
 import com.growsurf.api.services.blocking.campaign.CommissionService
 import com.growsurf.api.services.blocking.campaign.CommissionServiceImpl
 import com.growsurf.api.services.blocking.campaign.DesignService
@@ -52,6 +54,8 @@ import com.growsurf.api.services.blocking.campaign.RewardService
 import com.growsurf.api.services.blocking.campaign.RewardServiceImpl
 import com.growsurf.api.services.blocking.campaign.RewardsService
 import com.growsurf.api.services.blocking.campaign.RewardsServiceImpl
+import com.growsurf.api.services.blocking.campaign.WebhooksService
+import com.growsurf.api.services.blocking.campaign.WebhooksServiceImpl
 import java.util.function.Consumer
 import kotlin.jvm.optionals.getOrNull
 
@@ -77,6 +81,8 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
     private val options: OptionsService by lazy { OptionsServiceImpl(clientOptions) }
 
     private val installation: InstallationService by lazy { InstallationServiceImpl(clientOptions) }
+
+    private val webhooks: WebhooksService by lazy { WebhooksServiceImpl(clientOptions) }
 
     override fun withRawResponse(): CampaignService.WithRawResponse = withRawResponse
 
@@ -106,6 +112,9 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
     /** Program Editor Installation tab (`CampaignInstallation`) configuration operations. */
     override fun installation(): InstallationService = installation
 
+    /** Program webhook configuration (create, update, delete, and test webhooks). */
+    override fun webhooks(): WebhooksService = webhooks
+
     override fun create(params: CampaignCreateParams, requestOptions: RequestOptions): Campaign =
         // post /campaigns
         withRawResponse().create(params, requestOptions).parse()
@@ -131,6 +140,13 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
     ): CampaignListResponse =
         // get /campaigns
         withRawResponse().list(params, requestOptions).parse()
+
+    override fun getReferralFlowScreenshots(
+        params: CampaignGetReferralFlowScreenshotsParams,
+        requestOptions: RequestOptions,
+    ): ReferralFlowScreenshotsResponse =
+        // get /campaign/{id}/referral-flow-screenshots
+        withRawResponse().getReferralFlowScreenshots(params, requestOptions).parse()
 
     override fun createMobileParticipantToken(
         params: CampaignCreateMobileParticipantTokenParams,
@@ -219,6 +235,10 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
             InstallationServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val webhooks: WebhooksService.WithRawResponse by lazy {
+            WebhooksServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         override fun withOptions(
             modifier: Consumer<ClientOptions.Builder>
         ): CampaignService.WithRawResponse =
@@ -248,6 +268,9 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
 
         /** Program Editor Installation tab (`CampaignInstallation`) configuration operations. */
         override fun installation(): InstallationService.WithRawResponse = installation
+
+        /** Program webhook configuration (create, update, delete, and test webhooks). */
+        override fun webhooks(): WebhooksService.WithRawResponse = webhooks
 
         private val createHandler: Handler<Campaign> =
             jsonHandler<Campaign>(clientOptions.jsonMapper)
@@ -388,6 +411,36 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
             return errorHandler.handle(response).parseable {
                 response
                     .use { listHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val getReferralFlowScreenshotsHandler: Handler<ReferralFlowScreenshotsResponse> =
+            jsonHandler<ReferralFlowScreenshotsResponse>(clientOptions.jsonMapper)
+
+        override fun getReferralFlowScreenshots(
+            params: CampaignGetReferralFlowScreenshotsParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<ReferralFlowScreenshotsResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("id", params.id().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("campaign", params._pathParam(0), "referral-flow-screenshots")
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { getReferralFlowScreenshotsHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

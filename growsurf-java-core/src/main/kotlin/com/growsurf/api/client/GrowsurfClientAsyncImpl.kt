@@ -4,6 +4,8 @@ package com.growsurf.api.client
 
 import com.growsurf.api.core.ClientOptions
 import com.growsurf.api.core.getPackageVersion
+import com.growsurf.api.services.async.AccountServiceAsync
+import com.growsurf.api.services.async.AccountServiceAsyncImpl
 import com.growsurf.api.services.async.CampaignServiceAsync
 import com.growsurf.api.services.async.CampaignServiceAsyncImpl
 import java.util.function.Consumer
@@ -25,6 +27,10 @@ class GrowsurfClientAsyncImpl(private val clientOptions: ClientOptions) : Growsu
         WithRawResponseImpl(clientOptions)
     }
 
+    private val account: AccountServiceAsync by lazy {
+        AccountServiceAsyncImpl(clientOptionsWithUserAgent)
+    }
+
     private val campaign: CampaignServiceAsync by lazy {
         CampaignServiceAsyncImpl(clientOptionsWithUserAgent)
     }
@@ -36,12 +42,18 @@ class GrowsurfClientAsyncImpl(private val clientOptions: ClientOptions) : Growsu
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): GrowsurfClientAsync =
         GrowsurfClientAsyncImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
+    override fun account(): AccountServiceAsync = account
+
     override fun campaign(): CampaignServiceAsync = campaign
 
     override fun close() = clientOptions.close()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         GrowsurfClientAsync.WithRawResponse {
+
+        private val account: AccountServiceAsync.WithRawResponse by lazy {
+            AccountServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
 
         private val campaign: CampaignServiceAsync.WithRawResponse by lazy {
             CampaignServiceAsyncImpl.WithRawResponseImpl(clientOptions)
@@ -53,6 +65,8 @@ class GrowsurfClientAsyncImpl(private val clientOptions: ClientOptions) : Growsu
             GrowsurfClientAsyncImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
+
+        override fun account(): AccountServiceAsync.WithRawResponse = account
 
         override fun campaign(): CampaignServiceAsync.WithRawResponse = campaign
     }

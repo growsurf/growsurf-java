@@ -6,14 +6,18 @@ import com.growsurf.api.client.okhttp.GrowsurfOkHttpClient
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.models.campaign.participant.Create
 import com.growsurf.api.models.campaign.participant.ParticipantAddParams
+import com.growsurf.api.models.campaign.participant.ParticipantBulkDeleteParams
 import com.growsurf.api.models.campaign.participant.ParticipantCancelDelayedReferralParams
 import com.growsurf.api.models.campaign.participant.ParticipantDeleteParams
+import com.growsurf.api.models.campaign.participant.ParticipantEmailParams
+import com.growsurf.api.models.campaign.participant.ParticipantListActivityLogsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListCommissionsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListPayoutsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListReferralsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListRewardsParams
 import com.growsurf.api.models.campaign.participant.ParticipantRecordTransactionParams
 import com.growsurf.api.models.campaign.participant.ParticipantRefundTransactionParams
+import com.growsurf.api.models.campaign.participant.ParticipantRetrieveAnalyticsParams
 import com.growsurf.api.models.campaign.participant.ParticipantRetrieveParams
 import com.growsurf.api.models.campaign.participant.ParticipantSendInvitesParams
 import com.growsurf.api.models.campaign.participant.ParticipantTriggerReferralParams
@@ -85,6 +89,24 @@ internal class ParticipantServiceTest {
             )
 
         participant.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun bulkDelete() {
+        val client = GrowsurfOkHttpClient.builder().apiKey("My API Key").build()
+        val participantService = client.campaign().participant()
+
+        val response =
+            participantService.bulkDelete(
+                ParticipantBulkDeleteParams.builder()
+                    .id("id")
+                    .addParticipant("gavin@hooli.com")
+                    .addParticipant("f8g9nl")
+                    .build()
+            )
+
+        response.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -332,6 +354,60 @@ internal class ParticipantServiceTest {
         val response =
             participantService.cancelDelayedReferral(
                 ParticipantCancelDelayedReferralParams.builder()
+                    .id("id")
+                    .participantIdOrEmail("participantIdOrEmail")
+                    .build()
+            )
+
+        response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun email() {
+        val client = GrowsurfOkHttpClient.builder().apiKey("My API Key").build()
+        val participantService = client.campaign().participant()
+
+        val response =
+            participantService.email(
+                ParticipantEmailParams.builder()
+                    .id("id")
+                    .participantIdOrEmail("participantIdOrEmail")
+                    .emailType("goalAchieved")
+                    .build()
+            )
+
+        response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun listActivityLogs() {
+        val client = GrowsurfOkHttpClient.builder().apiKey("My API Key").build()
+        val participantService = client.campaign().participant()
+
+        val response =
+            participantService.listActivityLogs(
+                ParticipantListActivityLogsParams.builder()
+                    .id("id")
+                    .participantIdOrEmail("participantIdOrEmail")
+                    .limit(20L)
+                    .offset(0L)
+                    .build()
+            )
+
+        response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun retrieveAnalytics() {
+        val client = GrowsurfOkHttpClient.builder().apiKey("My API Key").build()
+        val participantService = client.campaign().participant()
+
+        val response =
+            participantService.retrieveAnalytics(
+                ParticipantRetrieveAnalyticsParams.builder()
                     .id("id")
                     .participantIdOrEmail("participantIdOrEmail")
                     .build()

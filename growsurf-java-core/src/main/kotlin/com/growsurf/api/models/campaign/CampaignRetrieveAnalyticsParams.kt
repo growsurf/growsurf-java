@@ -2,9 +2,13 @@
 
 package com.growsurf.api.models.campaign
 
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.growsurf.api.core.Enum
+import com.growsurf.api.core.JsonField
 import com.growsurf.api.core.Params
 import com.growsurf.api.core.http.Headers
 import com.growsurf.api.core.http.QueryParams
+import com.growsurf.api.errors.GrowsurfInvalidDataException
 import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
@@ -15,6 +19,8 @@ private constructor(
     private val id: String?,
     private val days: Long?,
     private val endDate: Long?,
+    private val include: String?,
+    private val interval: Interval?,
     private val startDate: Long?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
@@ -30,6 +36,20 @@ private constructor(
      * is not set.
      */
     fun endDate(): Optional<Long> = Optional.ofNullable(endDate)
+
+    /**
+     * Comma-separated list of optional enrichments (opt-in to keep the default response lean):
+     * `previousPeriod` adds totals for the equal-length window immediately before the requested one;
+     * `statusCounts` adds reward (and, for affiliate programs, affiliate/commission/payout) status
+     * breakdowns; `rates` adds derived referral rates.
+     */
+    fun include(): Optional<String> = Optional.ofNullable(include)
+
+    /**
+     * When set to `day`, `week`, or `month`, the response also includes a `series` array with
+     * per-period totals. Defaults to `total` (no series).
+     */
+    fun interval(): Optional<Interval> = Optional.ofNullable(interval)
 
     /**
      * Start date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days`
@@ -62,6 +82,8 @@ private constructor(
         private var id: String? = null
         private var days: Long? = null
         private var endDate: Long? = null
+        private var include: String? = null
+        private var interval: Interval? = null
         private var startDate: Long? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
@@ -72,6 +94,8 @@ private constructor(
                 id = campaignRetrieveAnalyticsParams.id
                 days = campaignRetrieveAnalyticsParams.days
                 endDate = campaignRetrieveAnalyticsParams.endDate
+                include = campaignRetrieveAnalyticsParams.include
+                interval = campaignRetrieveAnalyticsParams.interval
                 startDate = campaignRetrieveAnalyticsParams.startDate
                 additionalHeaders = campaignRetrieveAnalyticsParams.additionalHeaders.toBuilder()
                 additionalQueryParams =
@@ -111,6 +135,26 @@ private constructor(
 
         /** Alias for calling [Builder.endDate] with `endDate.orElse(null)`. */
         fun endDate(endDate: Optional<Long>) = endDate(endDate.getOrNull())
+
+        /**
+         * Comma-separated list of optional enrichments (opt-in to keep the default response lean):
+         * `previousPeriod` adds totals for the equal-length window immediately before the requested
+         * one; `statusCounts` adds reward (and, for affiliate programs, affiliate/commission/payout)
+         * status breakdowns; `rates` adds derived referral rates.
+         */
+        fun include(include: String?) = apply { this.include = include }
+
+        /** Alias for calling [Builder.include] with `include.orElse(null)`. */
+        fun include(include: Optional<String>) = include(include.getOrNull())
+
+        /**
+         * When set to `day`, `week`, or `month`, the response also includes a `series` array with
+         * per-period totals. Defaults to `total` (no series).
+         */
+        fun interval(interval: Interval?) = apply { this.interval = interval }
+
+        /** Alias for calling [Builder.interval] with `interval.orElse(null)`. */
+        fun interval(interval: Optional<Interval>) = interval(interval.getOrNull())
 
         /**
          * Start date of the analytics timeframe as a Unix timestamp in milliseconds. Required if
@@ -236,6 +280,8 @@ private constructor(
                 id,
                 days,
                 endDate,
+                include,
+                interval,
                 startDate,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -255,10 +301,146 @@ private constructor(
             .apply {
                 days?.let { put("days", it.toString()) }
                 endDate?.let { put("endDate", it.toString()) }
+                include?.let { put("include", it) }
+                interval?.let { put("interval", it.toString()) }
                 startDate?.let { put("startDate", it.toString()) }
                 putAll(additionalQueryParams)
             }
             .build()
+
+    /**
+     * When set to `day`, `week`, or `month`, the response also includes a `series` array with
+     * per-period totals. Defaults to `total` (no series).
+     */
+    class Interval @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't match
+         * any known member, and you want to know that value. For example, if the SDK is on an older
+         * version than the API, then the API may respond with new members that the SDK is unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val DAY = of("day")
+
+            @JvmField val WEEK = of("week")
+
+            @JvmField val MONTH = of("month")
+
+            @JvmField val TOTAL = of("total")
+
+            @JvmStatic fun of(value: String) = Interval(JsonField.of(value))
+        }
+
+        /** An enum containing [Interval]'s known values. */
+        enum class Known {
+            DAY,
+            WEEK,
+            MONTH,
+            TOTAL,
+        }
+
+        /**
+         * An enum containing [Interval]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [Interval] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            DAY,
+            WEEK,
+            MONTH,
+            TOTAL,
+            /** An enum member indicating that [Interval] was instantiated with an unknown value. */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                DAY -> Value.DAY
+                WEEK -> Value.WEEK
+                MONTH -> Value.MONTH
+                TOTAL -> Value.TOTAL
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws GrowsurfInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                DAY -> Known.DAY
+                WEEK -> Known.WEEK
+                MONTH -> Known.MONTH
+                TOTAL -> Known.TOTAL
+                else -> throw GrowsurfInvalidDataException("Unknown Interval: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws GrowsurfInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow { GrowsurfInvalidDataException("Value is not a String") }
+
+        private var validated: Boolean = false
+
+        fun validate(): Interval = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: GrowsurfInvalidDataException) {
+                false
+            }
+
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Interval && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -269,14 +451,25 @@ private constructor(
             id == other.id &&
             days == other.days &&
             endDate == other.endDate &&
+            include == other.include &&
+            interval == other.interval &&
             startDate == other.startDate &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(id, days, endDate, startDate, additionalHeaders, additionalQueryParams)
+        Objects.hash(
+            id,
+            days,
+            endDate,
+            include,
+            interval,
+            startDate,
+            additionalHeaders,
+            additionalQueryParams,
+        )
 
     override fun toString() =
-        "CampaignRetrieveAnalyticsParams{id=$id, days=$days, endDate=$endDate, startDate=$startDate, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "CampaignRetrieveAnalyticsParams{id=$id, days=$days, endDate=$endDate, include=$include, interval=$interval, startDate=$startDate, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

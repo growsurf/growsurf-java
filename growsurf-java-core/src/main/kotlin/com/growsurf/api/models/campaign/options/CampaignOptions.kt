@@ -13,9 +13,10 @@ import java.util.Objects
 /**
  * Program Editor **Options** tab configuration — the same surface as the dashboard. This is a
  * large, loosely-typed object modeled as free-form properties; the available fields depend on the
- * program type. See the [API reference](https://growsurf.com/settings#contact_support) for the full
- * field list (reward/fraud approval, anti-fraud lists + toggles, referral cookie/credit windows,
- * reCAPTCHA, payout threshold + tax settings (affiliate only), and notification-email settings).
+ * program type (reward/fraud approval, anti-fraud lists + toggles, referral cookie/credit windows,
+ * reCAPTCHA, payout threshold + tax settings (affiliate only), and notification-email settings). To
+ * see the full object with every field and its current value, retrieve the resource first, then
+ * send back only the fields you want to change.
  */
 class CampaignOptions
 @JsonCreator

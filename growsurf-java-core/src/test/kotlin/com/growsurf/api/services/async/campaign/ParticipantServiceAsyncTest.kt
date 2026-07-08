@@ -6,14 +6,18 @@ import com.growsurf.api.client.okhttp.GrowsurfOkHttpClientAsync
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.models.campaign.participant.Create
 import com.growsurf.api.models.campaign.participant.ParticipantAddParams
+import com.growsurf.api.models.campaign.participant.ParticipantBulkDeleteParams
 import com.growsurf.api.models.campaign.participant.ParticipantCancelDelayedReferralParams
 import com.growsurf.api.models.campaign.participant.ParticipantDeleteParams
+import com.growsurf.api.models.campaign.participant.ParticipantEmailParams
+import com.growsurf.api.models.campaign.participant.ParticipantListActivityLogsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListCommissionsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListPayoutsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListReferralsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListRewardsParams
 import com.growsurf.api.models.campaign.participant.ParticipantRecordTransactionParams
 import com.growsurf.api.models.campaign.participant.ParticipantRefundTransactionParams
+import com.growsurf.api.models.campaign.participant.ParticipantRetrieveAnalyticsParams
 import com.growsurf.api.models.campaign.participant.ParticipantRetrieveParams
 import com.growsurf.api.models.campaign.participant.ParticipantSendInvitesParams
 import com.growsurf.api.models.campaign.participant.ParticipantTriggerReferralParams
@@ -88,6 +92,25 @@ internal class ParticipantServiceAsyncTest {
 
         val participant = participantFuture.get()
         participant.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun bulkDelete() {
+        val client = GrowsurfOkHttpClientAsync.builder().apiKey("My API Key").build()
+        val participantServiceAsync = client.campaign().participant()
+
+        val responseFuture =
+            participantServiceAsync.bulkDelete(
+                ParticipantBulkDeleteParams.builder()
+                    .id("id")
+                    .addParticipant("gavin@hooli.com")
+                    .addParticipant("f8g9nl")
+                    .build()
+            )
+
+        val response = responseFuture.get()
+        response.validate()
     }
 
     @Disabled("Mock server tests are disabled")
@@ -344,6 +367,63 @@ internal class ParticipantServiceAsyncTest {
         val responseFuture =
             participantServiceAsync.cancelDelayedReferral(
                 ParticipantCancelDelayedReferralParams.builder()
+                    .id("id")
+                    .participantIdOrEmail("participantIdOrEmail")
+                    .build()
+            )
+
+        val response = responseFuture.get()
+        response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun email() {
+        val client = GrowsurfOkHttpClientAsync.builder().apiKey("My API Key").build()
+        val participantServiceAsync = client.campaign().participant()
+
+        val responseFuture =
+            participantServiceAsync.email(
+                ParticipantEmailParams.builder()
+                    .id("id")
+                    .participantIdOrEmail("participantIdOrEmail")
+                    .emailType("goalAchieved")
+                    .build()
+            )
+
+        val response = responseFuture.get()
+        response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun listActivityLogs() {
+        val client = GrowsurfOkHttpClientAsync.builder().apiKey("My API Key").build()
+        val participantServiceAsync = client.campaign().participant()
+
+        val responseFuture =
+            participantServiceAsync.listActivityLogs(
+                ParticipantListActivityLogsParams.builder()
+                    .id("id")
+                    .participantIdOrEmail("participantIdOrEmail")
+                    .limit(20L)
+                    .offset(0L)
+                    .build()
+            )
+
+        val response = responseFuture.get()
+        response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun retrieveAnalytics() {
+        val client = GrowsurfOkHttpClientAsync.builder().apiKey("My API Key").build()
+        val participantServiceAsync = client.campaign().participant()
+
+        val responseFuture =
+            participantServiceAsync.retrieveAnalytics(
+                ParticipantRetrieveAnalyticsParams.builder()
                     .id("id")
                     .participantIdOrEmail("participantIdOrEmail")
                     .build()

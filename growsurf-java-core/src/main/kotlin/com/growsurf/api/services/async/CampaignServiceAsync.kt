@@ -10,6 +10,7 @@ import com.growsurf.api.models.campaign.CampaignCloneParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenResponse
 import com.growsurf.api.models.campaign.CampaignCreateParams
+import com.growsurf.api.models.campaign.CampaignGetReferralFlowScreenshotsParams
 import com.growsurf.api.models.campaign.CampaignListCommissionsParams
 import com.growsurf.api.models.campaign.CampaignListLeaderboardParams
 import com.growsurf.api.models.campaign.CampaignListParams
@@ -25,6 +26,7 @@ import com.growsurf.api.models.campaign.ParticipantCommissionList
 import com.growsurf.api.models.campaign.ParticipantList
 import com.growsurf.api.models.campaign.ParticipantPayoutList
 import com.growsurf.api.models.campaign.ReferralList
+import com.growsurf.api.models.campaign.ReferralFlowScreenshotsResponse
 import com.growsurf.api.services.async.campaign.CommissionServiceAsync
 import com.growsurf.api.services.async.campaign.DesignServiceAsync
 import com.growsurf.api.services.async.campaign.EmailsServiceAsync
@@ -33,6 +35,7 @@ import com.growsurf.api.services.async.campaign.OptionsServiceAsync
 import com.growsurf.api.services.async.campaign.ParticipantServiceAsync
 import com.growsurf.api.services.async.campaign.RewardServiceAsync
 import com.growsurf.api.services.async.campaign.RewardsServiceAsync
+import com.growsurf.api.services.async.campaign.WebhooksServiceAsync
 import java.util.concurrent.CompletableFuture
 import java.util.function.Consumer
 
@@ -73,11 +76,13 @@ interface CampaignServiceAsync {
     /** Program Editor Installation tab (`CampaignInstallation`) configuration operations. */
     fun installation(): InstallationServiceAsync
 
+    /** Program webhook configuration (create, update, delete, and test webhooks). */
+    fun webhooks(): WebhooksServiceAsync
+
     /**
      * Creates a new program pre-populated with type-appropriate defaults, plus any optional inline
      * rewards. The new program is created in `DRAFT` status and owned by the API key's account.
-     * Requires a verified account email and a paid plan (referral) or a payment source on file
-     * (affiliate); subject to your plan's program limit.
+     * Requires a verified account email.
      */
     fun create(params: CampaignCreateParams): CompletableFuture<Campaign> =
         create(params, RequestOptions.none())
@@ -89,9 +94,10 @@ interface CampaignServiceAsync {
     ): CompletableFuture<Campaign>
 
     /**
-     * Updates a program's configuration and/or status. Only the fields you send are changed. `type`
-     * and `urlId` are immutable. Status changes are validated against the allowed transitions; the
-     * program cannot be deleted via this endpoint.
+     * Updates a program's identity and lifecycle. Only the fields you send are changed. `type`,
+     * `urlId`, and `currencyISO` are immutable. Editor-tab configuration (design, emails, options,
+     * installation) is edited via the dedicated config sub-resources, not here. The program cannot
+     * be deleted via this endpoint.
      */
     fun update(id: String): CompletableFuture<Campaign> = update(id, CampaignUpdateParams.none())
 
@@ -203,6 +209,53 @@ interface CampaignServiceAsync {
     /** @see list */
     fun list(requestOptions: RequestOptions): CompletableFuture<CampaignListResponse> =
         list(CampaignListParams.none(), requestOptions)
+
+    /**
+     * Captures two preview screenshots for the program: the authenticated referrer view and the
+     * referred-friend view.
+     */
+    fun getReferralFlowScreenshots(id: String): CompletableFuture<ReferralFlowScreenshotsResponse> =
+        getReferralFlowScreenshots(id, CampaignGetReferralFlowScreenshotsParams.none())
+
+    /** @see getReferralFlowScreenshots */
+    fun getReferralFlowScreenshots(
+        id: String,
+        params: CampaignGetReferralFlowScreenshotsParams =
+            CampaignGetReferralFlowScreenshotsParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<ReferralFlowScreenshotsResponse> =
+        getReferralFlowScreenshots(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see getReferralFlowScreenshots */
+    fun getReferralFlowScreenshots(
+        id: String,
+        params: CampaignGetReferralFlowScreenshotsParams =
+            CampaignGetReferralFlowScreenshotsParams.none(),
+    ): CompletableFuture<ReferralFlowScreenshotsResponse> =
+        getReferralFlowScreenshots(id, params, RequestOptions.none())
+
+    /** @see getReferralFlowScreenshots */
+    fun getReferralFlowScreenshots(
+        params: CampaignGetReferralFlowScreenshotsParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<ReferralFlowScreenshotsResponse>
+
+    /** @see getReferralFlowScreenshots */
+    fun getReferralFlowScreenshots(
+        params: CampaignGetReferralFlowScreenshotsParams
+    ): CompletableFuture<ReferralFlowScreenshotsResponse> =
+        getReferralFlowScreenshots(params, RequestOptions.none())
+
+    /** @see getReferralFlowScreenshots */
+    fun getReferralFlowScreenshots(
+        id: String,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<ReferralFlowScreenshotsResponse> =
+        getReferralFlowScreenshots(
+            id,
+            CampaignGetReferralFlowScreenshotsParams.none(),
+            requestOptions,
+        )
 
     /**
      * Creates or returns a participant using the same input behavior as Add Participant, then
@@ -486,6 +539,9 @@ interface CampaignServiceAsync {
         /** Program Editor Installation tab (`CampaignInstallation`) configuration operations. */
         fun installation(): InstallationServiceAsync.WithRawResponse
 
+        /** Program webhook configuration (create, update, delete, and test webhooks). */
+        fun webhooks(): WebhooksServiceAsync.WithRawResponse
+
         /**
          * Returns a raw HTTP response for `post /campaigns`, but is otherwise the same as
          * [CampaignServiceAsync.create].
@@ -638,6 +694,55 @@ interface CampaignServiceAsync {
             requestOptions: RequestOptions
         ): CompletableFuture<HttpResponseFor<CampaignListResponse>> =
             list(CampaignListParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /campaign/{id}/referral-flow-screenshots`, but is
+         * otherwise the same as [CampaignServiceAsync.getReferralFlowScreenshots].
+         */
+        fun getReferralFlowScreenshots(
+            id: String
+        ): CompletableFuture<HttpResponseFor<ReferralFlowScreenshotsResponse>> =
+            getReferralFlowScreenshots(id, CampaignGetReferralFlowScreenshotsParams.none())
+
+        /** @see getReferralFlowScreenshots */
+        fun getReferralFlowScreenshots(
+            id: String,
+            params: CampaignGetReferralFlowScreenshotsParams =
+                CampaignGetReferralFlowScreenshotsParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ReferralFlowScreenshotsResponse>> =
+            getReferralFlowScreenshots(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see getReferralFlowScreenshots */
+        fun getReferralFlowScreenshots(
+            id: String,
+            params: CampaignGetReferralFlowScreenshotsParams =
+                CampaignGetReferralFlowScreenshotsParams.none(),
+        ): CompletableFuture<HttpResponseFor<ReferralFlowScreenshotsResponse>> =
+            getReferralFlowScreenshots(id, params, RequestOptions.none())
+
+        /** @see getReferralFlowScreenshots */
+        fun getReferralFlowScreenshots(
+            params: CampaignGetReferralFlowScreenshotsParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<ReferralFlowScreenshotsResponse>>
+
+        /** @see getReferralFlowScreenshots */
+        fun getReferralFlowScreenshots(
+            params: CampaignGetReferralFlowScreenshotsParams
+        ): CompletableFuture<HttpResponseFor<ReferralFlowScreenshotsResponse>> =
+            getReferralFlowScreenshots(params, RequestOptions.none())
+
+        /** @see getReferralFlowScreenshots */
+        fun getReferralFlowScreenshots(
+            id: String,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<ReferralFlowScreenshotsResponse>> =
+            getReferralFlowScreenshots(
+                id,
+                CampaignGetReferralFlowScreenshotsParams.none(),
+                requestOptions,
+            )
 
         /**
          * Returns a raw HTTP response for `post /campaign/{id}/mobile-participant-token`, but is

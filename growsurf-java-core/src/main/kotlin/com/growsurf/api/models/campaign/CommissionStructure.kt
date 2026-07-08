@@ -21,6 +21,7 @@ class CommissionStructure
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val amount: JsonField<Long>,
+    private val amountIso: JsonField<String>,
     private val approvalRequired: JsonField<Boolean>,
     private val duration: JsonField<String>,
     private val durationInMonths: JsonField<Long>,
@@ -45,6 +46,9 @@ private constructor(
     @JsonCreator
     private constructor(
         @JsonProperty("amount") @ExcludeMissing amount: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("amountISO")
+        @ExcludeMissing
+        amountIso: JsonField<String> = JsonMissing.of(),
         @JsonProperty("approvalRequired")
         @ExcludeMissing
         approvalRequired: JsonField<Boolean> = JsonMissing.of(),
@@ -87,6 +91,7 @@ private constructor(
         @JsonProperty("type") @ExcludeMissing type: JsonField<Type> = JsonMissing.of(),
     ) : this(
         amount,
+        amountIso,
         approvalRequired,
         duration,
         durationInMonths,
@@ -113,6 +118,12 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun amount(): Optional<Long> = amount.getOptional("amount")
+
+    /**
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun amountIso(): Optional<String> = amountIso.getOptional("amountISO")
 
     /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -229,6 +240,13 @@ private constructor(
      * Unlike [amount], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("amount") @ExcludeMissing fun _amount(): JsonField<Long> = amount
+
+    /**
+     * Returns the raw JSON value of [amountIso].
+     *
+     * Unlike [amountIso], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("amountISO") @ExcludeMissing fun _amountIso(): JsonField<String> = amountIso
 
     /**
      * Returns the raw JSON value of [approvalRequired].
@@ -402,6 +420,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var amount: JsonField<Long> = JsonMissing.of()
+        private var amountIso: JsonField<String> = JsonMissing.of()
         private var approvalRequired: JsonField<Boolean> = JsonMissing.of()
         private var duration: JsonField<String> = JsonMissing.of()
         private var durationInMonths: JsonField<Long> = JsonMissing.of()
@@ -425,6 +444,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(commissionStructure: CommissionStructure) = apply {
             amount = commissionStructure.amount
+            amountIso = commissionStructure.amountIso
             approvalRequired = commissionStructure.approvalRequired
             duration = commissionStructure.duration
             durationInMonths = commissionStructure.durationInMonths
@@ -465,6 +485,19 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun amount(amount: JsonField<Long>) = apply { this.amount = amount }
+
+        fun amountIso(amountIso: String?) = amountIso(JsonField.ofNullable(amountIso))
+
+        /** Alias for calling [Builder.amountIso] with `amountIso.orElse(null)`. */
+        fun amountIso(amountIso: Optional<String>) = amountIso(amountIso.getOrNull())
+
+        /**
+         * Sets [Builder.amountIso] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.amountIso] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun amountIso(amountIso: JsonField<String>) = apply { this.amountIso = amountIso }
 
         fun approvalRequired(approvalRequired: Boolean?) =
             approvalRequired(JsonField.ofNullable(approvalRequired))
@@ -852,6 +885,7 @@ private constructor(
         fun build(): CommissionStructure =
             CommissionStructure(
                 amount,
+                amountIso,
                 approvalRequired,
                 duration,
                 durationInMonths,
@@ -890,6 +924,7 @@ private constructor(
         }
 
         amount()
+        amountIso()
         approvalRequired()
         duration()
         durationInMonths()
@@ -927,6 +962,7 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (if (amount.asKnown().isPresent) 1 else 0) +
+            (if (amountIso.asKnown().isPresent) 1 else 0) +
             (if (approvalRequired.asKnown().isPresent) 1 else 0) +
             (if (duration.asKnown().isPresent) 1 else 0) +
             (if (durationInMonths.asKnown().isPresent) 1 else 0) +
@@ -962,7 +998,7 @@ private constructor(
 
             @JvmField val PERCENT = of("PERCENT")
 
-            @JvmField val AMOUNT = of("AMOUNT")
+            @JvmField val FIXED = of("FIXED")
 
             @JvmStatic fun of(value: String) = Type(JsonField.of(value))
         }
@@ -970,7 +1006,7 @@ private constructor(
         /** An enum containing [Type]'s known values. */
         enum class Known {
             PERCENT,
-            AMOUNT,
+            FIXED,
         }
 
         /**
@@ -984,7 +1020,7 @@ private constructor(
          */
         enum class Value {
             PERCENT,
-            AMOUNT,
+            FIXED,
             /** An enum member indicating that [Type] was instantiated with an unknown value. */
             _UNKNOWN,
         }
@@ -999,7 +1035,7 @@ private constructor(
         fun value(): Value =
             when (this) {
                 PERCENT -> Value.PERCENT
-                AMOUNT -> Value.AMOUNT
+                FIXED -> Value.FIXED
                 else -> Value._UNKNOWN
             }
 
@@ -1015,7 +1051,7 @@ private constructor(
         fun known(): Known =
             when (this) {
                 PERCENT -> Known.PERCENT
-                AMOUNT -> Known.AMOUNT
+                FIXED -> Known.FIXED
                 else -> throw GrowsurfInvalidDataException("Unknown Type: $value")
             }
 
@@ -1089,6 +1125,7 @@ private constructor(
 
         return other is CommissionStructure &&
             amount == other.amount &&
+            amountIso == other.amountIso &&
             approvalRequired == other.approvalRequired &&
             duration == other.duration &&
             durationInMonths == other.durationInMonths &&
@@ -1113,6 +1150,7 @@ private constructor(
     private val hashCode: Int by lazy {
         Objects.hash(
             amount,
+            amountIso,
             approvalRequired,
             duration,
             durationInMonths,
@@ -1138,5 +1176,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CommissionStructure{amount=$amount, approvalRequired=$approvalRequired, duration=$duration, durationInMonths=$durationInMonths, event=$event, hasIntro=$hasIntro, hasMaxAmount=$hasMaxAmount, holdDuration=$holdDuration, introAmount=$introAmount, introAmountIso=$introAmountIso, introDuration=$introDuration, introDurationInMonths=$introDurationInMonths, introPercent=$introPercent, introType=$introType, maxAmount=$maxAmount, maxAmountIso=$maxAmountIso, minPaidReferrals=$minPaidReferrals, percent=$percent, type=$type, additionalProperties=$additionalProperties}"
+        "CommissionStructure{amount=$amount, amountIso=$amountIso, approvalRequired=$approvalRequired, duration=$duration, durationInMonths=$durationInMonths, event=$event, hasIntro=$hasIntro, hasMaxAmount=$hasMaxAmount, holdDuration=$holdDuration, introAmount=$introAmount, introAmountIso=$introAmountIso, introDuration=$introDuration, introDurationInMonths=$introDurationInMonths, introPercent=$introPercent, introType=$introType, maxAmount=$maxAmount, maxAmountIso=$maxAmountIso, minPaidReferrals=$minPaidReferrals, percent=$percent, type=$type, additionalProperties=$additionalProperties}"
 }
