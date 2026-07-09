@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/growsurf/growsurf-java/compare/v1.1.0...v1.1.1) (2026-07-09)
+
+
+### Bug Fixes
+
+* remove referral screenshot REST surface ([2af8db8](https://github.com/growsurf/growsurf-java/commit/2af8db8c0f50b085a8d103ad8a8b3be9b58b1e7a))
+
 ## [1.1.0](https://github.com/growsurf/growsurf-java/compare/v1.0.0...v1.1.0) (2026-07-08)
 
 
