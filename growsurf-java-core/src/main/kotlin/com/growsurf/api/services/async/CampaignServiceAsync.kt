@@ -10,7 +10,6 @@ import com.growsurf.api.models.campaign.CampaignCloneParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenResponse
 import com.growsurf.api.models.campaign.CampaignCreateParams
-import com.growsurf.api.models.campaign.CampaignGetReferralFlowScreenshotsParams
 import com.growsurf.api.models.campaign.CampaignListCommissionsParams
 import com.growsurf.api.models.campaign.CampaignListLeaderboardParams
 import com.growsurf.api.models.campaign.CampaignListParams
@@ -25,7 +24,6 @@ import com.growsurf.api.models.campaign.CampaignUpdateParams
 import com.growsurf.api.models.campaign.ParticipantCommissionList
 import com.growsurf.api.models.campaign.ParticipantList
 import com.growsurf.api.models.campaign.ParticipantPayoutList
-import com.growsurf.api.models.campaign.ReferralFlowScreenshotsResponse
 import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.services.async.campaign.CommissionServiceAsync
 import com.growsurf.api.services.async.campaign.DesignServiceAsync
@@ -209,53 +207,6 @@ interface CampaignServiceAsync {
     /** @see list */
     fun list(requestOptions: RequestOptions): CompletableFuture<CampaignListResponse> =
         list(CampaignListParams.none(), requestOptions)
-
-    /**
-     * Captures two preview screenshots for the program: the authenticated referrer view and the
-     * referred-friend view.
-     */
-    fun getReferralFlowScreenshots(id: String): CompletableFuture<ReferralFlowScreenshotsResponse> =
-        getReferralFlowScreenshots(id, CampaignGetReferralFlowScreenshotsParams.none())
-
-    /** @see getReferralFlowScreenshots */
-    fun getReferralFlowScreenshots(
-        id: String,
-        params: CampaignGetReferralFlowScreenshotsParams =
-            CampaignGetReferralFlowScreenshotsParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ReferralFlowScreenshotsResponse> =
-        getReferralFlowScreenshots(params.toBuilder().id(id).build(), requestOptions)
-
-    /** @see getReferralFlowScreenshots */
-    fun getReferralFlowScreenshots(
-        id: String,
-        params: CampaignGetReferralFlowScreenshotsParams =
-            CampaignGetReferralFlowScreenshotsParams.none(),
-    ): CompletableFuture<ReferralFlowScreenshotsResponse> =
-        getReferralFlowScreenshots(id, params, RequestOptions.none())
-
-    /** @see getReferralFlowScreenshots */
-    fun getReferralFlowScreenshots(
-        params: CampaignGetReferralFlowScreenshotsParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): CompletableFuture<ReferralFlowScreenshotsResponse>
-
-    /** @see getReferralFlowScreenshots */
-    fun getReferralFlowScreenshots(
-        params: CampaignGetReferralFlowScreenshotsParams
-    ): CompletableFuture<ReferralFlowScreenshotsResponse> =
-        getReferralFlowScreenshots(params, RequestOptions.none())
-
-    /** @see getReferralFlowScreenshots */
-    fun getReferralFlowScreenshots(
-        id: String,
-        requestOptions: RequestOptions,
-    ): CompletableFuture<ReferralFlowScreenshotsResponse> =
-        getReferralFlowScreenshots(
-            id,
-            CampaignGetReferralFlowScreenshotsParams.none(),
-            requestOptions,
-        )
 
     /**
      * Creates or returns a participant using the same input behavior as Add Participant, then
@@ -694,55 +645,6 @@ interface CampaignServiceAsync {
             requestOptions: RequestOptions
         ): CompletableFuture<HttpResponseFor<CampaignListResponse>> =
             list(CampaignListParams.none(), requestOptions)
-
-        /**
-         * Returns a raw HTTP response for `get /campaign/{id}/referral-flow-screenshots`, but is
-         * otherwise the same as [CampaignServiceAsync.getReferralFlowScreenshots].
-         */
-        fun getReferralFlowScreenshots(
-            id: String
-        ): CompletableFuture<HttpResponseFor<ReferralFlowScreenshotsResponse>> =
-            getReferralFlowScreenshots(id, CampaignGetReferralFlowScreenshotsParams.none())
-
-        /** @see getReferralFlowScreenshots */
-        fun getReferralFlowScreenshots(
-            id: String,
-            params: CampaignGetReferralFlowScreenshotsParams =
-                CampaignGetReferralFlowScreenshotsParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ReferralFlowScreenshotsResponse>> =
-            getReferralFlowScreenshots(params.toBuilder().id(id).build(), requestOptions)
-
-        /** @see getReferralFlowScreenshots */
-        fun getReferralFlowScreenshots(
-            id: String,
-            params: CampaignGetReferralFlowScreenshotsParams =
-                CampaignGetReferralFlowScreenshotsParams.none(),
-        ): CompletableFuture<HttpResponseFor<ReferralFlowScreenshotsResponse>> =
-            getReferralFlowScreenshots(id, params, RequestOptions.none())
-
-        /** @see getReferralFlowScreenshots */
-        fun getReferralFlowScreenshots(
-            params: CampaignGetReferralFlowScreenshotsParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): CompletableFuture<HttpResponseFor<ReferralFlowScreenshotsResponse>>
-
-        /** @see getReferralFlowScreenshots */
-        fun getReferralFlowScreenshots(
-            params: CampaignGetReferralFlowScreenshotsParams
-        ): CompletableFuture<HttpResponseFor<ReferralFlowScreenshotsResponse>> =
-            getReferralFlowScreenshots(params, RequestOptions.none())
-
-        /** @see getReferralFlowScreenshots */
-        fun getReferralFlowScreenshots(
-            id: String,
-            requestOptions: RequestOptions,
-        ): CompletableFuture<HttpResponseFor<ReferralFlowScreenshotsResponse>> =
-            getReferralFlowScreenshots(
-                id,
-                CampaignGetReferralFlowScreenshotsParams.none(),
-                requestOptions,
-            )
 
         /**
          * Returns a raw HTTP response for `post /campaign/{id}/mobile-participant-token`, but is

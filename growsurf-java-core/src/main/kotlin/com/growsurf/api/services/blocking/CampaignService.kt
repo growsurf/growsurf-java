@@ -11,7 +11,6 @@ import com.growsurf.api.models.campaign.CampaignCloneParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenResponse
 import com.growsurf.api.models.campaign.CampaignCreateParams
-import com.growsurf.api.models.campaign.CampaignGetReferralFlowScreenshotsParams
 import com.growsurf.api.models.campaign.CampaignListCommissionsParams
 import com.growsurf.api.models.campaign.CampaignListLeaderboardParams
 import com.growsurf.api.models.campaign.CampaignListParams
@@ -26,7 +25,6 @@ import com.growsurf.api.models.campaign.CampaignUpdateParams
 import com.growsurf.api.models.campaign.ParticipantCommissionList
 import com.growsurf.api.models.campaign.ParticipantList
 import com.growsurf.api.models.campaign.ParticipantPayoutList
-import com.growsurf.api.models.campaign.ReferralFlowScreenshotsResponse
 import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.services.blocking.campaign.CommissionService
 import com.growsurf.api.services.blocking.campaign.DesignService
@@ -199,52 +197,6 @@ interface CampaignService {
     /** @see list */
     fun list(requestOptions: RequestOptions): CampaignListResponse =
         list(CampaignListParams.none(), requestOptions)
-
-    /**
-     * Captures two preview screenshots for the program: the authenticated referrer view and the
-     * referred-friend view.
-     */
-    fun getReferralFlowScreenshots(id: String): ReferralFlowScreenshotsResponse =
-        getReferralFlowScreenshots(id, CampaignGetReferralFlowScreenshotsParams.none())
-
-    /** @see getReferralFlowScreenshots */
-    fun getReferralFlowScreenshots(
-        id: String,
-        params: CampaignGetReferralFlowScreenshotsParams =
-            CampaignGetReferralFlowScreenshotsParams.none(),
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): ReferralFlowScreenshotsResponse =
-        getReferralFlowScreenshots(params.toBuilder().id(id).build(), requestOptions)
-
-    /** @see getReferralFlowScreenshots */
-    fun getReferralFlowScreenshots(
-        id: String,
-        params: CampaignGetReferralFlowScreenshotsParams =
-            CampaignGetReferralFlowScreenshotsParams.none(),
-    ): ReferralFlowScreenshotsResponse =
-        getReferralFlowScreenshots(id, params, RequestOptions.none())
-
-    /** @see getReferralFlowScreenshots */
-    fun getReferralFlowScreenshots(
-        params: CampaignGetReferralFlowScreenshotsParams,
-        requestOptions: RequestOptions = RequestOptions.none(),
-    ): ReferralFlowScreenshotsResponse
-
-    /** @see getReferralFlowScreenshots */
-    fun getReferralFlowScreenshots(
-        params: CampaignGetReferralFlowScreenshotsParams
-    ): ReferralFlowScreenshotsResponse = getReferralFlowScreenshots(params, RequestOptions.none())
-
-    /** @see getReferralFlowScreenshots */
-    fun getReferralFlowScreenshots(
-        id: String,
-        requestOptions: RequestOptions,
-    ): ReferralFlowScreenshotsResponse =
-        getReferralFlowScreenshots(
-            id,
-            CampaignGetReferralFlowScreenshotsParams.none(),
-            requestOptions,
-        )
 
     /**
      * Creates or returns a participant using the same input behavior as Add Participant, then
@@ -663,61 +615,6 @@ interface CampaignService {
         @MustBeClosed
         fun list(requestOptions: RequestOptions): HttpResponseFor<CampaignListResponse> =
             list(CampaignListParams.none(), requestOptions)
-
-        /**
-         * Returns a raw HTTP response for `get /campaign/{id}/referral-flow-screenshots`, but is
-         * otherwise the same as [CampaignService.getReferralFlowScreenshots].
-         */
-        @MustBeClosed
-        fun getReferralFlowScreenshots(
-            id: String
-        ): HttpResponseFor<ReferralFlowScreenshotsResponse> =
-            getReferralFlowScreenshots(id, CampaignGetReferralFlowScreenshotsParams.none())
-
-        /** @see getReferralFlowScreenshots */
-        @MustBeClosed
-        fun getReferralFlowScreenshots(
-            id: String,
-            params: CampaignGetReferralFlowScreenshotsParams =
-                CampaignGetReferralFlowScreenshotsParams.none(),
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ReferralFlowScreenshotsResponse> =
-            getReferralFlowScreenshots(params.toBuilder().id(id).build(), requestOptions)
-
-        /** @see getReferralFlowScreenshots */
-        @MustBeClosed
-        fun getReferralFlowScreenshots(
-            id: String,
-            params: CampaignGetReferralFlowScreenshotsParams =
-                CampaignGetReferralFlowScreenshotsParams.none(),
-        ): HttpResponseFor<ReferralFlowScreenshotsResponse> =
-            getReferralFlowScreenshots(id, params, RequestOptions.none())
-
-        /** @see getReferralFlowScreenshots */
-        @MustBeClosed
-        fun getReferralFlowScreenshots(
-            params: CampaignGetReferralFlowScreenshotsParams,
-            requestOptions: RequestOptions = RequestOptions.none(),
-        ): HttpResponseFor<ReferralFlowScreenshotsResponse>
-
-        /** @see getReferralFlowScreenshots */
-        @MustBeClosed
-        fun getReferralFlowScreenshots(
-            params: CampaignGetReferralFlowScreenshotsParams
-        ): HttpResponseFor<ReferralFlowScreenshotsResponse> =
-            getReferralFlowScreenshots(params, RequestOptions.none())
-
-        /** @see getReferralFlowScreenshots */
-        @MustBeClosed
-        fun getReferralFlowScreenshots(
-            id: String,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<ReferralFlowScreenshotsResponse> =
-            getReferralFlowScreenshots(
-                id,
-                CampaignGetReferralFlowScreenshotsParams.none(),
-                requestOptions,
-            )
 
         /**
          * Returns a raw HTTP response for `post /campaign/{id}/mobile-participant-token`, but is

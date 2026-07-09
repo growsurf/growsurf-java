@@ -21,7 +21,6 @@ import com.growsurf.api.models.campaign.CampaignCloneParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenResponse
 import com.growsurf.api.models.campaign.CampaignCreateParams
-import com.growsurf.api.models.campaign.CampaignGetReferralFlowScreenshotsParams
 import com.growsurf.api.models.campaign.CampaignListCommissionsParams
 import com.growsurf.api.models.campaign.CampaignListLeaderboardParams
 import com.growsurf.api.models.campaign.CampaignListParams
@@ -36,7 +35,6 @@ import com.growsurf.api.models.campaign.CampaignUpdateParams
 import com.growsurf.api.models.campaign.ParticipantCommissionList
 import com.growsurf.api.models.campaign.ParticipantList
 import com.growsurf.api.models.campaign.ParticipantPayoutList
-import com.growsurf.api.models.campaign.ReferralFlowScreenshotsResponse
 import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.services.blocking.campaign.CommissionService
 import com.growsurf.api.services.blocking.campaign.CommissionServiceImpl
@@ -140,13 +138,6 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
     ): CampaignListResponse =
         // get /campaigns
         withRawResponse().list(params, requestOptions).parse()
-
-    override fun getReferralFlowScreenshots(
-        params: CampaignGetReferralFlowScreenshotsParams,
-        requestOptions: RequestOptions,
-    ): ReferralFlowScreenshotsResponse =
-        // get /campaign/{id}/referral-flow-screenshots
-        withRawResponse().getReferralFlowScreenshots(params, requestOptions).parse()
 
     override fun createMobileParticipantToken(
         params: CampaignCreateMobileParticipantTokenParams,
@@ -411,36 +402,6 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
             return errorHandler.handle(response).parseable {
                 response
                     .use { listHandler.handle(it) }
-                    .also {
-                        if (requestOptions.responseValidation!!) {
-                            it.validate()
-                        }
-                    }
-            }
-        }
-
-        private val getReferralFlowScreenshotsHandler: Handler<ReferralFlowScreenshotsResponse> =
-            jsonHandler<ReferralFlowScreenshotsResponse>(clientOptions.jsonMapper)
-
-        override fun getReferralFlowScreenshots(
-            params: CampaignGetReferralFlowScreenshotsParams,
-            requestOptions: RequestOptions,
-        ): HttpResponseFor<ReferralFlowScreenshotsResponse> {
-            // We check here instead of in the params builder because this can be specified
-            // positionally or in the params class.
-            checkRequired("id", params.id().getOrNull())
-            val request =
-                HttpRequest.builder()
-                    .method(HttpMethod.GET)
-                    .baseUrl(clientOptions.baseUrl())
-                    .addPathSegments("campaign", params._pathParam(0), "referral-flow-screenshots")
-                    .build()
-                    .prepare(clientOptions, params)
-            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
-            val response = clientOptions.httpClient.execute(request, requestOptions)
-            return errorHandler.handle(response).parseable {
-                response
-                    .use { getReferralFlowScreenshotsHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()
