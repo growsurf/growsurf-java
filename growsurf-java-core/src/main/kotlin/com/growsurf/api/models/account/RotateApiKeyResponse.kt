@@ -28,7 +28,7 @@ private constructor(
     ) : this(apiKey, mutableMapOf())
 
     /**
-     * The new API key. The previous key is revoked immediately.
+     * The new API key. Store it now; the key used for rotation stops working immediately.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -79,7 +79,7 @@ private constructor(
             additionalProperties = rotateApiKeyResponse.additionalProperties.toMutableMap()
         }
 
-        /** The new API key. The previous key is revoked immediately. */
+        /** The new API key. Store it now; the key used for rotation stops working immediately. */
         fun apiKey(apiKey: String) = apiKey(JsonField.of(apiKey))
 
         /**

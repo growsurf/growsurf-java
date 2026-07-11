@@ -40,6 +40,16 @@ internal class ClientOptionsTest {
     }
 
     @Test
+    fun build_configuresIdempotencyHeader() {
+        val clientOptions =
+            ClientOptions.builder().httpClient(httpClient).apiKey("My API Key").build()
+        val field = clientOptions.httpClient.javaClass.getDeclaredField("idempotencyHeader")
+        field.isAccessible = true
+
+        assertThat(field.get(clientOptions.httpClient)).isEqualTo("Idempotency-Key")
+    }
+
+    @Test
     fun toBuilder_whenOriginalClientOptionsGarbageCollected_doesNotCloseOriginalClient() {
         var clientOptions =
             ClientOptions.builder().httpClient(httpClient).apiKey("My API Key").build()

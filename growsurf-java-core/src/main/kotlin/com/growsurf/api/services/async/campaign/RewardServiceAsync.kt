@@ -53,7 +53,10 @@ interface RewardServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<RewardDeleteResponse>
 
-    /** Approves a manually approved reward earned by a participant. */
+    /**
+     * Approves a manually approved reward earned by a participant. Requires `reward:write`. Passing
+     * `fulfill=true` also requires `reward:fulfill`.
+     */
     fun approve(
         rewardId: String,
         params: RewardApproveParams,
@@ -77,7 +80,7 @@ interface RewardServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<RewardApproveResponse>
 
-    /** Marks an approved participant reward as fulfilled. */
+    /** Marks an approved participant reward as fulfilled. Requires `reward:fulfill`. */
     fun fulfill(
         rewardId: String,
         params: RewardFulfillParams,
