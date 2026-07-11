@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/growsurf/growsurf-java/compare/v1.1.1...v1.1.2) (2026-07-11)
+
+
+### Bug Fixes
+
+* support retry-safe API key rotation ([bb2b12b](https://github.com/growsurf/growsurf-java/commit/bb2b12b166437f6f1d13f4b7028bd7d8a1a0bda1))
+
 ## [1.1.1](https://github.com/growsurf/growsurf-java/compare/v1.1.0...v1.1.1) (2026-07-09)
 
 
