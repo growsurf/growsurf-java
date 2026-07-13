@@ -5,6 +5,7 @@ package com.growsurf.api.client
 import com.growsurf.api.core.ClientOptions
 import com.growsurf.api.services.blocking.AccountService
 import com.growsurf.api.services.blocking.CampaignService
+import com.growsurf.api.services.blocking.TeamService
 import java.util.function.Consumer
 
 /**
@@ -45,6 +46,8 @@ interface GrowsurfClient {
 
     fun account(): AccountService
 
+    fun team(): TeamService
+
     fun campaign(): CampaignService
 
     /**
@@ -71,6 +74,8 @@ interface GrowsurfClient {
         fun withOptions(modifier: Consumer<ClientOptions.Builder>): GrowsurfClient.WithRawResponse
 
         fun account(): AccountService.WithRawResponse
+
+        fun team(): TeamService.WithRawResponse
 
         fun campaign(): CampaignService.WithRawResponse
     }

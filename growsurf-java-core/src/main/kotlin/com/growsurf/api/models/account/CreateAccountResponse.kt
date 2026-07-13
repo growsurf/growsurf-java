@@ -22,7 +22,6 @@ class CreateAccountResponse
 private constructor(
     private val apiKey: JsonField<String>,
     private val email: JsonField<String>,
-    private val id: JsonField<String>,
     private val verificationStatus: JsonField<VerificationStatus>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
@@ -31,11 +30,10 @@ private constructor(
     private constructor(
         @JsonProperty("apiKey") @ExcludeMissing apiKey: JsonField<String> = JsonMissing.of(),
         @JsonProperty("email") @ExcludeMissing email: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("id") @ExcludeMissing id: JsonField<String> = JsonMissing.of(),
         @JsonProperty("verificationStatus")
         @ExcludeMissing
         verificationStatus: JsonField<VerificationStatus> = JsonMissing.of(),
-    ) : this(apiKey, email, id, verificationStatus, mutableMapOf())
+    ) : this(apiKey, email, verificationStatus, mutableMapOf())
 
     /**
      * An API key for the new account. Use it as the `Bearer` token on subsequent requests. Locked
@@ -52,14 +50,6 @@ private constructor(
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun email(): String = email.getRequired("email")
-
-    /**
-     * The new account's unique identifier.
-     *
-     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-     */
-    fun id(): String = id.getRequired("id")
 
     /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
@@ -81,13 +71,6 @@ private constructor(
      * Unlike [email], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("email") @ExcludeMissing fun _email(): JsonField<String> = email
-
-    /**
-     * Returns the raw JSON value of [id].
-     *
-     * Unlike [id], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    @JsonProperty("id") @ExcludeMissing fun _id(): JsonField<String> = id
 
     /**
      * Returns the raw JSON value of [verificationStatus].
@@ -120,7 +103,6 @@ private constructor(
          * ```java
          * .apiKey()
          * .email()
-         * .id()
          * .verificationStatus()
          * ```
          */
@@ -132,7 +114,6 @@ private constructor(
 
         private var apiKey: JsonField<String>? = null
         private var email: JsonField<String>? = null
-        private var id: JsonField<String>? = null
         private var verificationStatus: JsonField<VerificationStatus>? = null
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -140,7 +121,6 @@ private constructor(
         internal fun from(createAccountResponse: CreateAccountResponse) = apply {
             apiKey = createAccountResponse.apiKey
             email = createAccountResponse.email
-            id = createAccountResponse.id
             verificationStatus = createAccountResponse.verificationStatus
             additionalProperties = createAccountResponse.additionalProperties.toMutableMap()
         }
@@ -169,17 +149,6 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun email(email: JsonField<String>) = apply { this.email = email }
-
-        /** The new account's unique identifier. */
-        fun id(id: String) = id(JsonField.of(id))
-
-        /**
-         * Sets [Builder.id] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.id] with a well-typed [String] value instead. This
-         * method is primarily for setting the field to an undocumented or not yet supported value.
-         */
-        fun id(id: JsonField<String>) = apply { this.id = id }
 
         fun verificationStatus(verificationStatus: VerificationStatus) =
             verificationStatus(JsonField.of(verificationStatus))
@@ -223,7 +192,6 @@ private constructor(
          * ```java
          * .apiKey()
          * .email()
-         * .id()
          * .verificationStatus()
          * ```
          *
@@ -233,7 +201,6 @@ private constructor(
             CreateAccountResponse(
                 checkRequired("apiKey", apiKey),
                 checkRequired("email", email),
-                checkRequired("id", id),
                 checkRequired("verificationStatus", verificationStatus),
                 additionalProperties.toMutableMap(),
             )
@@ -256,7 +223,6 @@ private constructor(
 
         apiKey()
         email()
-        id()
         verificationStatus().validate()
         validated = true
     }
@@ -278,7 +244,6 @@ private constructor(
     internal fun validity(): Int =
         (if (apiKey.asKnown().isPresent) 1 else 0) +
             (if (email.asKnown().isPresent) 1 else 0) +
-            (if (id.asKnown().isPresent) 1 else 0) +
             (verificationStatus.asKnown().getOrNull()?.validity() ?: 0)
 
     /** GrowSurf-team verification state. */
@@ -422,17 +387,16 @@ private constructor(
         return other is CreateAccountResponse &&
             apiKey == other.apiKey &&
             email == other.email &&
-            id == other.id &&
             verificationStatus == other.verificationStatus &&
             additionalProperties == other.additionalProperties
     }
 
     private val hashCode: Int by lazy {
-        Objects.hash(apiKey, email, id, verificationStatus, additionalProperties)
+        Objects.hash(apiKey, email, verificationStatus, additionalProperties)
     }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CreateAccountResponse{apiKey=$apiKey, email=$email, id=$id, verificationStatus=$verificationStatus, additionalProperties=$additionalProperties}"
+        "CreateAccountResponse{apiKey=$apiKey, email=$email, verificationStatus=$verificationStatus, additionalProperties=$additionalProperties}"
 }

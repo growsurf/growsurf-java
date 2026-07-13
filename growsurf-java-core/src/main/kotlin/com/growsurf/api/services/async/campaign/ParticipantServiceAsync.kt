@@ -486,9 +486,9 @@ interface ParticipantServiceAsync {
     /**
      * Sends an email to a participant. Provide EITHER `emailType` to trigger one of the program's
      * configured email templates, OR `subject` + `body` for a free-form email. Sending requires the
-     * account to be verified by the GrowSurf team. Requires a verified custom email domain on the
-     * program (set up in Campaign Editor > 3. Emails > Email Settings). Returns `400` until one is
-     * verified. The email is accepted for delivery.
+     * team to be verified by GrowSurf. Requires a verified custom email domain on the program (set
+     * up in Campaign Editor > 3. Emails > Email Settings). Returns `400` until one is verified. The
+     * email is accepted for delivery.
      */
     fun email(
         participantIdOrEmail: String,

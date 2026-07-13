@@ -105,7 +105,7 @@ private constructor(
      * Defaults to [LogLevel.fromEnv].
      */
     @get:JvmName("logLevel") val logLevel: LogLevel,
-    /** GrowSurf REST API key supplied as `Authorization: Bearer <api_key>`. */
+    /** GrowSurf REST API key supplied as `Authorization: Bearer <api_key>`, when configured. */
     @get:JvmName("apiKey") val apiKey: String,
 ) {
 
@@ -134,7 +134,6 @@ private constructor(
          * The following fields are required:
          * ```java
          * .httpClient()
-         * .apiKey()
          * ```
          */
         @JvmStatic fun builder() = Builder()
@@ -389,7 +388,7 @@ private constructor(
          *
          * |Setter   |System property   |Environment variable|Required|Default value                  |
          * |---------|------------------|--------------------|--------|-------------------------------|
-         * |`apiKey` |`growsurf.apiKey` |`GROWSURF_API_KEY`  |true    |-                              |
+         * |`apiKey` |`growsurf.apiKey` |`GROWSURF_API_KEY`  |false   |`""`                           |
          * |`baseUrl`|`growsurf.baseUrl`|`GROWSURF_BASE_URL` |true    |`"https://api.growsurf.com/v2"`|
          *
          * System properties take precedence over environment variables.
@@ -420,7 +419,6 @@ private constructor(
          * The following fields are required:
          * ```java
          * .httpClient()
-         * .apiKey()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
@@ -428,7 +426,7 @@ private constructor(
         fun build(): ClientOptions {
             val httpClient = checkRequired("httpClient", httpClient)
             val sleeper = sleeper ?: PhantomReachableSleeper(DefaultSleeper())
-            val apiKey = checkRequired("apiKey", apiKey)
+            val apiKey = apiKey ?: ""
 
             val headers = Headers.builder()
             val queryParams = QueryParams.builder()

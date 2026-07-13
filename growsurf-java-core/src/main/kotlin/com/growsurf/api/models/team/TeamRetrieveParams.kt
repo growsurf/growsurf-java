@@ -1,13 +1,13 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.growsurf.api.models.account
+package com.growsurf.api.models.team
 
 import com.growsurf.api.core.Params
 import com.growsurf.api.core.http.Headers
 import com.growsurf.api.core.http.QueryParams
 import java.util.Objects
 
-class AccountResendVerificationEmailParams
+class TeamRetrieveParams
 private constructor(
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
@@ -23,28 +23,22 @@ private constructor(
 
     companion object {
 
-        @JvmStatic fun none(): AccountResendVerificationEmailParams = builder().build()
+        @JvmStatic fun none(): TeamRetrieveParams = builder().build()
 
-        /**
-         * Returns a mutable builder for constructing an instance of
-         * [AccountResendVerificationEmailParams].
-         */
+        /** Returns a mutable builder for constructing an instance of [TeamRetrieveParams]. */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [AccountResendVerificationEmailParams]. */
+    /** A builder for [TeamRetrieveParams]. */
     class Builder internal constructor() {
 
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
-        internal fun from(
-            accountResendVerificationEmailParams: AccountResendVerificationEmailParams
-        ) = apply {
-            additionalHeaders = accountResendVerificationEmailParams.additionalHeaders.toBuilder()
-            additionalQueryParams =
-                accountResendVerificationEmailParams.additionalQueryParams.toBuilder()
+        internal fun from(teamRetrieveParams: TeamRetrieveParams) = apply {
+            additionalHeaders = teamRetrieveParams.additionalHeaders.toBuilder()
+            additionalQueryParams = teamRetrieveParams.additionalQueryParams.toBuilder()
         }
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
@@ -146,15 +140,12 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [AccountResendVerificationEmailParams].
+         * Returns an immutable instance of [TeamRetrieveParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): AccountResendVerificationEmailParams =
-            AccountResendVerificationEmailParams(
-                additionalHeaders.build(),
-                additionalQueryParams.build(),
-            )
+        fun build(): TeamRetrieveParams =
+            TeamRetrieveParams(additionalHeaders.build(), additionalQueryParams.build())
     }
 
     override fun _headers(): Headers = additionalHeaders
@@ -166,7 +157,7 @@ private constructor(
             return true
         }
 
-        return other is AccountResendVerificationEmailParams &&
+        return other is TeamRetrieveParams &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
@@ -174,5 +165,5 @@ private constructor(
     override fun hashCode(): Int = Objects.hash(additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "AccountResendVerificationEmailParams{additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "TeamRetrieveParams{additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

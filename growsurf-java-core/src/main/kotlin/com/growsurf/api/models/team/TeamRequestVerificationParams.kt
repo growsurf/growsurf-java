@@ -1,13 +1,13 @@
 // File generated from our OpenAPI spec by Stainless.
 
-package com.growsurf.api.models.account
+package com.growsurf.api.models.team
 
 import com.growsurf.api.core.Params
 import com.growsurf.api.core.http.Headers
 import com.growsurf.api.core.http.QueryParams
 import java.util.Objects
 
-class AccountRotateApiKeyParams
+class TeamRequestVerificationParams
 private constructor(
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
@@ -23,24 +23,25 @@ private constructor(
 
     companion object {
 
-        @JvmStatic fun none(): AccountRotateApiKeyParams = builder().build()
+        @JvmStatic fun none(): TeamRequestVerificationParams = builder().build()
 
         /**
-         * Returns a mutable builder for constructing an instance of [AccountRotateApiKeyParams].
+         * Returns a mutable builder for constructing an instance of
+         * [TeamRequestVerificationParams].
          */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [AccountRotateApiKeyParams]. */
+    /** A builder for [TeamRequestVerificationParams]. */
     class Builder internal constructor() {
 
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
         @JvmSynthetic
-        internal fun from(accountRotateApiKeyParams: AccountRotateApiKeyParams) = apply {
-            additionalHeaders = accountRotateApiKeyParams.additionalHeaders.toBuilder()
-            additionalQueryParams = accountRotateApiKeyParams.additionalQueryParams.toBuilder()
+        internal fun from(teamRequestVerificationParams: TeamRequestVerificationParams) = apply {
+            additionalHeaders = teamRequestVerificationParams.additionalHeaders.toBuilder()
+            additionalQueryParams = teamRequestVerificationParams.additionalQueryParams.toBuilder()
         }
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
@@ -142,12 +143,12 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [AccountRotateApiKeyParams].
+         * Returns an immutable instance of [TeamRequestVerificationParams].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          */
-        fun build(): AccountRotateApiKeyParams =
-            AccountRotateApiKeyParams(additionalHeaders.build(), additionalQueryParams.build())
+        fun build(): TeamRequestVerificationParams =
+            TeamRequestVerificationParams(additionalHeaders.build(), additionalQueryParams.build())
     }
 
     override fun _headers(): Headers = additionalHeaders
@@ -159,7 +160,7 @@ private constructor(
             return true
         }
 
-        return other is AccountRotateApiKeyParams &&
+        return other is TeamRequestVerificationParams &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
@@ -167,5 +168,5 @@ private constructor(
     override fun hashCode(): Int = Objects.hash(additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "AccountRotateApiKeyParams{additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "TeamRequestVerificationParams{additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

@@ -8,6 +8,8 @@ import com.growsurf.api.services.blocking.AccountService
 import com.growsurf.api.services.blocking.AccountServiceImpl
 import com.growsurf.api.services.blocking.CampaignService
 import com.growsurf.api.services.blocking.CampaignServiceImpl
+import com.growsurf.api.services.blocking.TeamService
+import com.growsurf.api.services.blocking.TeamServiceImpl
 import java.util.function.Consumer
 
 class GrowsurfClientImpl(private val clientOptions: ClientOptions) : GrowsurfClient {
@@ -29,6 +31,8 @@ class GrowsurfClientImpl(private val clientOptions: ClientOptions) : GrowsurfCli
 
     private val account: AccountService by lazy { AccountServiceImpl(clientOptionsWithUserAgent) }
 
+    private val team: TeamService by lazy { TeamServiceImpl(clientOptionsWithUserAgent) }
+
     private val campaign: CampaignService by lazy {
         CampaignServiceImpl(clientOptionsWithUserAgent)
     }
@@ -42,6 +46,8 @@ class GrowsurfClientImpl(private val clientOptions: ClientOptions) : GrowsurfCli
 
     override fun account(): AccountService = account
 
+    override fun team(): TeamService = team
+
     override fun campaign(): CampaignService = campaign
 
     override fun close() = clientOptions.close()
@@ -51,6 +57,10 @@ class GrowsurfClientImpl(private val clientOptions: ClientOptions) : GrowsurfCli
 
         private val account: AccountService.WithRawResponse by lazy {
             AccountServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val team: TeamService.WithRawResponse by lazy {
+            TeamServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val campaign: CampaignService.WithRawResponse by lazy {
@@ -65,6 +75,8 @@ class GrowsurfClientImpl(private val clientOptions: ClientOptions) : GrowsurfCli
             )
 
         override fun account(): AccountService.WithRawResponse = account
+
+        override fun team(): TeamService.WithRawResponse = team
 
         override fun campaign(): CampaignService.WithRawResponse = campaign
     }

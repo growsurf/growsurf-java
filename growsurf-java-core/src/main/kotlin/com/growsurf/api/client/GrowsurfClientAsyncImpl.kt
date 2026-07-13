@@ -8,6 +8,8 @@ import com.growsurf.api.services.async.AccountServiceAsync
 import com.growsurf.api.services.async.AccountServiceAsyncImpl
 import com.growsurf.api.services.async.CampaignServiceAsync
 import com.growsurf.api.services.async.CampaignServiceAsyncImpl
+import com.growsurf.api.services.async.TeamServiceAsync
+import com.growsurf.api.services.async.TeamServiceAsyncImpl
 import java.util.function.Consumer
 
 class GrowsurfClientAsyncImpl(private val clientOptions: ClientOptions) : GrowsurfClientAsync {
@@ -31,6 +33,8 @@ class GrowsurfClientAsyncImpl(private val clientOptions: ClientOptions) : Growsu
         AccountServiceAsyncImpl(clientOptionsWithUserAgent)
     }
 
+    private val team: TeamServiceAsync by lazy { TeamServiceAsyncImpl(clientOptionsWithUserAgent) }
+
     private val campaign: CampaignServiceAsync by lazy {
         CampaignServiceAsyncImpl(clientOptionsWithUserAgent)
     }
@@ -44,6 +48,8 @@ class GrowsurfClientAsyncImpl(private val clientOptions: ClientOptions) : Growsu
 
     override fun account(): AccountServiceAsync = account
 
+    override fun team(): TeamServiceAsync = team
+
     override fun campaign(): CampaignServiceAsync = campaign
 
     override fun close() = clientOptions.close()
@@ -53,6 +59,10 @@ class GrowsurfClientAsyncImpl(private val clientOptions: ClientOptions) : Growsu
 
         private val account: AccountServiceAsync.WithRawResponse by lazy {
             AccountServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
+        private val team: TeamServiceAsync.WithRawResponse by lazy {
+            TeamServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
         private val campaign: CampaignServiceAsync.WithRawResponse by lazy {
@@ -67,6 +77,8 @@ class GrowsurfClientAsyncImpl(private val clientOptions: ClientOptions) : Growsu
             )
 
         override fun account(): AccountServiceAsync.WithRawResponse = account
+
+        override fun team(): TeamServiceAsync.WithRawResponse = team
 
         override fun campaign(): CampaignServiceAsync.WithRawResponse = campaign
     }

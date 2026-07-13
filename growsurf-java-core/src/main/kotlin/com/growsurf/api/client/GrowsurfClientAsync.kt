@@ -5,6 +5,7 @@ package com.growsurf.api.client
 import com.growsurf.api.core.ClientOptions
 import com.growsurf.api.services.async.AccountServiceAsync
 import com.growsurf.api.services.async.CampaignServiceAsync
+import com.growsurf.api.services.async.TeamServiceAsync
 import java.util.function.Consumer
 
 /**
@@ -45,6 +46,8 @@ interface GrowsurfClientAsync {
 
     fun account(): AccountServiceAsync
 
+    fun team(): TeamServiceAsync
+
     fun campaign(): CampaignServiceAsync
 
     /**
@@ -75,6 +78,8 @@ interface GrowsurfClientAsync {
         ): GrowsurfClientAsync.WithRawResponse
 
         fun account(): AccountServiceAsync.WithRawResponse
+
+        fun team(): TeamServiceAsync.WithRawResponse
 
         fun campaign(): CampaignServiceAsync.WithRawResponse
     }

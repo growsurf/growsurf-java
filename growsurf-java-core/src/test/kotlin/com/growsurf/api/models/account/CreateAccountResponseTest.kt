@@ -13,7 +13,6 @@ internal class CreateAccountResponseTest {
     fun create() {
         val createAccountResponse =
             CreateAccountResponse.builder()
-                .id("8f3a1c2e9b7d4f60a1e2c3d4")
                 .email("richard@piedpiper.com")
                 .apiKey(
                     "sk_api_0123456789abcdef0123456789abcdef_u9v4m2q8n6r5s1t7w3x0y9z8a6b4c2d0e1f3g5h7"
@@ -33,7 +32,6 @@ internal class CreateAccountResponseTest {
         val jsonMapper = jsonMapper()
         val createAccountResponse =
             CreateAccountResponse.builder()
-                .id("8f3a1c2e9b7d4f60a1e2c3d4")
                 .email("richard@piedpiper.com")
                 .apiKey(
                     "sk_api_0123456789abcdef0123456789abcdef_u9v4m2q8n6r5s1t7w3x0y9z8a6b4c2d0e1f3g5h7"
