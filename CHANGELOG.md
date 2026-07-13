@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/growsurf/growsurf-java/compare/v1.1.2...v1.2.0) (2026-07-13)
+
+
+### Features
+
+* **api:** add Team resource ([c14d7c6](https://github.com/growsurf/growsurf-java/commit/c14d7c6c360b908b146672a930c98a467603954d))
+
 ## [1.1.2](https://github.com/growsurf/growsurf-java/compare/v1.1.1...v1.1.2) (2026-07-11)
 
 
