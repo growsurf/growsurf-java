@@ -26,7 +26,12 @@ interface OptionsService {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): OptionsService
 
-    /** Retrieves a program's Options configuration. */
+    /**
+     * Retrieves a program's options — the same surface as the dashboard Program Editor's
+     * **Options** tab. Includes reward/fraud approval, anti-fraud lists + toggles, referral
+     * cookie/credit windows, reCAPTCHA, payout threshold + tax settings (affiliate only), and
+     * notification-email settings. `fraud.recaptcha.secretKey` is never returned.
+     */
     fun retrieve(id: String): CampaignOptions = retrieve(id, OptionRetrieveParams.none())
 
     /** @see retrieve */
@@ -57,8 +62,11 @@ interface OptionsService {
         retrieve(id, OptionRetrieveParams.none(), requestOptions)
 
     /**
-     * Updates a program's Options configuration. Only the fields you send are changed; anything you
-     * leave out is untouched.
+     * Updates a program's options. Only the fields you send are changed. Some fields are
+     * program-type specific (`requireManualRewardApproval`/`autoFulfillRewards` are referral-only;
+     * `payoutThreshold`/`taxDocumentation` are affiliate-only, and affiliate programs require
+     * `requireParticipantAuth: true`). `fraud.recaptcha.secretKey` is write-only.
+     * `referralCreditWindowDays: null` means "never expires".
      */
     fun update(id: String, params: OptionUpdateParams): CampaignOptions =
         update(id, params, RequestOptions.none())

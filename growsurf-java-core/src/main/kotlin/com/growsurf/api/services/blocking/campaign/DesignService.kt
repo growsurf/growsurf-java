@@ -26,7 +26,14 @@ interface DesignService {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): DesignService
 
-    /** Retrieves a program's Design configuration. */
+    /**
+     * Retrieves a program's design configuration — the same surface as the dashboard Program
+     * Editor's **Design** tab: the GrowSurf window layout, header, share channels + invite, signup
+     * form, portal/landing pages, theme styling, and the referral/affiliate summary + status
+     * sections. This is a large object whose available fields depend on the program type; the
+     * response includes every field and its current value, which is the same shape you send back on
+     * `PATCH`.
+     */
     fun retrieve(id: String): CampaignDesign = retrieve(id, DesignRetrieveParams.none())
 
     /** @see retrieve */
@@ -57,8 +64,10 @@ interface DesignService {
         retrieve(id, DesignRetrieveParams.none(), requestOptions)
 
     /**
-     * Updates a program's Design configuration. Only the fields you send are changed; anything you
-     * leave out is untouched (arrays such as `signup.fields` replace wholesale).
+     * Updates a program's design configuration. Only the fields you send are changed; anything you
+     * leave out is untouched (arrays such as `signup.fields` replace wholesale). Unknown fields,
+     * fields not available for the program type, and invalid values return a `400`. Landing-page
+     * custom code and JavaScript are not editable via the API.
      */
     fun update(id: String, params: DesignUpdateParams): CampaignDesign =
         update(id, params, RequestOptions.none())

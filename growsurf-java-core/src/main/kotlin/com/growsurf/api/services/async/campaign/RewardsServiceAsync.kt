@@ -32,7 +32,7 @@ interface RewardsServiceAsync {
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): RewardsServiceAsync
 
     /**
-     * Creates a new campaign reward (`CampaignReward`) with a server-generated ID. The reward type
+     * Creates a new campaign reward (`CampaignReward`) with a GrowSurf-assigned ID. The reward type
      * must be compatible with the program type (affiliate programs support only `AFFILIATE`
      * rewards; referral programs support all other types). Enabling an active reward of a type
      * automatically enables that reward type on the program.
@@ -59,7 +59,9 @@ interface RewardsServiceAsync {
 
     /**
      * Updates an existing campaign reward (`CampaignReward`). The reward `type` is immutable and
-     * cannot be changed.
+     * cannot be changed. When the update replaces `metadata`, renamed keys automatically rewrite
+     * any `{{campaignReward[…]}}` references in campaign copy; removing a key that campaign copy
+     * still references returns a `409` listing the referencing fields.
      */
     fun update(campaignRewardId: String, params: RewardUpdateParams): CompletableFuture<Reward> =
         update(campaignRewardId, params, RequestOptions.none())
@@ -83,8 +85,9 @@ interface RewardsServiceAsync {
     ): CompletableFuture<Reward>
 
     /**
-     * Retrieves the list of a program's configured rewards (`CampaignReward`s), the same set
-     * embedded in the `rewards` array of the campaign response.
+     * Retrieves the list of a program's configured rewards (`CampaignReward`s) — the same set
+     * embedded in the `rewards` array of the campaign response. Delete a reward with `DELETE
+     * /campaign/{id}/reward-configs/{campaignRewardId}`.
      */
     fun list(id: String): CompletableFuture<CampaignRewardListResponse> =
         list(id, RewardListParams.none())
@@ -122,7 +125,9 @@ interface RewardsServiceAsync {
 
     /**
      * Deletes a campaign reward (`CampaignReward`). The reward is deactivated, removed from the
-     * program's reward set, and any connected upfront-discount coupons are cleaned up.
+     * program's reward set, and any connected upfront-discount coupons are cleaned up. If campaign
+     * copy still references any of the reward's metadata keys via `{{campaignReward[…]}}` tokens,
+     * the delete returns a `409` listing the referencing fields — update those fields first.
      */
     fun delete(
         campaignRewardId: String,

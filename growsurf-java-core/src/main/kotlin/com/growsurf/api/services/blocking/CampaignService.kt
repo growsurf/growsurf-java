@@ -78,9 +78,8 @@ interface CampaignService {
     fun webhooks(): WebhooksService
 
     /**
-     * Creates a new program pre-populated with type-appropriate defaults, plus any optional inline
-     * rewards. The new program is created in `DRAFT` status and owned by the API key's bound team.
-     * Requires the team owner's verified email.
+     * Creates a new program, plus any optional program rewards. The new program is created in
+     * `DRAFT` status and owned by the API key's bound team.
      */
     fun create(params: CampaignCreateParams): Campaign = create(params, RequestOptions.none())
 
@@ -230,7 +229,10 @@ interface CampaignService {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CampaignCreateMobileParticipantTokenResponse
 
-    /** Retrieves a paged list of all participant commissions in an affiliate program. */
+    /**
+     * **Affiliate programs only.** Retrieves a paged list of all participant commissions in an
+     * affiliate program.
+     */
     fun listCommissions(id: String): ParticipantCommissionList =
         listCommissions(id, CampaignListCommissionsParams.none())
 
@@ -324,7 +326,10 @@ interface CampaignService {
     fun listParticipants(id: String, requestOptions: RequestOptions): ParticipantList =
         listParticipants(id, CampaignListParticipantsParams.none(), requestOptions)
 
-    /** Retrieves a paged list of all participant payouts in an affiliate program. */
+    /**
+     * **Affiliate programs only.** Retrieves a paged list of all participant payouts in an
+     * affiliate program.
+     */
     fun listPayouts(id: String): ParticipantPayoutList =
         listPayouts(id, CampaignListPayoutsParams.none())
 
@@ -386,7 +391,11 @@ interface CampaignService {
     fun listReferrals(id: String, requestOptions: RequestOptions): ReferralList =
         listReferrals(id, CampaignListReferralsParams.none(), requestOptions)
 
-    /** Retrieves analytics for a program. */
+    /**
+     * Retrieves analytics for a program. Pass `interval` to also get a time-series (`series`)
+     * alongside the totals, and `include` to add previous-period totals, status breakdowns, or
+     * derived rates — useful for detecting trends over time.
+     */
     fun retrieveAnalytics(id: String): CampaignRetrieveAnalyticsResponse =
         retrieveAnalytics(id, CampaignRetrieveAnalyticsParams.none())
 

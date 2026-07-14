@@ -181,7 +181,9 @@ interface ParticipantService {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): Participant
 
-    /** Retrieves a paged list of commissions earned by a participant. */
+    /**
+     * **Affiliate programs only.** Retrieves a paged list of commissions earned by a participant.
+     */
     fun listCommissions(
         participantIdOrEmail: String,
         params: ParticipantListCommissionsParams,
@@ -209,7 +211,9 @@ interface ParticipantService {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): ParticipantCommissionList
 
-    /** Retrieves a paged list of payouts that belong to a participant. */
+    /**
+     * **Affiliate programs only.** Retrieves a paged list of payouts that belong to a participant.
+     */
     fun listPayouts(
         participantIdOrEmail: String,
         params: ParticipantListPayoutsParams,
@@ -292,14 +296,11 @@ interface ParticipantService {
     ): ParticipantListRewardsResponse
 
     /**
-     * Records a sale made by a referred customer and generates affiliate commissions for their
-     * referrer when applicable.
-     *
-     * At least one transaction identifier is required: one of `externalId`, `transactionId`,
-     * `orderId`, `paymentId`, `invoiceId`, `paymentIntentId`, or `chargeId`. `customerId` and
-     * `subscriptionId` do not count, since they identify the customer or subscription rather than
-     * the specific transaction. Without an identifier, resending the same sale creates a duplicate
-     * commission and double-pays the referrer; the server rejects such requests with HTTP 400.
+     * **Affiliate programs only.** Records a sale made by a referred customer and generates
+     * affiliate commissions for their referrer when applicable. Requires at least one transaction
+     * identifier (externalId, transactionId, orderId, paymentId, invoiceId, paymentIntentId, or
+     * chargeId) so repeated requests can be de-duplicated — without one, a resent sale would create
+     * a second commission. Reuse the same identifier(s) when refunding.
      */
     fun recordTransaction(
         participantIdOrEmail: String,
@@ -330,9 +331,12 @@ interface ParticipantService {
     ): ParticipantRecordTransactionResponse
 
     /**
-     * Records an amendment (refund, partial refund, refund cancellation, or chargeback) against a
-     * previously recorded transaction and reverses or adjusts the referrer's commission. The
-     * inverse of Record Affiliate Transaction.
+     * **Affiliate programs only.** Records an amendment (refund, partial refund, refund
+     * cancellation, or chargeback) against a previously recorded transaction and reverses or
+     * adjusts the referrer's commission. The inverse of Record Affiliate Transaction. Identify the
+     * original transaction with the same identifier(s) you sent when recording it. Commissions
+     * already paid out to the affiliate are not clawed back; the amendment is recorded for tax
+     * reporting only.
      */
     fun refundTransaction(
         participantIdOrEmail: String,
@@ -364,8 +368,8 @@ interface ParticipantService {
 
     /**
      * Sends email invites on behalf of a participant to a list of email addresses. Sending invites
-     * via the API requires a verified custom email domain on the program; the request fails until
-     * one is verified.
+     * via the API requires a **verified custom email domain** on the program; the request fails
+     * until one is verified.
      */
     fun sendInvites(
         participantIdOrEmail: String,
@@ -396,7 +400,10 @@ interface ParticipantService {
 
     /**
      * Triggers referral credit for an existing referred participant by GrowSurf participant ID or
-     * email address.
+     * email address. Optionally pass `delayInDays` to hold the credit for a number of days before
+     * it is awarded (for example, to cover your own refund window). A delayed trigger can be
+     * cancelled before it is awarded with the Cancel delayed referral trigger request (DELETE on
+     * this same path).
      */
     fun triggerReferral(
         participantIdOrEmail: String,
@@ -427,8 +434,10 @@ interface ParticipantService {
     ): ParticipantTriggerReferralResponse
 
     /**
-     * Cancels a pending delayed referral trigger for a participant by GrowSurf participant ID or
-     * email address.
+     * Cancels a pending delayed referral trigger for a participant (the companion to a delayed
+     * Trigger referral request). Use this to undo a scheduled referral credit before it is awarded,
+     * for example when a refund occurs inside your refund window. If the participant has no pending
+     * delayed trigger, `success` is returned as `false`.
      */
     fun cancelDelayedReferral(
         participantIdOrEmail: String,
@@ -461,10 +470,12 @@ interface ParticipantService {
 
     /**
      * Sends an email to a participant. Provide EITHER `emailType` to trigger one of the program's
-     * configured email templates, OR `subject` + `body` for a free-form email. Sending requires the
-     * team to be verified by GrowSurf. Requires a verified custom email domain on the program (set
-     * up in Campaign Editor > 3. Emails > Email Settings). Returns `400` until one is verified. The
-     * email is accepted for delivery.
+     * configured email templates, OR `subject` + `body` for a free-form email. Free-form emails are
+     * sent with the same compliance handling (company name, postal address, and an unsubscribe link
+     * are added automatically, and unsubscribed participants are suppressed). Sending requires the
+     * team to be verified by GrowSurf. Requires a **verified custom email domain** on the program
+     * (which can be completed in *Campaign Editor > 3. Emails > Email Settings*). Returns `400`
+     * until one is verified. The email is accepted for delivery.
      */
     fun email(
         participantIdOrEmail: String,
@@ -521,6 +532,8 @@ interface ParticipantService {
     /**
      * Retrieves analytics for a single participant — all-time engagement counters, leaderboard
      * ranks, and per-channel share counts (plus affiliate money metrics for affiliate programs).
+     * Useful for segmenting and re-engaging participants. Pass `include=series` to also get this
+     * participant's own activity over time.
      */
     fun retrieveAnalytics(
         participantIdOrEmail: String,

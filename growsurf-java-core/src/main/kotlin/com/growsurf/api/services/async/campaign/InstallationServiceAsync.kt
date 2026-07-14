@@ -27,7 +27,12 @@ interface InstallationServiceAsync {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): InstallationServiceAsync
 
-    /** Retrieves a program's Installation configuration. */
+    /**
+     * Retrieves a program's installation configuration — the same surface as the dashboard Program
+     * Editor's **Installation** tab (plus the Mobile SDK settings). Includes the referral trigger
+     * (referral programs only), signup tracking method, share URL and whitelist, custom-form signup
+     * settings, and mobile SDK settings.
+     */
     fun retrieve(id: String): CompletableFuture<CampaignInstallation> =
         retrieve(id, InstallationRetrieveParams.none())
 
@@ -63,8 +68,11 @@ interface InstallationServiceAsync {
         retrieve(id, InstallationRetrieveParams.none(), requestOptions)
 
     /**
-     * Updates a program's Installation configuration. Only the fields you send are changed;
-     * anything you leave out is untouched.
+     * Updates a program's installation configuration. Only the fields you send are changed; omitted
+     * fields are left untouched. `referralTrigger` is only available for referral programs.
+     * `mobile.publicKey` is read-only; if no key exists yet, enabling `mobile.isEnabled` creates
+     * one. Changing `shareUrl` re-resolves its redirect destinations, which may take a moment to
+     * complete. URLs must include an explicit `http://` or `https://` scheme.
      */
     fun update(
         id: String,

@@ -27,7 +27,7 @@ interface CommissionServiceAsync {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): CommissionServiceAsync
 
-    /** Removes a pending participant commission. */
+    /** **Affiliate programs only.** Removes a pending participant commission. */
     fun delete(
         commissionId: String,
         params: CommissionDeleteParams,
@@ -52,7 +52,10 @@ interface CommissionServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<CommissionDeleteResponse>
 
-    /** Approves a pending participant commission so it can become eligible for payout. */
+    /**
+     * **Affiliate programs only.** Approves a pending participant commission so it can become
+     * eligible for payout.
+     */
     fun approve(
         commissionId: String,
         params: CommissionApproveParams,
