@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/growsurf/growsurf-java/compare/v1.2.0...v1.2.1) (2026-07-14)
+
+
+### Bug Fixes
+
+* align method docs with the REST v2 contract ([d8b27a4](https://github.com/growsurf/growsurf-java/commit/d8b27a48ceebbbd75124ab3d1b8d4d2084278c95))
+
 ## [1.2.0](https://github.com/growsurf/growsurf-java/compare/v1.1.2...v1.2.0) (2026-07-13)
 
 
