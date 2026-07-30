@@ -10,6 +10,7 @@ import com.growsurf.api.models.campaign.participant.ParticipantBulkDeleteParams
 import com.growsurf.api.models.campaign.participant.ParticipantCancelDelayedReferralParams
 import com.growsurf.api.models.campaign.participant.ParticipantDeleteParams
 import com.growsurf.api.models.campaign.participant.ParticipantEmailParams
+import com.growsurf.api.models.campaign.participant.ParticipantGetPayoutDestinationParams
 import com.growsurf.api.models.campaign.participant.ParticipantListActivityLogsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListCommissionsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListPayoutsParams
@@ -17,6 +18,7 @@ import com.growsurf.api.models.campaign.participant.ParticipantListReferralsPara
 import com.growsurf.api.models.campaign.participant.ParticipantListRewardsParams
 import com.growsurf.api.models.campaign.participant.ParticipantRecordTransactionParams
 import com.growsurf.api.models.campaign.participant.ParticipantRefundTransactionParams
+import com.growsurf.api.models.campaign.participant.ParticipantRequestPayoutDestinationConfirmationParams
 import com.growsurf.api.models.campaign.participant.ParticipantRetrieveAnalyticsParams
 import com.growsurf.api.models.campaign.participant.ParticipantRetrieveParams
 import com.growsurf.api.models.campaign.participant.ParticipantSendInvitesParams
@@ -426,6 +428,43 @@ internal class ParticipantServiceAsyncTest {
                 ParticipantRetrieveAnalyticsParams.builder()
                     .id("id")
                     .participantIdOrEmail("participantIdOrEmail")
+                    .build()
+            )
+
+        val response = responseFuture.get()
+        response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun getPayoutDestination() {
+        val client = GrowsurfOkHttpClientAsync.builder().apiKey("My API Key").build()
+        val participantServiceAsync = client.campaign().participant()
+
+        val responseFuture =
+            participantServiceAsync.getPayoutDestination(
+                ParticipantGetPayoutDestinationParams.builder()
+                    .id("id")
+                    .participantIdOrEmail("participantIdOrEmail")
+                    .build()
+            )
+
+        val response = responseFuture.get()
+        response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun requestPayoutDestinationConfirmation() {
+        val client = GrowsurfOkHttpClientAsync.builder().apiKey("My API Key").build()
+        val participantServiceAsync = client.campaign().participant()
+
+        val responseFuture =
+            participantServiceAsync.requestPayoutDestinationConfirmation(
+                ParticipantRequestPayoutDestinationConfirmationParams.builder()
+                    .id("id")
+                    .participantIdOrEmail("participantIdOrEmail")
+                    .provider(ParticipantRequestPayoutDestinationConfirmationParams.Provider.PAYPAL)
                     .build()
             )
 

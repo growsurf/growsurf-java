@@ -26,6 +26,7 @@ private constructor(
     private val fingerprint: JsonField<String>,
     private val firstName: JsonField<String>,
     private val ipAddress: JsonField<String>,
+    private val isAffiliate: JsonField<Boolean>,
     private val lastName: JsonField<String>,
     private val metadata: JsonField<Metadata>,
     private val mobileInstanceId: JsonField<String>,
@@ -42,6 +43,9 @@ private constructor(
         fingerprint: JsonField<String> = JsonMissing.of(),
         @JsonProperty("firstName") @ExcludeMissing firstName: JsonField<String> = JsonMissing.of(),
         @JsonProperty("ipAddress") @ExcludeMissing ipAddress: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("isAffiliate")
+        @ExcludeMissing
+        isAffiliate: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("lastName") @ExcludeMissing lastName: JsonField<String> = JsonMissing.of(),
         @JsonProperty("metadata") @ExcludeMissing metadata: JsonField<Metadata> = JsonMissing.of(),
         @JsonProperty("mobileInstanceId")
@@ -56,6 +60,7 @@ private constructor(
         fingerprint,
         firstName,
         ipAddress,
+        isAffiliate,
         lastName,
         metadata,
         mobileInstanceId,
@@ -87,6 +92,16 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun ipAddress(): Optional<String> = ipAddress.getOptional("ipAddress")
+
+    /**
+     * Affiliate programs only. Controls affiliate enrollment for a new participant. `true` enrolls
+     * the participant with `affiliateStatus: APPROVED`; `false` creates a non-affiliate without
+     * `affiliateStatus`. Existing participants are returned unchanged.
+     *
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun isAffiliate(): Optional<Boolean> = isAffiliate.getOptional("isAffiliate")
 
     /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -157,6 +172,15 @@ private constructor(
      * Unlike [ipAddress], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("ipAddress") @ExcludeMissing fun _ipAddress(): JsonField<String> = ipAddress
+
+    /**
+     * Returns the raw JSON value of [isAffiliate].
+     *
+     * Unlike [isAffiliate], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("isAffiliate")
+    @ExcludeMissing
+    fun _isAffiliate(): JsonField<Boolean> = isAffiliate
 
     /**
      * Returns the raw JSON value of [lastName].
@@ -230,6 +254,7 @@ private constructor(
         private var fingerprint: JsonField<String> = JsonMissing.of()
         private var firstName: JsonField<String> = JsonMissing.of()
         private var ipAddress: JsonField<String> = JsonMissing.of()
+        private var isAffiliate: JsonField<Boolean> = JsonMissing.of()
         private var lastName: JsonField<String> = JsonMissing.of()
         private var metadata: JsonField<Metadata> = JsonMissing.of()
         private var mobileInstanceId: JsonField<String> = JsonMissing.of()
@@ -243,6 +268,7 @@ private constructor(
             fingerprint = create.fingerprint
             firstName = create.firstName
             ipAddress = create.ipAddress
+            isAffiliate = create.isAffiliate
             lastName = create.lastName
             metadata = create.metadata
             mobileInstanceId = create.mobileInstanceId
@@ -293,6 +319,22 @@ private constructor(
          * value.
          */
         fun ipAddress(ipAddress: JsonField<String>) = apply { this.ipAddress = ipAddress }
+
+        /**
+         * Affiliate programs only. Controls affiliate enrollment for a new participant. `true`
+         * enrolls the participant with `affiliateStatus: APPROVED`; `false` creates a non-affiliate
+         * without `affiliateStatus`. Existing participants are returned unchanged.
+         */
+        fun isAffiliate(isAffiliate: Boolean) = isAffiliate(JsonField.of(isAffiliate))
+
+        /**
+         * Sets [Builder.isAffiliate] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.isAffiliate] with a well-typed [Boolean] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun isAffiliate(isAffiliate: JsonField<Boolean>) = apply { this.isAffiliate = isAffiliate }
 
         fun lastName(lastName: String) = lastName(JsonField.of(lastName))
 
@@ -403,6 +445,7 @@ private constructor(
                 fingerprint,
                 firstName,
                 ipAddress,
+                isAffiliate,
                 lastName,
                 metadata,
                 mobileInstanceId,
@@ -431,6 +474,7 @@ private constructor(
         fingerprint()
         firstName()
         ipAddress()
+        isAffiliate()
         lastName()
         metadata().ifPresent { it.validate() }
         mobileInstanceId()
@@ -458,6 +502,7 @@ private constructor(
             (if (fingerprint.asKnown().isPresent) 1 else 0) +
             (if (firstName.asKnown().isPresent) 1 else 0) +
             (if (ipAddress.asKnown().isPresent) 1 else 0) +
+            (if (isAffiliate.asKnown().isPresent) 1 else 0) +
             (if (lastName.asKnown().isPresent) 1 else 0) +
             (metadata.asKnown().getOrNull()?.validity() ?: 0) +
             (if (mobileInstanceId.asKnown().isPresent) 1 else 0) +
@@ -723,6 +768,7 @@ private constructor(
             fingerprint == other.fingerprint &&
             firstName == other.firstName &&
             ipAddress == other.ipAddress &&
+            isAffiliate == other.isAffiliate &&
             lastName == other.lastName &&
             metadata == other.metadata &&
             mobileInstanceId == other.mobileInstanceId &&
@@ -737,6 +783,7 @@ private constructor(
             fingerprint,
             firstName,
             ipAddress,
+            isAffiliate,
             lastName,
             metadata,
             mobileInstanceId,
@@ -749,5 +796,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Create{email=$email, fingerprint=$fingerprint, firstName=$firstName, ipAddress=$ipAddress, lastName=$lastName, metadata=$metadata, mobileInstanceId=$mobileInstanceId, referralStatus=$referralStatus, referredBy=$referredBy, additionalProperties=$additionalProperties}"
+        "Create{email=$email, fingerprint=$fingerprint, firstName=$firstName, ipAddress=$ipAddress, isAffiliate=$isAffiliate, lastName=$lastName, metadata=$metadata, mobileInstanceId=$mobileInstanceId, referralStatus=$referralStatus, referredBy=$referredBy, additionalProperties=$additionalProperties}"
 }

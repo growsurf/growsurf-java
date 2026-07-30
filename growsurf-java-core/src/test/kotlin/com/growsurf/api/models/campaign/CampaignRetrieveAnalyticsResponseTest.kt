@@ -11,6 +11,41 @@ import org.junit.jupiter.api.Test
 internal class CampaignRetrieveAnalyticsResponseTest {
 
     @Test
+    fun emailAnalytics() {
+        val email =
+            EmailAnalytics(
+                sent = 2L,
+                delivered = 1L,
+                opened = 1L,
+                clicked = 0L,
+                bounced = 1L,
+                spamComplaints = 0L,
+                deliveryRate = 0.5,
+                openRate = 1.0,
+                clickRate = 0.0,
+                bounceRate = 0.5,
+                byType = emptyList(),
+                coverageStartDate = null,
+                isPartial = false,
+            )
+        val response =
+            CampaignRetrieveAnalyticsResponse.builder()
+                .analytics(CampaignRetrieveAnalyticsResponse.Analytics.builder().build())
+                .endDate(2L)
+                .startDate(1L)
+                .email(email)
+                .addSeries(
+                    CampaignRetrieveAnalyticsResponse.Series.builder()
+                        .email(EmailAnalyticsCounts(1L, 1L, 0L, 0L, 0L, 0L))
+                        .build()
+                )
+                .build()
+
+        assertThat(response.email()).contains(email)
+        assertThat(response.series().get().single().email().get().sent).isEqualTo(1L)
+    }
+
+    @Test
     fun create() {
         val campaignRetrieveAnalyticsResponse =
             CampaignRetrieveAnalyticsResponse.builder()
@@ -136,6 +171,14 @@ internal class CampaignRetrieveAnalyticsResponseTest {
                                         .build()
                                 )
                                 .queued(
+                                    CampaignRetrieveAnalyticsResponse.StatusCounts.PayoutStatus
+                                        .PayoutStatusMetric
+                                        .builder()
+                                        .count(0L)
+                                        .totalAmount(0L)
+                                        .build()
+                                )
+                                .reversed(
                                     CampaignRetrieveAnalyticsResponse.StatusCounts.PayoutStatus
                                         .PayoutStatusMetric
                                         .builder()

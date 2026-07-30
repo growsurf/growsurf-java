@@ -14,6 +14,8 @@ import com.growsurf.api.core.checkKnown
 import com.growsurf.api.core.checkRequired
 import com.growsurf.api.core.toImmutable
 import com.growsurf.api.errors.GrowsurfInvalidDataException
+import com.growsurf.api.models.campaign.EmailAnalytics
+import com.growsurf.api.models.campaign.EmailAnalyticsCounts
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -24,6 +26,7 @@ class ParticipantAnalyticsResponse
 private constructor(
     private val analytics: JsonField<Analytics>,
     private val endDate: JsonField<Long>,
+    private val email: JsonField<EmailAnalytics>,
     private val ranks: JsonField<Ranks>,
     private val series: JsonField<List<Series>>,
     private val shareCount: JsonField<ShareCount>,
@@ -37,13 +40,14 @@ private constructor(
         @ExcludeMissing
         analytics: JsonField<Analytics> = JsonMissing.of(),
         @JsonProperty("endDate") @ExcludeMissing endDate: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("email") @ExcludeMissing email: JsonField<EmailAnalytics> = JsonMissing.of(),
         @JsonProperty("ranks") @ExcludeMissing ranks: JsonField<Ranks> = JsonMissing.of(),
         @JsonProperty("series") @ExcludeMissing series: JsonField<List<Series>> = JsonMissing.of(),
         @JsonProperty("shareCount")
         @ExcludeMissing
         shareCount: JsonField<ShareCount> = JsonMissing.of(),
         @JsonProperty("startDate") @ExcludeMissing startDate: JsonField<Long> = JsonMissing.of(),
-    ) : this(analytics, endDate, ranks, series, shareCount, startDate, mutableMapOf())
+    ) : this(analytics, endDate, email, ranks, series, shareCount, startDate, mutableMapOf())
 
     /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
@@ -52,12 +56,15 @@ private constructor(
     fun analytics(): Analytics = analytics.getRequired("analytics")
 
     /**
-     * Present only with `include=series`. Window end (Unix ms).
+     * Present only when `include` contains `series` or `email`. Window end (Unix ms).
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun endDate(): Optional<Long> = endDate.getOptional("endDate")
+
+    /** Present only when `include` contains `email`. */
+    fun email(): Optional<EmailAnalytics> = email.getOptional("email")
 
     /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
@@ -83,7 +90,7 @@ private constructor(
     fun shareCount(): ShareCount = shareCount.getRequired("shareCount")
 
     /**
-     * Present only with `include=series`. Window start (Unix ms).
+     * Present only when `include` contains `series` or `email`. Window start (Unix ms).
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -103,6 +110,8 @@ private constructor(
      * Unlike [endDate], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("endDate") @ExcludeMissing fun _endDate(): JsonField<Long> = endDate
+
+    @JsonProperty("email") @ExcludeMissing fun _email(): JsonField<EmailAnalytics> = email
 
     /**
      * Returns the raw JSON value of [ranks].
@@ -166,6 +175,7 @@ private constructor(
 
         private var analytics: JsonField<Analytics>? = null
         private var endDate: JsonField<Long> = JsonMissing.of()
+        private var email: JsonField<EmailAnalytics> = JsonMissing.of()
         private var ranks: JsonField<Ranks>? = null
         private var series: JsonField<MutableList<Series>>? = null
         private var shareCount: JsonField<ShareCount>? = null
@@ -176,6 +186,7 @@ private constructor(
         internal fun from(participantAnalyticsResponse: ParticipantAnalyticsResponse) = apply {
             analytics = participantAnalyticsResponse.analytics
             endDate = participantAnalyticsResponse.endDate
+            email = participantAnalyticsResponse.email
             ranks = participantAnalyticsResponse.ranks
             series = participantAnalyticsResponse.series.map { it.toMutableList() }
             shareCount = participantAnalyticsResponse.shareCount
@@ -194,7 +205,7 @@ private constructor(
          */
         fun analytics(analytics: JsonField<Analytics>) = apply { this.analytics = analytics }
 
-        /** Present only with `include=series`. Window end (Unix ms). */
+        /** Present only when `include` contains `series` or `email`. Window end (Unix ms). */
         fun endDate(endDate: Long) = endDate(JsonField.of(endDate))
 
         /**
@@ -204,6 +215,11 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun endDate(endDate: JsonField<Long>) = apply { this.endDate = endDate }
+
+        /** Present only when `include` contains `email`. */
+        fun email(email: EmailAnalytics) = email(JsonField.of(email))
+
+        fun email(email: JsonField<EmailAnalytics>) = apply { this.email = email }
 
         fun ranks(ranks: Ranks) = ranks(JsonField.of(ranks))
 
@@ -256,7 +272,7 @@ private constructor(
          */
         fun shareCount(shareCount: JsonField<ShareCount>) = apply { this.shareCount = shareCount }
 
-        /** Present only with `include=series`. Window start (Unix ms). */
+        /** Present only when `include` contains `series` or `email`. Window start (Unix ms). */
         fun startDate(startDate: Long) = startDate(JsonField.of(startDate))
 
         /**
@@ -304,6 +320,7 @@ private constructor(
             ParticipantAnalyticsResponse(
                 checkRequired("analytics", analytics),
                 endDate,
+                email,
                 checkRequired("ranks", ranks),
                 (series ?: JsonMissing.of()).map { it.toImmutable() },
                 checkRequired("shareCount", shareCount),
@@ -329,6 +346,7 @@ private constructor(
 
         analytics().validate()
         endDate()
+        email().ifPresent { it.validate() }
         ranks().validate()
         series().ifPresent { it.forEach { it.validate() } }
         shareCount().validate()
@@ -353,6 +371,7 @@ private constructor(
     internal fun validity(): Int =
         (analytics.asKnown().getOrNull()?.validity() ?: 0) +
             (if (endDate.asKnown().isPresent) 1 else 0) +
+            (email.asKnown().getOrNull()?.validity() ?: 0) +
             (ranks.asKnown().getOrNull()?.validity() ?: 0) +
             (series.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (shareCount.asKnown().getOrNull()?.validity() ?: 0) +
@@ -1392,6 +1411,7 @@ private constructor(
         private val blueskyShares: JsonField<Long>,
         private val copyRefLinkShares: JsonField<Long>,
         private val emailShares: JsonField<Long>,
+        private val email: JsonField<EmailAnalyticsCounts>,
         private val facebookShares: JsonField<Long>,
         private val impressions: JsonField<Long>,
         private val invites: JsonField<Long>,
@@ -1434,6 +1454,9 @@ private constructor(
             @JsonProperty("emailShares")
             @ExcludeMissing
             emailShares: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("email")
+            @ExcludeMissing
+            email: JsonField<EmailAnalyticsCounts> = JsonMissing.of(),
             @JsonProperty("facebookShares")
             @ExcludeMissing
             facebookShares: JsonField<Long> = JsonMissing.of(),
@@ -1512,6 +1535,7 @@ private constructor(
             blueskyShares,
             copyRefLinkShares,
             emailShares,
+            email,
             facebookShares,
             impressions,
             invites,
@@ -1606,6 +1630,9 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun participants(): Optional<Long> = participants.getOptional("participants")
+
+        /** Per-period email counts when both `series` and `email` are requested. */
+        fun email(): Optional<EmailAnalyticsCounts> = email.getOptional("email")
 
         /**
          * Start of the period, as a Unix timestamp in milliseconds (UTC).
@@ -1831,6 +1858,8 @@ private constructor(
         @ExcludeMissing
         fun _participants(): JsonField<Long> = participants
 
+        @JsonProperty("email") @ExcludeMissing fun _email(): JsonField<EmailAnalyticsCounts> = email
+
         /**
          * Returns the raw JSON value of [periodStart].
          *
@@ -2036,6 +2065,7 @@ private constructor(
             private var linkedInShares: JsonField<Long> = JsonMissing.of()
             private var messengerShares: JsonField<Long> = JsonMissing.of()
             private var participants: JsonField<Long> = JsonMissing.of()
+            private var email: JsonField<EmailAnalyticsCounts> = JsonMissing.of()
             private var periodStart: JsonField<Long> = JsonMissing.of()
             private var pinterestShares: JsonField<Long> = JsonMissing.of()
             private var qrcodeShares: JsonField<Long> = JsonMissing.of()
@@ -2069,6 +2099,7 @@ private constructor(
                 linkedInShares = series.linkedInShares
                 messengerShares = series.messengerShares
                 participants = series.participants
+                email = series.email
                 periodStart = series.periodStart
                 pinterestShares = series.pinterestShares
                 qrcodeShares = series.qrcodeShares
@@ -2230,6 +2261,11 @@ private constructor(
             fun participants(participants: JsonField<Long>) = apply {
                 this.participants = participants
             }
+
+            /** Per-period email counts when both `series` and `email` are requested. */
+            fun email(email: EmailAnalyticsCounts) = email(JsonField.of(email))
+
+            fun email(email: JsonField<EmailAnalyticsCounts>) = apply { this.email = email }
 
             /** Start of the period, as a Unix timestamp in milliseconds (UTC). */
             fun periodStart(periodStart: Long) = periodStart(JsonField.of(periodStart))
@@ -2501,6 +2537,7 @@ private constructor(
                     blueskyShares,
                     copyRefLinkShares,
                     emailShares,
+                    email,
                     facebookShares,
                     impressions,
                     invites,
@@ -2541,6 +2578,7 @@ private constructor(
             blueskyShares()
             copyRefLinkShares()
             emailShares()
+            email().ifPresent { it.validate() }
             facebookShares()
             impressions()
             invites()
@@ -2583,6 +2621,7 @@ private constructor(
                 (if (blueskyShares.asKnown().isPresent) 1 else 0) +
                 (if (copyRefLinkShares.asKnown().isPresent) 1 else 0) +
                 (if (emailShares.asKnown().isPresent) 1 else 0) +
+                (email.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (facebookShares.asKnown().isPresent) 1 else 0) +
                 (if (impressions.asKnown().isPresent) 1 else 0) +
                 (if (invites.asKnown().isPresent) 1 else 0) +
@@ -2619,6 +2658,7 @@ private constructor(
                 blueskyShares == other.blueskyShares &&
                 copyRefLinkShares == other.copyRefLinkShares &&
                 emailShares == other.emailShares &&
+                email == other.email &&
                 facebookShares == other.facebookShares &&
                 impressions == other.impressions &&
                 invites == other.invites &&
@@ -2653,6 +2693,7 @@ private constructor(
                 blueskyShares,
                 copyRefLinkShares,
                 emailShares,
+                email,
                 facebookShares,
                 impressions,
                 invites,
@@ -2685,7 +2726,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Series{androidNativeShares=$androidNativeShares, blueskyShares=$blueskyShares, copyRefLinkShares=$copyRefLinkShares, emailShares=$emailShares, facebookShares=$facebookShares, impressions=$impressions, invites=$invites, iosNativeShares=$iosNativeShares, linkedInShares=$linkedInShares, messengerShares=$messengerShares, participants=$participants, periodStart=$periodStart, pinterestShares=$pinterestShares, qrcodeShares=$qrcodeShares, redditShares=$redditShares, referralCreditExpireds=$referralCreditExpireds, referralCreditPendings=$referralCreditPendings, referrals=$referrals, smsShares=$smsShares, telegramShares=$telegramShares, threadsShares=$threadsShares, totalCommissionCount=$totalCommissionCount, totalCommissions=$totalCommissions, totalRevenue=$totalRevenue, tumblrShares=$tumblrShares, twitterShares=$twitterShares, uniqueImpressions=$uniqueImpressions, wechatShares=$wechatShares, whatsAppShares=$whatsAppShares, additionalProperties=$additionalProperties}"
+            "Series{androidNativeShares=$androidNativeShares, blueskyShares=$blueskyShares, copyRefLinkShares=$copyRefLinkShares, emailShares=$emailShares, email=$email, facebookShares=$facebookShares, impressions=$impressions, invites=$invites, iosNativeShares=$iosNativeShares, linkedInShares=$linkedInShares, messengerShares=$messengerShares, participants=$participants, periodStart=$periodStart, pinterestShares=$pinterestShares, qrcodeShares=$qrcodeShares, redditShares=$redditShares, referralCreditExpireds=$referralCreditExpireds, referralCreditPendings=$referralCreditPendings, referrals=$referrals, smsShares=$smsShares, telegramShares=$telegramShares, threadsShares=$threadsShares, totalCommissionCount=$totalCommissionCount, totalCommissions=$totalCommissions, totalRevenue=$totalRevenue, tumblrShares=$tumblrShares, twitterShares=$twitterShares, uniqueImpressions=$uniqueImpressions, wechatShares=$wechatShares, whatsAppShares=$whatsAppShares, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -2696,6 +2737,7 @@ private constructor(
         return other is ParticipantAnalyticsResponse &&
             analytics == other.analytics &&
             endDate == other.endDate &&
+            email == other.email &&
             ranks == other.ranks &&
             series == other.series &&
             shareCount == other.shareCount &&
@@ -2704,11 +2746,20 @@ private constructor(
     }
 
     private val hashCode: Int by lazy {
-        Objects.hash(analytics, endDate, ranks, series, shareCount, startDate, additionalProperties)
+        Objects.hash(
+            analytics,
+            endDate,
+            email,
+            ranks,
+            series,
+            shareCount,
+            startDate,
+            additionalProperties,
+        )
     }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ParticipantAnalyticsResponse{analytics=$analytics, endDate=$endDate, ranks=$ranks, series=$series, shareCount=$shareCount, startDate=$startDate, additionalProperties=$additionalProperties}"
+        "ParticipantAnalyticsResponse{analytics=$analytics, endDate=$endDate, email=$email, ranks=$ranks, series=$series, shareCount=$shareCount, startDate=$startDate, additionalProperties=$additionalProperties}"
 }

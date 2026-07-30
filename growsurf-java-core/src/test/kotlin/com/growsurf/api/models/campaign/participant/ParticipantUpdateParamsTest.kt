@@ -14,6 +14,7 @@ internal class ParticipantUpdateParamsTest {
         ParticipantUpdateParams.builder()
             .id("id")
             .participantIdOrEmail("participantIdOrEmail")
+            .affiliateStatus(ParticipantUpdateParams.AffiliateStatus.APPROVED)
             .email("dev@stainless.com")
             .firstName("Gavin")
             .lastName("Belson")
@@ -49,6 +50,7 @@ internal class ParticipantUpdateParamsTest {
             ParticipantUpdateParams.builder()
                 .id("id")
                 .participantIdOrEmail("participantIdOrEmail")
+                .affiliateStatus(ParticipantUpdateParams.AffiliateStatus.APPROVED)
                 .email("dev@stainless.com")
                 .firstName("Gavin")
                 .lastName("Belson")
@@ -65,6 +67,8 @@ internal class ParticipantUpdateParamsTest {
 
         val body = params._body()
 
+        assertThat(body.affiliateStatus())
+            .contains(ParticipantUpdateParams.AffiliateStatus.APPROVED)
         assertThat(body.email()).contains("dev@stainless.com")
         assertThat(body.firstName()).contains("Gavin")
         assertThat(body.lastName()).contains("Belson")

@@ -18,6 +18,7 @@ internal class ParticipantAddParamsTest {
                     .fingerprint("fingerprint")
                     .firstName("firstName")
                     .ipAddress("ipAddress")
+                    .isAffiliate(true)
                     .lastName("lastName")
                     .metadata(
                         Create.Metadata.builder()
@@ -56,6 +57,7 @@ internal class ParticipantAddParamsTest {
                         .fingerprint("fingerprint")
                         .firstName("firstName")
                         .ipAddress("ipAddress")
+                        .isAffiliate(true)
                         .lastName("lastName")
                         .metadata(
                             Create.Metadata.builder()
@@ -78,6 +80,7 @@ internal class ParticipantAddParamsTest {
                     .fingerprint("fingerprint")
                     .firstName("firstName")
                     .ipAddress("ipAddress")
+                    .isAffiliate(true)
                     .lastName("lastName")
                     .metadata(
                         Create.Metadata.builder()

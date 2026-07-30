@@ -32,7 +32,22 @@ internal class DesignServiceAsyncTest {
             designServiceAsync.update(
                 "id",
                 DesignUpdateParams.builder()
-                    .putAdditionalBodyProperty("foo", JsonValue.from("bar"))
+                    .putAdditionalBodyProperty(
+                        "login",
+                        JsonValue.from(
+                            mapOf(
+                                "heading" to "Sign in",
+                                "buttonText" to "Send sign-in link",
+                                "successHeading" to "Check your email",
+                            )
+                        ),
+                    )
+                    .putAdditionalBodyProperty(
+                        "payoutDestinationConfirmation",
+                        JsonValue.from(
+                            mapOf("headline" to "Confirm your {{payoutProvider}} payout email")
+                        ),
+                    )
                     .build(),
             )
 

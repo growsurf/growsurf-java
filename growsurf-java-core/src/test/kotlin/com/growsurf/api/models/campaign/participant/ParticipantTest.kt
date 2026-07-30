@@ -13,6 +13,22 @@ import org.junit.jupiter.api.Test
 internal class ParticipantTest {
 
     @Test
+    fun createAffiliateWithoutShareUrl() {
+        val participant =
+            Participant.builder()
+                .id("participant-id")
+                .email("affiliate@example.com")
+                .monthlyRank(0L)
+                .monthlyReferralCount(0L)
+                .rank(0L)
+                .referralCount(0L)
+                .rewards(emptyList())
+                .build()
+
+        assertThat(participant.shareUrl()).isEmpty()
+    }
+
+    @Test
     fun create() {
         val participant =
             Participant.builder()
@@ -88,7 +104,9 @@ internal class ParticipantTest {
                 .notes("notes")
                 .payoutSettings(
                     Participant.PayoutSettings.builder()
-                        .addRequiredAction(Participant.PayoutSettings.RequiredAction.PAYPAL_EMAIL)
+                        .addRequiredAction(
+                            Participant.PayoutSettings.RequiredAction.PAYOUT_DESTINATION
+                        )
                         .build()
                 )
                 .paypalEmailAddress("dev@stainless.com")
@@ -195,7 +213,7 @@ internal class ParticipantTest {
                     .unread(true)
                     .build()
             )
-        assertThat(participant.shareUrl()).isEqualTo("shareUrl")
+        assertThat(participant.shareUrl()).contains("shareUrl")
         assertThat(participant.allMatchingFraudsters().getOrNull())
             .containsExactly(
                 Participant.AllMatchingFraudster.builder()
@@ -225,7 +243,7 @@ internal class ParticipantTest {
         assertThat(participant.payoutSettings())
             .contains(
                 Participant.PayoutSettings.builder()
-                    .addRequiredAction(Participant.PayoutSettings.RequiredAction.PAYPAL_EMAIL)
+                    .addRequiredAction(Participant.PayoutSettings.RequiredAction.PAYOUT_DESTINATION)
                     .build()
             )
         assertThat(participant.paypalEmailAddress()).contains("dev@stainless.com")
@@ -365,7 +383,9 @@ internal class ParticipantTest {
                 .notes("notes")
                 .payoutSettings(
                     Participant.PayoutSettings.builder()
-                        .addRequiredAction(Participant.PayoutSettings.RequiredAction.PAYPAL_EMAIL)
+                        .addRequiredAction(
+                            Participant.PayoutSettings.RequiredAction.PAYOUT_DESTINATION
+                        )
                         .build()
                 )
                 .paypalEmailAddress("dev@stainless.com")

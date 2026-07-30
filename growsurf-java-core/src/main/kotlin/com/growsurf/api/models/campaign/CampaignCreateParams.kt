@@ -1222,8 +1222,8 @@ private constructor(
         fun value(): Optional<RewardTaxValuation> = value.getOptional("value")
 
         /**
-         * Tax valuation for the referred friend's side of a double-sided reward. Defaults to not
-         * tax-reportable (a purchase rebate).
+         * Tax treatment override for the referred friend's side of a double-sided reward. Defaults
+         * to not tax-reportable (a purchase rebate).
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -1828,8 +1828,8 @@ private constructor(
             fun value(value: JsonField<RewardTaxValuation>) = apply { this.value = value }
 
             /**
-             * Tax valuation for the referred friend's side of a double-sided reward. Defaults to
-             * not tax-reportable (a purchase rebate).
+             * Tax treatment override for the referred friend's side of a double-sided reward.
+             * Defaults to the program's confirmed default.
              */
             fun referredValue(referredValue: RewardTaxValuation) =
                 referredValue(JsonField.of(referredValue))

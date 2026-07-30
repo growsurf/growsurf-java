@@ -96,7 +96,7 @@ internal class ParticipantListTest {
                         .payoutSettings(
                             Participant.PayoutSettings.builder()
                                 .addRequiredAction(
-                                    Participant.PayoutSettings.RequiredAction.PAYPAL_EMAIL
+                                    Participant.PayoutSettings.RequiredAction.PAYOUT_DESTINATION
                                 )
                                 .build()
                         )
@@ -238,7 +238,7 @@ internal class ParticipantListTest {
                     .payoutSettings(
                         Participant.PayoutSettings.builder()
                             .addRequiredAction(
-                                Participant.PayoutSettings.RequiredAction.PAYPAL_EMAIL
+                                Participant.PayoutSettings.RequiredAction.PAYOUT_DESTINATION
                             )
                             .build()
                     )
@@ -384,7 +384,7 @@ internal class ParticipantListTest {
                         .payoutSettings(
                             Participant.PayoutSettings.builder()
                                 .addRequiredAction(
-                                    Participant.PayoutSettings.RequiredAction.PAYPAL_EMAIL
+                                    Participant.PayoutSettings.RequiredAction.PAYOUT_DESTINATION
                                 )
                                 .build()
                         )

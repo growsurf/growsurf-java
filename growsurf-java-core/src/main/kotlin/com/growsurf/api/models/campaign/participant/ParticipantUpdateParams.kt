@@ -23,7 +23,12 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Updates a participant by GrowSurf participant ID or email address. */
+/**
+ * Updates a participant by GrowSurf participant ID or email address. For affiliate programs, set
+ * `affiliateStatus` to `APPROVED`, `SUSPENDED`, or `BANNED`. `APPROVED` enrolls the participant as
+ * an affiliate. `SUSPENDED` and `BANNED` require an existing affiliate. This endpoint does not
+ * accept `isAffiliate`, and affiliate enrollment cannot be removed through REST.
+ */
 class ParticipantUpdateParams
 private constructor(
     private val id: String,
@@ -36,6 +41,15 @@ private constructor(
     fun id(): String = id
 
     fun participantIdOrEmail(): Optional<String> = Optional.ofNullable(participantIdOrEmail)
+
+    /**
+     * Affiliate programs only. Sets the affiliate status. `APPROVED` also enrolls a participant who
+     * is not yet an affiliate. `SUSPENDED` and `BANNED` are rejected for non-affiliates.
+     *
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun affiliateStatus(): Optional<AffiliateStatus> = body.affiliateStatus()
 
     /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -72,14 +86,6 @@ private constructor(
     fun notes(): Optional<String> = body.notes()
 
     /**
-     * The participant's PayPal email address, used for affiliate payouts.
-     *
-     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
-     *   server responded with an unexpected value).
-     */
-    fun paypalEmail(): Optional<String> = body.paypalEmail()
-
-    /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -111,6 +117,13 @@ private constructor(
     fun _email(): JsonField<String> = body._email()
 
     /**
+     * Returns the raw JSON value of [affiliateStatus].
+     *
+     * Unlike [affiliateStatus], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _affiliateStatus(): JsonField<AffiliateStatus> = body._affiliateStatus()
+
+    /**
      * Returns the raw JSON value of [firstName].
      *
      * Unlike [firstName], this method doesn't throw if the JSON field has an unexpected type.
@@ -137,13 +150,6 @@ private constructor(
      * Unlike [notes], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _notes(): JsonField<String> = body._notes()
-
-    /**
-     * Returns the raw JSON value of [paypalEmail].
-     *
-     * Unlike [paypalEmail], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _paypalEmail(): JsonField<String> = body._paypalEmail()
 
     /**
      * Returns the raw JSON value of [referralStatus].
@@ -232,6 +238,7 @@ private constructor(
          *
          * This is generally only useful if you are already constructing the body separately.
          * Otherwise, it's more convenient to use the top-level setters instead:
+         * - [affiliateStatus]
          * - [email]
          * - [firstName]
          * - [lastName]
@@ -240,6 +247,25 @@ private constructor(
          * - etc.
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
+
+        /**
+         * Affiliate programs only. Sets the affiliate status. `APPROVED` also enrolls a participant
+         * who is not yet an affiliate. `SUSPENDED` and `BANNED` are rejected for non-affiliates.
+         */
+        fun affiliateStatus(affiliateStatus: AffiliateStatus) = apply {
+            body.affiliateStatus(affiliateStatus)
+        }
+
+        /**
+         * Sets [Builder.affiliateStatus] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.affiliateStatus] with a well-typed [AffiliateStatus]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun affiliateStatus(affiliateStatus: JsonField<AffiliateStatus>) = apply {
+            body.affiliateStatus(affiliateStatus)
+        }
 
         fun email(email: String) = apply { body.email(email) }
 
@@ -297,18 +323,6 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun notes(notes: JsonField<String>) = apply { body.notes(notes) }
-
-        /** The participant's PayPal email address, used for affiliate payouts. */
-        fun paypalEmail(paypalEmail: String) = apply { body.paypalEmail(paypalEmail) }
-
-        /**
-         * Sets [Builder.paypalEmail] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.paypalEmail] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun paypalEmail(paypalEmail: JsonField<String>) = apply { body.paypalEmail(paypalEmail) }
 
         fun referralStatus(referralStatus: ReferralStatus) = apply {
             body.referralStatus(referralStatus)
@@ -522,12 +536,12 @@ private constructor(
     class Body
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
+        private val affiliateStatus: JsonField<AffiliateStatus>,
         private val email: JsonField<String>,
         private val firstName: JsonField<String>,
         private val lastName: JsonField<String>,
         private val metadata: JsonField<Metadata>,
         private val notes: JsonField<String>,
-        private val paypalEmail: JsonField<String>,
         private val referralStatus: JsonField<ReferralStatus>,
         private val referredBy: JsonField<String>,
         private val unsubscribed: JsonField<Boolean>,
@@ -537,6 +551,9 @@ private constructor(
 
         @JsonCreator
         private constructor(
+            @JsonProperty("affiliateStatus")
+            @ExcludeMissing
+            affiliateStatus: JsonField<AffiliateStatus> = JsonMissing.of(),
             @JsonProperty("email") @ExcludeMissing email: JsonField<String> = JsonMissing.of(),
             @JsonProperty("firstName")
             @ExcludeMissing
@@ -548,9 +565,6 @@ private constructor(
             @ExcludeMissing
             metadata: JsonField<Metadata> = JsonMissing.of(),
             @JsonProperty("notes") @ExcludeMissing notes: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("paypalEmail")
-            @ExcludeMissing
-            paypalEmail: JsonField<String> = JsonMissing.of(),
             @JsonProperty("referralStatus")
             @ExcludeMissing
             referralStatus: JsonField<ReferralStatus> = JsonMissing.of(),
@@ -564,18 +578,28 @@ private constructor(
             @ExcludeMissing
             vanityKeys: JsonField<List<String>> = JsonMissing.of(),
         ) : this(
+            affiliateStatus,
             email,
             firstName,
             lastName,
             metadata,
             notes,
-            paypalEmail,
             referralStatus,
             referredBy,
             unsubscribed,
             vanityKeys,
             mutableMapOf(),
         )
+
+        /**
+         * Affiliate programs only. Sets the affiliate status. `APPROVED` also enrolls a participant
+         * who is not yet an affiliate. `SUSPENDED` and `BANNED` are rejected for non-affiliates.
+         *
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun affiliateStatus(): Optional<AffiliateStatus> =
+            affiliateStatus.getOptional("affiliateStatus")
 
         /**
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -613,14 +637,6 @@ private constructor(
         fun notes(): Optional<String> = notes.getOptional("notes")
 
         /**
-         * The participant's PayPal email address, used for affiliate payouts.
-         *
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
-         *   the server responded with an unexpected value).
-         */
-        fun paypalEmail(): Optional<String> = paypalEmail.getOptional("paypalEmail")
-
-        /**
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -644,6 +660,16 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun vanityKeys(): Optional<List<String>> = vanityKeys.getOptional("vanityKeys")
+
+        /**
+         * Returns the raw JSON value of [affiliateStatus].
+         *
+         * Unlike [affiliateStatus], this method doesn't throw if the JSON field has an unexpected
+         * type.
+         */
+        @JsonProperty("affiliateStatus")
+        @ExcludeMissing
+        fun _affiliateStatus(): JsonField<AffiliateStatus> = affiliateStatus
 
         /**
          * Returns the raw JSON value of [email].
@@ -679,15 +705,6 @@ private constructor(
          * Unlike [notes], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("notes") @ExcludeMissing fun _notes(): JsonField<String> = notes
-
-        /**
-         * Returns the raw JSON value of [paypalEmail].
-         *
-         * Unlike [paypalEmail], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("paypalEmail")
-        @ExcludeMissing
-        fun _paypalEmail(): JsonField<String> = paypalEmail
 
         /**
          * Returns the raw JSON value of [referralStatus].
@@ -748,12 +765,12 @@ private constructor(
         /** A builder for [Body]. */
         class Builder internal constructor() {
 
+            private var affiliateStatus: JsonField<AffiliateStatus> = JsonMissing.of()
             private var email: JsonField<String> = JsonMissing.of()
             private var firstName: JsonField<String> = JsonMissing.of()
             private var lastName: JsonField<String> = JsonMissing.of()
             private var metadata: JsonField<Metadata> = JsonMissing.of()
             private var notes: JsonField<String> = JsonMissing.of()
-            private var paypalEmail: JsonField<String> = JsonMissing.of()
             private var referralStatus: JsonField<ReferralStatus> = JsonMissing.of()
             private var referredBy: JsonField<String> = JsonMissing.of()
             private var unsubscribed: JsonField<Boolean> = JsonMissing.of()
@@ -762,17 +779,36 @@ private constructor(
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
+                affiliateStatus = body.affiliateStatus
                 email = body.email
                 firstName = body.firstName
                 lastName = body.lastName
                 metadata = body.metadata
                 notes = body.notes
-                paypalEmail = body.paypalEmail
                 referralStatus = body.referralStatus
                 referredBy = body.referredBy
                 unsubscribed = body.unsubscribed
                 vanityKeys = body.vanityKeys.map { it.toMutableList() }
                 additionalProperties = body.additionalProperties.toMutableMap()
+            }
+
+            /**
+             * Affiliate programs only. Sets the affiliate status. `APPROVED` also enrolls a
+             * participant who is not yet an affiliate. `SUSPENDED` and `BANNED` are rejected for
+             * non-affiliates.
+             */
+            fun affiliateStatus(affiliateStatus: AffiliateStatus) =
+                affiliateStatus(JsonField.of(affiliateStatus))
+
+            /**
+             * Sets [Builder.affiliateStatus] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.affiliateStatus] with a well-typed [AffiliateStatus]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun affiliateStatus(affiliateStatus: JsonField<AffiliateStatus>) = apply {
+                this.affiliateStatus = affiliateStatus
             }
 
             fun email(email: String) = email(JsonField.of(email))
@@ -834,20 +870,6 @@ private constructor(
              * supported value.
              */
             fun notes(notes: JsonField<String>) = apply { this.notes = notes }
-
-            /** The participant's PayPal email address, used for affiliate payouts. */
-            fun paypalEmail(paypalEmail: String) = paypalEmail(JsonField.of(paypalEmail))
-
-            /**
-             * Sets [Builder.paypalEmail] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.paypalEmail] with a well-typed [String] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun paypalEmail(paypalEmail: JsonField<String>) = apply {
-                this.paypalEmail = paypalEmail
-            }
 
             fun referralStatus(referralStatus: ReferralStatus) =
                 referralStatus(JsonField.of(referralStatus))
@@ -938,12 +960,12 @@ private constructor(
              */
             fun build(): Body =
                 Body(
+                    affiliateStatus,
                     email,
                     firstName,
                     lastName,
                     metadata,
                     notes,
-                    paypalEmail,
                     referralStatus,
                     referredBy,
                     unsubscribed,
@@ -968,12 +990,12 @@ private constructor(
                 return@apply
             }
 
+            affiliateStatus().ifPresent { it.validate() }
             email()
             firstName()
             lastName()
             metadata().ifPresent { it.validate() }
             notes()
-            paypalEmail()
             referralStatus().ifPresent { it.validate() }
             referredBy()
             unsubscribed()
@@ -997,12 +1019,12 @@ private constructor(
          */
         @JvmSynthetic
         internal fun validity(): Int =
-            (if (email.asKnown().isPresent) 1 else 0) +
+            (affiliateStatus.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (email.asKnown().isPresent) 1 else 0) +
                 (if (firstName.asKnown().isPresent) 1 else 0) +
                 (if (lastName.asKnown().isPresent) 1 else 0) +
                 (metadata.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (notes.asKnown().isPresent) 1 else 0) +
-                (if (paypalEmail.asKnown().isPresent) 1 else 0) +
                 (referralStatus.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (referredBy.asKnown().isPresent) 1 else 0) +
                 (if (unsubscribed.asKnown().isPresent) 1 else 0) +
@@ -1014,12 +1036,12 @@ private constructor(
             }
 
             return other is Body &&
+                affiliateStatus == other.affiliateStatus &&
                 email == other.email &&
                 firstName == other.firstName &&
                 lastName == other.lastName &&
                 metadata == other.metadata &&
                 notes == other.notes &&
-                paypalEmail == other.paypalEmail &&
                 referralStatus == other.referralStatus &&
                 referredBy == other.referredBy &&
                 unsubscribed == other.unsubscribed &&
@@ -1029,12 +1051,12 @@ private constructor(
 
         private val hashCode: Int by lazy {
             Objects.hash(
+                affiliateStatus,
                 email,
                 firstName,
                 lastName,
                 metadata,
                 notes,
-                paypalEmail,
                 referralStatus,
                 referredBy,
                 unsubscribed,
@@ -1046,7 +1068,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{email=$email, firstName=$firstName, lastName=$lastName, metadata=$metadata, notes=$notes, paypalEmail=$paypalEmail, referralStatus=$referralStatus, referredBy=$referredBy, unsubscribed=$unsubscribed, vanityKeys=$vanityKeys, additionalProperties=$additionalProperties}"
+            "Body{affiliateStatus=$affiliateStatus, email=$email, firstName=$firstName, lastName=$lastName, metadata=$metadata, notes=$notes, referralStatus=$referralStatus, referredBy=$referredBy, unsubscribed=$unsubscribed, vanityKeys=$vanityKeys, additionalProperties=$additionalProperties}"
     }
 
     /** Shallow custom metadata object. */
@@ -1156,6 +1178,152 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() = "Metadata{additionalProperties=$additionalProperties}"
+    }
+
+    class AffiliateStatus @JsonCreator private constructor(private val value: JsonField<String>) :
+        Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val APPROVED = of("APPROVED")
+
+            @JvmField val SUSPENDED = of("SUSPENDED")
+
+            @JvmField val BANNED = of("BANNED")
+
+            @JvmStatic fun of(value: String) = AffiliateStatus(JsonField.of(value))
+        }
+
+        /** An enum containing [AffiliateStatus]'s known values. */
+        enum class Known {
+            APPROVED,
+            SUSPENDED,
+            BANNED,
+        }
+
+        /**
+         * An enum containing [AffiliateStatus]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [AffiliateStatus] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            APPROVED,
+            SUSPENDED,
+            BANNED,
+            /**
+             * An enum member indicating that [AffiliateStatus] was instantiated with an unknown
+             * value.
+             */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                APPROVED -> Value.APPROVED
+                SUSPENDED -> Value.SUSPENDED
+                BANNED -> Value.BANNED
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws GrowsurfInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                APPROVED -> Known.APPROVED
+                SUSPENDED -> Known.SUSPENDED
+                BANNED -> Known.BANNED
+                else -> throw GrowsurfInvalidDataException("Unknown AffiliateStatus: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws GrowsurfInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                GrowsurfInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws GrowsurfInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): AffiliateStatus = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: GrowsurfInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is AffiliateStatus && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
     }
 
     class ReferralStatus @JsonCreator private constructor(private val value: JsonField<String>) :

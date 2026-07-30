@@ -31,6 +31,8 @@ import com.growsurf.api.models.campaign.participant.ParticipantDeleteParams
 import com.growsurf.api.models.campaign.participant.ParticipantDeleteResponse
 import com.growsurf.api.models.campaign.participant.ParticipantEmailParams
 import com.growsurf.api.models.campaign.participant.ParticipantEmailResponse
+import com.growsurf.api.models.campaign.participant.ParticipantGetPayoutDestinationParams
+import com.growsurf.api.models.campaign.participant.ParticipantGetPayoutDestinationResponse
 import com.growsurf.api.models.campaign.participant.ParticipantListActivityLogsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListCommissionsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListPayoutsParams
@@ -41,6 +43,8 @@ import com.growsurf.api.models.campaign.participant.ParticipantRecordTransaction
 import com.growsurf.api.models.campaign.participant.ParticipantRecordTransactionResponse
 import com.growsurf.api.models.campaign.participant.ParticipantRefundTransactionParams
 import com.growsurf.api.models.campaign.participant.ParticipantRefundTransactionResponse
+import com.growsurf.api.models.campaign.participant.ParticipantRequestPayoutDestinationConfirmationParams
+import com.growsurf.api.models.campaign.participant.ParticipantRequestPayoutDestinationConfirmationResponse
 import com.growsurf.api.models.campaign.participant.ParticipantRetrieveAnalyticsParams
 import com.growsurf.api.models.campaign.participant.ParticipantRetrieveParams
 import com.growsurf.api.models.campaign.participant.ParticipantSendInvitesParams
@@ -178,6 +182,21 @@ class ParticipantServiceImpl internal constructor(private val clientOptions: Cli
     ): ParticipantAnalyticsResponse =
         // get /campaign/{id}/participant/{participantIdOrEmail}/analytics
         withRawResponse().retrieveAnalytics(params, requestOptions).parse()
+
+    override fun getPayoutDestination(
+        params: ParticipantGetPayoutDestinationParams,
+        requestOptions: RequestOptions,
+    ): ParticipantGetPayoutDestinationResponse =
+        // get /campaign/{id}/participant/{participantIdOrEmail}/payout-destination
+        withRawResponse().getPayoutDestination(params, requestOptions).parse()
+
+    override fun requestPayoutDestinationConfirmation(
+        params: ParticipantRequestPayoutDestinationConfirmationParams,
+        requestOptions: RequestOptions,
+    ): ParticipantRequestPayoutDestinationConfirmationResponse =
+        // post
+        // /campaign/{id}/participant/{participantIdOrEmail}/payout-destination/request-confirmation
+        withRawResponse().requestPayoutDestinationConfirmation(params, requestOptions).parse()
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         ParticipantService.WithRawResponse {
@@ -798,6 +817,83 @@ class ParticipantServiceImpl internal constructor(private val clientOptions: Cli
             return errorHandler.handle(response).parseable {
                 response
                     .use { retrieveAnalyticsHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val getPayoutDestinationHandler: Handler<ParticipantGetPayoutDestinationResponse> =
+            jsonHandler<ParticipantGetPayoutDestinationResponse>(clientOptions.jsonMapper)
+
+        override fun getPayoutDestination(
+            params: ParticipantGetPayoutDestinationParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<ParticipantGetPayoutDestinationResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("participantIdOrEmail", params.participantIdOrEmail().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "campaign",
+                        params._pathParam(0),
+                        "participant",
+                        params._pathParam(1),
+                        "payout-destination",
+                    )
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { getPayoutDestinationHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val requestPayoutDestinationConfirmationHandler:
+            Handler<ParticipantRequestPayoutDestinationConfirmationResponse> =
+            jsonHandler<ParticipantRequestPayoutDestinationConfirmationResponse>(
+                clientOptions.jsonMapper
+            )
+
+        override fun requestPayoutDestinationConfirmation(
+            params: ParticipantRequestPayoutDestinationConfirmationParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<ParticipantRequestPayoutDestinationConfirmationResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("participantIdOrEmail", params.participantIdOrEmail().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "campaign",
+                        params._pathParam(0),
+                        "participant",
+                        params._pathParam(1),
+                        "payout-destination",
+                        "request-confirmation",
+                    )
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { requestPayoutDestinationConfirmationHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

@@ -558,6 +558,7 @@ private constructor(
         private val couponCode: JsonField<String>,
         private val description: JsonField<String>,
         private val imageUrl: JsonField<String>,
+        private val isVisible: JsonField<Boolean>,
         private val limit: JsonField<Long>,
         private val limitDuration: JsonField<LimitDuration>,
         private val nextMilestonePrefix: JsonField<String>,
@@ -568,6 +569,7 @@ private constructor(
         private val referralDescription: JsonField<String>,
         private val referredRewardUpfront: JsonField<Boolean>,
         private val referredValue: JsonField<RewardTaxValuation>,
+        private val title: JsonField<String>,
         private val value: JsonField<RewardTaxValuation>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -597,6 +599,9 @@ private constructor(
             @JsonProperty("imageUrl")
             @ExcludeMissing
             imageUrl: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("isVisible")
+            @ExcludeMissing
+            isVisible: JsonField<Boolean> = JsonMissing.of(),
             @JsonProperty("limit") @ExcludeMissing limit: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("limitDuration")
             @ExcludeMissing
@@ -623,6 +628,7 @@ private constructor(
             @JsonProperty("referredValue")
             @ExcludeMissing
             referredValue: JsonField<RewardTaxValuation> = JsonMissing.of(),
+            @JsonProperty("title") @ExcludeMissing title: JsonField<String> = JsonMissing.of(),
             @JsonProperty("value")
             @ExcludeMissing
             value: JsonField<RewardTaxValuation> = JsonMissing.of(),
@@ -636,6 +642,7 @@ private constructor(
             couponCode,
             description,
             imageUrl,
+            isVisible,
             limit,
             limitDuration,
             nextMilestonePrefix,
@@ -646,6 +653,7 @@ private constructor(
             referralDescription,
             referredRewardUpfront,
             referredValue,
+            title,
             value,
             mutableMapOf(),
         )
@@ -707,6 +715,12 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun imageUrl(): Optional<String> = imageUrl.getOptional("imageUrl")
+
+        /**
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun isVisible(): Optional<Boolean> = isVisible.getOptional("isVisible")
 
         /**
          * `-1` represents an unlimited reward in REST responses.
@@ -775,6 +789,12 @@ private constructor(
          */
         fun referredValue(): Optional<RewardTaxValuation> =
             referredValue.getOptional("referredValue")
+
+        /**
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun title(): Optional<String> = title.getOptional("title")
 
         /**
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -856,6 +876,13 @@ private constructor(
          * Unlike [imageUrl], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("imageUrl") @ExcludeMissing fun _imageUrl(): JsonField<String> = imageUrl
+
+        /**
+         * Returns the raw JSON value of [isVisible].
+         *
+         * Unlike [isVisible], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("isVisible") @ExcludeMissing fun _isVisible(): JsonField<Boolean> = isVisible
 
         /**
          * Returns the raw JSON value of [limit].
@@ -952,6 +979,13 @@ private constructor(
         fun _referredValue(): JsonField<RewardTaxValuation> = referredValue
 
         /**
+         * Returns the raw JSON value of [title].
+         *
+         * Unlike [title], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("title") @ExcludeMissing fun _title(): JsonField<String> = title
+
+        /**
          * Returns the raw JSON value of [value].
          *
          * Unlike [value], this method doesn't throw if the JSON field has an unexpected type.
@@ -998,6 +1032,7 @@ private constructor(
             private var couponCode: JsonField<String> = JsonMissing.of()
             private var description: JsonField<String> = JsonMissing.of()
             private var imageUrl: JsonField<String> = JsonMissing.of()
+            private var isVisible: JsonField<Boolean> = JsonMissing.of()
             private var limit: JsonField<Long> = JsonMissing.of()
             private var limitDuration: JsonField<LimitDuration> = JsonMissing.of()
             private var nextMilestonePrefix: JsonField<String> = JsonMissing.of()
@@ -1008,6 +1043,7 @@ private constructor(
             private var referralDescription: JsonField<String> = JsonMissing.of()
             private var referredRewardUpfront: JsonField<Boolean> = JsonMissing.of()
             private var referredValue: JsonField<RewardTaxValuation> = JsonMissing.of()
+            private var title: JsonField<String> = JsonMissing.of()
             private var value: JsonField<RewardTaxValuation> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -1022,6 +1058,7 @@ private constructor(
                 couponCode = reward.couponCode
                 description = reward.description
                 imageUrl = reward.imageUrl
+                isVisible = reward.isVisible
                 limit = reward.limit
                 limitDuration = reward.limitDuration
                 nextMilestonePrefix = reward.nextMilestonePrefix
@@ -1032,6 +1069,7 @@ private constructor(
                 referralDescription = reward.referralDescription
                 referredRewardUpfront = reward.referredRewardUpfront
                 referredValue = reward.referredValue
+                title = reward.title
                 value = reward.value
                 additionalProperties = reward.additionalProperties.toMutableMap()
             }
@@ -1176,6 +1214,17 @@ private constructor(
              * supported value.
              */
             fun imageUrl(imageUrl: JsonField<String>) = apply { this.imageUrl = imageUrl }
+
+            fun isVisible(isVisible: Boolean) = isVisible(JsonField.of(isVisible))
+
+            /**
+             * Sets [Builder.isVisible] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.isVisible] with a well-typed [Boolean] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun isVisible(isVisible: JsonField<Boolean>) = apply { this.isVisible = isVisible }
 
             /** `-1` represents an unlimited reward in REST responses. */
             fun limit(limit: Long?) = limit(JsonField.ofNullable(limit))
@@ -1379,6 +1428,20 @@ private constructor(
                 this.referredValue = referredValue
             }
 
+            fun title(title: String?) = title(JsonField.ofNullable(title))
+
+            /** Alias for calling [Builder.title] with `title.orElse(null)`. */
+            fun title(title: Optional<String>) = title(title.getOrNull())
+
+            /**
+             * Sets [Builder.title] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.title] with a well-typed [String] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun title(title: JsonField<String>) = apply { this.title = title }
+
             fun value(value: RewardTaxValuation?) = value(JsonField.ofNullable(value))
 
             /** Alias for calling [Builder.value] with `value.orElse(null)`. */
@@ -1438,6 +1501,7 @@ private constructor(
                     couponCode,
                     description,
                     imageUrl,
+                    isVisible,
                     limit,
                     limitDuration,
                     nextMilestonePrefix,
@@ -1448,6 +1512,7 @@ private constructor(
                     referralDescription,
                     referredRewardUpfront,
                     referredValue,
+                    title,
                     value,
                     additionalProperties.toMutableMap(),
                 )
@@ -1478,6 +1543,7 @@ private constructor(
             couponCode()
             description()
             imageUrl()
+            isVisible()
             limit()
             limitDuration().ifPresent { it.validate() }
             nextMilestonePrefix()
@@ -1488,6 +1554,7 @@ private constructor(
             referralDescription()
             referredRewardUpfront()
             referredValue().ifPresent { it.validate() }
+            title()
             value().ifPresent { it.validate() }
             validated = true
         }
@@ -1517,6 +1584,7 @@ private constructor(
                 (if (couponCode.asKnown().isPresent) 1 else 0) +
                 (if (description.asKnown().isPresent) 1 else 0) +
                 (if (imageUrl.asKnown().isPresent) 1 else 0) +
+                (if (isVisible.asKnown().isPresent) 1 else 0) +
                 (if (limit.asKnown().isPresent) 1 else 0) +
                 (limitDuration.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (nextMilestonePrefix.asKnown().isPresent) 1 else 0) +
@@ -1527,6 +1595,7 @@ private constructor(
                 (if (referralDescription.asKnown().isPresent) 1 else 0) +
                 (if (referredRewardUpfront.asKnown().isPresent) 1 else 0) +
                 (referredValue.asKnown().getOrNull()?.validity() ?: 0) +
+                (if (title.asKnown().isPresent) 1 else 0) +
                 (value.asKnown().getOrNull()?.validity() ?: 0)
 
         /** Shallow custom metadata object. */
@@ -1816,6 +1885,8 @@ private constructor(
 
                 @JvmField val PER_MONTH = of("PER_MONTH")
 
+                @JvmField val PER_YEAR = of("PER_YEAR")
+
                 @JvmStatic fun of(value: String) = LimitDuration(JsonField.of(value))
             }
 
@@ -1823,6 +1894,7 @@ private constructor(
             enum class Known {
                 IN_TOTAL,
                 PER_MONTH,
+                PER_YEAR,
             }
 
             /**
@@ -1837,6 +1909,7 @@ private constructor(
             enum class Value {
                 IN_TOTAL,
                 PER_MONTH,
+                PER_YEAR,
                 /**
                  * An enum member indicating that [LimitDuration] was instantiated with an unknown
                  * value.
@@ -1855,6 +1928,7 @@ private constructor(
                 when (this) {
                     IN_TOTAL -> Value.IN_TOTAL
                     PER_MONTH -> Value.PER_MONTH
+                    PER_YEAR -> Value.PER_YEAR
                     else -> Value._UNKNOWN
                 }
 
@@ -1871,6 +1945,7 @@ private constructor(
                 when (this) {
                     IN_TOTAL -> Known.IN_TOTAL
                     PER_MONTH -> Known.PER_MONTH
+                    PER_YEAR -> Known.PER_YEAR
                     else -> throw GrowsurfInvalidDataException("Unknown LimitDuration: $value")
                 }
 
@@ -1953,6 +2028,7 @@ private constructor(
                 couponCode == other.couponCode &&
                 description == other.description &&
                 imageUrl == other.imageUrl &&
+                isVisible == other.isVisible &&
                 limit == other.limit &&
                 limitDuration == other.limitDuration &&
                 nextMilestonePrefix == other.nextMilestonePrefix &&
@@ -1963,6 +2039,7 @@ private constructor(
                 referralDescription == other.referralDescription &&
                 referredRewardUpfront == other.referredRewardUpfront &&
                 referredValue == other.referredValue &&
+                title == other.title &&
                 value == other.value &&
                 additionalProperties == other.additionalProperties
         }
@@ -1978,6 +2055,7 @@ private constructor(
                 couponCode,
                 description,
                 imageUrl,
+                isVisible,
                 limit,
                 limitDuration,
                 nextMilestonePrefix,
@@ -1988,6 +2066,7 @@ private constructor(
                 referralDescription,
                 referredRewardUpfront,
                 referredValue,
+                title,
                 value,
                 additionalProperties,
             )
@@ -1996,7 +2075,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Reward{id=$id, isUnlimited=$isUnlimited, metadata=$metadata, type=$type, commissionStructure=$commissionStructure, conversionsRequired=$conversionsRequired, couponCode=$couponCode, description=$description, imageUrl=$imageUrl, limit=$limit, limitDuration=$limitDuration, nextMilestonePrefix=$nextMilestonePrefix, nextMilestoneSuffix=$nextMilestoneSuffix, numberOfWinners=$numberOfWinners, order=$order, referralCouponCode=$referralCouponCode, referralDescription=$referralDescription, referredRewardUpfront=$referredRewardUpfront, referredValue=$referredValue, value=$value, additionalProperties=$additionalProperties}"
+            "Reward{id=$id, isUnlimited=$isUnlimited, metadata=$metadata, type=$type, commissionStructure=$commissionStructure, conversionsRequired=$conversionsRequired, couponCode=$couponCode, description=$description, imageUrl=$imageUrl, isVisible=$isVisible, limit=$limit, limitDuration=$limitDuration, nextMilestonePrefix=$nextMilestonePrefix, nextMilestoneSuffix=$nextMilestoneSuffix, numberOfWinners=$numberOfWinners, order=$order, referralCouponCode=$referralCouponCode, referralDescription=$referralDescription, referredRewardUpfront=$referredRewardUpfront, referredValue=$referredValue, title=$title, value=$value, additionalProperties=$additionalProperties}"
     }
 
     class Status @JsonCreator private constructor(private val value: JsonField<String>) : Enum {

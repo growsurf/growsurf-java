@@ -12,12 +12,12 @@ import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
 /**
- * Updates a program's Design configuration (the dashboard Program Editor's Design tab). Only the
- * fields you send are changed; anything you leave out is untouched (arrays such as `signup.fields`
- * replace wholesale). The body is a large, loosely-typed partial object modeled as free-form
- * properties — set fields via [Builder.putAdditionalBodyProperty] /
- * [Builder.additionalBodyProperties]. To see the full object with every field and its current
- * value, retrieve the resource first, then send back only the fields you want to change.
+ * Updates a program's design configuration, including the payout-destination confirmation page copy
+ * configured from payout integration cards. Only the fields you send are changed; anything you
+ * leave out is untouched (arrays such as `signup.fields` replace wholesale). The body is a large,
+ * loosely-typed partial object modeled as free-form properties — set fields via
+ * [Builder.putAdditionalBodyProperty] / [Builder.additionalBodyProperties]. Retrieve the configured
+ * fields first, then send back only the fields you want to change.
  */
 class DesignUpdateParams
 private constructor(

@@ -21,6 +21,8 @@ import com.growsurf.api.models.campaign.participant.ParticipantDeleteParams
 import com.growsurf.api.models.campaign.participant.ParticipantDeleteResponse
 import com.growsurf.api.models.campaign.participant.ParticipantEmailParams
 import com.growsurf.api.models.campaign.participant.ParticipantEmailResponse
+import com.growsurf.api.models.campaign.participant.ParticipantGetPayoutDestinationParams
+import com.growsurf.api.models.campaign.participant.ParticipantGetPayoutDestinationResponse
 import com.growsurf.api.models.campaign.participant.ParticipantListActivityLogsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListCommissionsParams
 import com.growsurf.api.models.campaign.participant.ParticipantListPayoutsParams
@@ -31,6 +33,8 @@ import com.growsurf.api.models.campaign.participant.ParticipantRecordTransaction
 import com.growsurf.api.models.campaign.participant.ParticipantRecordTransactionResponse
 import com.growsurf.api.models.campaign.participant.ParticipantRefundTransactionParams
 import com.growsurf.api.models.campaign.participant.ParticipantRefundTransactionResponse
+import com.growsurf.api.models.campaign.participant.ParticipantRequestPayoutDestinationConfirmationParams
+import com.growsurf.api.models.campaign.participant.ParticipantRequestPayoutDestinationConfirmationResponse
 import com.growsurf.api.models.campaign.participant.ParticipantRetrieveAnalyticsParams
 import com.growsurf.api.models.campaign.participant.ParticipantRetrieveParams
 import com.growsurf.api.models.campaign.participant.ParticipantSendInvitesParams
@@ -79,7 +83,13 @@ interface ParticipantService {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): Participant
 
-    /** Updates a participant by GrowSurf participant ID or email address. */
+    /**
+     * Updates a participant by GrowSurf participant ID or email address. For affiliate programs,
+     * set `affiliateStatus` to `APPROVED`, `SUSPENDED`, or `BANNED`. `APPROVED` enrolls the
+     * participant as an affiliate. `SUSPENDED` and `BANNED` require an existing affiliate. This
+     * endpoint does not accept `isAffiliate`, and affiliate enrollment cannot be removed through
+     * REST.
+     */
     fun update(participantIdOrEmail: String, params: ParticipantUpdateParams): Participant =
         update(participantIdOrEmail, params, RequestOptions.none())
 
@@ -160,7 +170,12 @@ interface ParticipantService {
 
     /**
      * Adds a new participant to the program. If the email already exists, the existing participant
-     * is returned.
+     * is returned unchanged. For affiliate programs, set `isAffiliate` to `true` to enroll a new
+     * participant as an approved affiliate or `false` to create a non-affiliate. If you omit
+     * `isAffiliate`, a valid `referredBy` creates a referred non-affiliate; without a valid
+     * referrer, the new participant is enrolled as an approved affiliate. You can send a valid
+     * `referredBy` with `isAffiliate: true` to keep the referral attribution and enroll the
+     * participant as an affiliate.
      */
     fun add(id: String, params: ParticipantAddParams): Participant =
         add(id, params, RequestOptions.none())
@@ -531,9 +546,11 @@ interface ParticipantService {
 
     /**
      * Retrieves analytics for a single participant — all-time engagement counters, leaderboard
-     * ranks, and per-channel share counts (plus affiliate money metrics for affiliate programs).
-     * Useful for segmenting and re-engaging participants. Pass `include=series` to also get this
-     * participant's own activity over time.
+     * ranks, and per-channel share counts (plus affiliate revenue, commission, and payout metrics
+     * for affiliate programs). Pass `include=email` for `sent` (accepted for delivery),
+     * `delivered`, `opened`, `clicked`, `bounced`, and `spamComplaints` metrics attributed to this
+     * participant, including invitations they sent. Use `include=email,series` to include the same
+     * counts in each UTC series bucket.
      */
     fun retrieveAnalytics(
         participantIdOrEmail: String,
@@ -562,6 +579,75 @@ interface ParticipantService {
         params: ParticipantRetrieveAnalyticsParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): ParticipantAnalyticsResponse
+
+    /**
+     * Returns a participant's payout-destination status across every payout provider enabled for
+     * the program (PayPal and/or Wise). For each provider it reports the current status, the
+     * confirmed claim email, the legal recipient type, and — when a delivery bounced or a recipient
+     * was invalidated — the repair reason. `activeProvider` is the provider that currently gets
+     * paid, or `null` until the participant confirms one.
+     */
+    fun getPayoutDestination(
+        participantIdOrEmail: String,
+        params: ParticipantGetPayoutDestinationParams,
+    ): ParticipantGetPayoutDestinationResponse =
+        getPayoutDestination(participantIdOrEmail, params, RequestOptions.none())
+
+    /** @see getPayoutDestination */
+    fun getPayoutDestination(
+        participantIdOrEmail: String,
+        params: ParticipantGetPayoutDestinationParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ParticipantGetPayoutDestinationResponse =
+        getPayoutDestination(
+            params.toBuilder().participantIdOrEmail(participantIdOrEmail).build(),
+            requestOptions,
+        )
+
+    /** @see getPayoutDestination */
+    fun getPayoutDestination(
+        params: ParticipantGetPayoutDestinationParams
+    ): ParticipantGetPayoutDestinationResponse = getPayoutDestination(params, RequestOptions.none())
+
+    /** @see getPayoutDestination */
+    fun getPayoutDestination(
+        params: ParticipantGetPayoutDestinationParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ParticipantGetPayoutDestinationResponse
+
+    /**
+     * Sends the participant a one-time link to confirm their payout destination for the chosen
+     * provider. Only the participant can open the link and confirm — this endpoint just triggers
+     * the message. The provider must be enabled for the program.
+     */
+    fun requestPayoutDestinationConfirmation(
+        participantIdOrEmail: String,
+        params: ParticipantRequestPayoutDestinationConfirmationParams,
+    ): ParticipantRequestPayoutDestinationConfirmationResponse =
+        requestPayoutDestinationConfirmation(participantIdOrEmail, params, RequestOptions.none())
+
+    /** @see requestPayoutDestinationConfirmation */
+    fun requestPayoutDestinationConfirmation(
+        participantIdOrEmail: String,
+        params: ParticipantRequestPayoutDestinationConfirmationParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ParticipantRequestPayoutDestinationConfirmationResponse =
+        requestPayoutDestinationConfirmation(
+            params.toBuilder().participantIdOrEmail(participantIdOrEmail).build(),
+            requestOptions,
+        )
+
+    /** @see requestPayoutDestinationConfirmation */
+    fun requestPayoutDestinationConfirmation(
+        params: ParticipantRequestPayoutDestinationConfirmationParams
+    ): ParticipantRequestPayoutDestinationConfirmationResponse =
+        requestPayoutDestinationConfirmation(params, RequestOptions.none())
+
+    /** @see requestPayoutDestinationConfirmation */
+    fun requestPayoutDestinationConfirmation(
+        params: ParticipantRequestPayoutDestinationConfirmationParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ParticipantRequestPayoutDestinationConfirmationResponse
 
     /**
      * A view of [ParticipantService] that provides access to raw HTTP responses for each method.
@@ -1195,5 +1281,85 @@ interface ParticipantService {
             params: ParticipantRetrieveAnalyticsParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<ParticipantAnalyticsResponse>
+
+        /**
+         * Returns a raw HTTP response for `get
+         * /campaign/{id}/participant/{participantIdOrEmail}/payout-destination`, but is otherwise
+         * the same as [ParticipantService.getPayoutDestination].
+         */
+        @MustBeClosed
+        fun getPayoutDestination(
+            participantIdOrEmail: String,
+            params: ParticipantGetPayoutDestinationParams,
+        ): HttpResponseFor<ParticipantGetPayoutDestinationResponse> =
+            getPayoutDestination(participantIdOrEmail, params, RequestOptions.none())
+
+        /** @see getPayoutDestination */
+        @MustBeClosed
+        fun getPayoutDestination(
+            participantIdOrEmail: String,
+            params: ParticipantGetPayoutDestinationParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ParticipantGetPayoutDestinationResponse> =
+            getPayoutDestination(
+                params.toBuilder().participantIdOrEmail(participantIdOrEmail).build(),
+                requestOptions,
+            )
+
+        /** @see getPayoutDestination */
+        @MustBeClosed
+        fun getPayoutDestination(
+            params: ParticipantGetPayoutDestinationParams
+        ): HttpResponseFor<ParticipantGetPayoutDestinationResponse> =
+            getPayoutDestination(params, RequestOptions.none())
+
+        /** @see getPayoutDestination */
+        @MustBeClosed
+        fun getPayoutDestination(
+            params: ParticipantGetPayoutDestinationParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ParticipantGetPayoutDestinationResponse>
+
+        /**
+         * Returns a raw HTTP response for `post
+         * /campaign/{id}/participant/{participantIdOrEmail}/payout-destination/request-confirmation`,
+         * but is otherwise the same as [ParticipantService.requestPayoutDestinationConfirmation].
+         */
+        @MustBeClosed
+        fun requestPayoutDestinationConfirmation(
+            participantIdOrEmail: String,
+            params: ParticipantRequestPayoutDestinationConfirmationParams,
+        ): HttpResponseFor<ParticipantRequestPayoutDestinationConfirmationResponse> =
+            requestPayoutDestinationConfirmation(
+                participantIdOrEmail,
+                params,
+                RequestOptions.none(),
+            )
+
+        /** @see requestPayoutDestinationConfirmation */
+        @MustBeClosed
+        fun requestPayoutDestinationConfirmation(
+            participantIdOrEmail: String,
+            params: ParticipantRequestPayoutDestinationConfirmationParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ParticipantRequestPayoutDestinationConfirmationResponse> =
+            requestPayoutDestinationConfirmation(
+                params.toBuilder().participantIdOrEmail(participantIdOrEmail).build(),
+                requestOptions,
+            )
+
+        /** @see requestPayoutDestinationConfirmation */
+        @MustBeClosed
+        fun requestPayoutDestinationConfirmation(
+            params: ParticipantRequestPayoutDestinationConfirmationParams
+        ): HttpResponseFor<ParticipantRequestPayoutDestinationConfirmationResponse> =
+            requestPayoutDestinationConfirmation(params, RequestOptions.none())
+
+        /** @see requestPayoutDestinationConfirmation */
+        @MustBeClosed
+        fun requestPayoutDestinationConfirmation(
+            params: ParticipantRequestPayoutDestinationConfirmationParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ParticipantRequestPayoutDestinationConfirmationResponse>
     }
 }

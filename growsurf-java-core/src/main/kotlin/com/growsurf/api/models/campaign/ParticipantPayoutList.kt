@@ -267,6 +267,7 @@ private constructor(
         private val issuedAt: JsonField<Long>,
         private val provider: JsonField<String>,
         private val queuedAt: JsonField<Long>,
+        private val reversedAt: JsonField<Long>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -306,6 +307,9 @@ private constructor(
             @ExcludeMissing
             provider: JsonField<String> = JsonMissing.of(),
             @JsonProperty("queuedAt") @ExcludeMissing queuedAt: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("reversedAt")
+            @ExcludeMissing
+            reversedAt: JsonField<Long> = JsonMissing.of(),
         ) : this(
             id,
             amount,
@@ -323,6 +327,7 @@ private constructor(
             issuedAt,
             provider,
             queuedAt,
+            reversedAt,
             mutableMapOf(),
         )
 
@@ -423,6 +428,12 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun queuedAt(): Optional<Long> = queuedAt.getOptional("queuedAt")
+
+        /**
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun reversedAt(): Optional<Long> = reversedAt.getOptional("reversedAt")
 
         /**
          * Returns the raw JSON value of [id].
@@ -556,6 +567,13 @@ private constructor(
          */
         @JsonProperty("queuedAt") @ExcludeMissing fun _queuedAt(): JsonField<Long> = queuedAt
 
+        /**
+         * Returns the raw JSON value of [reversedAt].
+         *
+         * Unlike [reversedAt], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("reversedAt") @ExcludeMissing fun _reversedAt(): JsonField<Long> = reversedAt
+
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
             additionalProperties.put(key, value)
@@ -606,6 +624,7 @@ private constructor(
             private var issuedAt: JsonField<Long> = JsonMissing.of()
             private var provider: JsonField<String> = JsonMissing.of()
             private var queuedAt: JsonField<Long> = JsonMissing.of()
+            private var reversedAt: JsonField<Long> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -626,6 +645,7 @@ private constructor(
                 issuedAt = payout.issuedAt
                 provider = payout.provider
                 queuedAt = payout.queuedAt
+                reversedAt = payout.reversedAt
                 additionalProperties = payout.additionalProperties.toMutableMap()
             }
 
@@ -884,6 +904,17 @@ private constructor(
              */
             fun queuedAt(queuedAt: JsonField<Long>) = apply { this.queuedAt = queuedAt }
 
+            fun reversedAt(reversedAt: Long) = reversedAt(JsonField.of(reversedAt))
+
+            /**
+             * Sets [Builder.reversedAt] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.reversedAt] with a well-typed [Long] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun reversedAt(reversedAt: JsonField<Long>) = apply { this.reversedAt = reversedAt }
+
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
                 putAllAdditionalProperties(additionalProperties)
@@ -939,6 +970,7 @@ private constructor(
                     issuedAt,
                     provider,
                     queuedAt,
+                    reversedAt,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -975,6 +1007,7 @@ private constructor(
             issuedAt()
             provider()
             queuedAt()
+            reversedAt()
             validated = true
         }
 
@@ -1009,7 +1042,8 @@ private constructor(
                 (if (fxError.asKnown().isPresent) 1 else 0) +
                 (if (issuedAt.asKnown().isPresent) 1 else 0) +
                 (if (provider.asKnown().isPresent) 1 else 0) +
-                (if (queuedAt.asKnown().isPresent) 1 else 0)
+                (if (queuedAt.asKnown().isPresent) 1 else 0) +
+                (if (reversedAt.asKnown().isPresent) 1 else 0)
 
         class Status @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
@@ -1033,6 +1067,8 @@ private constructor(
 
                 @JvmField val FAILED = of("FAILED")
 
+                @JvmField val REVERSED = of("REVERSED")
+
                 @JvmStatic fun of(value: String) = Status(JsonField.of(value))
             }
 
@@ -1042,6 +1078,7 @@ private constructor(
                 QUEUED,
                 ISSUED,
                 FAILED,
+                REVERSED,
             }
 
             /**
@@ -1058,6 +1095,7 @@ private constructor(
                 QUEUED,
                 ISSUED,
                 FAILED,
+                REVERSED,
                 /**
                  * An enum member indicating that [Status] was instantiated with an unknown value.
                  */
@@ -1077,6 +1115,7 @@ private constructor(
                     QUEUED -> Value.QUEUED
                     ISSUED -> Value.ISSUED
                     FAILED -> Value.FAILED
+                    REVERSED -> Value.REVERSED
                     else -> Value._UNKNOWN
                 }
 
@@ -1095,6 +1134,7 @@ private constructor(
                     QUEUED -> Known.QUEUED
                     ISSUED -> Known.ISSUED
                     FAILED -> Known.FAILED
+                    REVERSED -> Known.REVERSED
                     else -> throw GrowsurfInvalidDataException("Unknown Status: $value")
                 }
 
@@ -1184,6 +1224,7 @@ private constructor(
                 issuedAt == other.issuedAt &&
                 provider == other.provider &&
                 queuedAt == other.queuedAt &&
+                reversedAt == other.reversedAt &&
                 additionalProperties == other.additionalProperties
         }
 
@@ -1205,6 +1246,7 @@ private constructor(
                 issuedAt,
                 provider,
                 queuedAt,
+                reversedAt,
                 additionalProperties,
             )
         }
@@ -1212,7 +1254,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Payout{id=$id, amount=$amount, commissionIds=$commissionIds, createdAt=$createdAt, currencyIso=$currencyIso, participantId=$participantId, status=$status, amountInCampaignCurrency=$amountInCampaignCurrency, campaignCurrencyIso=$campaignCurrencyIso, exchangeRate=$exchangeRate, exchangeRateAt=$exchangeRateAt, failedAt=$failedAt, fxError=$fxError, issuedAt=$issuedAt, provider=$provider, queuedAt=$queuedAt, additionalProperties=$additionalProperties}"
+            "Payout{id=$id, amount=$amount, commissionIds=$commissionIds, createdAt=$createdAt, currencyIso=$currencyIso, participantId=$participantId, status=$status, amountInCampaignCurrency=$amountInCampaignCurrency, campaignCurrencyIso=$campaignCurrencyIso, exchangeRate=$exchangeRate, exchangeRateAt=$exchangeRateAt, failedAt=$failedAt, fxError=$fxError, issuedAt=$issuedAt, provider=$provider, queuedAt=$queuedAt, reversedAt=$reversedAt, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

@@ -16,11 +16,18 @@ import com.growsurf.api.core.http.HttpResponseFor
 import com.growsurf.api.core.http.json
 import com.growsurf.api.core.http.parseable
 import com.growsurf.api.core.prepareAsync
+import com.growsurf.api.models.campaign.AffiliateApplication
+import com.growsurf.api.models.campaign.AffiliateApplicationListResponse
+import com.growsurf.api.models.campaign.AffiliateInvite
+import com.growsurf.api.models.campaign.AffiliateInviteListResponse
 import com.growsurf.api.models.campaign.Campaign
 import com.growsurf.api.models.campaign.CampaignCloneParams
+import com.growsurf.api.models.campaign.CampaignCreateAffiliateInviteParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenResponse
 import com.growsurf.api.models.campaign.CampaignCreateParams
+import com.growsurf.api.models.campaign.CampaignListAffiliateApplicationsParams
+import com.growsurf.api.models.campaign.CampaignListAffiliateInvitesParams
 import com.growsurf.api.models.campaign.CampaignListCommissionsParams
 import com.growsurf.api.models.campaign.CampaignListLeaderboardParams
 import com.growsurf.api.models.campaign.CampaignListParams
@@ -28,9 +35,13 @@ import com.growsurf.api.models.campaign.CampaignListParticipantsParams
 import com.growsurf.api.models.campaign.CampaignListPayoutsParams
 import com.growsurf.api.models.campaign.CampaignListReferralsParams
 import com.growsurf.api.models.campaign.CampaignListResponse
+import com.growsurf.api.models.campaign.CampaignResendAffiliateInviteParams
+import com.growsurf.api.models.campaign.CampaignRetrieveAffiliateApplicationParams
 import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsParams
 import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsResponse
 import com.growsurf.api.models.campaign.CampaignRetrieveParams
+import com.growsurf.api.models.campaign.CampaignReviewAffiliateApplicationParams
+import com.growsurf.api.models.campaign.CampaignRevokeAffiliateInviteParams
 import com.growsurf.api.models.campaign.CampaignUpdateParams
 import com.growsurf.api.models.campaign.ParticipantCommissionList
 import com.growsurf.api.models.campaign.ParticipantList
@@ -205,6 +216,59 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
     ): CompletableFuture<CampaignRetrieveAnalyticsResponse> =
         // get /campaign/{id}/analytics
         withRawResponse().retrieveAnalytics(params, requestOptions).thenApply { it.parse() }
+
+    override fun listAffiliateApplications(
+        params: CampaignListAffiliateApplicationsParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<AffiliateApplicationListResponse> =
+        // get /campaign/{id}/affiliate-applications
+        withRawResponse().listAffiliateApplications(params, requestOptions).thenApply { it.parse() }
+
+    override fun retrieveAffiliateApplication(
+        params: CampaignRetrieveAffiliateApplicationParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<AffiliateApplication> =
+        // get /campaign/{id}/affiliate-applications/{applicationId}
+        withRawResponse().retrieveAffiliateApplication(params, requestOptions).thenApply {
+            it.parse()
+        }
+
+    override fun reviewAffiliateApplication(
+        params: CampaignReviewAffiliateApplicationParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<AffiliateApplication> =
+        // patch /campaign/{id}/affiliate-applications/{applicationId}
+        withRawResponse().reviewAffiliateApplication(params, requestOptions).thenApply {
+            it.parse()
+        }
+
+    override fun listAffiliateInvites(
+        params: CampaignListAffiliateInvitesParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<AffiliateInviteListResponse> =
+        // get /campaign/{id}/affiliate-invites
+        withRawResponse().listAffiliateInvites(params, requestOptions).thenApply { it.parse() }
+
+    override fun createAffiliateInvite(
+        params: CampaignCreateAffiliateInviteParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<AffiliateInvite> =
+        // post /campaign/{id}/affiliate-invites
+        withRawResponse().createAffiliateInvite(params, requestOptions).thenApply { it.parse() }
+
+    override fun revokeAffiliateInvite(
+        params: CampaignRevokeAffiliateInviteParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<AffiliateInvite> =
+        // delete /campaign/{id}/affiliate-invites/{inviteId}
+        withRawResponse().revokeAffiliateInvite(params, requestOptions).thenApply { it.parse() }
+
+    override fun resendAffiliateInvite(
+        params: CampaignResendAffiliateInviteParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<AffiliateInvite> =
+        // post /campaign/{id}/affiliate-invites/{inviteId}/resend
+        withRawResponse().resendAffiliateInvite(params, requestOptions).thenApply { it.parse() }
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         CampaignServiceAsync.WithRawResponse {
@@ -667,6 +731,262 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
                     errorHandler.handle(response).parseable {
                         response
                             .use { retrieveAnalyticsHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val listAffiliateApplicationsHandler: Handler<AffiliateApplicationListResponse> =
+            jsonHandler<AffiliateApplicationListResponse>(clientOptions.jsonMapper)
+
+        override fun listAffiliateApplications(
+            params: CampaignListAffiliateApplicationsParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<AffiliateApplicationListResponse>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("id", params.id().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("campaign", params._pathParam(0), "affiliate-applications")
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { listAffiliateApplicationsHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val retrieveAffiliateApplicationHandler: Handler<AffiliateApplication> =
+            jsonHandler<AffiliateApplication>(clientOptions.jsonMapper)
+
+        override fun retrieveAffiliateApplication(
+            params: CampaignRetrieveAffiliateApplicationParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<AffiliateApplication>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("id", params.id().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "campaign",
+                        params._pathParam(0),
+                        "affiliate-applications",
+                        params._pathParam(1),
+                    )
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { retrieveAffiliateApplicationHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val reviewAffiliateApplicationHandler: Handler<AffiliateApplication> =
+            jsonHandler<AffiliateApplication>(clientOptions.jsonMapper)
+
+        override fun reviewAffiliateApplication(
+            params: CampaignReviewAffiliateApplicationParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<AffiliateApplication>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("id", params.id().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.PATCH)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "campaign",
+                        params._pathParam(0),
+                        "affiliate-applications",
+                        params._pathParam(1),
+                    )
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { reviewAffiliateApplicationHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val listAffiliateInvitesHandler: Handler<AffiliateInviteListResponse> =
+            jsonHandler<AffiliateInviteListResponse>(clientOptions.jsonMapper)
+
+        override fun listAffiliateInvites(
+            params: CampaignListAffiliateInvitesParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<AffiliateInviteListResponse>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("id", params.id().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("campaign", params._pathParam(0), "affiliate-invites")
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { listAffiliateInvitesHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val createAffiliateInviteHandler: Handler<AffiliateInvite> =
+            jsonHandler<AffiliateInvite>(clientOptions.jsonMapper)
+
+        override fun createAffiliateInvite(
+            params: CampaignCreateAffiliateInviteParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<AffiliateInvite>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("id", params.id().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("campaign", params._pathParam(0), "affiliate-invites")
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { createAffiliateInviteHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val revokeAffiliateInviteHandler: Handler<AffiliateInvite> =
+            jsonHandler<AffiliateInvite>(clientOptions.jsonMapper)
+
+        override fun revokeAffiliateInvite(
+            params: CampaignRevokeAffiliateInviteParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<AffiliateInvite>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("id", params.id().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.DELETE)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "campaign",
+                        params._pathParam(0),
+                        "affiliate-invites",
+                        params._pathParam(1),
+                    )
+                    .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { revokeAffiliateInviteHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val resendAffiliateInviteHandler: Handler<AffiliateInvite> =
+            jsonHandler<AffiliateInvite>(clientOptions.jsonMapper)
+
+        override fun resendAffiliateInvite(
+            params: CampaignResendAffiliateInviteParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<AffiliateInvite>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("id", params.id().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments(
+                        "campaign",
+                        params._pathParam(0),
+                        "affiliate-invites",
+                        params._pathParam(1),
+                        "resend",
+                    )
+                    .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { resendAffiliateInviteHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()

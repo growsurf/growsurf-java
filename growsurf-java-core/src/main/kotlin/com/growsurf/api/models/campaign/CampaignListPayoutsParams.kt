@@ -258,6 +258,8 @@ private constructor(
 
             @JvmField val FAILED = of("FAILED")
 
+            @JvmField val REVERSED = of("REVERSED")
+
             @JvmStatic fun of(value: String) = Status(JsonField.of(value))
         }
 
@@ -267,6 +269,7 @@ private constructor(
             QUEUED,
             ISSUED,
             FAILED,
+            REVERSED,
         }
 
         /**
@@ -283,6 +286,7 @@ private constructor(
             QUEUED,
             ISSUED,
             FAILED,
+            REVERSED,
             /** An enum member indicating that [Status] was instantiated with an unknown value. */
             _UNKNOWN,
         }
@@ -300,6 +304,7 @@ private constructor(
                 QUEUED -> Value.QUEUED
                 ISSUED -> Value.ISSUED
                 FAILED -> Value.FAILED
+                REVERSED -> Value.REVERSED
                 else -> Value._UNKNOWN
             }
 
@@ -318,6 +323,7 @@ private constructor(
                 QUEUED -> Known.QUEUED
                 ISSUED -> Known.ISSUED
                 FAILED -> Known.FAILED
+                REVERSED -> Known.REVERSED
                 else -> throw GrowsurfInvalidDataException("Unknown Status: $value")
             }
 

@@ -24,6 +24,7 @@ class CampaignRetrieveAnalyticsResponse
 private constructor(
     private val analytics: JsonField<Analytics>,
     private val endDate: JsonField<Long>,
+    private val email: JsonField<EmailAnalytics>,
     private val previousPeriod: JsonField<PreviousPeriod>,
     private val rates: JsonField<Rates>,
     private val series: JsonField<List<Series>>,
@@ -38,6 +39,7 @@ private constructor(
         @ExcludeMissing
         analytics: JsonField<Analytics> = JsonMissing.of(),
         @JsonProperty("endDate") @ExcludeMissing endDate: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("email") @ExcludeMissing email: JsonField<EmailAnalytics> = JsonMissing.of(),
         @JsonProperty("previousPeriod")
         @ExcludeMissing
         previousPeriod: JsonField<PreviousPeriod> = JsonMissing.of(),
@@ -50,6 +52,7 @@ private constructor(
     ) : this(
         analytics,
         endDate,
+        email,
         previousPeriod,
         rates,
         series,
@@ -69,6 +72,9 @@ private constructor(
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun endDate(): Long = endDate.getRequired("endDate")
+
+    /** Present only when `include` contains `email`. */
+    fun email(): Optional<EmailAnalytics> = email.getOptional("email")
 
     /**
      * Present only when `include` contains `previousPeriod`.
@@ -121,6 +127,8 @@ private constructor(
      * Unlike [endDate], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("endDate") @ExcludeMissing fun _endDate(): JsonField<Long> = endDate
+
+    @JsonProperty("email") @ExcludeMissing fun _email(): JsonField<EmailAnalytics> = email
 
     /**
      * Returns the raw JSON value of [previousPeriod].
@@ -194,6 +202,7 @@ private constructor(
 
         private var analytics: JsonField<Analytics>? = null
         private var endDate: JsonField<Long>? = null
+        private var email: JsonField<EmailAnalytics> = JsonMissing.of()
         private var previousPeriod: JsonField<PreviousPeriod> = JsonMissing.of()
         private var rates: JsonField<Rates> = JsonMissing.of()
         private var series: JsonField<MutableList<Series>>? = null
@@ -206,6 +215,7 @@ private constructor(
             apply {
                 analytics = campaignRetrieveAnalyticsResponse.analytics
                 endDate = campaignRetrieveAnalyticsResponse.endDate
+                email = campaignRetrieveAnalyticsResponse.email
                 previousPeriod = campaignRetrieveAnalyticsResponse.previousPeriod
                 rates = campaignRetrieveAnalyticsResponse.rates
                 series = campaignRetrieveAnalyticsResponse.series.map { it.toMutableList() }
@@ -235,6 +245,11 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun endDate(endDate: JsonField<Long>) = apply { this.endDate = endDate }
+
+        /** Present only when `include` contains `email`. */
+        fun email(email: EmailAnalytics) = email(JsonField.of(email))
+
+        fun email(email: JsonField<EmailAnalytics>) = apply { this.email = email }
 
         /** Present only when `include` contains `previousPeriod`. */
         fun previousPeriod(previousPeriod: PreviousPeriod) =
@@ -351,6 +366,7 @@ private constructor(
             CampaignRetrieveAnalyticsResponse(
                 checkRequired("analytics", analytics),
                 checkRequired("endDate", endDate),
+                email,
                 previousPeriod,
                 rates,
                 (series ?: JsonMissing.of()).map { it.toImmutable() },
@@ -377,6 +393,7 @@ private constructor(
 
         analytics().validate()
         endDate()
+        email().ifPresent { it.validate() }
         previousPeriod().ifPresent { it.validate() }
         rates().ifPresent { it.validate() }
         series().ifPresent { it.forEach { it.validate() } }
@@ -402,6 +419,7 @@ private constructor(
     internal fun validity(): Int =
         (analytics.asKnown().getOrNull()?.validity() ?: 0) +
             (if (endDate.asKnown().isPresent) 1 else 0) +
+            (email.asKnown().getOrNull()?.validity() ?: 0) +
             (previousPeriod.asKnown().getOrNull()?.validity() ?: 0) +
             (rates.asKnown().getOrNull()?.validity() ?: 0) +
             (series.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
@@ -1692,6 +1710,7 @@ private constructor(
         private val blueskyShares: JsonField<Long>,
         private val copyRefLinkShares: JsonField<Long>,
         private val emailShares: JsonField<Long>,
+        private val email: JsonField<EmailAnalyticsCounts>,
         private val facebookShares: JsonField<Long>,
         private val impressions: JsonField<Long>,
         private val invites: JsonField<Long>,
@@ -1734,6 +1753,9 @@ private constructor(
             @JsonProperty("emailShares")
             @ExcludeMissing
             emailShares: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("email")
+            @ExcludeMissing
+            email: JsonField<EmailAnalyticsCounts> = JsonMissing.of(),
             @JsonProperty("facebookShares")
             @ExcludeMissing
             facebookShares: JsonField<Long> = JsonMissing.of(),
@@ -1812,6 +1834,7 @@ private constructor(
             blueskyShares,
             copyRefLinkShares,
             emailShares,
+            email,
             facebookShares,
             impressions,
             invites,
@@ -1906,6 +1929,9 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun participants(): Optional<Long> = participants.getOptional("participants")
+
+        /** Per-period email counts. Present only when `include` contains `email`. */
+        fun email(): Optional<EmailAnalyticsCounts> = email.getOptional("email")
 
         /**
          * Start of the period, as a Unix timestamp in milliseconds (UTC).
@@ -2131,6 +2157,8 @@ private constructor(
         @ExcludeMissing
         fun _participants(): JsonField<Long> = participants
 
+        @JsonProperty("email") @ExcludeMissing fun _email(): JsonField<EmailAnalyticsCounts> = email
+
         /**
          * Returns the raw JSON value of [periodStart].
          *
@@ -2336,6 +2364,7 @@ private constructor(
             private var linkedInShares: JsonField<Long> = JsonMissing.of()
             private var messengerShares: JsonField<Long> = JsonMissing.of()
             private var participants: JsonField<Long> = JsonMissing.of()
+            private var email: JsonField<EmailAnalyticsCounts> = JsonMissing.of()
             private var periodStart: JsonField<Long> = JsonMissing.of()
             private var pinterestShares: JsonField<Long> = JsonMissing.of()
             private var qrcodeShares: JsonField<Long> = JsonMissing.of()
@@ -2369,6 +2398,7 @@ private constructor(
                 linkedInShares = series.linkedInShares
                 messengerShares = series.messengerShares
                 participants = series.participants
+                email = series.email
                 periodStart = series.periodStart
                 pinterestShares = series.pinterestShares
                 qrcodeShares = series.qrcodeShares
@@ -2530,6 +2560,11 @@ private constructor(
             fun participants(participants: JsonField<Long>) = apply {
                 this.participants = participants
             }
+
+            /** Per-period email counts. Present only when `include` contains `email`. */
+            fun email(email: EmailAnalyticsCounts) = email(JsonField.of(email))
+
+            fun email(email: JsonField<EmailAnalyticsCounts>) = apply { this.email = email }
 
             /** Start of the period, as a Unix timestamp in milliseconds (UTC). */
             fun periodStart(periodStart: Long) = periodStart(JsonField.of(periodStart))
@@ -2801,6 +2836,7 @@ private constructor(
                     blueskyShares,
                     copyRefLinkShares,
                     emailShares,
+                    email,
                     facebookShares,
                     impressions,
                     invites,
@@ -2848,6 +2884,7 @@ private constructor(
             linkedInShares()
             messengerShares()
             participants()
+            email().ifPresent { it.validate() }
             periodStart()
             pinterestShares()
             qrcodeShares()
@@ -2890,6 +2927,7 @@ private constructor(
                 (if (linkedInShares.asKnown().isPresent) 1 else 0) +
                 (if (messengerShares.asKnown().isPresent) 1 else 0) +
                 (if (participants.asKnown().isPresent) 1 else 0) +
+                (email.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (periodStart.asKnown().isPresent) 1 else 0) +
                 (if (pinterestShares.asKnown().isPresent) 1 else 0) +
                 (if (qrcodeShares.asKnown().isPresent) 1 else 0) +
@@ -2926,6 +2964,7 @@ private constructor(
                 linkedInShares == other.linkedInShares &&
                 messengerShares == other.messengerShares &&
                 participants == other.participants &&
+                email == other.email &&
                 periodStart == other.periodStart &&
                 pinterestShares == other.pinterestShares &&
                 qrcodeShares == other.qrcodeShares &&
@@ -2960,6 +2999,7 @@ private constructor(
                 linkedInShares,
                 messengerShares,
                 participants,
+                email,
                 periodStart,
                 pinterestShares,
                 qrcodeShares,
@@ -2985,7 +3025,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Series{androidNativeShares=$androidNativeShares, blueskyShares=$blueskyShares, copyRefLinkShares=$copyRefLinkShares, emailShares=$emailShares, facebookShares=$facebookShares, impressions=$impressions, invites=$invites, iosNativeShares=$iosNativeShares, linkedInShares=$linkedInShares, messengerShares=$messengerShares, participants=$participants, periodStart=$periodStart, pinterestShares=$pinterestShares, qrcodeShares=$qrcodeShares, redditShares=$redditShares, referralCreditExpireds=$referralCreditExpireds, referralCreditPendings=$referralCreditPendings, referrals=$referrals, smsShares=$smsShares, telegramShares=$telegramShares, threadsShares=$threadsShares, totalCommissionCount=$totalCommissionCount, totalCommissions=$totalCommissions, totalRevenue=$totalRevenue, tumblrShares=$tumblrShares, twitterShares=$twitterShares, uniqueImpressions=$uniqueImpressions, wechatShares=$wechatShares, whatsAppShares=$whatsAppShares, additionalProperties=$additionalProperties}"
+            "Series{androidNativeShares=$androidNativeShares, blueskyShares=$blueskyShares, copyRefLinkShares=$copyRefLinkShares, emailShares=$emailShares, email=$email, facebookShares=$facebookShares, impressions=$impressions, invites=$invites, iosNativeShares=$iosNativeShares, linkedInShares=$linkedInShares, messengerShares=$messengerShares, participants=$participants, periodStart=$periodStart, pinterestShares=$pinterestShares, qrcodeShares=$qrcodeShares, redditShares=$redditShares, referralCreditExpireds=$referralCreditExpireds, referralCreditPendings=$referralCreditPendings, referrals=$referrals, smsShares=$smsShares, telegramShares=$telegramShares, threadsShares=$threadsShares, totalCommissionCount=$totalCommissionCount, totalCommissions=$totalCommissions, totalRevenue=$totalRevenue, tumblrShares=$tumblrShares, twitterShares=$twitterShares, uniqueImpressions=$uniqueImpressions, wechatShares=$wechatShares, whatsAppShares=$whatsAppShares, additionalProperties=$additionalProperties}"
     }
 
     /** Totals for the equal-length window immediately preceding the requested one. */
@@ -2993,6 +3033,7 @@ private constructor(
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
         private val analytics: JsonField<Analytics>,
+        private val email: JsonField<EmailAnalytics>,
         private val endDate: JsonField<Long>,
         private val startDate: JsonField<Long>,
         private val additionalProperties: MutableMap<String, JsonValue>,
@@ -3003,15 +3044,21 @@ private constructor(
             @JsonProperty("analytics")
             @ExcludeMissing
             analytics: JsonField<Analytics> = JsonMissing.of(),
+            @JsonProperty("email")
+            @ExcludeMissing
+            email: JsonField<EmailAnalytics> = JsonMissing.of(),
             @JsonProperty("endDate") @ExcludeMissing endDate: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("startDate") @ExcludeMissing startDate: JsonField<Long> = JsonMissing.of(),
-        ) : this(analytics, endDate, startDate, mutableMapOf())
+        ) : this(analytics, email, endDate, startDate, mutableMapOf())
 
         /**
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun analytics(): Analytics = analytics.getRequired("analytics")
+
+        /** Present when the parent request includes both `previousPeriod` and `email`. */
+        fun email(): Optional<EmailAnalytics> = email.getOptional("email")
 
         /**
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
@@ -3033,6 +3080,8 @@ private constructor(
         @JsonProperty("analytics")
         @ExcludeMissing
         fun _analytics(): JsonField<Analytics> = analytics
+
+        @JsonProperty("email") @ExcludeMissing fun _email(): JsonField<EmailAnalytics> = email
 
         /**
          * Returns the raw JSON value of [endDate].
@@ -3079,6 +3128,7 @@ private constructor(
         class Builder internal constructor() {
 
             private var analytics: JsonField<Analytics>? = null
+            private var email: JsonField<EmailAnalytics> = JsonMissing.of()
             private var endDate: JsonField<Long>? = null
             private var startDate: JsonField<Long>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -3086,6 +3136,7 @@ private constructor(
             @JvmSynthetic
             internal fun from(previousPeriod: PreviousPeriod) = apply {
                 analytics = previousPeriod.analytics
+                email = previousPeriod.email
                 endDate = previousPeriod.endDate
                 startDate = previousPeriod.startDate
                 additionalProperties = previousPeriod.additionalProperties.toMutableMap()
@@ -3101,6 +3152,11 @@ private constructor(
              * supported value.
              */
             fun analytics(analytics: JsonField<Analytics>) = apply { this.analytics = analytics }
+
+            /** Present when the parent request includes both `previousPeriod` and `email`. */
+            fun email(email: EmailAnalytics) = email(JsonField.of(email))
+
+            fun email(email: JsonField<EmailAnalytics>) = apply { this.email = email }
 
             fun endDate(endDate: Long) = endDate(JsonField.of(endDate))
 
@@ -3160,6 +3216,7 @@ private constructor(
             fun build(): PreviousPeriod =
                 PreviousPeriod(
                     checkRequired("analytics", analytics),
+                    email,
                     checkRequired("endDate", endDate),
                     checkRequired("startDate", startDate),
                     additionalProperties.toMutableMap(),
@@ -3174,6 +3231,7 @@ private constructor(
             }
 
             analytics().validate()
+            email().ifPresent { it.validate() }
             endDate()
             startDate()
             validated = true
@@ -3190,6 +3248,7 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (analytics.asKnown().getOrNull()?.validity() ?: 0) +
+                (email.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (endDate.asKnown().isPresent) 1 else 0) +
                 (if (startDate.asKnown().isPresent) 1 else 0)
 
@@ -3200,19 +3259,20 @@ private constructor(
 
             return other is PreviousPeriod &&
                 analytics == other.analytics &&
+                email == other.email &&
                 endDate == other.endDate &&
                 startDate == other.startDate &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(analytics, endDate, startDate, additionalProperties)
+            Objects.hash(analytics, email, endDate, startDate, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "PreviousPeriod{analytics=$analytics, endDate=$endDate, startDate=$startDate, additionalProperties=$additionalProperties}"
+            "PreviousPeriod{analytics=$analytics, email=$email, endDate=$endDate, startDate=$startDate, additionalProperties=$additionalProperties}"
     }
 
     /** Derived referral rates, each a ratio in the range 0–1 (0 when its denominator is 0). */
@@ -4367,6 +4427,7 @@ private constructor(
             private val failed: JsonField<PayoutStatusMetric>,
             private val issued: JsonField<PayoutStatusMetric>,
             private val queued: JsonField<PayoutStatusMetric>,
+            private val reversed: JsonField<PayoutStatusMetric>,
             private val upcoming: JsonField<PayoutStatusMetric>,
             private val additionalProperties: MutableMap<String, JsonValue>,
         ) {
@@ -4382,10 +4443,13 @@ private constructor(
                 @JsonProperty("queued")
                 @ExcludeMissing
                 queued: JsonField<PayoutStatusMetric> = JsonMissing.of(),
+                @JsonProperty("reversed")
+                @ExcludeMissing
+                reversed: JsonField<PayoutStatusMetric> = JsonMissing.of(),
                 @JsonProperty("upcoming")
                 @ExcludeMissing
                 upcoming: JsonField<PayoutStatusMetric> = JsonMissing.of(),
-            ) : this(failed, issued, queued, upcoming, mutableMapOf())
+            ) : this(failed, issued, queued, reversed, upcoming, mutableMapOf())
 
             /**
              * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g.
@@ -4404,6 +4468,12 @@ private constructor(
              *   if the server responded with an unexpected value).
              */
             fun queued(): Optional<PayoutStatusMetric> = queued.getOptional("queued")
+
+            /**
+             * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun reversed(): Optional<PayoutStatusMetric> = reversed.getOptional("reversed")
 
             /**
              * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g.
@@ -4439,6 +4509,16 @@ private constructor(
             fun _queued(): JsonField<PayoutStatusMetric> = queued
 
             /**
+             * Returns the raw JSON value of [reversed].
+             *
+             * Unlike [reversed], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("reversed")
+            @ExcludeMissing
+            fun _reversed(): JsonField<PayoutStatusMetric> = reversed
+
+            /**
              * Returns the raw JSON value of [upcoming].
              *
              * Unlike [upcoming], this method doesn't throw if the JSON field has an unexpected
@@ -4472,6 +4552,7 @@ private constructor(
                 private var failed: JsonField<PayoutStatusMetric> = JsonMissing.of()
                 private var issued: JsonField<PayoutStatusMetric> = JsonMissing.of()
                 private var queued: JsonField<PayoutStatusMetric> = JsonMissing.of()
+                private var reversed: JsonField<PayoutStatusMetric> = JsonMissing.of()
                 private var upcoming: JsonField<PayoutStatusMetric> = JsonMissing.of()
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -4480,6 +4561,7 @@ private constructor(
                     failed = payoutStatus.failed
                     issued = payoutStatus.issued
                     queued = payoutStatus.queued
+                    reversed = payoutStatus.reversed
                     upcoming = payoutStatus.upcoming
                     additionalProperties = payoutStatus.additionalProperties.toMutableMap()
                 }
@@ -4516,6 +4598,19 @@ private constructor(
                  * or not yet supported value.
                  */
                 fun queued(queued: JsonField<PayoutStatusMetric>) = apply { this.queued = queued }
+
+                fun reversed(reversed: PayoutStatusMetric) = reversed(JsonField.of(reversed))
+
+                /**
+                 * Sets [Builder.reversed] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.reversed] with a well-typed [PayoutStatusMetric]
+                 * value instead. This method is primarily for setting the field to an undocumented
+                 * or not yet supported value.
+                 */
+                fun reversed(reversed: JsonField<PayoutStatusMetric>) = apply {
+                    this.reversed = reversed
+                }
 
                 fun upcoming(upcoming: PayoutStatusMetric) = upcoming(JsonField.of(upcoming))
 
@@ -4562,6 +4657,7 @@ private constructor(
                         failed,
                         issued,
                         queued,
+                        reversed,
                         upcoming,
                         additionalProperties.toMutableMap(),
                     )
@@ -4577,6 +4673,7 @@ private constructor(
                 failed().ifPresent { it.validate() }
                 issued().ifPresent { it.validate() }
                 queued().ifPresent { it.validate() }
+                reversed().ifPresent { it.validate() }
                 upcoming().ifPresent { it.validate() }
                 validated = true
             }
@@ -4594,6 +4691,7 @@ private constructor(
                 (failed.asKnown().getOrNull()?.validity() ?: 0) +
                     (issued.asKnown().getOrNull()?.validity() ?: 0) +
                     (queued.asKnown().getOrNull()?.validity() ?: 0) +
+                    (reversed.asKnown().getOrNull()?.validity() ?: 0) +
                     (upcoming.asKnown().getOrNull()?.validity() ?: 0)
 
             class PayoutStatusMetric
@@ -4793,18 +4891,19 @@ private constructor(
                     failed == other.failed &&
                     issued == other.issued &&
                     queued == other.queued &&
+                    reversed == other.reversed &&
                     upcoming == other.upcoming &&
                     additionalProperties == other.additionalProperties
             }
 
             private val hashCode: Int by lazy {
-                Objects.hash(failed, issued, queued, upcoming, additionalProperties)
+                Objects.hash(failed, issued, queued, reversed, upcoming, additionalProperties)
             }
 
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "PayoutStatus{failed=$failed, issued=$issued, queued=$queued, upcoming=$upcoming, additionalProperties=$additionalProperties}"
+                "PayoutStatus{failed=$failed, issued=$issued, queued=$queued, reversed=$reversed, upcoming=$upcoming, additionalProperties=$additionalProperties}"
         }
 
         /** Affiliate only. Reward counts by status. */
@@ -5024,6 +5123,7 @@ private constructor(
         return other is CampaignRetrieveAnalyticsResponse &&
             analytics == other.analytics &&
             endDate == other.endDate &&
+            email == other.email &&
             previousPeriod == other.previousPeriod &&
             rates == other.rates &&
             series == other.series &&
@@ -5036,6 +5136,7 @@ private constructor(
         Objects.hash(
             analytics,
             endDate,
+            email,
             previousPeriod,
             rates,
             series,
@@ -5048,5 +5149,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CampaignRetrieveAnalyticsResponse{analytics=$analytics, endDate=$endDate, previousPeriod=$previousPeriod, rates=$rates, series=$series, startDate=$startDate, statusCounts=$statusCounts, additionalProperties=$additionalProperties}"
+        "CampaignRetrieveAnalyticsResponse{analytics=$analytics, endDate=$endDate, email=$email, previousPeriod=$previousPeriod, rates=$rates, series=$series, startDate=$startDate, statusCounts=$statusCounts, additionalProperties=$additionalProperties}"
 }

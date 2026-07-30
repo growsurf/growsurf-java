@@ -21,7 +21,7 @@ private constructor(
     private val participantIdOrEmail: String?,
     private val days: Long?,
     private val endDate: Long?,
-    private val include: Include?,
+    private val include: String?,
     private val interval: Interval?,
     private val startDate: Long?,
     private val additionalHeaders: Headers,
@@ -41,10 +41,19 @@ private constructor(
      */
     fun endDate(): Optional<Long> = Optional.ofNullable(endDate)
 
-    /** Set to `series` to also return this participant's own activity per period. */
-    fun include(): Optional<Include> = Optional.ofNullable(include)
+    /**
+     * Comma-separated optional data. `series` returns this participant's own activity per period;
+     * `email` returns `sent`, `delivered`, `opened`, `clicked`, `bounced`, `spamComplaints`, and
+     * per-email-type metrics attributed to the participant for the requested analytics window
+     * (including invitations they sent). Request both in either order to add email counts to every
+     * series item for emails sent during that period. Only documented tokens are accepted; an
+     * unknown token returns `400`.
+     */
+    fun include(): Optional<String> = Optional.ofNullable(include)
 
-    /** Bucket size for the `series` (only used with `include=series`). Defaults to `day`. */
+    /**
+     * Bucket size for the `series` (only used when `include` contains `series`). Defaults to `day`.
+     */
     fun interval(): Optional<Interval> = Optional.ofNullable(interval)
 
     /**
@@ -82,7 +91,7 @@ private constructor(
         private var participantIdOrEmail: String? = null
         private var days: Long? = null
         private var endDate: Long? = null
-        private var include: Include? = null
+        private var include: String? = null
         private var interval: Interval? = null
         private var startDate: Long? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
@@ -145,13 +154,23 @@ private constructor(
         /** Alias for calling [Builder.endDate] with `endDate.orElse(null)`. */
         fun endDate(endDate: Optional<Long>) = endDate(endDate.getOrNull())
 
-        /** Set to `series` to also return this participant's own activity per period. */
-        fun include(include: Include?) = apply { this.include = include }
+        /**
+         * Comma-separated optional data. `series` returns this participant's own activity per
+         * period; `email` returns `sent`, `delivered`, `opened`, `clicked`, `bounced`,
+         * `spamComplaints`, and per-email-type metrics attributed to the participant for the
+         * requested analytics window (including invitations they sent). Request both in either
+         * order to add email counts to every series item for emails sent during that period. Only
+         * documented tokens are accepted; an unknown token returns `400`.
+         */
+        fun include(include: String?) = apply { this.include = include }
 
         /** Alias for calling [Builder.include] with `include.orElse(null)`. */
-        fun include(include: Optional<Include>) = include(include.getOrNull())
+        fun include(include: Optional<String>) = include(include.getOrNull())
 
-        /** Bucket size for the `series` (only used with `include=series`). Defaults to `day`. */
+        /**
+         * Bucket size for the `series` (only used when `include` contains `series`). Defaults to
+         * `day`.
+         */
         fun interval(interval: Interval?) = apply { this.interval = interval }
 
         /** Alias for calling [Builder.interval] with `interval.orElse(null)`. */
@@ -318,123 +337,9 @@ private constructor(
             }
             .build()
 
-    /** Set to `series` to also return this participant's own activity per period. */
-    class Include @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
-
-        /**
-         * Returns this class instance's raw value.
-         *
-         * This is usually only useful if this instance was deserialized from data that doesn't
-         * match any known member, and you want to know that value. For example, if the SDK is on an
-         * older version than the API, then the API may respond with new members that the SDK is
-         * unaware of.
-         */
-        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
-
-        companion object {
-
-            @JvmField val SERIES = of("series")
-
-            @JvmStatic fun of(value: String) = Include(JsonField.of(value))
-        }
-
-        /** An enum containing [Include]'s known values. */
-        enum class Known {
-            SERIES
-        }
-
-        /**
-         * An enum containing [Include]'s known values, as well as an [_UNKNOWN] member.
-         *
-         * An instance of [Include] can contain an unknown value in a couple of cases:
-         * - It was deserialized from data that doesn't match any known member. For example, if the
-         *   SDK is on an older version than the API, then the API may respond with new members that
-         *   the SDK is unaware of.
-         * - It was constructed with an arbitrary value using the [of] method.
-         */
-        enum class Value {
-            SERIES,
-            /** An enum member indicating that [Include] was instantiated with an unknown value. */
-            _UNKNOWN,
-        }
-
-        /**
-         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
-         * if the class was instantiated with an unknown value.
-         *
-         * Use the [known] method instead if you're certain the value is always known or if you want
-         * to throw for the unknown case.
-         */
-        fun value(): Value =
-            when (this) {
-                SERIES -> Value.SERIES
-                else -> Value._UNKNOWN
-            }
-
-        /**
-         * Returns an enum member corresponding to this class instance's value.
-         *
-         * Use the [value] method instead if you're uncertain the value is always known and don't
-         * want to throw for the unknown case.
-         *
-         * @throws GrowsurfInvalidDataException if this class instance's value is a not a known
-         *   member.
-         */
-        fun known(): Known =
-            when (this) {
-                SERIES -> Known.SERIES
-                else -> throw GrowsurfInvalidDataException("Unknown Include: $value")
-            }
-
-        /**
-         * Returns this class instance's primitive wire representation.
-         *
-         * This differs from the [toString] method because that method is primarily for debugging
-         * and generally doesn't throw.
-         *
-         * @throws GrowsurfInvalidDataException if this class instance's value does not have the
-         *   expected primitive type.
-         */
-        fun asString(): String =
-            _value().asString().orElseThrow {
-                GrowsurfInvalidDataException("Value is not a String")
-            }
-
-        private var validated: Boolean = false
-
-        fun validate(): Include = apply {
-            if (validated) {
-                return@apply
-            }
-
-            known()
-            validated = true
-        }
-
-        fun isValid(): Boolean =
-            try {
-                validate()
-                true
-            } catch (e: GrowsurfInvalidDataException) {
-                false
-            }
-
-        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
-
-        override fun equals(other: Any?): Boolean {
-            if (this === other) {
-                return true
-            }
-
-            return other is Include && value == other.value
-        }
-
-        override fun hashCode() = value.hashCode()
-
-        override fun toString() = value.toString()
-    }
-
-    /** Bucket size for the `series` (only used with `include=series`). Defaults to `day`. */
+    /**
+     * Bucket size for the `series` (only used when `include` contains `series`). Defaults to `day`.
+     */
     class Interval @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
         /**

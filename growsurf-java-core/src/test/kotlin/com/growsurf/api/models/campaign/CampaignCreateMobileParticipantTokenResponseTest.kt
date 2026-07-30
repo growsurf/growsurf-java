@@ -96,7 +96,7 @@ internal class CampaignCreateMobileParticipantTokenResponseTest {
                         .payoutSettings(
                             Participant.PayoutSettings.builder()
                                 .addRequiredAction(
-                                    Participant.PayoutSettings.RequiredAction.PAYPAL_EMAIL
+                                    Participant.PayoutSettings.RequiredAction.PAYOUT_DESTINATION
                                 )
                                 .build()
                         )
@@ -239,7 +239,7 @@ internal class CampaignCreateMobileParticipantTokenResponseTest {
                     .payoutSettings(
                         Participant.PayoutSettings.builder()
                             .addRequiredAction(
-                                Participant.PayoutSettings.RequiredAction.PAYPAL_EMAIL
+                                Participant.PayoutSettings.RequiredAction.PAYOUT_DESTINATION
                             )
                             .build()
                     )
@@ -387,7 +387,7 @@ internal class CampaignCreateMobileParticipantTokenResponseTest {
                         .payoutSettings(
                             Participant.PayoutSettings.builder()
                                 .addRequiredAction(
-                                    Participant.PayoutSettings.RequiredAction.PAYPAL_EMAIL
+                                    Participant.PayoutSettings.RequiredAction.PAYOUT_DESTINATION
                                 )
                                 .build()
                         )

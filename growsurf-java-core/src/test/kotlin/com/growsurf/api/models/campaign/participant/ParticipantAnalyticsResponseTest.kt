@@ -5,11 +5,41 @@ package com.growsurf.api.models.campaign.participant
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.jsonMapper
+import com.growsurf.api.models.campaign.EmailAnalytics
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 internal class ParticipantAnalyticsResponseTest {
+
+    @Test
+    fun emailAnalytics() {
+        val email =
+            EmailAnalytics(
+                sent = 1L,
+                delivered = 1L,
+                opened = 0L,
+                clicked = 0L,
+                bounced = 0L,
+                spamComplaints = 0L,
+                deliveryRate = 1.0,
+                openRate = 0.0,
+                clickRate = 0.0,
+                bounceRate = 0.0,
+                byType = emptyList(),
+                coverageStartDate = null,
+                isPartial = false,
+            )
+        val response =
+            ParticipantAnalyticsResponse.builder()
+                .analytics(ParticipantAnalyticsResponse.Analytics.builder().build())
+                .ranks(ParticipantAnalyticsResponse.Ranks.builder().build())
+                .shareCount(ParticipantAnalyticsResponse.ShareCount.builder().build())
+                .email(email)
+                .build()
+
+        assertThat(response.email()).contains(email)
+    }
 
     @Test
     fun create() {

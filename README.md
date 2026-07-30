@@ -3,7 +3,7 @@
 <!-- x-release-please-start-version -->
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.growsurf.api/growsurf-java)](https://central.sonatype.com/artifact/com.growsurf.api/growsurf-java/1.2.0)
-[![javadoc](https://javadoc.io/badge2/com.growsurf.api/growsurf-java/1.2.0/javadoc.svg)](https://javadoc.io/doc/com.growsurf.api/growsurf-java/0.8.0)
+[![javadoc](https://javadoc.io/badge2/com.growsurf.api/growsurf-java/1.2.0/javadoc.svg)](https://javadoc.io/doc/com.growsurf.api/growsurf-java/1.2.0)
 
 <!-- x-release-please-end -->
 

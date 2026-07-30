@@ -5,11 +5,18 @@ package com.growsurf.api.services.async
 import com.growsurf.api.core.ClientOptions
 import com.growsurf.api.core.RequestOptions
 import com.growsurf.api.core.http.HttpResponseFor
+import com.growsurf.api.models.campaign.AffiliateApplication
+import com.growsurf.api.models.campaign.AffiliateApplicationListResponse
+import com.growsurf.api.models.campaign.AffiliateInvite
+import com.growsurf.api.models.campaign.AffiliateInviteListResponse
 import com.growsurf.api.models.campaign.Campaign
 import com.growsurf.api.models.campaign.CampaignCloneParams
+import com.growsurf.api.models.campaign.CampaignCreateAffiliateInviteParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenResponse
 import com.growsurf.api.models.campaign.CampaignCreateParams
+import com.growsurf.api.models.campaign.CampaignListAffiliateApplicationsParams
+import com.growsurf.api.models.campaign.CampaignListAffiliateInvitesParams
 import com.growsurf.api.models.campaign.CampaignListCommissionsParams
 import com.growsurf.api.models.campaign.CampaignListLeaderboardParams
 import com.growsurf.api.models.campaign.CampaignListParams
@@ -17,9 +24,13 @@ import com.growsurf.api.models.campaign.CampaignListParticipantsParams
 import com.growsurf.api.models.campaign.CampaignListPayoutsParams
 import com.growsurf.api.models.campaign.CampaignListReferralsParams
 import com.growsurf.api.models.campaign.CampaignListResponse
+import com.growsurf.api.models.campaign.CampaignResendAffiliateInviteParams
+import com.growsurf.api.models.campaign.CampaignRetrieveAffiliateApplicationParams
 import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsParams
 import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsResponse
 import com.growsurf.api.models.campaign.CampaignRetrieveParams
+import com.growsurf.api.models.campaign.CampaignReviewAffiliateApplicationParams
+import com.growsurf.api.models.campaign.CampaignRevokeAffiliateInviteParams
 import com.growsurf.api.models.campaign.CampaignUpdateParams
 import com.growsurf.api.models.campaign.ParticipantCommissionList
 import com.growsurf.api.models.campaign.ParticipantList
@@ -78,7 +89,7 @@ interface CampaignServiceAsync {
     fun webhooks(): WebhooksServiceAsync
 
     /**
-     * Creates a new program, plus any optional program rewards. The new program is created in
+     * Creates a new program, plus any optional campaign rewards. The new program is created in
      * `DRAFT` status and owned by the API key's bound team.
      */
     fun create(params: CampaignCreateParams): CompletableFuture<Campaign> =
@@ -422,8 +433,11 @@ interface CampaignServiceAsync {
 
     /**
      * Retrieves analytics for a program. Pass `interval` to also get a time-series (`series`)
-     * alongside the totals, and `include` to add previous-period totals, status breakdowns, or
-     * derived rates — useful for detecting trends over time.
+     * alongside the totals, and `include` to add previous-period totals, status breakdowns, derived
+     * rates, or email performance. Add `email` to `include` for `sent` (accepted for delivery),
+     * `delivered`, `opened`, `clicked`, `bounced`, and `spamComplaints` metrics plus per-email-type
+     * breakdowns. Email rates are ratios from `0` to `1`, and `isPartial` identifies windows that
+     * begin before complete coverage.
      */
     fun retrieveAnalytics(id: String): CompletableFuture<CampaignRetrieveAnalyticsResponse> =
         retrieveAnalytics(id, CampaignRetrieveAnalyticsParams.none())
@@ -461,6 +475,236 @@ interface CampaignServiceAsync {
         requestOptions: RequestOptions,
     ): CompletableFuture<CampaignRetrieveAnalyticsResponse> =
         retrieveAnalytics(id, CampaignRetrieveAnalyticsParams.none(), requestOptions)
+
+    /**
+     * Lists an affiliate program's applications, newest first. Applications exist on programs that
+     * review public signups (an `affiliateApplicationMode` of `MANUAL_REVIEW` or `AUTO_APPROVE`). A
+     * pending applicant is not a participant until their application is approved.
+     */
+    fun listAffiliateApplications(id: String): CompletableFuture<AffiliateApplicationListResponse> =
+        listAffiliateApplications(id, CampaignListAffiliateApplicationsParams.none())
+
+    /** @see listAffiliateApplications */
+    fun listAffiliateApplications(
+        id: String,
+        params: CampaignListAffiliateApplicationsParams =
+            CampaignListAffiliateApplicationsParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<AffiliateApplicationListResponse> =
+        listAffiliateApplications(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see listAffiliateApplications */
+    fun listAffiliateApplications(
+        id: String,
+        params: CampaignListAffiliateApplicationsParams =
+            CampaignListAffiliateApplicationsParams.none(),
+    ): CompletableFuture<AffiliateApplicationListResponse> =
+        listAffiliateApplications(id, params, RequestOptions.none())
+
+    /** @see listAffiliateApplications */
+    fun listAffiliateApplications(
+        params: CampaignListAffiliateApplicationsParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<AffiliateApplicationListResponse>
+
+    /** @see listAffiliateApplications */
+    fun listAffiliateApplications(
+        params: CampaignListAffiliateApplicationsParams
+    ): CompletableFuture<AffiliateApplicationListResponse> =
+        listAffiliateApplications(params, RequestOptions.none())
+
+    /** @see listAffiliateApplications */
+    fun listAffiliateApplications(
+        id: String,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<AffiliateApplicationListResponse> =
+        listAffiliateApplications(
+            id,
+            CampaignListAffiliateApplicationsParams.none(),
+            requestOptions,
+        )
+
+    /** Returns one affiliate application, including its submitted form answers. */
+    fun retrieveAffiliateApplication(
+        id: String,
+        params: CampaignRetrieveAffiliateApplicationParams,
+    ): CompletableFuture<AffiliateApplication> =
+        retrieveAffiliateApplication(id, params, RequestOptions.none())
+
+    /** @see retrieveAffiliateApplication */
+    fun retrieveAffiliateApplication(
+        id: String,
+        params: CampaignRetrieveAffiliateApplicationParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<AffiliateApplication> =
+        retrieveAffiliateApplication(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see retrieveAffiliateApplication */
+    fun retrieveAffiliateApplication(
+        params: CampaignRetrieveAffiliateApplicationParams
+    ): CompletableFuture<AffiliateApplication> =
+        retrieveAffiliateApplication(params, RequestOptions.none())
+
+    /** @see retrieveAffiliateApplication */
+    fun retrieveAffiliateApplication(
+        params: CampaignRetrieveAffiliateApplicationParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<AffiliateApplication>
+
+    /**
+     * Decides a pending application. Set `status` to `APPROVED` to enroll the applicant (this
+     * creates the participant, or upgrades an existing participant with the same email), or to
+     * `DENIED` with an optional `rejectionReason`. A denied applicant may reapply after the
+     * program's reapplication cooldown; send an earlier `reapplyAllowedAt` (without `status`) to
+     * shorten that wait for one applicant. Provide exactly one of `status` or `reapplyAllowedAt`.
+     * Denial-only fields are only valid with `status` set to `DENIED`. Approval is idempotent:
+     * repeating it returns the same participant.
+     */
+    fun reviewAffiliateApplication(
+        id: String,
+        params: CampaignReviewAffiliateApplicationParams,
+    ): CompletableFuture<AffiliateApplication> =
+        reviewAffiliateApplication(id, params, RequestOptions.none())
+
+    /** @see reviewAffiliateApplication */
+    fun reviewAffiliateApplication(
+        id: String,
+        params: CampaignReviewAffiliateApplicationParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<AffiliateApplication> =
+        reviewAffiliateApplication(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see reviewAffiliateApplication */
+    fun reviewAffiliateApplication(
+        params: CampaignReviewAffiliateApplicationParams
+    ): CompletableFuture<AffiliateApplication> =
+        reviewAffiliateApplication(params, RequestOptions.none())
+
+    /** @see reviewAffiliateApplication */
+    fun reviewAffiliateApplication(
+        params: CampaignReviewAffiliateApplicationParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<AffiliateApplication>
+
+    /** Lists an affiliate program's enrollment invites, newest first. */
+    fun listAffiliateInvites(id: String): CompletableFuture<AffiliateInviteListResponse> =
+        listAffiliateInvites(id, CampaignListAffiliateInvitesParams.none())
+
+    /** @see listAffiliateInvites */
+    fun listAffiliateInvites(
+        id: String,
+        params: CampaignListAffiliateInvitesParams = CampaignListAffiliateInvitesParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<AffiliateInviteListResponse> =
+        listAffiliateInvites(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see listAffiliateInvites */
+    fun listAffiliateInvites(
+        id: String,
+        params: CampaignListAffiliateInvitesParams = CampaignListAffiliateInvitesParams.none(),
+    ): CompletableFuture<AffiliateInviteListResponse> =
+        listAffiliateInvites(id, params, RequestOptions.none())
+
+    /** @see listAffiliateInvites */
+    fun listAffiliateInvites(
+        params: CampaignListAffiliateInvitesParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<AffiliateInviteListResponse>
+
+    /** @see listAffiliateInvites */
+    fun listAffiliateInvites(
+        params: CampaignListAffiliateInvitesParams
+    ): CompletableFuture<AffiliateInviteListResponse> =
+        listAffiliateInvites(params, RequestOptions.none())
+
+    /** @see listAffiliateInvites */
+    fun listAffiliateInvites(
+        id: String,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<AffiliateInviteListResponse> =
+        listAffiliateInvites(id, CampaignListAffiliateInvitesParams.none(), requestOptions)
+
+    /**
+     * Invites someone to join the affiliate program. GrowSurf emails them a single-use accept link;
+     * accepting it enrolls them as an approved affiliate without going through the public
+     * application. One active invite can exist per email address.
+     */
+    fun createAffiliateInvite(
+        id: String,
+        params: CampaignCreateAffiliateInviteParams,
+    ): CompletableFuture<AffiliateInvite> = createAffiliateInvite(id, params, RequestOptions.none())
+
+    /** @see createAffiliateInvite */
+    fun createAffiliateInvite(
+        id: String,
+        params: CampaignCreateAffiliateInviteParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<AffiliateInvite> =
+        createAffiliateInvite(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see createAffiliateInvite */
+    fun createAffiliateInvite(
+        params: CampaignCreateAffiliateInviteParams
+    ): CompletableFuture<AffiliateInvite> = createAffiliateInvite(params, RequestOptions.none())
+
+    /** @see createAffiliateInvite */
+    fun createAffiliateInvite(
+        params: CampaignCreateAffiliateInviteParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<AffiliateInvite>
+
+    /** Revokes a pending invite. Its emailed accept link stops working immediately. */
+    fun revokeAffiliateInvite(
+        id: String,
+        params: CampaignRevokeAffiliateInviteParams,
+    ): CompletableFuture<AffiliateInvite> = revokeAffiliateInvite(id, params, RequestOptions.none())
+
+    /** @see revokeAffiliateInvite */
+    fun revokeAffiliateInvite(
+        id: String,
+        params: CampaignRevokeAffiliateInviteParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<AffiliateInvite> =
+        revokeAffiliateInvite(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see revokeAffiliateInvite */
+    fun revokeAffiliateInvite(
+        params: CampaignRevokeAffiliateInviteParams
+    ): CompletableFuture<AffiliateInvite> = revokeAffiliateInvite(params, RequestOptions.none())
+
+    /** @see revokeAffiliateInvite */
+    fun revokeAffiliateInvite(
+        params: CampaignRevokeAffiliateInviteParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<AffiliateInvite>
+
+    /**
+     * Re-sends a pending invite with a fresh accept link (the previous link stops working). Resends
+     * are rate limited per invite; retry after a few minutes if a resend was just sent.
+     */
+    fun resendAffiliateInvite(
+        id: String,
+        params: CampaignResendAffiliateInviteParams,
+    ): CompletableFuture<AffiliateInvite> = resendAffiliateInvite(id, params, RequestOptions.none())
+
+    /** @see resendAffiliateInvite */
+    fun resendAffiliateInvite(
+        id: String,
+        params: CampaignResendAffiliateInviteParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<AffiliateInvite> =
+        resendAffiliateInvite(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see resendAffiliateInvite */
+    fun resendAffiliateInvite(
+        params: CampaignResendAffiliateInviteParams
+    ): CompletableFuture<AffiliateInvite> = resendAffiliateInvite(params, RequestOptions.none())
+
+    /** @see resendAffiliateInvite */
+    fun resendAffiliateInvite(
+        params: CampaignResendAffiliateInviteParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<AffiliateInvite>
 
     /**
      * A view of [CampaignServiceAsync] that provides access to raw HTTP responses for each method.
@@ -934,5 +1178,250 @@ interface CampaignServiceAsync {
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<CampaignRetrieveAnalyticsResponse>> =
             retrieveAnalytics(id, CampaignRetrieveAnalyticsParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /campaign/{id}/affiliate-applications`, but is
+         * otherwise the same as [CampaignServiceAsync.listAffiliateApplications].
+         */
+        fun listAffiliateApplications(
+            id: String
+        ): CompletableFuture<HttpResponseFor<AffiliateApplicationListResponse>> =
+            listAffiliateApplications(id, CampaignListAffiliateApplicationsParams.none())
+
+        /** @see listAffiliateApplications */
+        fun listAffiliateApplications(
+            id: String,
+            params: CampaignListAffiliateApplicationsParams =
+                CampaignListAffiliateApplicationsParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<AffiliateApplicationListResponse>> =
+            listAffiliateApplications(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see listAffiliateApplications */
+        fun listAffiliateApplications(
+            id: String,
+            params: CampaignListAffiliateApplicationsParams =
+                CampaignListAffiliateApplicationsParams.none(),
+        ): CompletableFuture<HttpResponseFor<AffiliateApplicationListResponse>> =
+            listAffiliateApplications(id, params, RequestOptions.none())
+
+        /** @see listAffiliateApplications */
+        fun listAffiliateApplications(
+            params: CampaignListAffiliateApplicationsParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<AffiliateApplicationListResponse>>
+
+        /** @see listAffiliateApplications */
+        fun listAffiliateApplications(
+            params: CampaignListAffiliateApplicationsParams
+        ): CompletableFuture<HttpResponseFor<AffiliateApplicationListResponse>> =
+            listAffiliateApplications(params, RequestOptions.none())
+
+        /** @see listAffiliateApplications */
+        fun listAffiliateApplications(
+            id: String,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<AffiliateApplicationListResponse>> =
+            listAffiliateApplications(
+                id,
+                CampaignListAffiliateApplicationsParams.none(),
+                requestOptions,
+            )
+
+        /**
+         * Returns a raw HTTP response for `get
+         * /campaign/{id}/affiliate-applications/{applicationId}`, but is otherwise the same as
+         * [CampaignServiceAsync.retrieveAffiliateApplication].
+         */
+        fun retrieveAffiliateApplication(
+            id: String,
+            params: CampaignRetrieveAffiliateApplicationParams,
+        ): CompletableFuture<HttpResponseFor<AffiliateApplication>> =
+            retrieveAffiliateApplication(id, params, RequestOptions.none())
+
+        /** @see retrieveAffiliateApplication */
+        fun retrieveAffiliateApplication(
+            id: String,
+            params: CampaignRetrieveAffiliateApplicationParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<AffiliateApplication>> =
+            retrieveAffiliateApplication(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see retrieveAffiliateApplication */
+        fun retrieveAffiliateApplication(
+            params: CampaignRetrieveAffiliateApplicationParams
+        ): CompletableFuture<HttpResponseFor<AffiliateApplication>> =
+            retrieveAffiliateApplication(params, RequestOptions.none())
+
+        /** @see retrieveAffiliateApplication */
+        fun retrieveAffiliateApplication(
+            params: CampaignRetrieveAffiliateApplicationParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<AffiliateApplication>>
+
+        /**
+         * Returns a raw HTTP response for `patch
+         * /campaign/{id}/affiliate-applications/{applicationId}`, but is otherwise the same as
+         * [CampaignServiceAsync.reviewAffiliateApplication].
+         */
+        fun reviewAffiliateApplication(
+            id: String,
+            params: CampaignReviewAffiliateApplicationParams,
+        ): CompletableFuture<HttpResponseFor<AffiliateApplication>> =
+            reviewAffiliateApplication(id, params, RequestOptions.none())
+
+        /** @see reviewAffiliateApplication */
+        fun reviewAffiliateApplication(
+            id: String,
+            params: CampaignReviewAffiliateApplicationParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<AffiliateApplication>> =
+            reviewAffiliateApplication(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see reviewAffiliateApplication */
+        fun reviewAffiliateApplication(
+            params: CampaignReviewAffiliateApplicationParams
+        ): CompletableFuture<HttpResponseFor<AffiliateApplication>> =
+            reviewAffiliateApplication(params, RequestOptions.none())
+
+        /** @see reviewAffiliateApplication */
+        fun reviewAffiliateApplication(
+            params: CampaignReviewAffiliateApplicationParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<AffiliateApplication>>
+
+        /**
+         * Returns a raw HTTP response for `get /campaign/{id}/affiliate-invites`, but is otherwise
+         * the same as [CampaignServiceAsync.listAffiliateInvites].
+         */
+        fun listAffiliateInvites(
+            id: String
+        ): CompletableFuture<HttpResponseFor<AffiliateInviteListResponse>> =
+            listAffiliateInvites(id, CampaignListAffiliateInvitesParams.none())
+
+        /** @see listAffiliateInvites */
+        fun listAffiliateInvites(
+            id: String,
+            params: CampaignListAffiliateInvitesParams = CampaignListAffiliateInvitesParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<AffiliateInviteListResponse>> =
+            listAffiliateInvites(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see listAffiliateInvites */
+        fun listAffiliateInvites(
+            id: String,
+            params: CampaignListAffiliateInvitesParams = CampaignListAffiliateInvitesParams.none(),
+        ): CompletableFuture<HttpResponseFor<AffiliateInviteListResponse>> =
+            listAffiliateInvites(id, params, RequestOptions.none())
+
+        /** @see listAffiliateInvites */
+        fun listAffiliateInvites(
+            params: CampaignListAffiliateInvitesParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<AffiliateInviteListResponse>>
+
+        /** @see listAffiliateInvites */
+        fun listAffiliateInvites(
+            params: CampaignListAffiliateInvitesParams
+        ): CompletableFuture<HttpResponseFor<AffiliateInviteListResponse>> =
+            listAffiliateInvites(params, RequestOptions.none())
+
+        /** @see listAffiliateInvites */
+        fun listAffiliateInvites(
+            id: String,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<AffiliateInviteListResponse>> =
+            listAffiliateInvites(id, CampaignListAffiliateInvitesParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `post /campaign/{id}/affiliate-invites`, but is otherwise
+         * the same as [CampaignServiceAsync.createAffiliateInvite].
+         */
+        fun createAffiliateInvite(
+            id: String,
+            params: CampaignCreateAffiliateInviteParams,
+        ): CompletableFuture<HttpResponseFor<AffiliateInvite>> =
+            createAffiliateInvite(id, params, RequestOptions.none())
+
+        /** @see createAffiliateInvite */
+        fun createAffiliateInvite(
+            id: String,
+            params: CampaignCreateAffiliateInviteParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<AffiliateInvite>> =
+            createAffiliateInvite(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see createAffiliateInvite */
+        fun createAffiliateInvite(
+            params: CampaignCreateAffiliateInviteParams
+        ): CompletableFuture<HttpResponseFor<AffiliateInvite>> =
+            createAffiliateInvite(params, RequestOptions.none())
+
+        /** @see createAffiliateInvite */
+        fun createAffiliateInvite(
+            params: CampaignCreateAffiliateInviteParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<AffiliateInvite>>
+
+        /**
+         * Returns a raw HTTP response for `delete /campaign/{id}/affiliate-invites/{inviteId}`, but
+         * is otherwise the same as [CampaignServiceAsync.revokeAffiliateInvite].
+         */
+        fun revokeAffiliateInvite(
+            id: String,
+            params: CampaignRevokeAffiliateInviteParams,
+        ): CompletableFuture<HttpResponseFor<AffiliateInvite>> =
+            revokeAffiliateInvite(id, params, RequestOptions.none())
+
+        /** @see revokeAffiliateInvite */
+        fun revokeAffiliateInvite(
+            id: String,
+            params: CampaignRevokeAffiliateInviteParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<AffiliateInvite>> =
+            revokeAffiliateInvite(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see revokeAffiliateInvite */
+        fun revokeAffiliateInvite(
+            params: CampaignRevokeAffiliateInviteParams
+        ): CompletableFuture<HttpResponseFor<AffiliateInvite>> =
+            revokeAffiliateInvite(params, RequestOptions.none())
+
+        /** @see revokeAffiliateInvite */
+        fun revokeAffiliateInvite(
+            params: CampaignRevokeAffiliateInviteParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<AffiliateInvite>>
+
+        /**
+         * Returns a raw HTTP response for `post
+         * /campaign/{id}/affiliate-invites/{inviteId}/resend`, but is otherwise the same as
+         * [CampaignServiceAsync.resendAffiliateInvite].
+         */
+        fun resendAffiliateInvite(
+            id: String,
+            params: CampaignResendAffiliateInviteParams,
+        ): CompletableFuture<HttpResponseFor<AffiliateInvite>> =
+            resendAffiliateInvite(id, params, RequestOptions.none())
+
+        /** @see resendAffiliateInvite */
+        fun resendAffiliateInvite(
+            id: String,
+            params: CampaignResendAffiliateInviteParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<AffiliateInvite>> =
+            resendAffiliateInvite(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see resendAffiliateInvite */
+        fun resendAffiliateInvite(
+            params: CampaignResendAffiliateInviteParams
+        ): CompletableFuture<HttpResponseFor<AffiliateInvite>> =
+            resendAffiliateInvite(params, RequestOptions.none())
+
+        /** @see resendAffiliateInvite */
+        fun resendAffiliateInvite(
+            params: CampaignResendAffiliateInviteParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<AffiliateInvite>>
     }
 }

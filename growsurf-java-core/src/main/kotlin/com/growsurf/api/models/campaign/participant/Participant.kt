@@ -31,6 +31,8 @@ private constructor(
     private val referralCount: JsonField<Long>,
     private val rewards: JsonField<List<ParticipantReward>>,
     private val shareUrl: JsonField<String>,
+    private val affiliateEnrollmentSource: JsonField<String>,
+    private val affiliateStatus: JsonField<String>,
     private val allMatchingFraudsters: JsonField<List<AllMatchingFraudster>>,
     private val createdAt: JsonField<Long>,
     private val fingerprint: JsonField<String>,
@@ -40,6 +42,7 @@ private constructor(
     private val impressionCount: JsonField<Long>,
     private val inviteCount: JsonField<Long>,
     private val ipAddress: JsonField<String>,
+    private val isAffiliate: JsonField<Boolean>,
     private val isNew: JsonField<Boolean>,
     private val isWinner: JsonField<Boolean>,
     private val lastName: JsonField<String>,
@@ -83,6 +86,12 @@ private constructor(
         @ExcludeMissing
         rewards: JsonField<List<ParticipantReward>> = JsonMissing.of(),
         @JsonProperty("shareUrl") @ExcludeMissing shareUrl: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("affiliateEnrollmentSource")
+        @ExcludeMissing
+        affiliateEnrollmentSource: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("affiliateStatus")
+        @ExcludeMissing
+        affiliateStatus: JsonField<String> = JsonMissing.of(),
         @JsonProperty("allMatchingFraudsters")
         @ExcludeMissing
         allMatchingFraudsters: JsonField<List<AllMatchingFraudster>> = JsonMissing.of(),
@@ -104,6 +113,9 @@ private constructor(
         @ExcludeMissing
         inviteCount: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("ipAddress") @ExcludeMissing ipAddress: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("isAffiliate")
+        @ExcludeMissing
+        isAffiliate: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("isNew") @ExcludeMissing isNew: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("isWinner") @ExcludeMissing isWinner: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("lastName") @ExcludeMissing lastName: JsonField<String> = JsonMissing.of(),
@@ -167,6 +179,8 @@ private constructor(
         referralCount,
         rewards,
         shareUrl,
+        affiliateEnrollmentSource,
+        affiliateStatus,
         allMatchingFraudsters,
         createdAt,
         fingerprint,
@@ -176,6 +190,7 @@ private constructor(
         impressionCount,
         inviteCount,
         ipAddress,
+        isAffiliate,
         isNew,
         isWinner,
         lastName,
@@ -244,10 +259,32 @@ private constructor(
     fun rewards(): List<ParticipantReward> = rewards.getRequired("rewards")
 
     /**
-     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
+     * The unique share URL of the participant. Omitted for affiliate program participants who are
+     * not approved affiliates.
+     *
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
      */
-    fun shareUrl(): String = shareUrl.getRequired("shareUrl")
+    fun shareUrl(): Optional<String> = shareUrl.getOptional("shareUrl")
+
+    /**
+     * Affiliate programs only. How the affiliate enrolled (`OPEN_ENROLLMENT`, `APPLICATION`,
+     * `PARTICIPANT_AUTH`, `INVITE`, `REST_API`, `CSV`, or `DASHBOARD`). `null` when not recorded.
+     *
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun affiliateEnrollmentSource(): Optional<String> =
+        affiliateEnrollmentSource.getOptional("affiliateEnrollmentSource")
+
+    /**
+     * Affiliate programs only. The enrolled affiliate's status (`APPROVED`, `SUSPENDED`, or
+     * `BANNED`). `null` for participants who are not affiliates.
+     *
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun affiliateStatus(): Optional<String> = affiliateStatus.getOptional("affiliateStatus")
 
     /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -305,6 +342,15 @@ private constructor(
     fun ipAddress(): Optional<String> = ipAddress.getOptional("ipAddress")
 
     /**
+     * Affiliate programs only. Whether this participant is an enrolled affiliate. A referred
+     * customer who has not joined the program is `false`.
+     *
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun isAffiliate(): Optional<Boolean> = isAffiliate.getOptional("isAffiliate")
+
+    /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -355,7 +401,7 @@ private constructor(
 
     /**
      * Payout-related actions the participant must complete before a payout can be released (e.g.
-     * confirming a PayPal email or submitting a W-9/W-8 tax form). Always present; the
+     * configuring a payout destination or submitting a W-9/W-8 tax form). Always present; the
      * requiredActions array is empty when no action is required.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -515,6 +561,25 @@ private constructor(
     @JsonProperty("shareUrl") @ExcludeMissing fun _shareUrl(): JsonField<String> = shareUrl
 
     /**
+     * Returns the raw JSON value of [affiliateEnrollmentSource].
+     *
+     * Unlike [affiliateEnrollmentSource], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    @JsonProperty("affiliateEnrollmentSource")
+    @ExcludeMissing
+    fun _affiliateEnrollmentSource(): JsonField<String> = affiliateEnrollmentSource
+
+    /**
+     * Returns the raw JSON value of [affiliateStatus].
+     *
+     * Unlike [affiliateStatus], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("affiliateStatus")
+    @ExcludeMissing
+    fun _affiliateStatus(): JsonField<String> = affiliateStatus
+
+    /**
      * Returns the raw JSON value of [allMatchingFraudsters].
      *
      * Unlike [allMatchingFraudsters], this method doesn't throw if the JSON field has an unexpected
@@ -585,6 +650,15 @@ private constructor(
      * Unlike [ipAddress], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("ipAddress") @ExcludeMissing fun _ipAddress(): JsonField<String> = ipAddress
+
+    /**
+     * Returns the raw JSON value of [isAffiliate].
+     *
+     * Unlike [isAffiliate], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("isAffiliate")
+    @ExcludeMissing
+    fun _isAffiliate(): JsonField<Boolean> = isAffiliate
 
     /**
      * Returns the raw JSON value of [isNew].
@@ -801,7 +875,6 @@ private constructor(
          * .rank()
          * .referralCount()
          * .rewards()
-         * .shareUrl()
          * ```
          */
         @JvmStatic fun builder() = Builder()
@@ -817,7 +890,9 @@ private constructor(
         private var rank: JsonField<Long>? = null
         private var referralCount: JsonField<Long>? = null
         private var rewards: JsonField<MutableList<ParticipantReward>>? = null
-        private var shareUrl: JsonField<String>? = null
+        private var shareUrl: JsonField<String> = JsonMissing.of()
+        private var affiliateEnrollmentSource: JsonField<String> = JsonMissing.of()
+        private var affiliateStatus: JsonField<String> = JsonMissing.of()
         private var allMatchingFraudsters: JsonField<MutableList<AllMatchingFraudster>>? = null
         private var createdAt: JsonField<Long> = JsonMissing.of()
         private var fingerprint: JsonField<String> = JsonMissing.of()
@@ -827,6 +902,7 @@ private constructor(
         private var impressionCount: JsonField<Long> = JsonMissing.of()
         private var inviteCount: JsonField<Long> = JsonMissing.of()
         private var ipAddress: JsonField<String> = JsonMissing.of()
+        private var isAffiliate: JsonField<Boolean> = JsonMissing.of()
         private var isNew: JsonField<Boolean> = JsonMissing.of()
         private var isWinner: JsonField<Boolean> = JsonMissing.of()
         private var lastName: JsonField<String> = JsonMissing.of()
@@ -861,6 +937,8 @@ private constructor(
             referralCount = participant.referralCount
             rewards = participant.rewards.map { it.toMutableList() }
             shareUrl = participant.shareUrl
+            affiliateEnrollmentSource = participant.affiliateEnrollmentSource
+            affiliateStatus = participant.affiliateStatus
             allMatchingFraudsters = participant.allMatchingFraudsters.map { it.toMutableList() }
             createdAt = participant.createdAt
             fingerprint = participant.fingerprint
@@ -870,6 +948,7 @@ private constructor(
             impressionCount = participant.impressionCount
             inviteCount = participant.inviteCount
             ipAddress = participant.ipAddress
+            isAffiliate = participant.isAffiliate
             isNew = participant.isNew
             isWinner = participant.isWinner
             lastName = participant.lastName
@@ -997,6 +1076,54 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun shareUrl(shareUrl: JsonField<String>) = apply { this.shareUrl = shareUrl }
+
+        /**
+         * Affiliate programs only. How the affiliate enrolled (`OPEN_ENROLLMENT`, `APPLICATION`,
+         * `PARTICIPANT_AUTH`, `INVITE`, `REST_API`, `CSV`, or `DASHBOARD`). `null` when not
+         * recorded.
+         */
+        fun affiliateEnrollmentSource(affiliateEnrollmentSource: String?) =
+            affiliateEnrollmentSource(JsonField.ofNullable(affiliateEnrollmentSource))
+
+        /**
+         * Alias for calling [Builder.affiliateEnrollmentSource] with
+         * `affiliateEnrollmentSource.orElse(null)`.
+         */
+        fun affiliateEnrollmentSource(affiliateEnrollmentSource: Optional<String>) =
+            affiliateEnrollmentSource(affiliateEnrollmentSource.getOrNull())
+
+        /**
+         * Sets [Builder.affiliateEnrollmentSource] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.affiliateEnrollmentSource] with a well-typed [String]
+         * value instead. This method is primarily for setting the field to an undocumented or not
+         * yet supported value.
+         */
+        fun affiliateEnrollmentSource(affiliateEnrollmentSource: JsonField<String>) = apply {
+            this.affiliateEnrollmentSource = affiliateEnrollmentSource
+        }
+
+        /**
+         * Affiliate programs only. The enrolled affiliate's status (`APPROVED`, `SUSPENDED`, or
+         * `BANNED`). `null` for participants who are not affiliates.
+         */
+        fun affiliateStatus(affiliateStatus: String?) =
+            affiliateStatus(JsonField.ofNullable(affiliateStatus))
+
+        /** Alias for calling [Builder.affiliateStatus] with `affiliateStatus.orElse(null)`. */
+        fun affiliateStatus(affiliateStatus: Optional<String>) =
+            affiliateStatus(affiliateStatus.getOrNull())
+
+        /**
+         * Sets [Builder.affiliateStatus] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.affiliateStatus] with a well-typed [String] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun affiliateStatus(affiliateStatus: JsonField<String>) = apply {
+            this.affiliateStatus = affiliateStatus
+        }
 
         fun allMatchingFraudsters(allMatchingFraudsters: List<AllMatchingFraudster>) =
             allMatchingFraudsters(JsonField.of(allMatchingFraudsters))
@@ -1129,6 +1256,21 @@ private constructor(
          */
         fun ipAddress(ipAddress: JsonField<String>) = apply { this.ipAddress = ipAddress }
 
+        /**
+         * Affiliate programs only. Whether this participant is an enrolled affiliate. A referred
+         * customer who has not joined the program is `false`.
+         */
+        fun isAffiliate(isAffiliate: Boolean) = isAffiliate(JsonField.of(isAffiliate))
+
+        /**
+         * Sets [Builder.isAffiliate] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.isAffiliate] with a well-typed [Boolean] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun isAffiliate(isAffiliate: JsonField<Boolean>) = apply { this.isAffiliate = isAffiliate }
+
         fun isNew(isNew: Boolean) = isNew(JsonField.of(isNew))
 
         /**
@@ -1239,8 +1381,8 @@ private constructor(
 
         /**
          * Payout-related actions the participant must complete before a payout can be released
-         * (e.g. confirming a PayPal email or submitting a W-9/W-8 tax form). Always present; the
-         * requiredActions array is empty when no action is required.
+         * (e.g. configuring a payout destination or submitting a W-9/W-8 tax form). Always present;
+         * the requiredActions array is empty when no action is required.
          */
         fun payoutSettings(payoutSettings: PayoutSettings) =
             payoutSettings(JsonField.of(payoutSettings))
@@ -1499,7 +1641,6 @@ private constructor(
          * .rank()
          * .referralCount()
          * .rewards()
-         * .shareUrl()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
@@ -1513,7 +1654,9 @@ private constructor(
                 checkRequired("rank", rank),
                 checkRequired("referralCount", referralCount),
                 checkRequired("rewards", rewards).map { it.toImmutable() },
-                checkRequired("shareUrl", shareUrl),
+                shareUrl,
+                affiliateEnrollmentSource,
+                affiliateStatus,
                 (allMatchingFraudsters ?: JsonMissing.of()).map { it.toImmutable() },
                 createdAt,
                 fingerprint,
@@ -1523,6 +1666,7 @@ private constructor(
                 impressionCount,
                 inviteCount,
                 ipAddress,
+                isAffiliate,
                 isNew,
                 isWinner,
                 lastName,
@@ -1572,6 +1716,8 @@ private constructor(
         referralCount()
         rewards().forEach { it.validate() }
         shareUrl()
+        affiliateEnrollmentSource()
+        affiliateStatus()
         allMatchingFraudsters().ifPresent { it.forEach { it.validate() } }
         createdAt()
         fingerprint()
@@ -1581,6 +1727,7 @@ private constructor(
         impressionCount()
         inviteCount()
         ipAddress()
+        isAffiliate()
         isNew()
         isWinner()
         lastName()
@@ -1629,6 +1776,8 @@ private constructor(
             (if (referralCount.asKnown().isPresent) 1 else 0) +
             (rewards.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (if (shareUrl.asKnown().isPresent) 1 else 0) +
+            (if (affiliateEnrollmentSource.asKnown().isPresent) 1 else 0) +
+            (if (affiliateStatus.asKnown().isPresent) 1 else 0) +
             (allMatchingFraudsters.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
             (if (createdAt.asKnown().isPresent) 1 else 0) +
             (if (fingerprint.asKnown().isPresent) 1 else 0) +
@@ -1638,6 +1787,7 @@ private constructor(
             (if (impressionCount.asKnown().isPresent) 1 else 0) +
             (if (inviteCount.asKnown().isPresent) 1 else 0) +
             (if (ipAddress.asKnown().isPresent) 1 else 0) +
+            (if (isAffiliate.asKnown().isPresent) 1 else 0) +
             (if (isNew.asKnown().isPresent) 1 else 0) +
             (if (isWinner.asKnown().isPresent) 1 else 0) +
             (if (lastName.asKnown().isPresent) 1 else 0) +
@@ -1882,7 +2032,7 @@ private constructor(
 
     /**
      * Payout-related actions the participant must complete before a payout can be released (e.g.
-     * confirming a PayPal email or submitting a W-9/W-8 tax form). Always present; the
+     * configuring a payout destination or submitting a W-9/W-8 tax form). Always present; the
      * requiredActions array is empty when no action is required.
      */
     class PayoutSettings
@@ -2057,7 +2207,7 @@ private constructor(
 
             companion object {
 
-                @JvmField val PAYPAL_EMAIL = of("PAYPAL_EMAIL")
+                @JvmField val PAYOUT_DESTINATION = of("PAYOUT_DESTINATION")
 
                 @JvmField val TAX_INFO = of("TAX_INFO")
 
@@ -2066,7 +2216,7 @@ private constructor(
 
             /** An enum containing [RequiredAction]'s known values. */
             enum class Known {
-                PAYPAL_EMAIL,
+                PAYOUT_DESTINATION,
                 TAX_INFO,
             }
 
@@ -2080,7 +2230,7 @@ private constructor(
              * - It was constructed with an arbitrary value using the [of] method.
              */
             enum class Value {
-                PAYPAL_EMAIL,
+                PAYOUT_DESTINATION,
                 TAX_INFO,
                 /**
                  * An enum member indicating that [RequiredAction] was instantiated with an unknown
@@ -2098,7 +2248,7 @@ private constructor(
              */
             fun value(): Value =
                 when (this) {
-                    PAYPAL_EMAIL -> Value.PAYPAL_EMAIL
+                    PAYOUT_DESTINATION -> Value.PAYOUT_DESTINATION
                     TAX_INFO -> Value.TAX_INFO
                     else -> Value._UNKNOWN
                 }
@@ -2114,7 +2264,7 @@ private constructor(
              */
             fun known(): Known =
                 when (this) {
-                    PAYPAL_EMAIL -> Known.PAYPAL_EMAIL
+                    PAYOUT_DESTINATION -> Known.PAYOUT_DESTINATION
                     TAX_INFO -> Known.TAX_INFO
                     else -> throw GrowsurfInvalidDataException("Unknown RequiredAction: $value")
                 }
@@ -3773,6 +3923,8 @@ private constructor(
             referralCount == other.referralCount &&
             rewards == other.rewards &&
             shareUrl == other.shareUrl &&
+            affiliateEnrollmentSource == other.affiliateEnrollmentSource &&
+            affiliateStatus == other.affiliateStatus &&
             allMatchingFraudsters == other.allMatchingFraudsters &&
             createdAt == other.createdAt &&
             fingerprint == other.fingerprint &&
@@ -3782,6 +3934,7 @@ private constructor(
             impressionCount == other.impressionCount &&
             inviteCount == other.inviteCount &&
             ipAddress == other.ipAddress &&
+            isAffiliate == other.isAffiliate &&
             isNew == other.isNew &&
             isWinner == other.isWinner &&
             lastName == other.lastName &&
@@ -3817,6 +3970,8 @@ private constructor(
             referralCount,
             rewards,
             shareUrl,
+            affiliateEnrollmentSource,
+            affiliateStatus,
             allMatchingFraudsters,
             createdAt,
             fingerprint,
@@ -3826,6 +3981,7 @@ private constructor(
             impressionCount,
             inviteCount,
             ipAddress,
+            isAffiliate,
             isNew,
             isWinner,
             lastName,
@@ -3855,5 +4011,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Participant{id=$id, email=$email, monthlyRank=$monthlyRank, monthlyReferralCount=$monthlyReferralCount, rank=$rank, referralCount=$referralCount, rewards=$rewards, shareUrl=$shareUrl, allMatchingFraudsters=$allMatchingFraudsters, createdAt=$createdAt, fingerprint=$fingerprint, firstName=$firstName, fraudReasonCode=$fraudReasonCode, fraudRiskLevel=$fraudRiskLevel, impressionCount=$impressionCount, inviteCount=$inviteCount, ipAddress=$ipAddress, isNew=$isNew, isWinner=$isWinner, lastName=$lastName, metadata=$metadata, mobileInstanceId=$mobileInstanceId, monthlyReferrals=$monthlyReferrals, notes=$notes, payoutSettings=$payoutSettings, paypalEmailAddress=$paypalEmailAddress, prevMonthlyRank=$prevMonthlyRank, prevMonthlyReferralCount=$prevMonthlyReferralCount, referrals=$referrals, referralSource=$referralSource, referralStatus=$referralStatus, referredBy=$referredBy, referrer=$referrer, shareCount=$shareCount, uniqueImpressionCount=$uniqueImpressionCount, unreadCommissionsCount=$unreadCommissionsCount, unreadPayoutsCount=$unreadPayoutsCount, unsubscribed=$unsubscribed, vanityKeys=$vanityKeys, additionalProperties=$additionalProperties}"
+        "Participant{id=$id, email=$email, monthlyRank=$monthlyRank, monthlyReferralCount=$monthlyReferralCount, rank=$rank, referralCount=$referralCount, rewards=$rewards, shareUrl=$shareUrl, affiliateEnrollmentSource=$affiliateEnrollmentSource, affiliateStatus=$affiliateStatus, allMatchingFraudsters=$allMatchingFraudsters, createdAt=$createdAt, fingerprint=$fingerprint, firstName=$firstName, fraudReasonCode=$fraudReasonCode, fraudRiskLevel=$fraudRiskLevel, impressionCount=$impressionCount, inviteCount=$inviteCount, ipAddress=$ipAddress, isAffiliate=$isAffiliate, isNew=$isNew, isWinner=$isWinner, lastName=$lastName, metadata=$metadata, mobileInstanceId=$mobileInstanceId, monthlyReferrals=$monthlyReferrals, notes=$notes, payoutSettings=$payoutSettings, paypalEmailAddress=$paypalEmailAddress, prevMonthlyRank=$prevMonthlyRank, prevMonthlyReferralCount=$prevMonthlyReferralCount, referrals=$referrals, referralSource=$referralSource, referralStatus=$referralStatus, referredBy=$referredBy, referrer=$referrer, shareCount=$shareCount, uniqueImpressionCount=$uniqueImpressionCount, unreadCommissionsCount=$unreadCommissionsCount, unreadPayoutsCount=$unreadPayoutsCount, unsubscribed=$unsubscribed, vanityKeys=$vanityKeys, additionalProperties=$additionalProperties}"
 }

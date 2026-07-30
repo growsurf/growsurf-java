@@ -4,14 +4,21 @@ package com.growsurf.api.services.blocking
 
 import com.growsurf.api.client.okhttp.GrowsurfOkHttpClient
 import com.growsurf.api.core.JsonValue
+import com.growsurf.api.models.campaign.CampaignCreateAffiliateInviteParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenParams
 import com.growsurf.api.models.campaign.CampaignCreateParams
+import com.growsurf.api.models.campaign.CampaignListAffiliateApplicationsParams
+import com.growsurf.api.models.campaign.CampaignListAffiliateInvitesParams
 import com.growsurf.api.models.campaign.CampaignListCommissionsParams
 import com.growsurf.api.models.campaign.CampaignListLeaderboardParams
 import com.growsurf.api.models.campaign.CampaignListParticipantsParams
 import com.growsurf.api.models.campaign.CampaignListPayoutsParams
 import com.growsurf.api.models.campaign.CampaignListReferralsParams
+import com.growsurf.api.models.campaign.CampaignResendAffiliateInviteParams
+import com.growsurf.api.models.campaign.CampaignRetrieveAffiliateApplicationParams
 import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsParams
+import com.growsurf.api.models.campaign.CampaignReviewAffiliateApplicationParams
+import com.growsurf.api.models.campaign.CampaignRevokeAffiliateInviteParams
 import com.growsurf.api.models.campaign.participant.Create
 import com.growsurf.api.models.campaign.participant.ReferralStatus
 import org.junit.jupiter.api.Disabled
@@ -221,6 +228,130 @@ internal class CampaignServiceTest {
                     .endDate(0L)
                     .startDate(0L)
                     .build()
+            )
+
+        response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun listAffiliateApplications() {
+        val client = GrowsurfOkHttpClient.builder().apiKey("My API Key").build()
+        val campaignService = client.campaign()
+
+        val response =
+            campaignService.listAffiliateApplications(
+                CampaignListAffiliateApplicationsParams.builder()
+                    .id("id")
+                    .limit(1L)
+                    .offset(0L)
+                    .status(CampaignListAffiliateApplicationsParams.Status.PENDING)
+                    .build()
+            )
+
+        response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun retrieveAffiliateApplication() {
+        val client = GrowsurfOkHttpClient.builder().apiKey("My API Key").build()
+        val campaignService = client.campaign()
+
+        val response =
+            campaignService.retrieveAffiliateApplication(
+                CampaignRetrieveAffiliateApplicationParams.builder()
+                    .id("id")
+                    .applicationId("applicationId")
+                    .build()
+            )
+
+        response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun reviewAffiliateApplication() {
+        val client = GrowsurfOkHttpClient.builder().apiKey("My API Key").build()
+        val campaignService = client.campaign()
+
+        val response =
+            campaignService.reviewAffiliateApplication(
+                CampaignReviewAffiliateApplicationParams.builder()
+                    .id("id")
+                    .applicationId("applicationId")
+                    .allowImmediateReapply(true)
+                    .reapplyAllowedAt(0L)
+                    .rejectionReason("rejectionReason")
+                    .reviewNote("reviewNote")
+                    .status(CampaignReviewAffiliateApplicationParams.Status.APPROVED)
+                    .build()
+            )
+
+        response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun listAffiliateInvites() {
+        val client = GrowsurfOkHttpClient.builder().apiKey("My API Key").build()
+        val campaignService = client.campaign()
+
+        val response =
+            campaignService.listAffiliateInvites(
+                CampaignListAffiliateInvitesParams.builder()
+                    .id("id")
+                    .limit(1L)
+                    .offset(0L)
+                    .status(CampaignListAffiliateInvitesParams.Status.PENDING)
+                    .build()
+            )
+
+        response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun createAffiliateInvite() {
+        val client = GrowsurfOkHttpClient.builder().apiKey("My API Key").build()
+        val campaignService = client.campaign()
+
+        val response =
+            campaignService.createAffiliateInvite(
+                CampaignCreateAffiliateInviteParams.builder()
+                    .id("id")
+                    .email("dev@stainless.com")
+                    .firstName("firstName")
+                    .lastName("lastName")
+                    .build()
+            )
+
+        response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun revokeAffiliateInvite() {
+        val client = GrowsurfOkHttpClient.builder().apiKey("My API Key").build()
+        val campaignService = client.campaign()
+
+        val response =
+            campaignService.revokeAffiliateInvite(
+                CampaignRevokeAffiliateInviteParams.builder().id("id").inviteId("inviteId").build()
+            )
+
+        response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
+    fun resendAffiliateInvite() {
+        val client = GrowsurfOkHttpClient.builder().apiKey("My API Key").build()
+        val campaignService = client.campaign()
+
+        val response =
+            campaignService.resendAffiliateInvite(
+                CampaignResendAffiliateInviteParams.builder().id("id").inviteId("inviteId").build()
             )
 
         response.validate()

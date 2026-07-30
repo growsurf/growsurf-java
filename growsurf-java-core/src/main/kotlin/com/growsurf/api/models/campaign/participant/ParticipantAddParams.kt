@@ -13,7 +13,11 @@ import kotlin.jvm.optionals.getOrNull
 
 /**
  * Adds a new participant to the program. If the email already exists, the existing participant is
- * returned.
+ * returned unchanged. For affiliate programs, set `isAffiliate` to `true` to enroll a new
+ * participant as an approved affiliate or `false` to create a non-affiliate. If you omit
+ * `isAffiliate`, a valid `referredBy` creates a referred non-affiliate; without a valid referrer,
+ * the new participant is enrolled as an approved affiliate. You can send a valid `referredBy` with
+ * `isAffiliate: true` to keep the referral attribution and enroll the participant as an affiliate.
  */
 class ParticipantAddParams
 private constructor(

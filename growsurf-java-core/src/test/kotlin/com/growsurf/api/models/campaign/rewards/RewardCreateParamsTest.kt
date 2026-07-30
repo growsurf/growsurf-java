@@ -36,10 +36,16 @@ internal class RewardCreateParamsTest {
                     .build()
             )
             .value(
-                RewardTaxValuation.builder().fairMarketValueUsd(0.0).isTaxReportable(true).build()
+                RewardTaxValuation.builder()
+                    .fairMarketValueUsd(0.0)
+                    .taxCharacter(RewardTaxValuation.TaxCharacter.PRIZE_OR_AWARD)
+                    .build()
             )
             .referredValue(
-                RewardTaxValuation.builder().fairMarketValueUsd(0.0).isTaxReportable(true).build()
+                RewardTaxValuation.builder()
+                    .fairMarketValueUsd(0.0)
+                    .taxCharacter(RewardTaxValuation.TaxCharacter.PRIZE_OR_AWARD)
+                    .build()
             )
             .build()
     }
