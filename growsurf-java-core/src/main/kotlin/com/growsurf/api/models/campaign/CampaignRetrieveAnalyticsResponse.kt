@@ -4906,51 +4906,80 @@ private constructor(
                 "PayoutStatus{failed=$failed, issued=$issued, queued=$queued, reversed=$reversed, upcoming=$upcoming, additionalProperties=$additionalProperties}"
         }
 
-        /** Affiliate only. Reward counts by status. */
+        /** Reward counts grouped by review and fulfillment status. */
         class RewardStatus
         @JsonCreator(mode = JsonCreator.Mode.DISABLED)
         private constructor(
-            private val approved: JsonField<Long>,
-            private val pending: JsonField<Long>,
+            private val completed: JsonField<Long>,
+            private val unapproved: JsonField<Long>,
+            private val unfulfilled: JsonField<Long>,
             private val additionalProperties: MutableMap<String, JsonValue>,
         ) {
 
             @JsonCreator
             private constructor(
-                @JsonProperty("approved")
+                @JsonProperty("completed")
                 @ExcludeMissing
-                approved: JsonField<Long> = JsonMissing.of(),
-                @JsonProperty("pending") @ExcludeMissing pending: JsonField<Long> = JsonMissing.of(),
-            ) : this(approved, pending, mutableMapOf())
+                completed: JsonField<Long> = JsonMissing.of(),
+                @JsonProperty("unapproved")
+                @ExcludeMissing
+                unapproved: JsonField<Long> = JsonMissing.of(),
+                @JsonProperty("unfulfilled")
+                @ExcludeMissing
+                unfulfilled: JsonField<Long> = JsonMissing.of(),
+            ) : this(completed, unapproved, unfulfilled, mutableMapOf())
 
             /**
-             * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g.
-             *   if the server responded with an unexpected value).
-             */
-            fun approved(): Optional<Long> = approved.getOptional("approved")
-
-            /**
-             * Unapproved rewards awaiting fulfillment.
+             * Approved rewards that are fulfilled.
              *
              * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g.
              *   if the server responded with an unexpected value).
              */
-            fun pending(): Optional<Long> = pending.getOptional("pending")
+            fun completed(): Optional<Long> = completed.getOptional("completed")
 
             /**
-             * Returns the raw JSON value of [approved].
+             * Unapproved rewards awaiting review.
              *
-             * Unlike [approved], this method doesn't throw if the JSON field has an unexpected
+             * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun unapproved(): Optional<Long> = unapproved.getOptional("unapproved")
+
+            /**
+             * Rewards that are approved but not fulfilled.
+             *
+             * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun unfulfilled(): Optional<Long> = unfulfilled.getOptional("unfulfilled")
+
+            /**
+             * Returns the raw JSON value of [completed].
+             *
+             * Unlike [completed], this method doesn't throw if the JSON field has an unexpected
              * type.
              */
-            @JsonProperty("approved") @ExcludeMissing fun _approved(): JsonField<Long> = approved
+            @JsonProperty("completed") @ExcludeMissing fun _completed(): JsonField<Long> = completed
 
             /**
-             * Returns the raw JSON value of [pending].
+             * Returns the raw JSON value of [unapproved].
              *
-             * Unlike [pending], this method doesn't throw if the JSON field has an unexpected type.
+             * Unlike [unapproved], this method doesn't throw if the JSON field has an unexpected
+             * type.
              */
-            @JsonProperty("pending") @ExcludeMissing fun _pending(): JsonField<Long> = pending
+            @JsonProperty("unapproved")
+            @ExcludeMissing
+            fun _unapproved(): JsonField<Long> = unapproved
+
+            /**
+             * Returns the raw JSON value of [unfulfilled].
+             *
+             * Unlike [unfulfilled], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("unfulfilled")
+            @ExcludeMissing
+            fun _unfulfilled(): JsonField<Long> = unfulfilled
 
             @JsonAnySetter
             private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -4973,39 +5002,56 @@ private constructor(
             /** A builder for [RewardStatus]. */
             class Builder internal constructor() {
 
-                private var approved: JsonField<Long> = JsonMissing.of()
-                private var pending: JsonField<Long> = JsonMissing.of()
+                private var completed: JsonField<Long> = JsonMissing.of()
+                private var unapproved: JsonField<Long> = JsonMissing.of()
+                private var unfulfilled: JsonField<Long> = JsonMissing.of()
                 private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
                 @JvmSynthetic
                 internal fun from(rewardStatus: RewardStatus) = apply {
-                    approved = rewardStatus.approved
-                    pending = rewardStatus.pending
+                    completed = rewardStatus.completed
+                    unapproved = rewardStatus.unapproved
+                    unfulfilled = rewardStatus.unfulfilled
                     additionalProperties = rewardStatus.additionalProperties.toMutableMap()
                 }
 
-                fun approved(approved: Long) = approved(JsonField.of(approved))
+                /** Approved rewards that are fulfilled. */
+                fun completed(completed: Long) = completed(JsonField.of(completed))
 
                 /**
-                 * Sets [Builder.approved] to an arbitrary JSON value.
+                 * Sets [Builder.completed] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.approved] with a well-typed [Long] value
+                 * You should usually call [Builder.completed] with a well-typed [Long] value
                  * instead. This method is primarily for setting the field to an undocumented or not
                  * yet supported value.
                  */
-                fun approved(approved: JsonField<Long>) = apply { this.approved = approved }
+                fun completed(completed: JsonField<Long>) = apply { this.completed = completed }
 
-                /** Unapproved rewards awaiting fulfillment. */
-                fun pending(pending: Long) = pending(JsonField.of(pending))
+                /** Unapproved rewards awaiting review. */
+                fun unapproved(unapproved: Long) = unapproved(JsonField.of(unapproved))
 
                 /**
-                 * Sets [Builder.pending] to an arbitrary JSON value.
+                 * Sets [Builder.unapproved] to an arbitrary JSON value.
                  *
-                 * You should usually call [Builder.pending] with a well-typed [Long] value instead.
-                 * This method is primarily for setting the field to an undocumented or not yet
-                 * supported value.
+                 * You should usually call [Builder.unapproved] with a well-typed [Long] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
                  */
-                fun pending(pending: JsonField<Long>) = apply { this.pending = pending }
+                fun unapproved(unapproved: JsonField<Long>) = apply { this.unapproved = unapproved }
+
+                /** Rewards that are approved but not fulfilled. */
+                fun unfulfilled(unfulfilled: Long) = unfulfilled(JsonField.of(unfulfilled))
+
+                /**
+                 * Sets [Builder.unfulfilled] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.unfulfilled] with a well-typed [Long] value
+                 * instead. This method is primarily for setting the field to an undocumented or not
+                 * yet supported value.
+                 */
+                fun unfulfilled(unfulfilled: JsonField<Long>) = apply {
+                    this.unfulfilled = unfulfilled
+                }
 
                 fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                     this.additionalProperties.clear()
@@ -5035,7 +5081,12 @@ private constructor(
                  * Further updates to this [Builder] will not mutate the returned instance.
                  */
                 fun build(): RewardStatus =
-                    RewardStatus(approved, pending, additionalProperties.toMutableMap())
+                    RewardStatus(
+                        completed,
+                        unapproved,
+                        unfulfilled,
+                        additionalProperties.toMutableMap(),
+                    )
             }
 
             private var validated: Boolean = false
@@ -5045,8 +5096,9 @@ private constructor(
                     return@apply
                 }
 
-                approved()
-                pending()
+                completed()
+                unapproved()
+                unfulfilled()
                 validated = true
             }
 
@@ -5060,8 +5112,9 @@ private constructor(
 
             @JvmSynthetic
             internal fun validity(): Int =
-                (if (approved.asKnown().isPresent) 1 else 0) +
-                    (if (pending.asKnown().isPresent) 1 else 0)
+                (if (completed.asKnown().isPresent) 1 else 0) +
+                    (if (unapproved.asKnown().isPresent) 1 else 0) +
+                    (if (unfulfilled.asKnown().isPresent) 1 else 0)
 
             override fun equals(other: Any?): Boolean {
                 if (this === other) {
@@ -5069,19 +5122,20 @@ private constructor(
                 }
 
                 return other is RewardStatus &&
-                    approved == other.approved &&
-                    pending == other.pending &&
+                    completed == other.completed &&
+                    unapproved == other.unapproved &&
+                    unfulfilled == other.unfulfilled &&
                     additionalProperties == other.additionalProperties
             }
 
             private val hashCode: Int by lazy {
-                Objects.hash(approved, pending, additionalProperties)
+                Objects.hash(completed, unapproved, unfulfilled, additionalProperties)
             }
 
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "RewardStatus{approved=$approved, pending=$pending, additionalProperties=$additionalProperties}"
+                "RewardStatus{completed=$completed, unapproved=$unapproved, unfulfilled=$unfulfilled, additionalProperties=$additionalProperties}"
         }
 
         override fun equals(other: Any?): Boolean {

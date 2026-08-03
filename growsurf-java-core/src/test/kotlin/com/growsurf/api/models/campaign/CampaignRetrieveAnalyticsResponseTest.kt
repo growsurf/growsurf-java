@@ -198,8 +198,9 @@ internal class CampaignRetrieveAnalyticsResponseTest {
                         )
                         .rewardStatus(
                             CampaignRetrieveAnalyticsResponse.StatusCounts.RewardStatus.builder()
-                                .approved(340L)
-                                .pending(12L)
+                                .unapproved(12L)
+                                .unfulfilled(300L)
+                                .completed(40L)
                                 .build()
                         )
                         .build()
@@ -340,8 +341,9 @@ internal class CampaignRetrieveAnalyticsResponseTest {
                         )
                         .rewardStatus(
                             CampaignRetrieveAnalyticsResponse.StatusCounts.RewardStatus.builder()
-                                .approved(340L)
-                                .pending(12L)
+                                .unapproved(12L)
+                                .unfulfilled(300L)
+                                .completed(40L)
                                 .build()
                         )
                         .build()

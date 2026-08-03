@@ -5,6 +5,7 @@ package com.growsurf.api.models.campaign.participant
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.jsonMapper
+import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsResponse
 import com.growsurf.api.models.campaign.EmailAnalytics
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
@@ -54,8 +55,13 @@ internal class ParticipantAnalyticsResponseTest {
                         .impressions(340L)
                         .uniqueImpressions(210L)
                         .invitesSent(8L)
-                        .rewardsEarned(4L)
-                        .pendingRewards(1L)
+                        .rewardStatus(
+                            CampaignRetrieveAnalyticsResponse.StatusCounts.RewardStatus.builder()
+                                .unapproved(1L)
+                                .unfulfilled(3L)
+                                .completed(1L)
+                                .build()
+                        )
                         .currencyIso("USD")
                         .build()
                 )
@@ -84,6 +90,8 @@ internal class ParticipantAnalyticsResponseTest {
                 .build()
 
         assertThat(participantAnalyticsResponse.analytics().referrals()).contains(12L)
+        assertThat(participantAnalyticsResponse.analytics().rewardStatus().get().unapproved())
+            .contains(1L)
         assertThat(participantAnalyticsResponse.ranks().rank()).contains(5L)
         assertThat(participantAnalyticsResponse.endDate()).contains(1706745600000L)
         assertThat(participantAnalyticsResponse.series().getOrNull())

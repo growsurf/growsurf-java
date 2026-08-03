@@ -14,6 +14,7 @@ import com.growsurf.api.core.checkKnown
 import com.growsurf.api.core.checkRequired
 import com.growsurf.api.core.toImmutable
 import com.growsurf.api.errors.GrowsurfInvalidDataException
+import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsResponse
 import com.growsurf.api.models.campaign.EmailAnalytics
 import com.growsurf.api.models.campaign.EmailAnalyticsCounts
 import java.util.Collections
@@ -386,10 +387,10 @@ private constructor(
         private val invitesSent: JsonField<Long>,
         private val leads: JsonField<Long>,
         private val monthlyReferrals: JsonField<Long>,
-        private val pendingRewards: JsonField<Long>,
         private val referralRevenue: JsonField<Long>,
         private val referrals: JsonField<Long>,
-        private val rewardsEarned: JsonField<Long>,
+        private val rewardStatus:
+            JsonField<CampaignRetrieveAnalyticsResponse.StatusCounts.RewardStatus>,
         private val totalCommissions: JsonField<Long>,
         private val totalPaidOut: JsonField<Long>,
         private val uniqueImpressions: JsonField<Long>,
@@ -415,18 +416,16 @@ private constructor(
             @JsonProperty("monthlyReferrals")
             @ExcludeMissing
             monthlyReferrals: JsonField<Long> = JsonMissing.of(),
-            @JsonProperty("pendingRewards")
-            @ExcludeMissing
-            pendingRewards: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("referralRevenue")
             @ExcludeMissing
             referralRevenue: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("referrals")
             @ExcludeMissing
             referrals: JsonField<Long> = JsonMissing.of(),
-            @JsonProperty("rewardsEarned")
+            @JsonProperty("rewardStatus")
             @ExcludeMissing
-            rewardsEarned: JsonField<Long> = JsonMissing.of(),
+            rewardStatus: JsonField<CampaignRetrieveAnalyticsResponse.StatusCounts.RewardStatus> =
+                JsonMissing.of(),
             @JsonProperty("totalCommissions")
             @ExcludeMissing
             totalCommissions: JsonField<Long> = JsonMissing.of(),
@@ -446,10 +445,9 @@ private constructor(
             invitesSent,
             leads,
             monthlyReferrals,
-            pendingRewards,
             referralRevenue,
             referrals,
-            rewardsEarned,
+            rewardStatus,
             totalCommissions,
             totalPaidOut,
             uniqueImpressions,
@@ -497,8 +495,6 @@ private constructor(
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun pendingRewards(): Optional<Long> = pendingRewards.getOptional("pendingRewards")
-
         /**
          * Affiliate only. Revenue attributed to this participant's referrals, in minor currency
          * units.
@@ -518,7 +514,8 @@ private constructor(
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun rewardsEarned(): Optional<Long> = rewardsEarned.getOptional("rewardsEarned")
+        fun rewardStatus(): Optional<CampaignRetrieveAnalyticsResponse.StatusCounts.RewardStatus> =
+            rewardStatus.getOptional("rewardStatus")
 
         /**
          * Affiliate only. Total commissions earned, in minor currency units.
@@ -605,16 +602,6 @@ private constructor(
         fun _monthlyReferrals(): JsonField<Long> = monthlyReferrals
 
         /**
-         * Returns the raw JSON value of [pendingRewards].
-         *
-         * Unlike [pendingRewards], this method doesn't throw if the JSON field has an unexpected
-         * type.
-         */
-        @JsonProperty("pendingRewards")
-        @ExcludeMissing
-        fun _pendingRewards(): JsonField<Long> = pendingRewards
-
-        /**
          * Returns the raw JSON value of [referralRevenue].
          *
          * Unlike [referralRevenue], this method doesn't throw if the JSON field has an unexpected
@@ -632,14 +619,15 @@ private constructor(
         @JsonProperty("referrals") @ExcludeMissing fun _referrals(): JsonField<Long> = referrals
 
         /**
-         * Returns the raw JSON value of [rewardsEarned].
+         * Returns the raw JSON value of [rewardStatus].
          *
-         * Unlike [rewardsEarned], this method doesn't throw if the JSON field has an unexpected
+         * Unlike [rewardStatus], this method doesn't throw if the JSON field has an unexpected
          * type.
          */
-        @JsonProperty("rewardsEarned")
+        @JsonProperty("rewardStatus")
         @ExcludeMissing
-        fun _rewardsEarned(): JsonField<Long> = rewardsEarned
+        fun _rewardStatus():
+            JsonField<CampaignRetrieveAnalyticsResponse.StatusCounts.RewardStatus> = rewardStatus
 
         /**
          * Returns the raw JSON value of [totalCommissions].
@@ -708,10 +696,11 @@ private constructor(
             private var invitesSent: JsonField<Long> = JsonMissing.of()
             private var leads: JsonField<Long> = JsonMissing.of()
             private var monthlyReferrals: JsonField<Long> = JsonMissing.of()
-            private var pendingRewards: JsonField<Long> = JsonMissing.of()
             private var referralRevenue: JsonField<Long> = JsonMissing.of()
             private var referrals: JsonField<Long> = JsonMissing.of()
-            private var rewardsEarned: JsonField<Long> = JsonMissing.of()
+            private var rewardStatus:
+                JsonField<CampaignRetrieveAnalyticsResponse.StatusCounts.RewardStatus> =
+                JsonMissing.of()
             private var totalCommissions: JsonField<Long> = JsonMissing.of()
             private var totalPaidOut: JsonField<Long> = JsonMissing.of()
             private var uniqueImpressions: JsonField<Long> = JsonMissing.of()
@@ -726,10 +715,9 @@ private constructor(
                 invitesSent = analytics.invitesSent
                 leads = analytics.leads
                 monthlyReferrals = analytics.monthlyReferrals
-                pendingRewards = analytics.pendingRewards
                 referralRevenue = analytics.referralRevenue
                 referrals = analytics.referrals
-                rewardsEarned = analytics.rewardsEarned
+                rewardStatus = analytics.rewardStatus
                 totalCommissions = analytics.totalCommissions
                 totalPaidOut = analytics.totalPaidOut
                 uniqueImpressions = analytics.uniqueImpressions
@@ -811,19 +799,6 @@ private constructor(
                 this.monthlyReferrals = monthlyReferrals
             }
 
-            fun pendingRewards(pendingRewards: Long) = pendingRewards(JsonField.of(pendingRewards))
-
-            /**
-             * Sets [Builder.pendingRewards] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.pendingRewards] with a well-typed [Long] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun pendingRewards(pendingRewards: JsonField<Long>) = apply {
-                this.pendingRewards = pendingRewards
-            }
-
             /**
              * Affiliate only. Revenue attributed to this participant's referrals, in minor currency
              * units.
@@ -853,18 +828,20 @@ private constructor(
              */
             fun referrals(referrals: JsonField<Long>) = apply { this.referrals = referrals }
 
-            fun rewardsEarned(rewardsEarned: Long) = rewardsEarned(JsonField.of(rewardsEarned))
+            fun rewardStatus(
+                rewardStatus: CampaignRetrieveAnalyticsResponse.StatusCounts.RewardStatus
+            ) = rewardStatus(JsonField.of(rewardStatus))
 
             /**
-             * Sets [Builder.rewardsEarned] to an arbitrary JSON value.
+             * Sets [Builder.rewardStatus] to an arbitrary JSON value.
              *
-             * You should usually call [Builder.rewardsEarned] with a well-typed [Long] value
+             * You should usually call [Builder.rewardStatus] with a well-typed [RewardStatus] value
              * instead. This method is primarily for setting the field to an undocumented or not yet
              * supported value.
              */
-            fun rewardsEarned(rewardsEarned: JsonField<Long>) = apply {
-                this.rewardsEarned = rewardsEarned
-            }
+            fun rewardStatus(
+                rewardStatus: JsonField<CampaignRetrieveAnalyticsResponse.StatusCounts.RewardStatus>
+            ) = apply { this.rewardStatus = rewardStatus }
 
             /** Affiliate only. Total commissions earned, in minor currency units. */
             fun totalCommissions(totalCommissions: Long) =
@@ -955,10 +932,9 @@ private constructor(
                     invitesSent,
                     leads,
                     monthlyReferrals,
-                    pendingRewards,
                     referralRevenue,
                     referrals,
-                    rewardsEarned,
+                    rewardStatus,
                     totalCommissions,
                     totalPaidOut,
                     uniqueImpressions,
@@ -980,10 +956,9 @@ private constructor(
             invitesSent()
             leads()
             monthlyReferrals()
-            pendingRewards()
             referralRevenue()
             referrals()
-            rewardsEarned()
+            rewardStatus().ifPresent { it.validate() }
             totalCommissions()
             totalPaidOut()
             uniqueImpressions()
@@ -1007,10 +982,9 @@ private constructor(
                 (if (invitesSent.asKnown().isPresent) 1 else 0) +
                 (if (leads.asKnown().isPresent) 1 else 0) +
                 (if (monthlyReferrals.asKnown().isPresent) 1 else 0) +
-                (if (pendingRewards.asKnown().isPresent) 1 else 0) +
                 (if (referralRevenue.asKnown().isPresent) 1 else 0) +
                 (if (referrals.asKnown().isPresent) 1 else 0) +
-                (if (rewardsEarned.asKnown().isPresent) 1 else 0) +
+                (rewardStatus.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (totalCommissions.asKnown().isPresent) 1 else 0) +
                 (if (totalPaidOut.asKnown().isPresent) 1 else 0) +
                 (if (uniqueImpressions.asKnown().isPresent) 1 else 0) +
@@ -1028,10 +1002,9 @@ private constructor(
                 invitesSent == other.invitesSent &&
                 leads == other.leads &&
                 monthlyReferrals == other.monthlyReferrals &&
-                pendingRewards == other.pendingRewards &&
                 referralRevenue == other.referralRevenue &&
                 referrals == other.referrals &&
-                rewardsEarned == other.rewardsEarned &&
+                rewardStatus == other.rewardStatus &&
                 totalCommissions == other.totalCommissions &&
                 totalPaidOut == other.totalPaidOut &&
                 uniqueImpressions == other.uniqueImpressions &&
@@ -1047,10 +1020,9 @@ private constructor(
                 invitesSent,
                 leads,
                 monthlyReferrals,
-                pendingRewards,
                 referralRevenue,
                 referrals,
-                rewardsEarned,
+                rewardStatus,
                 totalCommissions,
                 totalPaidOut,
                 uniqueImpressions,
@@ -1062,7 +1034,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Analytics{currencyIso=$currencyIso, expiredReferrals=$expiredReferrals, impressions=$impressions, invitesSent=$invitesSent, leads=$leads, monthlyReferrals=$monthlyReferrals, pendingRewards=$pendingRewards, referralRevenue=$referralRevenue, referrals=$referrals, rewardsEarned=$rewardsEarned, totalCommissions=$totalCommissions, totalPaidOut=$totalPaidOut, uniqueImpressions=$uniqueImpressions, upcomingPayout=$upcomingPayout, additionalProperties=$additionalProperties}"
+            "Analytics{currencyIso=$currencyIso, expiredReferrals=$expiredReferrals, impressions=$impressions, invitesSent=$invitesSent, leads=$leads, monthlyReferrals=$monthlyReferrals, referralRevenue=$referralRevenue, referrals=$referrals, rewardStatus=$rewardStatus, totalCommissions=$totalCommissions, totalPaidOut=$totalPaidOut, uniqueImpressions=$uniqueImpressions, upcomingPayout=$upcomingPayout, additionalProperties=$additionalProperties}"
     }
 
     class Ranks
