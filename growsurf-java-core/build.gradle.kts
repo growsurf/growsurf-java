@@ -5,10 +5,11 @@ plugins {
 
 configurations.all {
     resolutionStrategy {
-        // Compile and test against a lower Jackson version to ensure we're compatible with it. Note that
-        // we generally support 2.13.4, but test against 2.14.0 because 2.13.4 has some annoying (but
-        // niche) bugs (users should upgrade if they encounter them). We publish with a higher version
-        // (see below) to ensure users depend on a secure version by default.
+        // Compile and test against the lowest Jackson version the README advertises, so a change that
+        // reaches for a newer Jackson API fails here instead of at a consumer whose framework pins
+        // Jackson (a Spring Boot BOM does exactly that). We publish the higher version below, so
+        // consumers who do not pin still get a secure Jackson by default. `resolutionStrategy` only
+        // affects resolution inside this build; the published POM keeps the declared versions.
         force("com.fasterxml.jackson.core:jackson-core:2.14.0")
         force("com.fasterxml.jackson.core:jackson-databind:2.14.0")
         force("com.fasterxml.jackson.core:jackson-annotations:2.14.0")
@@ -19,14 +20,14 @@ configurations.all {
 }
 
 dependencies {
-    api("com.fasterxml.jackson.core:jackson-core:2.18.2")
-    api("com.fasterxml.jackson.core:jackson-databind:2.18.2")
-    api("com.google.errorprone:error_prone_annotations:2.33.0")
+    api("com.fasterxml.jackson.core:jackson-core:2.18.9")
+    api("com.fasterxml.jackson.core:jackson-databind:2.18.9")
+    api("com.google.errorprone:error_prone_annotations:2.50.0")
 
-    implementation("com.fasterxml.jackson.core:jackson-annotations:2.18.2")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.18.2")
-    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.2")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.2")
+    implementation("com.fasterxml.jackson.core:jackson-annotations:2.18.9")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.18.9")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.18.9")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.18.9")
 
     testImplementation(kotlin("test"))
     testImplementation(project(":growsurf-java-client-okhttp"))

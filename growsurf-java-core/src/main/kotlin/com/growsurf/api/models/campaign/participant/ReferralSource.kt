@@ -24,6 +24,12 @@ class ReferralSource @JsonCreator private constructor(private val value: JsonFie
 
         @JvmField val PARTICIPANT = of("PARTICIPANT")
 
+        @JvmField val DELETED_PARTICIPANT = of("DELETED_PARTICIPANT")
+
+        @JvmField val IMPORT = of("IMPORT")
+
+        @JvmField val MANUAL = of("MANUAL")
+
         @JvmStatic fun of(value: String) = ReferralSource(JsonField.of(value))
     }
 
@@ -31,6 +37,9 @@ class ReferralSource @JsonCreator private constructor(private val value: JsonFie
     enum class Known {
         DIRECT,
         PARTICIPANT,
+        DELETED_PARTICIPANT,
+        IMPORT,
+        MANUAL,
     }
 
     /**
@@ -45,6 +54,9 @@ class ReferralSource @JsonCreator private constructor(private val value: JsonFie
     enum class Value {
         DIRECT,
         PARTICIPANT,
+        DELETED_PARTICIPANT,
+        IMPORT,
+        MANUAL,
         /**
          * An enum member indicating that [ReferralSource] was instantiated with an unknown value.
          */
@@ -62,6 +74,9 @@ class ReferralSource @JsonCreator private constructor(private val value: JsonFie
         when (this) {
             DIRECT -> Value.DIRECT
             PARTICIPANT -> Value.PARTICIPANT
+            DELETED_PARTICIPANT -> Value.DELETED_PARTICIPANT
+            IMPORT -> Value.IMPORT
+            MANUAL -> Value.MANUAL
             else -> Value._UNKNOWN
         }
 
@@ -77,6 +92,9 @@ class ReferralSource @JsonCreator private constructor(private val value: JsonFie
         when (this) {
             DIRECT -> Known.DIRECT
             PARTICIPANT -> Known.PARTICIPANT
+            DELETED_PARTICIPANT -> Known.DELETED_PARTICIPANT
+            IMPORT -> Known.IMPORT
+            MANUAL -> Known.MANUAL
             else -> throw GrowsurfInvalidDataException("Unknown ReferralSource: $value")
         }
 

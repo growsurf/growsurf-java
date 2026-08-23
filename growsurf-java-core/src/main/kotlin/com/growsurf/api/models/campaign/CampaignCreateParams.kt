@@ -44,7 +44,7 @@ private constructor(
     fun type(): Type = body.type()
 
     /**
-     * The program name. Defaults to "Untitled Program".
+     * The program name. Defaults to a generated friendly label plus the creation date.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -185,7 +185,7 @@ private constructor(
          */
         fun type(type: JsonField<Type>) = apply { body.type(type) }
 
-        /** The program name. Defaults to "Untitled Program". */
+        /** The program name. Defaults to a generated friendly label plus the creation date. */
         fun name(name: String) = apply { body.name(name) }
 
         /**
@@ -442,7 +442,7 @@ private constructor(
         fun type(): Type = type.getRequired("type")
 
         /**
-         * The program name. Defaults to "Untitled Program".
+         * The program name. Defaults to a generated friendly label plus the creation date.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -587,7 +587,7 @@ private constructor(
              */
             fun type(type: JsonField<Type>) = apply { this.type = type }
 
-            /** The program name. Defaults to "Untitled Program". */
+            /** The program name. Defaults to a generated friendly label plus the creation date. */
             fun name(name: String) = name(JsonField.of(name))
 
             /**

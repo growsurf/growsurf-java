@@ -184,7 +184,7 @@ class GrowsurfOkHttpClientAsync private constructor() {
 
         /**
          * Whether to throw an exception if any of the Jackson versions detected at runtime are
-         * incompatible with the SDK's minimum supported Jackson version (2.13.4).
+         * incompatible with the SDK's minimum supported Jackson version (2.14.0).
          *
          * Defaults to true. Use extreme caution when disabling this option. There is no guarantee
          * that the SDK will work correctly when using an incompatible Jackson version.

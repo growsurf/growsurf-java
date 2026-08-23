@@ -83,7 +83,10 @@ See https://www.github.com/growsurf/growsurf-java#jackson for more information.
     }
 }
 
-private val MINIMUM_JACKSON_VERSION: Version = VersionUtil.parseVersion("2.13.4", null, null)
+// 2.14.0, not 2.13.4: 2.13.x deserializes some documented response shapes to null (see the shape
+// cases in ObjectMappersTest). 2.14.0 is the lowest version the build actually compiles and tests
+// against, so it is the lowest version this check may admit.
+private val MINIMUM_JACKSON_VERSION: Version = VersionUtil.parseVersion("2.14.0", null, null)
 private val BAD_JACKSON_VERSIONS: Map<String, String> =
     mapOf("2.18.1" to "due to https://github.com/FasterXML/jackson-databind/issues/4639")
 private val RUNTIME_JACKSON_VERSIONS: List<Version> =

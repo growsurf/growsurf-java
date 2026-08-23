@@ -104,7 +104,7 @@ internal class RetryingHttpClientTest {
     @ParameterizedTest
     @ValueSource(booleans = [false, true])
     fun execute(async: Boolean) {
-        stubFor(post(urlPathEqualTo("/something")).willReturn(ok()))
+        stubFor(post(urlPathEqualTo("/api-key/rotate")).willReturn(ok()))
         val sleeper = RecordingSleeper()
         val retryingClient = retryingHttpClientBuilder(sleeper).build()
 
@@ -113,13 +113,13 @@ internal class RetryingHttpClientTest {
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(baseUrl)
-                    .addPathSegment("something")
+                    .addPathSegments("api-key", "rotate")
                     .build(),
                 async,
             )
 
         assertThat(response.statusCode()).isEqualTo(200)
-        verify(1, postRequestedFor(urlPathEqualTo("/something")))
+        verify(1, postRequestedFor(urlPathEqualTo("/api-key/rotate")))
         assertThat(sleeper.durations).isEmpty()
         assertNoResponseLeaks()
     }
@@ -128,7 +128,7 @@ internal class RetryingHttpClientTest {
     @ValueSource(booleans = [false, true])
     fun execute_withIdempotencyHeader(async: Boolean) {
         stubFor(
-            post(urlPathEqualTo("/something"))
+            post(urlPathEqualTo("/api-key/rotate"))
                 .withHeader("X-Some-Header", matching("stainless-java-retry-.+"))
                 .willReturn(ok())
         )
@@ -144,13 +144,39 @@ internal class RetryingHttpClientTest {
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(baseUrl)
-                    .addPathSegment("something")
+                    .addPathSegments("api-key", "rotate")
                     .build(),
                 async,
             )
 
         assertThat(response.statusCode()).isEqualTo(200)
-        verify(1, postRequestedFor(urlPathEqualTo("/something")))
+        verify(1, postRequestedFor(urlPathEqualTo("/api-key/rotate")))
+        assertThat(sleeper.durations).isEmpty()
+        assertNoResponseLeaks()
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = [false, true])
+    fun execute_doesNotRetryUnsafeMutation(async: Boolean) {
+        stubFor(post(urlPathEqualTo("/participant/email")).willReturn(serviceUnavailable()))
+        val sleeper = RecordingSleeper()
+        val retryingClient = retryingHttpClientBuilder(sleeper).maxRetries(2).build()
+
+        val response =
+            retryingClient.execute(
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(baseUrl)
+                    .addPathSegments("participant", "email")
+                    .build(),
+                async,
+            )
+
+        assertThat(response.statusCode()).isEqualTo(503)
+        verify(
+            1,
+            postRequestedFor(urlPathEqualTo("/participant/email")).withoutHeader("Idempotency-Key"),
+        )
         assertThat(sleeper.durations).isEmpty()
         assertNoResponseLeaks()
     }
@@ -160,7 +186,7 @@ internal class RetryingHttpClientTest {
     fun execute_withRetryAfterHeader(async: Boolean) {
         val retryAfterDate = "Wed, 21 Oct 2015 07:28:00 GMT"
         stubFor(
-            post(urlPathEqualTo("/something"))
+            post(urlPathEqualTo("/api-key/rotate"))
                 // First we fail with a retry after header given as a date
                 .inScenario("foo")
                 .whenScenarioStateIs(Scenario.STARTED)
@@ -168,7 +194,7 @@ internal class RetryingHttpClientTest {
                 .willSetStateTo("RETRY_AFTER_DATE")
         )
         stubFor(
-            post(urlPathEqualTo("/something"))
+            post(urlPathEqualTo("/api-key/rotate"))
                 // Then we fail with a retry after header given as a delay
                 .inScenario("foo")
                 .whenScenarioStateIs("RETRY_AFTER_DATE")
@@ -176,7 +202,7 @@ internal class RetryingHttpClientTest {
                 .willSetStateTo("RETRY_AFTER_DELAY")
         )
         stubFor(
-            post(urlPathEqualTo("/something"))
+            post(urlPathEqualTo("/api-key/rotate"))
                 // Then we return a success
                 .inScenario("foo")
                 .whenScenarioStateIs("RETRY_AFTER_DELAY")
@@ -196,7 +222,7 @@ internal class RetryingHttpClientTest {
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(baseUrl)
-                    .addPathSegment("something")
+                    .addPathSegments("api-key", "rotate")
                     .build(),
                 async,
             )
@@ -204,17 +230,17 @@ internal class RetryingHttpClientTest {
         assertThat(response.statusCode()).isEqualTo(200)
         verify(
             1,
-            postRequestedFor(urlPathEqualTo("/something"))
+            postRequestedFor(urlPathEqualTo("/api-key/rotate"))
                 .withHeader("x-stainless-retry-count", equalTo("0")),
         )
         verify(
             1,
-            postRequestedFor(urlPathEqualTo("/something"))
+            postRequestedFor(urlPathEqualTo("/api-key/rotate"))
                 .withHeader("x-stainless-retry-count", equalTo("1")),
         )
         verify(
             1,
-            postRequestedFor(urlPathEqualTo("/something"))
+            postRequestedFor(urlPathEqualTo("/api-key/rotate"))
                 .withHeader("x-stainless-retry-count", equalTo("2")),
         )
         assertThat(sleeper.durations)
@@ -227,14 +253,14 @@ internal class RetryingHttpClientTest {
     fun execute_withOverwrittenRetryCountHeader(async: Boolean) {
         val retryAfterDate = "Wed, 21 Oct 2015 07:28:00 GMT"
         stubFor(
-            post(urlPathEqualTo("/something"))
+            post(urlPathEqualTo("/api-key/rotate"))
                 .inScenario("foo") // first we fail with a retry after header given as a date
                 .whenScenarioStateIs(Scenario.STARTED)
                 .willReturn(serviceUnavailable().withHeader("Retry-After", retryAfterDate))
                 .willSetStateTo("RETRY_AFTER_DATE")
         )
         stubFor(
-            post(urlPathEqualTo("/something"))
+            post(urlPathEqualTo("/api-key/rotate"))
                 .inScenario("foo") // then we return a success
                 .whenScenarioStateIs("RETRY_AFTER_DATE")
                 .willReturn(ok())
@@ -251,7 +277,7 @@ internal class RetryingHttpClientTest {
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(baseUrl)
-                    .addPathSegment("something")
+                    .addPathSegments("api-key", "rotate")
                     .putHeader("x-stainless-retry-count", "42")
                     .build(),
                 async,
@@ -260,7 +286,7 @@ internal class RetryingHttpClientTest {
         assertThat(response.statusCode()).isEqualTo(200)
         verify(
             2,
-            postRequestedFor(urlPathEqualTo("/something"))
+            postRequestedFor(urlPathEqualTo("/api-key/rotate"))
                 .withHeader("x-stainless-retry-count", equalTo("42")),
         )
         assertThat(sleeper.durations).containsExactly(Duration.ofSeconds(5))
@@ -271,14 +297,14 @@ internal class RetryingHttpClientTest {
     @ValueSource(booleans = [false, true])
     fun execute_withRetryAfterMsHeader(async: Boolean) {
         stubFor(
-            post(urlPathEqualTo("/something"))
+            post(urlPathEqualTo("/api-key/rotate"))
                 .inScenario("foo")
                 .whenScenarioStateIs(Scenario.STARTED)
                 .willReturn(serviceUnavailable().withHeader("Retry-After-Ms", "10"))
                 .willSetStateTo("RETRY_AFTER_DELAY")
         )
         stubFor(
-            post(urlPathEqualTo("/something"))
+            post(urlPathEqualTo("/api-key/rotate"))
                 .inScenario("foo") // then we return a success
                 .whenScenarioStateIs("RETRY_AFTER_DELAY")
                 .willReturn(ok())
@@ -292,13 +318,13 @@ internal class RetryingHttpClientTest {
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(baseUrl)
-                    .addPathSegment("something")
+                    .addPathSegments("api-key", "rotate")
                     .build(),
                 async,
             )
 
         assertThat(response.statusCode()).isEqualTo(200)
-        verify(2, postRequestedFor(urlPathEqualTo("/something")))
+        verify(2, postRequestedFor(urlPathEqualTo("/api-key/rotate")))
         assertThat(sleeper.durations).containsExactly(Duration.ofMillis(10))
         assertNoResponseLeaks()
     }
@@ -306,7 +332,7 @@ internal class RetryingHttpClientTest {
     @ParameterizedTest
     @ValueSource(booleans = [false, true])
     fun execute_withRetryableException(async: Boolean) {
-        stubFor(post(urlPathEqualTo("/something")).willReturn(ok()))
+        stubFor(post(urlPathEqualTo("/api-key/rotate")).willReturn(ok()))
 
         var callCount = 0
         val failingHttpClient =
@@ -353,7 +379,7 @@ internal class RetryingHttpClientTest {
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(baseUrl)
-                    .addPathSegment("something")
+                    .addPathSegments("api-key", "rotate")
                     .build(),
                 async,
             )
@@ -361,12 +387,12 @@ internal class RetryingHttpClientTest {
         assertThat(response.statusCode()).isEqualTo(200)
         verify(
             1,
-            postRequestedFor(urlPathEqualTo("/something"))
+            postRequestedFor(urlPathEqualTo("/api-key/rotate"))
                 .withHeader("x-stainless-retry-count", equalTo("1")),
         )
         verify(
             0,
-            postRequestedFor(urlPathEqualTo("/something"))
+            postRequestedFor(urlPathEqualTo("/api-key/rotate"))
                 .withHeader("x-stainless-retry-count", equalTo("0")),
         )
         // Exponential backoff with jitter: 0.5s * jitter where jitter is in [0.75, 1.0].
@@ -378,7 +404,7 @@ internal class RetryingHttpClientTest {
     @ParameterizedTest
     @ValueSource(booleans = [false, true])
     fun execute_withExponentialBackoff(async: Boolean) {
-        stubFor(post(urlPathEqualTo("/something")).willReturn(serviceUnavailable()))
+        stubFor(post(urlPathEqualTo("/api-key/rotate")).willReturn(serviceUnavailable()))
         val sleeper = RecordingSleeper()
         val retryingClient = retryingHttpClientBuilder(sleeper).maxRetries(3).build()
 
@@ -387,14 +413,14 @@ internal class RetryingHttpClientTest {
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(baseUrl)
-                    .addPathSegment("something")
+                    .addPathSegments("api-key", "rotate")
                     .build(),
                 async,
             )
 
         // All retries exhausted; the last 503 response is returned.
         assertThat(response.statusCode()).isEqualTo(503)
-        verify(4, postRequestedFor(urlPathEqualTo("/something")))
+        verify(4, postRequestedFor(urlPathEqualTo("/api-key/rotate")))
         // Exponential backoff with jitter: backoff = min(0.5 * 2^(retries-1), 8) * jitter where
         // jitter is in [0.75, 1.0].
         assertThat(sleeper.durations).hasSize(3)
@@ -410,7 +436,7 @@ internal class RetryingHttpClientTest {
     @ParameterizedTest
     @ValueSource(booleans = [false, true])
     fun execute_withExponentialBackoffCap(async: Boolean) {
-        stubFor(post(urlPathEqualTo("/something")).willReturn(serviceUnavailable()))
+        stubFor(post(urlPathEqualTo("/api-key/rotate")).willReturn(serviceUnavailable()))
         val sleeper = RecordingSleeper()
         val retryingClient = retryingHttpClientBuilder(sleeper).maxRetries(6).build()
 
@@ -419,13 +445,13 @@ internal class RetryingHttpClientTest {
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(baseUrl)
-                    .addPathSegment("something")
+                    .addPathSegments("api-key", "rotate")
                     .build(),
                 async,
             )
 
         assertThat(response.statusCode()).isEqualTo(503)
-        verify(7, postRequestedFor(urlPathEqualTo("/something")))
+        verify(7, postRequestedFor(urlPathEqualTo("/api-key/rotate")))
         assertThat(sleeper.durations).hasSize(6)
         // retries=5: backoff hits the 8s cap * [0.75, 1.0]
         assertThat(sleeper.durations[4]).isBetween(Duration.ofMillis(6000), Duration.ofMillis(8000))
@@ -438,7 +464,7 @@ internal class RetryingHttpClientTest {
     @ValueSource(booleans = [false, true])
     fun execute_withRetryAfterMsPriorityOverRetryAfter(async: Boolean) {
         stubFor(
-            post(urlPathEqualTo("/something"))
+            post(urlPathEqualTo("/api-key/rotate"))
                 .inScenario("foo")
                 .whenScenarioStateIs(Scenario.STARTED)
                 .willReturn(
@@ -449,7 +475,7 @@ internal class RetryingHttpClientTest {
                 .willSetStateTo("RETRY")
         )
         stubFor(
-            post(urlPathEqualTo("/something"))
+            post(urlPathEqualTo("/api-key/rotate"))
                 .inScenario("foo")
                 .whenScenarioStateIs("RETRY")
                 .willReturn(ok())
@@ -463,7 +489,7 @@ internal class RetryingHttpClientTest {
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(baseUrl)
-                    .addPathSegment("something")
+                    .addPathSegments("api-key", "rotate")
                     .build(),
                 async,
             )
@@ -478,14 +504,14 @@ internal class RetryingHttpClientTest {
     @ValueSource(booleans = [false, true])
     fun execute_withRetryAfterUnparseable(async: Boolean) {
         stubFor(
-            post(urlPathEqualTo("/something"))
+            post(urlPathEqualTo("/api-key/rotate"))
                 .inScenario("foo")
                 .whenScenarioStateIs(Scenario.STARTED)
                 .willReturn(serviceUnavailable().withHeader("Retry-After", "not-a-date-or-number"))
                 .willSetStateTo("RETRY")
         )
         stubFor(
-            post(urlPathEqualTo("/something"))
+            post(urlPathEqualTo("/api-key/rotate"))
                 .inScenario("foo")
                 .whenScenarioStateIs("RETRY")
                 .willReturn(ok())
@@ -499,7 +525,7 @@ internal class RetryingHttpClientTest {
                 HttpRequest.builder()
                     .method(HttpMethod.POST)
                     .baseUrl(baseUrl)
-                    .addPathSegment("something")
+                    .addPathSegments("api-key", "rotate")
                     .build(),
                 async,
             )

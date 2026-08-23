@@ -511,6 +511,8 @@ private constructor(
         fun referrals(): Optional<Long> = referrals.getOptional("referrals")
 
         /**
+         * This participant's reward counts grouped by review and fulfillment status.
+         *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -828,6 +830,7 @@ private constructor(
              */
             fun referrals(referrals: JsonField<Long>) = apply { this.referrals = referrals }
 
+            /** This participant's reward counts grouped by review and fulfillment status. */
             fun rewardStatus(
                 rewardStatus: CampaignRetrieveAnalyticsResponse.StatusCounts.RewardStatus
             ) = rewardStatus(JsonField.of(rewardStatus))
@@ -1406,6 +1409,7 @@ private constructor(
         private val totalRevenue: JsonField<Long>,
         private val tumblrShares: JsonField<Long>,
         private val twitterShares: JsonField<Long>,
+        private val uniqueCommissionReferrals: JsonField<Long>,
         private val uniqueImpressions: JsonField<Long>,
         private val wechatShares: JsonField<Long>,
         private val whatsAppShares: JsonField<Long>,
@@ -1493,6 +1497,9 @@ private constructor(
             @JsonProperty("twitterShares")
             @ExcludeMissing
             twitterShares: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("uniqueCommissionReferrals")
+            @ExcludeMissing
+            uniqueCommissionReferrals: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("uniqueImpressions")
             @ExcludeMissing
             uniqueImpressions: JsonField<Long> = JsonMissing.of(),
@@ -1530,6 +1537,7 @@ private constructor(
             totalRevenue,
             tumblrShares,
             twitterShares,
+            uniqueCommissionReferrals,
             uniqueImpressions,
             wechatShares,
             whatsAppShares,
@@ -1706,6 +1714,16 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun twitterShares(): Optional<Long> = twitterShares.getOptional("twitterShares")
+
+        /**
+         * Affiliate programs only. Number of unique referred participants represented by
+         * commissions in the requested timeframe.
+         *
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun uniqueCommissionReferrals(): Optional<Long> =
+            uniqueCommissionReferrals.getOptional("uniqueCommissionReferrals")
 
         /**
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -1976,6 +1994,16 @@ private constructor(
         fun _twitterShares(): JsonField<Long> = twitterShares
 
         /**
+         * Returns the raw JSON value of [uniqueCommissionReferrals].
+         *
+         * Unlike [uniqueCommissionReferrals], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("uniqueCommissionReferrals")
+        @ExcludeMissing
+        fun _uniqueCommissionReferrals(): JsonField<Long> = uniqueCommissionReferrals
+
+        /**
          * Returns the raw JSON value of [uniqueImpressions].
          *
          * Unlike [uniqueImpressions], this method doesn't throw if the JSON field has an unexpected
@@ -2053,6 +2081,7 @@ private constructor(
             private var totalRevenue: JsonField<Long> = JsonMissing.of()
             private var tumblrShares: JsonField<Long> = JsonMissing.of()
             private var twitterShares: JsonField<Long> = JsonMissing.of()
+            private var uniqueCommissionReferrals: JsonField<Long> = JsonMissing.of()
             private var uniqueImpressions: JsonField<Long> = JsonMissing.of()
             private var wechatShares: JsonField<Long> = JsonMissing.of()
             private var whatsAppShares: JsonField<Long> = JsonMissing.of()
@@ -2087,6 +2116,7 @@ private constructor(
                 totalRevenue = series.totalRevenue
                 tumblrShares = series.tumblrShares
                 twitterShares = series.twitterShares
+                uniqueCommissionReferrals = series.uniqueCommissionReferrals
                 uniqueImpressions = series.uniqueImpressions
                 wechatShares = series.wechatShares
                 whatsAppShares = series.whatsAppShares
@@ -2439,6 +2469,24 @@ private constructor(
                 this.twitterShares = twitterShares
             }
 
+            /**
+             * Affiliate programs only. Number of unique referred participants represented by
+             * commissions in the requested timeframe.
+             */
+            fun uniqueCommissionReferrals(uniqueCommissionReferrals: Long) =
+                uniqueCommissionReferrals(JsonField.of(uniqueCommissionReferrals))
+
+            /**
+             * Sets [Builder.uniqueCommissionReferrals] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.uniqueCommissionReferrals] with a well-typed [Long]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun uniqueCommissionReferrals(uniqueCommissionReferrals: JsonField<Long>) = apply {
+                this.uniqueCommissionReferrals = uniqueCommissionReferrals
+            }
+
             fun uniqueImpressions(uniqueImpressions: Long) =
                 uniqueImpressions(JsonField.of(uniqueImpressions))
 
@@ -2532,6 +2580,7 @@ private constructor(
                     totalRevenue,
                     tumblrShares,
                     twitterShares,
+                    uniqueCommissionReferrals,
                     uniqueImpressions,
                     wechatShares,
                     whatsAppShares,
@@ -2573,6 +2622,7 @@ private constructor(
             totalRevenue()
             tumblrShares()
             twitterShares()
+            uniqueCommissionReferrals()
             uniqueImpressions()
             wechatShares()
             whatsAppShares()
@@ -2616,6 +2666,7 @@ private constructor(
                 (if (totalRevenue.asKnown().isPresent) 1 else 0) +
                 (if (tumblrShares.asKnown().isPresent) 1 else 0) +
                 (if (twitterShares.asKnown().isPresent) 1 else 0) +
+                (if (uniqueCommissionReferrals.asKnown().isPresent) 1 else 0) +
                 (if (uniqueImpressions.asKnown().isPresent) 1 else 0) +
                 (if (wechatShares.asKnown().isPresent) 1 else 0) +
                 (if (whatsAppShares.asKnown().isPresent) 1 else 0)
@@ -2653,6 +2704,7 @@ private constructor(
                 totalRevenue == other.totalRevenue &&
                 tumblrShares == other.tumblrShares &&
                 twitterShares == other.twitterShares &&
+                uniqueCommissionReferrals == other.uniqueCommissionReferrals &&
                 uniqueImpressions == other.uniqueImpressions &&
                 wechatShares == other.wechatShares &&
                 whatsAppShares == other.whatsAppShares &&
@@ -2688,6 +2740,7 @@ private constructor(
                 totalRevenue,
                 tumblrShares,
                 twitterShares,
+                uniqueCommissionReferrals,
                 uniqueImpressions,
                 wechatShares,
                 whatsAppShares,
@@ -2698,7 +2751,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Series{androidNativeShares=$androidNativeShares, blueskyShares=$blueskyShares, copyRefLinkShares=$copyRefLinkShares, emailShares=$emailShares, email=$email, facebookShares=$facebookShares, impressions=$impressions, invites=$invites, iosNativeShares=$iosNativeShares, linkedInShares=$linkedInShares, messengerShares=$messengerShares, participants=$participants, periodStart=$periodStart, pinterestShares=$pinterestShares, qrcodeShares=$qrcodeShares, redditShares=$redditShares, referralCreditExpireds=$referralCreditExpireds, referralCreditPendings=$referralCreditPendings, referrals=$referrals, smsShares=$smsShares, telegramShares=$telegramShares, threadsShares=$threadsShares, totalCommissionCount=$totalCommissionCount, totalCommissions=$totalCommissions, totalRevenue=$totalRevenue, tumblrShares=$tumblrShares, twitterShares=$twitterShares, uniqueImpressions=$uniqueImpressions, wechatShares=$wechatShares, whatsAppShares=$whatsAppShares, additionalProperties=$additionalProperties}"
+            "Series{androidNativeShares=$androidNativeShares, blueskyShares=$blueskyShares, copyRefLinkShares=$copyRefLinkShares, emailShares=$emailShares, email=$email, facebookShares=$facebookShares, impressions=$impressions, invites=$invites, iosNativeShares=$iosNativeShares, linkedInShares=$linkedInShares, messengerShares=$messengerShares, participants=$participants, periodStart=$periodStart, pinterestShares=$pinterestShares, qrcodeShares=$qrcodeShares, redditShares=$redditShares, referralCreditExpireds=$referralCreditExpireds, referralCreditPendings=$referralCreditPendings, referrals=$referrals, smsShares=$smsShares, telegramShares=$telegramShares, threadsShares=$threadsShares, totalCommissionCount=$totalCommissionCount, totalCommissions=$totalCommissions, totalRevenue=$totalRevenue, tumblrShares=$tumblrShares, twitterShares=$twitterShares, uniqueCommissionReferrals=$uniqueCommissionReferrals, uniqueImpressions=$uniqueImpressions, wechatShares=$wechatShares, whatsAppShares=$whatsAppShares, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

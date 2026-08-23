@@ -14,6 +14,7 @@ import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.http.Headers
 import com.growsurf.api.core.jsonMapper
 import com.growsurf.api.errors.BadRequestException
+import com.growsurf.api.errors.ConflictException
 import com.growsurf.api.errors.GrowsurfException
 import com.growsurf.api.errors.InternalServerException
 import com.growsurf.api.errors.NotFoundException
@@ -189,6 +190,40 @@ internal class ErrorHandlingTest {
         val e = assertThrows<NotFoundException> { campaignService.list() }
 
         assertThat(e.statusCode()).isEqualTo(404)
+        assertThat(e.headers().toMap()).contains(entry(HEADER_NAME, listOf(HEADER_VALUE)))
+        assertThat(e.body()).isEqualTo(ERROR_JSON)
+    }
+
+    @Test
+    fun campaignList409() {
+        val campaignService = client.campaign()
+        stubFor(
+            get(anyUrl())
+                .willReturn(
+                    status(409).withHeader(HEADER_NAME, HEADER_VALUE).withBody(ERROR_JSON_BYTES)
+                )
+        )
+
+        val e = assertThrows<ConflictException> { campaignService.list() }
+
+        assertThat(e.statusCode()).isEqualTo(409)
+        assertThat(e.headers().toMap()).contains(entry(HEADER_NAME, listOf(HEADER_VALUE)))
+        assertThat(e.body()).isEqualTo(ERROR_JSON)
+    }
+
+    @Test
+    fun campaignList409WithRawResponse() {
+        val campaignService = client.campaign().withRawResponse()
+        stubFor(
+            get(anyUrl())
+                .willReturn(
+                    status(409).withHeader(HEADER_NAME, HEADER_VALUE).withBody(ERROR_JSON_BYTES)
+                )
+        )
+
+        val e = assertThrows<ConflictException> { campaignService.list() }
+
+        assertThat(e.statusCode()).isEqualTo(409)
         assertThat(e.headers().toMap()).contains(entry(HEADER_NAME, listOf(HEADER_VALUE)))
         assertThat(e.body()).isEqualTo(ERROR_JSON)
     }

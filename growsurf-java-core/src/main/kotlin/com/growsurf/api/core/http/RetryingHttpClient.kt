@@ -137,10 +137,18 @@ private constructor(
         sleeper.close()
     }
 
-    private fun isRetryable(request: HttpRequest): Boolean =
-        // Some requests, such as when a request body is being streamed, cannot be retried because
-        // the body data aren't available on subsequent attempts.
-        request.body?.repeatable() ?: true
+    /** Returns whether replaying this request cannot duplicate a customer-visible mutation. */
+    private fun isRetryable(request: HttpRequest): Boolean {
+        val safeOperation =
+            request.method == HttpMethod.GET ||
+                request.method == HttpMethod.HEAD ||
+                (request.method == HttpMethod.POST &&
+                    request.pathSegments == listOf("api-key", "rotate"))
+
+        // Some requests, such as when a request body is streamed, cannot be replayed because the
+        // body data are unavailable on subsequent attempts.
+        return safeOperation && (request.body?.repeatable() ?: true)
+    }
 
     private fun setRetryCountHeader(request: HttpRequest, retries: Int): HttpRequest =
         request.toBuilder().replaceHeaders("X-Stainless-Retry-Count", retries.toString()).build()
@@ -148,7 +156,13 @@ private constructor(
     private fun idempotencyKey(): String = "stainless-java-retry-${UUID.randomUUID()}"
 
     private fun maybeAddIdempotencyHeader(request: HttpRequest): HttpRequest {
-        if (idempotencyHeader == null || request.headers.names().contains(idempotencyHeader)) {
+        val isRotation =
+            request.method == HttpMethod.POST && request.pathSegments == listOf("api-key", "rotate")
+        if (
+            idempotencyHeader == null ||
+                request.headers.names().contains(idempotencyHeader) ||
+                !isRotation
+        ) {
             return request
         }
 

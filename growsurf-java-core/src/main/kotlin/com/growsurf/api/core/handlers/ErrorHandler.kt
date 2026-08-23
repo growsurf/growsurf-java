@@ -10,6 +10,7 @@ import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.http.HttpResponse
 import com.growsurf.api.core.http.HttpResponse.Handler
 import com.growsurf.api.errors.BadRequestException
+import com.growsurf.api.errors.ConflictException
 import com.growsurf.api.errors.InternalServerException
 import com.growsurf.api.errors.NotFoundException
 import com.growsurf.api.errors.PermissionDeniedException
@@ -55,6 +56,11 @@ internal fun errorHandler(errorBodyHandler: Handler<JsonValue>): Handler<HttpRes
                         .build()
                 404 ->
                     throw NotFoundException.builder()
+                        .headers(response.headers())
+                        .body(errorBodyHandler.handle(response))
+                        .build()
+                409 ->
+                    throw ConflictException.builder()
                         .headers(response.headers())
                         .body(errorBodyHandler.handle(response))
                         .build()
