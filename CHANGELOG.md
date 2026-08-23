@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.0](https://github.com/growsurf/growsurf-java/compare/v1.2.1...v1.3.0) (2026-08-23)
+
+
+### Features
+
+* add ConflictException, uniqueCommissionReferrals, and new ReferralSource values ([b4240d0](https://github.com/growsurf/growsurf-java/commit/b4240d0a3fbbd76852d3582608e4672af6825158))
+* **api:** add affiliate and payout destination APIs ([62d0771](https://github.com/growsurf/growsurf-java/commit/62d077113d83d4ae45924a3c2740f786e3969033))
+
+
+### Bug Fixes
+
+* **api:** align analytics reward status models ([1f66d65](https://github.com/growsurf/growsurf-java/commit/1f66d658e7b8b42edd39afef16de7284f3efa063))
+
 ## [1.2.1](https://github.com/growsurf/growsurf-java/compare/v1.2.0...v1.2.1) (2026-07-14)
 
 
