@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.0](https://github.com/growsurf/growsurf-java/compare/v1.3.0...v1.4.0) (2026-08-25)
+
+
+### Features
+
+* **api:** add reward and commission event support ([2726470](https://github.com/growsurf/growsurf-java/commit/272647027e764951a85811a7b04dda3f90cfa158))
+
 ## [1.3.0](https://github.com/growsurf/growsurf-java/compare/v1.2.1...v1.3.0) (2026-08-23)
 
 
