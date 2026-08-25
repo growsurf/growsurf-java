@@ -8,6 +8,7 @@ import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.jsonMapper
 import com.growsurf.api.models.campaign.Campaign
 import com.growsurf.api.models.campaign.CommissionStructure
+import com.growsurf.api.models.campaign.RewardEvent
 import com.growsurf.api.models.campaign.RewardTaxValuation
 import com.growsurf.api.models.campaign.participant.FraudRiskLevel
 import com.growsurf.api.models.campaign.participant.ParticipantBulkDeleteResponse
@@ -80,7 +81,7 @@ internal class ProGuardCompatibilityTest {
                         .approvalRequired(true)
                         .duration("duration")
                         .durationInMonths(0L)
-                        .event("event")
+                        .eventEnum(CommissionStructure.Event.SALE)
                         .hasIntro(true)
                         .hasMaxAmount(true)
                         .holdDuration(0L)
@@ -100,6 +101,7 @@ internal class ProGuardCompatibilityTest {
                 .conversionsRequired(0L)
                 .couponCode("couponCode")
                 .description("description")
+                .event(RewardEvent.LEAD)
                 .imageUrl("imageUrl")
                 .isVisible(true)
                 .limit(0L)
@@ -154,7 +156,7 @@ internal class ProGuardCompatibilityTest {
                                 .approvalRequired(true)
                                 .duration("duration")
                                 .durationInMonths(0L)
-                                .event("event")
+                                .eventEnum(CommissionStructure.Event.SALE)
                                 .hasIntro(true)
                                 .hasMaxAmount(true)
                                 .holdDuration(0L)
@@ -174,6 +176,7 @@ internal class ProGuardCompatibilityTest {
                         .conversionsRequired(0L)
                         .couponCode("couponCode")
                         .description("description")
+                        .event(RewardEvent.LEAD)
                         .imageUrl("imageUrl")
                         .isVisible(true)
                         .limit(0L)
@@ -253,7 +256,7 @@ internal class ProGuardCompatibilityTest {
                                 .approvalRequired(true)
                                 .duration("duration")
                                 .durationInMonths(0L)
-                                .event("event")
+                                .eventEnum(CommissionStructure.Event.SALE)
                                 .hasIntro(true)
                                 .hasMaxAmount(true)
                                 .holdDuration(0L)
@@ -273,6 +276,7 @@ internal class ProGuardCompatibilityTest {
                         .conversionsRequired(0L)
                         .couponCode("couponCode")
                         .description("description")
+                        .event(RewardEvent.LEAD)
                         .imageUrl("imageUrl")
                         .isVisible(true)
                         .limit(0L)

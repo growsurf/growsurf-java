@@ -18,7 +18,7 @@ internal class CommissionStructureTest {
                 .approvalRequired(true)
                 .duration("duration")
                 .durationInMonths(0L)
-                .event("event")
+                .eventEnum(CommissionStructure.Event.SALE)
                 .hasIntro(true)
                 .hasMaxAmount(true)
                 .holdDuration(0L)
@@ -40,7 +40,8 @@ internal class CommissionStructureTest {
         assertThat(commissionStructure.approvalRequired()).contains(true)
         assertThat(commissionStructure.duration()).contains("duration")
         assertThat(commissionStructure.durationInMonths()).contains(0L)
-        assertThat(commissionStructure.event()).contains("event")
+        assertThat(commissionStructure.event()).contains("SALE")
+        assertThat(commissionStructure.eventEnum()).contains(CommissionStructure.Event.SALE)
         assertThat(commissionStructure.hasIntro()).contains(true)
         assertThat(commissionStructure.hasMaxAmount()).contains(true)
         assertThat(commissionStructure.holdDuration()).contains(0L)
@@ -67,7 +68,7 @@ internal class CommissionStructureTest {
                 .approvalRequired(true)
                 .duration("duration")
                 .durationInMonths(0L)
-                .event("event")
+                .eventEnum(CommissionStructure.Event.LEAD)
                 .hasIntro(true)
                 .hasMaxAmount(true)
                 .holdDuration(0L)
@@ -91,5 +92,19 @@ internal class CommissionStructureTest {
             )
 
         assertThat(roundtrippedCommissionStructure).isEqualTo(commissionStructure)
+        assertThat(roundtrippedCommissionStructure.eventEnum())
+            .contains(CommissionStructure.Event.LEAD)
+    }
+
+    @Test
+    fun unknownEventRemainsForwardCompatibleUntilStrictValidation() {
+        val commissionStructure = CommissionStructure.builder().event("PURCHASE").build()
+
+        assertThat(commissionStructure.event()).contains("PURCHASE")
+        assertThat(commissionStructure.eventEnum())
+            .contains(CommissionStructure.Event.of("PURCHASE"))
+        assertThat(commissionStructure.eventEnum().get().value())
+            .isEqualTo(CommissionStructure.Event.Value._UNKNOWN)
+        assertThat(commissionStructure.isValid()).isFalse()
     }
 }

@@ -3,6 +3,7 @@
 package com.growsurf.api.models.campaign.rewards
 
 import com.growsurf.api.core.JsonValue
+import com.growsurf.api.models.campaign.RewardEvent
 import com.growsurf.api.models.campaign.RewardTaxValuation
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -16,6 +17,7 @@ internal class RewardCreateParamsTest {
             .type(RewardCreateParams.Type.SINGLE_SIDED)
             .title("title")
             .description("description")
+            .event(RewardEvent.LEAD)
             .referralDescription("referralDescription")
             .imageUrl("imageUrl")
             .isVisible(true)
@@ -67,6 +69,7 @@ internal class RewardCreateParamsTest {
                 .id("id")
                 .type(RewardCreateParams.Type.MILESTONE)
                 .title("title")
+                .event(RewardEvent.CONVERSION)
                 .conversionsRequired(3L)
                 .build()
 
@@ -74,6 +77,7 @@ internal class RewardCreateParamsTest {
 
         assertThat(body.type()).isEqualTo(RewardCreateParams.Type.MILESTONE)
         assertThat(body.title()).contains("title")
+        assertThat(body.event()).contains(RewardEvent.CONVERSION)
         assertThat(body.conversionsRequired()).contains(3L)
     }
 

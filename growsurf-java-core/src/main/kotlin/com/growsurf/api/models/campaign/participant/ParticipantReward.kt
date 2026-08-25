@@ -601,6 +601,8 @@ private constructor(
 
             @JvmField val FULFILLED = of("FULFILLED")
 
+            @JvmField val CANCELLED = of("CANCELLED")
+
             @JvmStatic fun of(value: String) = Status(JsonField.of(value))
         }
 
@@ -608,6 +610,7 @@ private constructor(
         enum class Known {
             PENDING,
             FULFILLED,
+            CANCELLED,
         }
 
         /**
@@ -622,6 +625,7 @@ private constructor(
         enum class Value {
             PENDING,
             FULFILLED,
+            CANCELLED,
             /** An enum member indicating that [Status] was instantiated with an unknown value. */
             _UNKNOWN,
         }
@@ -637,6 +641,7 @@ private constructor(
             when (this) {
                 PENDING -> Value.PENDING
                 FULFILLED -> Value.FULFILLED
+                CANCELLED -> Value.CANCELLED
                 else -> Value._UNKNOWN
             }
 
@@ -653,6 +658,7 @@ private constructor(
             when (this) {
                 PENDING -> Known.PENDING
                 FULFILLED -> Known.FULFILLED
+                CANCELLED -> Known.CANCELLED
                 else -> throw GrowsurfInvalidDataException("Unknown Status: $value")
             }
 

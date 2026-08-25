@@ -32,12 +32,15 @@ private constructor(
 
     fun participantIdOrEmail(): Optional<String> = Optional.ofNullable(participantIdOrEmail)
 
-    /** Last number of days to retrieve analytics for. Defaults to 365. Maximum 1825. */
+    /**
+     * Last number of days for optional `series` and `email` analytics. Defaults to 365. Maximum
+     * 1825. Does not filter the top-level all-time totals.
+     */
     fun days(): Optional<Long> = Optional.ofNullable(days)
 
     /**
-     * End date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days`
-     * is not set.
+     * End of a custom `series` and `email` analytics window as a Unix timestamp in milliseconds.
+     * Set it together with `startDate`. Does not filter the top-level all-time totals.
      */
     fun endDate(): Optional<Long> = Optional.ofNullable(endDate)
 
@@ -57,8 +60,8 @@ private constructor(
     fun interval(): Optional<Interval> = Optional.ofNullable(interval)
 
     /**
-     * Start date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days`
-     * is not set.
+     * Start of a custom `series` and `email` analytics window as a Unix timestamp in milliseconds.
+     * Set it together with `endDate`. Does not filter the top-level all-time totals.
      */
     fun startDate(): Optional<Long> = Optional.ofNullable(startDate)
 
@@ -125,7 +128,10 @@ private constructor(
         fun participantIdOrEmail(participantIdOrEmail: Optional<String>) =
             participantIdOrEmail(participantIdOrEmail.getOrNull())
 
-        /** Last number of days to retrieve analytics for. Defaults to 365. Maximum 1825. */
+        /**
+         * Last number of days for optional `series` and `email` analytics. Defaults to 365.
+         * Maximum 1825. Does not filter the top-level all-time totals.
+         */
         fun days(days: Long?) = apply { this.days = days }
 
         /**
@@ -139,8 +145,9 @@ private constructor(
         fun days(days: Optional<Long>) = days(days.getOrNull())
 
         /**
-         * End date of the analytics timeframe as a Unix timestamp in milliseconds. Required if
-         * `days` is not set.
+         * End of a custom `series` and `email` analytics window as a Unix timestamp in
+         * milliseconds. Set it together with `startDate`. Does not filter the top-level all-time
+         * totals.
          */
         fun endDate(endDate: Long?) = apply { this.endDate = endDate }
 
@@ -177,8 +184,9 @@ private constructor(
         fun interval(interval: Optional<Interval>) = interval(interval.getOrNull())
 
         /**
-         * Start date of the analytics timeframe as a Unix timestamp in milliseconds. Required if
-         * `days` is not set.
+         * Start of a custom `series` and `email` analytics window as a Unix timestamp in
+         * milliseconds. Set it together with `endDate`. Does not filter the top-level all-time
+         * totals.
          */
         fun startDate(startDate: Long?) = apply { this.startDate = startDate }
 

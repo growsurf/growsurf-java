@@ -25,7 +25,7 @@ internal class ParticipantRewardTest {
                         .approvalRequired(true)
                         .duration("duration")
                         .durationInMonths(0L)
-                        .event("event")
+                        .eventEnum(CommissionStructure.Event.SALE)
                         .hasIntro(true)
                         .hasMaxAmount(true)
                         .holdDuration(0L)
@@ -63,7 +63,7 @@ internal class ParticipantRewardTest {
                     .approvalRequired(true)
                     .duration("duration")
                     .durationInMonths(0L)
-                    .event("event")
+                    .eventEnum(CommissionStructure.Event.SALE)
                     .hasIntro(true)
                     .hasMaxAmount(true)
                     .holdDuration(0L)
@@ -96,7 +96,7 @@ internal class ParticipantRewardTest {
             ParticipantReward.builder()
                 .id("id")
                 .rewardId("rewardId")
-                .status(ParticipantReward.Status.PENDING)
+                .status(ParticipantReward.Status.CANCELLED)
                 .approved(true)
                 .approvedAt(0L)
                 .commissionStructure(
@@ -105,7 +105,7 @@ internal class ParticipantRewardTest {
                         .approvalRequired(true)
                         .duration("duration")
                         .durationInMonths(0L)
-                        .event("event")
+                        .eventEnum(CommissionStructure.Event.SALE)
                         .hasIntro(true)
                         .hasMaxAmount(true)
                         .holdDuration(0L)
@@ -138,5 +138,10 @@ internal class ParticipantRewardTest {
             )
 
         assertThat(roundtrippedParticipantReward).isEqualTo(participantReward)
+        assertThat(roundtrippedParticipantReward.isValid()).isTrue()
+        assertThat(roundtrippedParticipantReward.status().known())
+            .isEqualTo(ParticipantReward.Status.Known.CANCELLED)
+        assertThat(roundtrippedParticipantReward.status().value())
+            .isEqualTo(ParticipantReward.Status.Value.CANCELLED)
     }
 }

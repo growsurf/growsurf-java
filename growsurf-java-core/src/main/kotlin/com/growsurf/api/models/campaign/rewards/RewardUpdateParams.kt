@@ -18,6 +18,7 @@ import com.growsurf.api.core.http.QueryParams
 import com.growsurf.api.core.toImmutable
 import com.growsurf.api.errors.GrowsurfInvalidDataException
 import com.growsurf.api.models.campaign.CommissionStructure
+import com.growsurf.api.models.campaign.RewardEvent
 import com.growsurf.api.models.campaign.RewardTaxValuation
 import java.util.Collections
 import java.util.Objects
@@ -56,6 +57,13 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun description(): Optional<String> = body.description()
+
+    /**
+     * The event that earns this Campaign Reward. Applies only to `SINGLE_SIDED`, `DOUBLE_SIDED`,
+     * and `MILESTONE` rewards. Use `LEAD` only when `installation.referralTrigger` is `CUSTOM`.
+     * When omitted, the stored event is unchanged.
+     */
+    fun event(): Optional<RewardEvent> = body.event()
 
     /**
      * The reward description shown to the referred friend (double-sided rewards).
@@ -226,6 +234,9 @@ private constructor(
      * Unlike [description], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _description(): JsonField<String> = body._description()
+
+    /** Returns the raw JSON value of [event]. */
+    fun _event(): JsonField<RewardEvent> = body._event()
 
     /**
      * Returns the raw JSON value of [referralDescription].
@@ -446,6 +457,16 @@ private constructor(
          * value.
          */
         fun description(description: JsonField<String>) = apply { body.description(description) }
+
+        /**
+         * The event that earns this Campaign Reward. Applies only to `SINGLE_SIDED`,
+         * `DOUBLE_SIDED`, and `MILESTONE` rewards. Use `LEAD` only when
+         * `installation.referralTrigger` is `CUSTOM`. When omitted, the stored event is unchanged.
+         */
+        fun event(event: RewardEvent) = apply { body.event(event) }
+
+        /** Sets [Builder.event] to an arbitrary JSON value. */
+        fun event(event: JsonField<RewardEvent>) = apply { body.event(event) }
 
         /** The reward description shown to the referred friend (double-sided rewards). */
         fun referralDescription(referralDescription: String?) = apply {
@@ -916,6 +937,7 @@ private constructor(
     private constructor(
         private val title: JsonField<String>,
         private val description: JsonField<String>,
+        private val event: JsonField<RewardEvent>,
         private val referralDescription: JsonField<String>,
         private val imageUrl: JsonField<String>,
         private val isVisible: JsonField<Boolean>,
@@ -943,6 +965,7 @@ private constructor(
             @JsonProperty("description")
             @ExcludeMissing
             description: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("event") @ExcludeMissing event: JsonField<RewardEvent> = JsonMissing.of(),
             @JsonProperty("referralDescription")
             @ExcludeMissing
             referralDescription: JsonField<String> = JsonMissing.of(),
@@ -996,6 +1019,7 @@ private constructor(
         ) : this(
             title,
             description,
+            event,
             referralDescription,
             imageUrl,
             isVisible,
@@ -1032,6 +1056,13 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun description(): Optional<String> = description.getOptional("description")
+
+        /**
+         * The event that earns this Campaign Reward. Applies only to `SINGLE_SIDED`,
+         * `DOUBLE_SIDED`, and `MILESTONE` rewards. Use `LEAD` only when
+         * `installation.referralTrigger` is `CUSTOM`. When omitted, the stored event is unchanged.
+         */
+        fun event(): Optional<RewardEvent> = event.getOptional("event")
 
         /**
          * The reward description shown to the referred friend (double-sided rewards).
@@ -1212,6 +1243,9 @@ private constructor(
         @JsonProperty("description")
         @ExcludeMissing
         fun _description(): JsonField<String> = description
+
+        /** Returns the raw JSON value of [event]. */
+        @JsonProperty("event") @ExcludeMissing fun _event(): JsonField<RewardEvent> = event
 
         /**
          * Returns the raw JSON value of [referralDescription].
@@ -1396,6 +1430,7 @@ private constructor(
 
             private var title: JsonField<String> = JsonMissing.of()
             private var description: JsonField<String> = JsonMissing.of()
+            private var event: JsonField<RewardEvent> = JsonMissing.of()
             private var referralDescription: JsonField<String> = JsonMissing.of()
             private var imageUrl: JsonField<String> = JsonMissing.of()
             private var isVisible: JsonField<Boolean> = JsonMissing.of()
@@ -1420,6 +1455,7 @@ private constructor(
             internal fun from(body: Body) = apply {
                 title = body.title
                 description = body.description
+                event = body.event
                 referralDescription = body.referralDescription
                 imageUrl = body.imageUrl
                 isVisible = body.isVisible
@@ -1466,6 +1502,17 @@ private constructor(
             fun description(description: JsonField<String>) = apply {
                 this.description = description
             }
+
+            /**
+             * The event that earns this Campaign Reward. Applies only to `SINGLE_SIDED`,
+             * `DOUBLE_SIDED`, and `MILESTONE` rewards. Use `LEAD` only when
+             * `installation.referralTrigger` is `CUSTOM`. When omitted, the stored event is
+             * unchanged.
+             */
+            fun event(event: RewardEvent) = event(JsonField.of(event))
+
+            /** Sets [Builder.event] to an arbitrary JSON value. */
+            fun event(event: JsonField<RewardEvent>) = apply { this.event = event }
 
             /** The reward description shown to the referred friend (double-sided rewards). */
             fun referralDescription(referralDescription: String?) =
@@ -1811,6 +1858,7 @@ private constructor(
                 Body(
                     title,
                     description,
+                    event,
                     referralDescription,
                     imageUrl,
                     isVisible,
@@ -1851,6 +1899,7 @@ private constructor(
 
             title()
             description()
+            event().ifPresent { it.validate() }
             referralDescription()
             imageUrl()
             isVisible()
@@ -1890,6 +1939,7 @@ private constructor(
         internal fun validity(): Int =
             (if (title.asKnown().isPresent) 1 else 0) +
                 (if (description.asKnown().isPresent) 1 else 0) +
+                (event.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (referralDescription.asKnown().isPresent) 1 else 0) +
                 (if (imageUrl.asKnown().isPresent) 1 else 0) +
                 (if (isVisible.asKnown().isPresent) 1 else 0) +
@@ -1917,6 +1967,7 @@ private constructor(
             return other is Body &&
                 title == other.title &&
                 description == other.description &&
+                event == other.event &&
                 referralDescription == other.referralDescription &&
                 imageUrl == other.imageUrl &&
                 isVisible == other.isVisible &&
@@ -1942,6 +1993,7 @@ private constructor(
             Objects.hash(
                 title,
                 description,
+                event,
                 referralDescription,
                 imageUrl,
                 isVisible,
@@ -1967,7 +2019,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{title=$title, description=$description, referralDescription=$referralDescription, imageUrl=$imageUrl, isVisible=$isVisible, isUnlimited=$isUnlimited, referredRewardUpfront=$referredRewardUpfront, limit=$limit, conversionsRequired=$conversionsRequired, numberOfWinners=$numberOfWinners, order=$order, limitDuration=$limitDuration, nextMilestonePrefix=$nextMilestonePrefix, nextMilestoneSuffix=$nextMilestoneSuffix, couponCode=$couponCode, referralCouponCode=$referralCouponCode, metadata=$metadata, commissionStructure=$commissionStructure, value=$value, referredValue=$referredValue, additionalProperties=$additionalProperties}"
+            "Body{title=$title, description=$description, event=$event, referralDescription=$referralDescription, imageUrl=$imageUrl, isVisible=$isVisible, isUnlimited=$isUnlimited, referredRewardUpfront=$referredRewardUpfront, limit=$limit, conversionsRequired=$conversionsRequired, numberOfWinners=$numberOfWinners, order=$order, limitDuration=$limitDuration, nextMilestonePrefix=$nextMilestonePrefix, nextMilestoneSuffix=$nextMilestoneSuffix, couponCode=$couponCode, referralCouponCode=$referralCouponCode, metadata=$metadata, commissionStructure=$commissionStructure, value=$value, referredValue=$referredValue, additionalProperties=$additionalProperties}"
     }
 
     /** Custom key/value metadata (single-level; values are stored as strings). */

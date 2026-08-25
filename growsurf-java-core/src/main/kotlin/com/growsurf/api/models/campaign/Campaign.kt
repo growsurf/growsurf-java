@@ -557,6 +557,7 @@ private constructor(
         private val conversionsRequired: JsonField<Long>,
         private val couponCode: JsonField<String>,
         private val description: JsonField<String>,
+        private val event: JsonField<RewardEvent>,
         private val imageUrl: JsonField<String>,
         private val isVisible: JsonField<Boolean>,
         private val limit: JsonField<Long>,
@@ -596,6 +597,7 @@ private constructor(
             @JsonProperty("description")
             @ExcludeMissing
             description: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("event") @ExcludeMissing event: JsonField<RewardEvent> = JsonMissing.of(),
             @JsonProperty("imageUrl")
             @ExcludeMissing
             imageUrl: JsonField<String> = JsonMissing.of(),
@@ -641,6 +643,7 @@ private constructor(
             conversionsRequired,
             couponCode,
             description,
+            event,
             imageUrl,
             isVisible,
             limit,
@@ -709,6 +712,12 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun description(): Optional<String> = description.getOptional("description")
+
+        /**
+         * The event that earns this Campaign Reward. Present only for `SINGLE_SIDED`,
+         * `DOUBLE_SIDED`, and `MILESTONE` rewards. Legacy Campaign Rewards return `CONVERSION`.
+         */
+        fun event(): Optional<RewardEvent> = event.getOptional("event")
 
         /**
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -869,6 +878,9 @@ private constructor(
         @JsonProperty("description")
         @ExcludeMissing
         fun _description(): JsonField<String> = description
+
+        /** Returns the raw JSON value of [event]. */
+        @JsonProperty("event") @ExcludeMissing fun _event(): JsonField<RewardEvent> = event
 
         /**
          * Returns the raw JSON value of [imageUrl].
@@ -1031,6 +1043,7 @@ private constructor(
             private var conversionsRequired: JsonField<Long> = JsonMissing.of()
             private var couponCode: JsonField<String> = JsonMissing.of()
             private var description: JsonField<String> = JsonMissing.of()
+            private var event: JsonField<RewardEvent> = JsonMissing.of()
             private var imageUrl: JsonField<String> = JsonMissing.of()
             private var isVisible: JsonField<Boolean> = JsonMissing.of()
             private var limit: JsonField<Long> = JsonMissing.of()
@@ -1057,6 +1070,7 @@ private constructor(
                 conversionsRequired = reward.conversionsRequired
                 couponCode = reward.couponCode
                 description = reward.description
+                event = reward.event
                 imageUrl = reward.imageUrl
                 isVisible = reward.isVisible
                 limit = reward.limit
@@ -1200,6 +1214,18 @@ private constructor(
             fun description(description: JsonField<String>) = apply {
                 this.description = description
             }
+
+            /**
+             * The event that earns this Campaign Reward. Present only for `SINGLE_SIDED`,
+             * `DOUBLE_SIDED`, and `MILESTONE` rewards. Legacy Campaign Rewards return `CONVERSION`.
+             */
+            fun event(event: RewardEvent?) = event(JsonField.ofNullable(event))
+
+            /** Alias for calling [Builder.event] with `event.orElse(null)`. */
+            fun event(event: Optional<RewardEvent>) = event(event.getOrNull())
+
+            /** Sets [Builder.event] to an arbitrary JSON value. */
+            fun event(event: JsonField<RewardEvent>) = apply { this.event = event }
 
             fun imageUrl(imageUrl: String?) = imageUrl(JsonField.ofNullable(imageUrl))
 
@@ -1500,6 +1526,7 @@ private constructor(
                     conversionsRequired,
                     couponCode,
                     description,
+                    event,
                     imageUrl,
                     isVisible,
                     limit,
@@ -1542,6 +1569,7 @@ private constructor(
             conversionsRequired()
             couponCode()
             description()
+            event().ifPresent { it.validate() }
             imageUrl()
             isVisible()
             limit()
@@ -1583,6 +1611,7 @@ private constructor(
                 (if (conversionsRequired.asKnown().isPresent) 1 else 0) +
                 (if (couponCode.asKnown().isPresent) 1 else 0) +
                 (if (description.asKnown().isPresent) 1 else 0) +
+                (event.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (imageUrl.asKnown().isPresent) 1 else 0) +
                 (if (isVisible.asKnown().isPresent) 1 else 0) +
                 (if (limit.asKnown().isPresent) 1 else 0) +
@@ -2027,6 +2056,7 @@ private constructor(
                 conversionsRequired == other.conversionsRequired &&
                 couponCode == other.couponCode &&
                 description == other.description &&
+                event == other.event &&
                 imageUrl == other.imageUrl &&
                 isVisible == other.isVisible &&
                 limit == other.limit &&
@@ -2054,6 +2084,7 @@ private constructor(
                 conversionsRequired,
                 couponCode,
                 description,
+                event,
                 imageUrl,
                 isVisible,
                 limit,
@@ -2075,7 +2106,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Reward{id=$id, isUnlimited=$isUnlimited, metadata=$metadata, type=$type, commissionStructure=$commissionStructure, conversionsRequired=$conversionsRequired, couponCode=$couponCode, description=$description, imageUrl=$imageUrl, isVisible=$isVisible, limit=$limit, limitDuration=$limitDuration, nextMilestonePrefix=$nextMilestonePrefix, nextMilestoneSuffix=$nextMilestoneSuffix, numberOfWinners=$numberOfWinners, order=$order, referralCouponCode=$referralCouponCode, referralDescription=$referralDescription, referredRewardUpfront=$referredRewardUpfront, referredValue=$referredValue, title=$title, value=$value, additionalProperties=$additionalProperties}"
+            "Reward{id=$id, isUnlimited=$isUnlimited, metadata=$metadata, type=$type, commissionStructure=$commissionStructure, conversionsRequired=$conversionsRequired, couponCode=$couponCode, description=$description, event=$event, imageUrl=$imageUrl, isVisible=$isVisible, limit=$limit, limitDuration=$limitDuration, nextMilestonePrefix=$nextMilestonePrefix, nextMilestoneSuffix=$nextMilestoneSuffix, numberOfWinners=$numberOfWinners, order=$order, referralCouponCode=$referralCouponCode, referralDescription=$referralDescription, referredRewardUpfront=$referredRewardUpfront, referredValue=$referredValue, title=$title, value=$value, additionalProperties=$additionalProperties}"
     }
 
     class Status @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
