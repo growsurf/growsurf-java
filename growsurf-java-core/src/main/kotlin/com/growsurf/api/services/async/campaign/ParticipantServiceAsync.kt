@@ -576,7 +576,9 @@ interface ParticipantServiceAsync {
      * for affiliate programs). Pass `include=email` for `sent` (accepted for delivery),
      * `delivered`, `opened`, `clicked`, `bounced`, and `spamComplaints` metrics attributed to this
      * participant, including invitations they sent. Use `include=email,series` to include the same
-     * counts in each UTC series bucket.
+     * counts in each UTC series bucket. `days`, `startDate`, and `endDate` filter only the optional
+     * `series` and `email` data. They do not filter the top-level `analytics`, `ranks`, or
+     * `shareCount` values.
      */
     fun retrieveAnalytics(
         participantIdOrEmail: String,

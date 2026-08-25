@@ -142,10 +142,20 @@ private constructor(
     fun durationInMonths(): Optional<Long> = durationInMonths.getOptional("durationInMonths")
 
     /**
+     * The event that generates a commission: `CLICK`, `LEAD`, or `SALE`. Missing legacy values read
+     * as `SALE`.
+     */
+    @Deprecated("Use eventEnum() for the typed commission event.")
+    fun event(): Optional<String> = event.getOptional("event")
+
+    /**
+     * The typed event that generates a commission: `CLICK`, `LEAD`, or `SALE`. Missing legacy
+     * values read as `SALE`.
+     *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun event(): Optional<String> = event.getOptional("event")
+    fun eventEnum(): Optional<Event> = event.getOptional("event").map(Event::of)
 
     /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -562,10 +572,23 @@ private constructor(
             this.durationInMonths = durationInMonths
         }
 
+        /**
+         * Sets the event that generates a commission.
+         *
+         * @deprecated Use [eventEnum] with a typed [Event] value.
+         */
+        @Deprecated("Use eventEnum(CommissionStructure.Event?) for the typed commission event.")
         fun event(event: String?) = event(JsonField.ofNullable(event))
 
         /** Alias for calling [Builder.event] with `event.orElse(null)`. */
+        @Deprecated("Use eventEnum(Optional<CommissionStructure.Event>) instead.")
         fun event(event: Optional<String>) = event(event.getOrNull())
+
+        /** Sets the event that generates a commission: `CLICK`, `LEAD`, or `SALE`. */
+        fun eventEnum(event: Event?) = event(JsonField.ofNullable(event?.asString()))
+
+        /** Alias for calling [Builder.eventEnum] with `event.orElse(null)`. */
+        fun eventEnum(event: Optional<Event>) = eventEnum(event.getOrNull())
 
         /**
          * Sets [Builder.event] to an arbitrary JSON value.
@@ -927,7 +950,7 @@ private constructor(
         approvalRequired()
         duration()
         durationInMonths()
-        event()
+        eventEnum().ifPresent { it.validate() }
         hasIntro()
         hasMaxAmount()
         holdDuration()
@@ -965,7 +988,7 @@ private constructor(
             (if (approvalRequired.asKnown().isPresent) 1 else 0) +
             (if (duration.asKnown().isPresent) 1 else 0) +
             (if (durationInMonths.asKnown().isPresent) 1 else 0) +
-            (if (event.asKnown().isPresent) 1 else 0) +
+            (eventEnum().getOrNull()?.validity() ?: 0) +
             (if (hasIntro.asKnown().isPresent) 1 else 0) +
             (if (hasMaxAmount.asKnown().isPresent) 1 else 0) +
             (if (holdDuration.asKnown().isPresent) 1 else 0) +
@@ -980,6 +1003,102 @@ private constructor(
             (if (minPaidReferrals.asKnown().isPresent) 1 else 0) +
             (if (percent.asKnown().isPresent) 1 else 0) +
             (type.asKnown().getOrNull()?.validity() ?: 0)
+
+    /** The event that generates a commission. */
+    class Event @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /** Returns this class instance's raw value. */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val CLICK = of("CLICK")
+
+            @JvmField val LEAD = of("LEAD")
+
+            @JvmField val SALE = of("SALE")
+
+            @JvmStatic fun of(value: String) = Event(JsonField.of(value))
+        }
+
+        /** An enum containing [Event]'s known values. */
+        enum class Known {
+            CLICK,
+            LEAD,
+            SALE,
+        }
+
+        /** An enum containing [Event]'s known values, as well as an [_UNKNOWN] member. */
+        enum class Value {
+            CLICK,
+            LEAD,
+            SALE,
+            /** An enum member indicating that [Event] was instantiated with an unknown value. */
+            _UNKNOWN,
+        }
+
+        /** Returns the known value or [Value._UNKNOWN] for a newer server value. */
+        fun value(): Value =
+            when (this) {
+                CLICK -> Value.CLICK
+                LEAD -> Value.LEAD
+                SALE -> Value.SALE
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns the known value.
+         *
+         * @throws GrowsurfInvalidDataException if this instance contains an unknown value.
+         */
+        fun known(): Known =
+            when (this) {
+                CLICK -> Known.CLICK
+                LEAD -> Known.LEAD
+                SALE -> Known.SALE
+                else -> throw GrowsurfInvalidDataException("Unknown Event: $value")
+            }
+
+        /** Returns this class instance's primitive wire representation. */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                GrowsurfInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /** Validates that this instance contains a known commission event. */
+        fun validate(): Event = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: GrowsurfInvalidDataException) {
+                false
+            }
+
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Event && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
 
     class Type @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 

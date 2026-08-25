@@ -5,6 +5,7 @@ package com.growsurf.api.models.campaign.rewards
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.jsonMapper
+import com.growsurf.api.models.campaign.RewardEvent
 import com.growsurf.api.models.campaign.RewardTaxValuation
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -26,6 +27,7 @@ internal class RewardTest {
                 .conversionsRequired(0L)
                 .couponCode("couponCode")
                 .description("description")
+                .event(RewardEvent.LEAD)
                 .imageUrl("imageUrl")
                 .isVisible(true)
                 .limit(0L)
@@ -64,6 +66,7 @@ internal class RewardTest {
         assertThat(reward.conversionsRequired()).contains(0L)
         assertThat(reward.couponCode()).contains("couponCode")
         assertThat(reward.description()).contains("description")
+        assertThat(reward.event()).contains(RewardEvent.LEAD)
         assertThat(reward.imageUrl()).contains("imageUrl")
         assertThat(reward.isVisible()).contains(true)
         assertThat(reward.limit()).contains(0L)
@@ -108,6 +111,7 @@ internal class RewardTest {
                 .conversionsRequired(0L)
                 .couponCode("couponCode")
                 .description("description")
+                .event(RewardEvent.LEAD)
                 .imageUrl("imageUrl")
                 .isVisible(true)
                 .limit(0L)

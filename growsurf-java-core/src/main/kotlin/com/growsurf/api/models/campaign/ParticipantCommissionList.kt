@@ -259,6 +259,7 @@ private constructor(
         private val amount: JsonField<Long>,
         private val createdAt: JsonField<Long>,
         private val currencyIso: JsonField<String>,
+        private val event: JsonField<CommissionEvent>,
         private val referredId: JsonField<String>,
         private val referrerId: JsonField<String>,
         private val saleAmount: JsonField<Long>,
@@ -288,6 +289,9 @@ private constructor(
             @JsonProperty("currencyISO")
             @ExcludeMissing
             currencyIso: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("event")
+            @ExcludeMissing
+            event: JsonField<CommissionEvent> = JsonMissing.of(),
             @JsonProperty("referredId")
             @ExcludeMissing
             referredId: JsonField<String> = JsonMissing.of(),
@@ -335,6 +339,7 @@ private constructor(
             amount,
             createdAt,
             currencyIso,
+            event,
             referredId,
             referrerId,
             saleAmount,
@@ -377,6 +382,9 @@ private constructor(
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun currencyIso(): String = currencyIso.getRequired("currencyISO")
+
+        /** The event that created the commission. */
+        fun event(): CommissionEvent = event.getRequired("event")
 
         /**
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
@@ -506,6 +514,9 @@ private constructor(
         @JsonProperty("currencyISO")
         @ExcludeMissing
         fun _currencyIso(): JsonField<String> = currencyIso
+
+        /** Returns the raw JSON value of [event]. */
+        @JsonProperty("event") @ExcludeMissing fun _event(): JsonField<CommissionEvent> = event
 
         /**
          * Returns the raw JSON value of [referredId].
@@ -667,6 +678,7 @@ private constructor(
              * .amount()
              * .createdAt()
              * .currencyIso()
+             * .event()
              * .referredId()
              * .referrerId()
              * .saleAmount()
@@ -683,6 +695,7 @@ private constructor(
             private var amount: JsonField<Long>? = null
             private var createdAt: JsonField<Long>? = null
             private var currencyIso: JsonField<String>? = null
+            private var event: JsonField<CommissionEvent>? = null
             private var referredId: JsonField<String>? = null
             private var referrerId: JsonField<String>? = null
             private var saleAmount: JsonField<Long>? = null
@@ -707,6 +720,7 @@ private constructor(
                 amount = commission.amount
                 createdAt = commission.createdAt
                 currencyIso = commission.currencyIso
+                event = commission.event
                 referredId = commission.referredId
                 referrerId = commission.referrerId
                 saleAmount = commission.saleAmount
@@ -781,6 +795,12 @@ private constructor(
             fun currencyIso(currencyIso: JsonField<String>) = apply {
                 this.currencyIso = currencyIso
             }
+
+            /** The event that created the commission. */
+            fun event(event: CommissionEvent) = event(JsonField.of(event))
+
+            /** Sets [Builder.event] to an arbitrary JSON value. */
+            fun event(event: JsonField<CommissionEvent>) = apply { this.event = event }
 
             fun referredId(referredId: String) = referredId(JsonField.of(referredId))
 
@@ -1081,6 +1101,7 @@ private constructor(
              * .amount()
              * .createdAt()
              * .currencyIso()
+             * .event()
              * .referredId()
              * .referrerId()
              * .saleAmount()
@@ -1095,6 +1116,7 @@ private constructor(
                     checkRequired("amount", amount),
                     checkRequired("createdAt", createdAt),
                     checkRequired("currencyIso", currencyIso),
+                    checkRequired("event", event),
                     checkRequired("referredId", referredId),
                     checkRequired("referrerId", referrerId),
                     checkRequired("saleAmount", saleAmount),
@@ -1135,6 +1157,7 @@ private constructor(
             amount()
             createdAt()
             currencyIso()
+            event().validate()
             referredId()
             referrerId()
             saleAmount()
@@ -1174,6 +1197,7 @@ private constructor(
                 (if (amount.asKnown().isPresent) 1 else 0) +
                 (if (createdAt.asKnown().isPresent) 1 else 0) +
                 (if (currencyIso.asKnown().isPresent) 1 else 0) +
+                (event.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (referredId.asKnown().isPresent) 1 else 0) +
                 (if (referrerId.asKnown().isPresent) 1 else 0) +
                 (if (saleAmount.asKnown().isPresent) 1 else 0) +
@@ -1358,6 +1382,7 @@ private constructor(
                 amount == other.amount &&
                 createdAt == other.createdAt &&
                 currencyIso == other.currencyIso &&
+                event == other.event &&
                 referredId == other.referredId &&
                 referrerId == other.referrerId &&
                 saleAmount == other.saleAmount &&
@@ -1383,6 +1408,7 @@ private constructor(
                 amount,
                 createdAt,
                 currencyIso,
+                event,
                 referredId,
                 referrerId,
                 saleAmount,
@@ -1406,7 +1432,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Commission{id=$id, amount=$amount, createdAt=$createdAt, currencyIso=$currencyIso, referredId=$referredId, referrerId=$referrerId, saleAmount=$saleAmount, status=$status, amountInCampaignCurrency=$amountInCampaignCurrency, approvedAt=$approvedAt, campaignCurrencyIso=$campaignCurrencyIso, exchangeRate=$exchangeRate, exchangeRateAt=$exchangeRateAt, fxError=$fxError, holdDuration=$holdDuration, paidAt=$paidAt, payoutQueuedAt=$payoutQueuedAt, provider=$provider, reversedAt=$reversedAt, saleAmountInCampaignCurrency=$saleAmountInCampaignCurrency, additionalProperties=$additionalProperties}"
+            "Commission{id=$id, amount=$amount, createdAt=$createdAt, currencyIso=$currencyIso, event=$event, referredId=$referredId, referrerId=$referrerId, saleAmount=$saleAmount, status=$status, amountInCampaignCurrency=$amountInCampaignCurrency, approvedAt=$approvedAt, campaignCurrencyIso=$campaignCurrencyIso, exchangeRate=$exchangeRate, exchangeRateAt=$exchangeRateAt, fxError=$fxError, holdDuration=$holdDuration, paidAt=$paidAt, payoutQueuedAt=$payoutQueuedAt, provider=$provider, reversedAt=$reversedAt, saleAmountInCampaignCurrency=$saleAmountInCampaignCurrency, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

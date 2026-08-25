@@ -2,6 +2,7 @@
 
 package com.growsurf.api.models.campaign
 
+import com.growsurf.api.core.jsonMapper
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -20,6 +21,7 @@ internal class CampaignCreateParamsTest {
                 CampaignCreateParams.Reward.builder()
                     .type(CampaignCreateParams.Reward.Type.SINGLE_SIDED)
                     .title("title")
+                    .event(RewardEvent.LEAD)
                     .build()
             )
             .build()
@@ -36,6 +38,7 @@ internal class CampaignCreateParamsTest {
                     CampaignCreateParams.Reward.builder()
                         .type(CampaignCreateParams.Reward.Type.SINGLE_SIDED)
                         .title("title")
+                        .event(RewardEvent.CONVERSION)
                         .build()
                 )
                 .build()
@@ -50,6 +53,7 @@ internal class CampaignCreateParamsTest {
                 CampaignCreateParams.Reward.builder()
                     .type(CampaignCreateParams.Reward.Type.SINGLE_SIDED)
                     .title("title")
+                    .event(RewardEvent.CONVERSION)
                     .build()
             )
     }
@@ -61,5 +65,26 @@ internal class CampaignCreateParamsTest {
         val body = params._body()
 
         assertThat(body.type()).isEqualTo(CampaignCreateParams.Type.REFERRAL)
+    }
+
+    @Test
+    fun rewardEventSerializesInCampaignCreateBody() {
+        val reward =
+            CampaignCreateParams.Reward.builder()
+                .type(CampaignCreateParams.Reward.Type.MILESTONE)
+                .event(RewardEvent.LEAD)
+                .build()
+        val params =
+            CampaignCreateParams.builder()
+                .type(CampaignCreateParams.Type.REFERRAL)
+                .addReward(reward)
+                .build()
+
+        val json = jsonMapper().writeValueAsString(params._body())
+
+        assertThat(reward.event()).contains(RewardEvent.LEAD)
+        assertThat(reward._event().asKnown()).contains(RewardEvent.LEAD)
+        assertThat(reward.toBuilder().build()).isEqualTo(reward)
+        assertThat(json).contains("\"rewards\":[").contains("\"event\":\"LEAD\"")
     }
 }

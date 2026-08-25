@@ -3,6 +3,7 @@
 package com.growsurf.api.models.campaign.rewards
 
 import com.growsurf.api.core.JsonValue
+import com.growsurf.api.models.campaign.RewardEvent
 import com.growsurf.api.models.campaign.RewardTaxValuation
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -16,6 +17,7 @@ internal class RewardUpdateParamsTest {
             .campaignRewardId("campaignRewardId")
             .title("title")
             .description("description")
+            .event(RewardEvent.LEAD)
             .referralDescription("referralDescription")
             .imageUrl("imageUrl")
             .isVisible(true)
@@ -68,12 +70,14 @@ internal class RewardUpdateParamsTest {
                 .id("id")
                 .campaignRewardId("campaignRewardId")
                 .title("title")
+                .event(RewardEvent.CONVERSION)
                 .isVisible(false)
                 .build()
 
         val body = params._body()
 
         assertThat(body.title()).contains("title")
+        assertThat(body.event()).contains(RewardEvent.CONVERSION)
         assertThat(body.isVisible()).contains(false)
     }
 
