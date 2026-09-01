@@ -142,15 +142,17 @@ private constructor(
     fun durationInMonths(): Optional<Long> = durationInMonths.getOptional("durationInMonths")
 
     /**
-     * The event that generates a commission: `CLICK`, `LEAD`, or `SALE`. Missing legacy values read
-     * as `SALE`.
+     * The event that generates a commission. `CLICK` and `LEAD` require `FIXED` with a positive
+     * `amount`; `amountISO` defaults to the program currency when omitted. `SALE` supports `FIXED`
+     * or `PERCENT`. Missing legacy values read as `SALE`.
      */
     @Deprecated("Use eventEnum() for the typed commission event.")
     fun event(): Optional<String> = event.getOptional("event")
 
     /**
-     * The typed event that generates a commission: `CLICK`, `LEAD`, or `SALE`. Missing legacy
-     * values read as `SALE`.
+     * The typed event that generates a commission. `CLICK` and `LEAD` require `FIXED` with a
+     * positive `amount`; `amountISO` defaults to the program currency when omitted. `SALE` supports
+     * `FIXED` or `PERCENT`. Missing legacy values read as `SALE`.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -573,7 +575,8 @@ private constructor(
         }
 
         /**
-         * Sets the event that generates a commission.
+         * Sets the event that generates a commission. `CLICK` and `LEAD` require `FIXED` with a
+         * positive `amount`; `amountISO` defaults to the program currency when omitted.
          *
          * @deprecated Use [eventEnum] with a typed [Event] value.
          */
@@ -584,7 +587,10 @@ private constructor(
         @Deprecated("Use eventEnum(Optional<CommissionStructure.Event>) instead.")
         fun event(event: Optional<String>) = event(event.getOrNull())
 
-        /** Sets the event that generates a commission: `CLICK`, `LEAD`, or `SALE`. */
+        /**
+         * Sets the event that generates a commission. `CLICK` and `LEAD` require `FIXED` with a
+         * positive `amount`; `amountISO` defaults to the program currency when omitted.
+         */
         fun eventEnum(event: Event?) = event(JsonField.ofNullable(event?.asString()))
 
         /** Alias for calling [Builder.eventEnum] with `event.orElse(null)`. */

@@ -21,6 +21,7 @@ import com.growsurf.api.models.campaign.AffiliateApplicationListResponse
 import com.growsurf.api.models.campaign.AffiliateInvite
 import com.growsurf.api.models.campaign.AffiliateInviteListResponse
 import com.growsurf.api.models.campaign.Campaign
+import com.growsurf.api.models.campaign.CampaignActivationAnalyticsResponse
 import com.growsurf.api.models.campaign.CampaignCloneParams
 import com.growsurf.api.models.campaign.CampaignCreateAffiliateInviteParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenParams
@@ -36,6 +37,7 @@ import com.growsurf.api.models.campaign.CampaignListPayoutsParams
 import com.growsurf.api.models.campaign.CampaignListReferralsParams
 import com.growsurf.api.models.campaign.CampaignListResponse
 import com.growsurf.api.models.campaign.CampaignResendAffiliateInviteParams
+import com.growsurf.api.models.campaign.CampaignRetrieveActivationAnalyticsParams
 import com.growsurf.api.models.campaign.CampaignRetrieveAffiliateApplicationParams
 import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsParams
 import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsResponse
@@ -59,6 +61,8 @@ import com.growsurf.api.services.blocking.campaign.OptionsService
 import com.growsurf.api.services.blocking.campaign.OptionsServiceImpl
 import com.growsurf.api.services.blocking.campaign.ParticipantService
 import com.growsurf.api.services.blocking.campaign.ParticipantServiceImpl
+import com.growsurf.api.services.blocking.campaign.ProgramResourcesService
+import com.growsurf.api.services.blocking.campaign.ProgramResourcesServiceImpl
 import com.growsurf.api.services.blocking.campaign.RewardService
 import com.growsurf.api.services.blocking.campaign.RewardServiceImpl
 import com.growsurf.api.services.blocking.campaign.RewardsService
@@ -82,6 +86,10 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
     private val commission: CommissionService by lazy { CommissionServiceImpl(clientOptions) }
 
     private val rewards: RewardsService by lazy { RewardsServiceImpl(clientOptions) }
+
+    private val resources: ProgramResourcesService by lazy {
+        ProgramResourcesServiceImpl(clientOptions)
+    }
 
     private val design: DesignService by lazy { DesignServiceImpl(clientOptions) }
 
@@ -108,6 +116,9 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
 
     /** Campaign reward (`CampaignReward`) configuration operations. */
     override fun rewards(): RewardsService = rewards
+
+    /** Program Resource management and secure FILE upload operations. */
+    override fun resources(): ProgramResourcesService = resources
 
     /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
     override fun design(): DesignService = design
@@ -199,6 +210,13 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
         // get /campaign/{id}/analytics
         withRawResponse().retrieveAnalytics(params, requestOptions).parse()
 
+    override fun retrieveActivationAnalytics(
+        params: CampaignRetrieveActivationAnalyticsParams,
+        requestOptions: RequestOptions,
+    ): CampaignActivationAnalyticsResponse =
+        // get /campaign/{id}/analytics/activation
+        withRawResponse().retrieveActivationAnalytics(params, requestOptions).parse()
+
     override fun listAffiliateApplications(
         params: CampaignListAffiliateApplicationsParams,
         requestOptions: RequestOptions,
@@ -270,6 +288,10 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
             RewardsServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val resources: ProgramResourcesService.WithRawResponse by lazy {
+            ProgramResourcesServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val design: DesignService.WithRawResponse by lazy {
             DesignServiceImpl.WithRawResponseImpl(clientOptions)
         }
@@ -307,6 +329,9 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
 
         /** Campaign reward (`CampaignReward`) configuration operations. */
         override fun rewards(): RewardsService.WithRawResponse = rewards
+
+        /** Program Resource management and secure FILE upload operations. */
+        override fun resources(): ProgramResourcesService.WithRawResponse = resources
 
         /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
         override fun design(): DesignService.WithRawResponse = design
@@ -674,6 +699,37 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
             return errorHandler.handle(response).parseable {
                 response
                     .use { retrieveAnalyticsHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val retrieveActivationAnalyticsHandler:
+            Handler<CampaignActivationAnalyticsResponse> =
+            jsonHandler<CampaignActivationAnalyticsResponse>(clientOptions.jsonMapper)
+
+        override fun retrieveActivationAnalytics(
+            params: CampaignRetrieveActivationAnalyticsParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<CampaignActivationAnalyticsResponse> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("id", params.id().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("campaign", params._pathParam(0), "analytics", "activation")
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { retrieveActivationAnalyticsHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

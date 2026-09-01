@@ -350,8 +350,8 @@ interface ParticipantService {
      * cancellation, or chargeback) against a previously recorded transaction and reverses or
      * adjusts the referrer's commission. The inverse of Record Affiliate Transaction. Identify the
      * original transaction with the same identifier(s) you sent when recording it. Commissions
-     * already paid out to the affiliate are not clawed back; the amendment is recorded for tax
-     * reporting only.
+     * already paid out to the affiliate are not clawed back. The amendment still updates the sale
+     * revenue used in program reporting; full refunds and chargebacks also update tax reporting.
      */
     fun refundTransaction(
         participantIdOrEmail: String,
@@ -550,9 +550,10 @@ interface ParticipantService {
      * for affiliate programs). Pass `include=email` for `sent` (accepted for delivery),
      * `delivered`, `opened`, `clicked`, `bounced`, and `spamComplaints` metrics attributed to this
      * participant, including invitations they sent. Use `include=email,series` to include the same
-     * counts in each UTC series bucket. `days`, `startDate`, and `endDate` filter only the optional
-     * `series` and `email` data. They do not filter the top-level `analytics`, `ranks`, or
-     * `shareCount` values.
+     * counts in each UTC series bucket. Use `include=activation` for covered cohort and
+     * first-milestone values. Add `series` to include covered portal views and share actions in
+     * each bucket. `days`, `startDate`, and `endDate` do not filter the top-level `analytics`,
+     * `ranks`, `shareCount`, or `activation` values.
      */
     fun retrieveAnalytics(
         participantIdOrEmail: String,

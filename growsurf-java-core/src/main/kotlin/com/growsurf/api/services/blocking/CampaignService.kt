@@ -11,6 +11,7 @@ import com.growsurf.api.models.campaign.AffiliateApplicationListResponse
 import com.growsurf.api.models.campaign.AffiliateInvite
 import com.growsurf.api.models.campaign.AffiliateInviteListResponse
 import com.growsurf.api.models.campaign.Campaign
+import com.growsurf.api.models.campaign.CampaignActivationAnalyticsResponse
 import com.growsurf.api.models.campaign.CampaignCloneParams
 import com.growsurf.api.models.campaign.CampaignCreateAffiliateInviteParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenParams
@@ -26,6 +27,7 @@ import com.growsurf.api.models.campaign.CampaignListPayoutsParams
 import com.growsurf.api.models.campaign.CampaignListReferralsParams
 import com.growsurf.api.models.campaign.CampaignListResponse
 import com.growsurf.api.models.campaign.CampaignResendAffiliateInviteParams
+import com.growsurf.api.models.campaign.CampaignRetrieveActivationAnalyticsParams
 import com.growsurf.api.models.campaign.CampaignRetrieveAffiliateApplicationParams
 import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsParams
 import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsResponse
@@ -43,6 +45,7 @@ import com.growsurf.api.services.blocking.campaign.EmailsService
 import com.growsurf.api.services.blocking.campaign.InstallationService
 import com.growsurf.api.services.blocking.campaign.OptionsService
 import com.growsurf.api.services.blocking.campaign.ParticipantService
+import com.growsurf.api.services.blocking.campaign.ProgramResourcesService
 import com.growsurf.api.services.blocking.campaign.RewardService
 import com.growsurf.api.services.blocking.campaign.RewardsService
 import com.growsurf.api.services.blocking.campaign.WebhooksService
@@ -72,6 +75,9 @@ interface CampaignService {
 
     /** Campaign reward (`CampaignReward`) configuration operations. */
     fun rewards(): RewardsService
+
+    /** Program Resource management and secure FILE upload operations. */
+    fun resources(): ProgramResourcesService
 
     /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
     fun design(): DesignService
@@ -405,10 +411,9 @@ interface CampaignService {
     /**
      * Retrieves analytics for a program. Pass `interval` to also get a time-series (`series`)
      * alongside the totals, and `include` to add previous-period totals, status breakdowns, derived
-     * rates, or email performance. Add `email` to `include` for `sent` (accepted for delivery),
-     * `delivered`, `opened`, `clicked`, `bounced`, and `spamComplaints` metrics plus per-email-type
-     * breakdowns. Email rates are ratios from `0` to `1`, and `isPartial` identifies windows that
-     * begin before complete coverage.
+     * rates, email performance, or participant engagement. Add `engagement` for covered activity
+     * totals, comparisons, series, and breakdowns. Availability states distinguish unknown values
+     * from measured zeroes.
      */
     fun retrieveAnalytics(id: String): CampaignRetrieveAnalyticsResponse =
         retrieveAnalytics(id, CampaignRetrieveAnalyticsParams.none())
@@ -444,6 +449,53 @@ interface CampaignService {
         requestOptions: RequestOptions,
     ): CampaignRetrieveAnalyticsResponse =
         retrieveAnalytics(id, CampaignRetrieveAnalyticsParams.none(), requestOptions)
+
+    /**
+     * Retrieves activation cohorts for eligible participants. Availability states preserve unknown
+     * pre-coverage values instead of reporting false zeroes.
+     */
+    fun retrieveActivationAnalytics(id: String): CampaignActivationAnalyticsResponse =
+        retrieveActivationAnalytics(id, CampaignRetrieveActivationAnalyticsParams.none())
+
+    /** @see retrieveActivationAnalytics */
+    fun retrieveActivationAnalytics(
+        id: String,
+        params: CampaignRetrieveActivationAnalyticsParams =
+            CampaignRetrieveActivationAnalyticsParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CampaignActivationAnalyticsResponse =
+        retrieveActivationAnalytics(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see retrieveActivationAnalytics */
+    fun retrieveActivationAnalytics(
+        id: String,
+        params: CampaignRetrieveActivationAnalyticsParams =
+            CampaignRetrieveActivationAnalyticsParams.none(),
+    ): CampaignActivationAnalyticsResponse =
+        retrieveActivationAnalytics(id, params, RequestOptions.none())
+
+    /** @see retrieveActivationAnalytics */
+    fun retrieveActivationAnalytics(
+        params: CampaignRetrieveActivationAnalyticsParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CampaignActivationAnalyticsResponse
+
+    /** @see retrieveActivationAnalytics */
+    fun retrieveActivationAnalytics(
+        params: CampaignRetrieveActivationAnalyticsParams
+    ): CampaignActivationAnalyticsResponse =
+        retrieveActivationAnalytics(params, RequestOptions.none())
+
+    /** @see retrieveActivationAnalytics */
+    fun retrieveActivationAnalytics(
+        id: String,
+        requestOptions: RequestOptions,
+    ): CampaignActivationAnalyticsResponse =
+        retrieveActivationAnalytics(
+            id,
+            CampaignRetrieveActivationAnalyticsParams.none(),
+            requestOptions,
+        )
 
     /**
      * Lists an affiliate program's applications, newest first. Applications exist on programs that
@@ -682,6 +734,9 @@ interface CampaignService {
 
         /** Campaign reward (`CampaignReward`) configuration operations. */
         fun rewards(): RewardsService.WithRawResponse
+
+        /** Program Resource management and secure FILE upload operations. */
+        fun resources(): ProgramResourcesService.WithRawResponse
 
         /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
         fun design(): DesignService.WithRawResponse
@@ -1161,6 +1216,61 @@ interface CampaignService {
             requestOptions: RequestOptions,
         ): HttpResponseFor<CampaignRetrieveAnalyticsResponse> =
             retrieveAnalytics(id, CampaignRetrieveAnalyticsParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `get /campaign/{id}/analytics/activation`, but is
+         * otherwise the same as [CampaignService.retrieveActivationAnalytics].
+         */
+        @MustBeClosed
+        fun retrieveActivationAnalytics(
+            id: String
+        ): HttpResponseFor<CampaignActivationAnalyticsResponse> =
+            retrieveActivationAnalytics(id, CampaignRetrieveActivationAnalyticsParams.none())
+
+        /** @see retrieveActivationAnalytics */
+        @MustBeClosed
+        fun retrieveActivationAnalytics(
+            id: String,
+            params: CampaignRetrieveActivationAnalyticsParams =
+                CampaignRetrieveActivationAnalyticsParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<CampaignActivationAnalyticsResponse> =
+            retrieveActivationAnalytics(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see retrieveActivationAnalytics */
+        @MustBeClosed
+        fun retrieveActivationAnalytics(
+            id: String,
+            params: CampaignRetrieveActivationAnalyticsParams =
+                CampaignRetrieveActivationAnalyticsParams.none(),
+        ): HttpResponseFor<CampaignActivationAnalyticsResponse> =
+            retrieveActivationAnalytics(id, params, RequestOptions.none())
+
+        /** @see retrieveActivationAnalytics */
+        @MustBeClosed
+        fun retrieveActivationAnalytics(
+            params: CampaignRetrieveActivationAnalyticsParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<CampaignActivationAnalyticsResponse>
+
+        /** @see retrieveActivationAnalytics */
+        @MustBeClosed
+        fun retrieveActivationAnalytics(
+            params: CampaignRetrieveActivationAnalyticsParams
+        ): HttpResponseFor<CampaignActivationAnalyticsResponse> =
+            retrieveActivationAnalytics(params, RequestOptions.none())
+
+        /** @see retrieveActivationAnalytics */
+        @MustBeClosed
+        fun retrieveActivationAnalytics(
+            id: String,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<CampaignActivationAnalyticsResponse> =
+            retrieveActivationAnalytics(
+                id,
+                CampaignRetrieveActivationAnalyticsParams.none(),
+                requestOptions,
+            )
 
         /**
          * Returns a raw HTTP response for `get /campaign/{id}/affiliate-applications`, but is

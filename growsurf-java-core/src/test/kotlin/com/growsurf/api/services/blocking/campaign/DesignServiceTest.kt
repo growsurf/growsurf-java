@@ -4,6 +4,9 @@ package com.growsurf.api.services.blocking.campaign
 
 import com.growsurf.api.client.okhttp.GrowsurfOkHttpClient
 import com.growsurf.api.core.JsonValue
+import com.growsurf.api.models.campaign.design.CampaignDesignResources
+import com.growsurf.api.models.campaign.design.CampaignDesignResourcesIcon
+import com.growsurf.api.models.campaign.design.CampaignDesignResourcesIconType
 import com.growsurf.api.models.campaign.design.DesignUpdateParams
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -31,6 +34,25 @@ internal class DesignServiceTest {
             designService.update(
                 "id",
                 DesignUpdateParams.builder()
+                    .putAdditionalBodyProperty(
+                        "participantAvatarStyle",
+                        JsonValue.from("CHARACTERS"),
+                    )
+                    .resources(
+                        CampaignDesignResources(
+                            isPublicDisplayed = true,
+                            title = "Resources",
+                            viewResourcesLinkText = "View resources",
+                            backLinkText = "Back",
+                            copyButtonText = "Copy",
+                            copiedText = "Copied",
+                            icon =
+                                CampaignDesignResourcesIcon(
+                                    type = CampaignDesignResourcesIconType.IMAGE,
+                                    imageUrl = "https://example.com/resources-icon.png",
+                                ),
+                        )
+                    )
                     .putAdditionalBodyProperty(
                         "login",
                         JsonValue.from(

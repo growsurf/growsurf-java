@@ -49,8 +49,10 @@ private constructor(
      * `email` returns `sent`, `delivered`, `opened`, `clicked`, `bounced`, `spamComplaints`, and
      * per-email-type metrics attributed to the participant for the requested analytics window
      * (including invitations they sent). Request both in either order to add email counts to every
-     * series item for emails sent during that period. Only documented tokens are accepted; an
-     * unknown token returns `400`.
+     * series item for emails sent during that period. `activation` adds the covered cohort anchor
+     * and first milestones. Request `activation,series` to add covered `portalViews` and
+     * `shareActions` to each series item. Only documented tokens are accepted; an unknown token
+     * returns `400`.
      */
     fun include(): Optional<String> = Optional.ofNullable(include)
 
@@ -166,8 +168,10 @@ private constructor(
          * period; `email` returns `sent`, `delivered`, `opened`, `clicked`, `bounced`,
          * `spamComplaints`, and per-email-type metrics attributed to the participant for the
          * requested analytics window (including invitations they sent). Request both in either
-         * order to add email counts to every series item for emails sent during that period. Only
-         * documented tokens are accepted; an unknown token returns `400`.
+         * order to add email counts to every series item for emails sent during that period.
+         * `activation` adds the covered cohort anchor and first milestones. Request
+         * `activation,series` to add covered `portalViews` and `shareActions` to each series item.
+         * Only documented tokens are accepted; an unknown token returns `400`.
          */
         fun include(include: String?) = apply { this.include = include }
 

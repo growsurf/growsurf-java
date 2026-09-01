@@ -21,6 +21,7 @@ import com.growsurf.api.models.campaign.AffiliateApplicationListResponse
 import com.growsurf.api.models.campaign.AffiliateInvite
 import com.growsurf.api.models.campaign.AffiliateInviteListResponse
 import com.growsurf.api.models.campaign.Campaign
+import com.growsurf.api.models.campaign.CampaignActivationAnalyticsResponse
 import com.growsurf.api.models.campaign.CampaignCloneParams
 import com.growsurf.api.models.campaign.CampaignCreateAffiliateInviteParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenParams
@@ -36,6 +37,7 @@ import com.growsurf.api.models.campaign.CampaignListPayoutsParams
 import com.growsurf.api.models.campaign.CampaignListReferralsParams
 import com.growsurf.api.models.campaign.CampaignListResponse
 import com.growsurf.api.models.campaign.CampaignResendAffiliateInviteParams
+import com.growsurf.api.models.campaign.CampaignRetrieveActivationAnalyticsParams
 import com.growsurf.api.models.campaign.CampaignRetrieveAffiliateApplicationParams
 import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsParams
 import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsResponse
@@ -59,6 +61,8 @@ import com.growsurf.api.services.async.campaign.OptionsServiceAsync
 import com.growsurf.api.services.async.campaign.OptionsServiceAsyncImpl
 import com.growsurf.api.services.async.campaign.ParticipantServiceAsync
 import com.growsurf.api.services.async.campaign.ParticipantServiceAsyncImpl
+import com.growsurf.api.services.async.campaign.ProgramResourcesServiceAsync
+import com.growsurf.api.services.async.campaign.ProgramResourcesServiceAsyncImpl
 import com.growsurf.api.services.async.campaign.RewardServiceAsync
 import com.growsurf.api.services.async.campaign.RewardServiceAsyncImpl
 import com.growsurf.api.services.async.campaign.RewardsServiceAsync
@@ -88,6 +92,10 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
 
     private val rewards: RewardsServiceAsync by lazy { RewardsServiceAsyncImpl(clientOptions) }
 
+    private val resources: ProgramResourcesServiceAsync by lazy {
+        ProgramResourcesServiceAsyncImpl(clientOptions)
+    }
+
     private val design: DesignServiceAsync by lazy { DesignServiceAsyncImpl(clientOptions) }
 
     private val emails: EmailsServiceAsync by lazy { EmailsServiceAsyncImpl(clientOptions) }
@@ -115,6 +123,9 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
 
     /** Campaign reward (`CampaignReward`) configuration operations. */
     override fun rewards(): RewardsServiceAsync = rewards
+
+    /** Program Resource management and secure FILE upload operations. */
+    override fun resources(): ProgramResourcesServiceAsync = resources
 
     /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
     override fun design(): DesignServiceAsync = design
@@ -217,6 +228,15 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
         // get /campaign/{id}/analytics
         withRawResponse().retrieveAnalytics(params, requestOptions).thenApply { it.parse() }
 
+    override fun retrieveActivationAnalytics(
+        params: CampaignRetrieveActivationAnalyticsParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<CampaignActivationAnalyticsResponse> =
+        // get /campaign/{id}/analytics/activation
+        withRawResponse().retrieveActivationAnalytics(params, requestOptions).thenApply {
+            it.parse()
+        }
+
     override fun listAffiliateApplications(
         params: CampaignListAffiliateApplicationsParams,
         requestOptions: RequestOptions,
@@ -292,6 +312,10 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
             RewardsServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val resources: ProgramResourcesServiceAsync.WithRawResponse by lazy {
+            ProgramResourcesServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val design: DesignServiceAsync.WithRawResponse by lazy {
             DesignServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
@@ -329,6 +353,9 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
 
         /** Campaign reward (`CampaignReward`) configuration operations. */
         override fun rewards(): RewardsServiceAsync.WithRawResponse = rewards
+
+        /** Program Resource management and secure FILE upload operations. */
+        override fun resources(): ProgramResourcesServiceAsync.WithRawResponse = resources
 
         /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
         override fun design(): DesignServiceAsync.WithRawResponse = design
@@ -731,6 +758,40 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
                     errorHandler.handle(response).parseable {
                         response
                             .use { retrieveAnalyticsHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val retrieveActivationAnalyticsHandler:
+            Handler<CampaignActivationAnalyticsResponse> =
+            jsonHandler<CampaignActivationAnalyticsResponse>(clientOptions.jsonMapper)
+
+        override fun retrieveActivationAnalytics(
+            params: CampaignRetrieveActivationAnalyticsParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<CampaignActivationAnalyticsResponse>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("id", params.id().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.GET)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("campaign", params._pathParam(0), "analytics", "activation")
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { retrieveActivationAnalyticsHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()

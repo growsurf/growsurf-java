@@ -3,6 +3,7 @@
 package com.growsurf.api.models.campaign
 
 import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonValue
 import com.growsurf.api.core.Enum
 import com.growsurf.api.core.JsonField
 import com.growsurf.api.core.Params
@@ -21,7 +22,9 @@ private constructor(
     private val endDate: Long?,
     private val include: String?,
     private val interval: Interval?,
+    private val platform: Platform?,
     private val startDate: Long?,
+    private val timezone: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
 ) : Params {
@@ -45,20 +48,29 @@ private constructor(
      * `spamComplaints`, and per-email-type metrics. When `email` and an interval are both
      * requested, each `series` item also contains counts for emails sent during that period.
      * Combine `email` with `previousPeriod` to include the same email metrics in both windows.
+     * `engagement` adds covered participant activity totals, comparisons, series, and breakdowns.
      */
     fun include(): Optional<String> = Optional.ofNullable(include)
 
     /**
      * When set to `day`, `week`, or `month`, the response also includes a `series` array with
-     * per-period totals. Defaults to `total` (no series).
+     * per-period totals and uses the same bucket size for `engagement.series`. Defaults to `total`
+     * (no legacy series); `engagement.series` uses daily buckets when `interval` is `total` or
+     * omitted.
      */
     fun interval(): Optional<Interval> = Optional.ofNullable(interval)
+
+    /** Limits engagement events to one client platform. Used only with `include=engagement`. */
+    fun platform(): Optional<Platform> = Optional.ofNullable(platform)
 
     /**
      * Start date of the analytics timeframe as a Unix timestamp in milliseconds. Required if `days`
      * is not set.
      */
     fun startDate(): Optional<Long> = Optional.ofNullable(startDate)
+
+    /** IANA timezone for engagement interval and distinct-day calculations. Defaults to `UTC`. */
+    fun timezone(): Optional<String> = Optional.ofNullable(timezone)
 
     /** Additional headers to send with the request. */
     fun _additionalHeaders(): Headers = additionalHeaders
@@ -87,7 +99,9 @@ private constructor(
         private var endDate: Long? = null
         private var include: String? = null
         private var interval: Interval? = null
+        private var platform: Platform? = null
         private var startDate: Long? = null
+        private var timezone: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
 
@@ -99,7 +113,9 @@ private constructor(
                 endDate = campaignRetrieveAnalyticsParams.endDate
                 include = campaignRetrieveAnalyticsParams.include
                 interval = campaignRetrieveAnalyticsParams.interval
+                platform = campaignRetrieveAnalyticsParams.platform
                 startDate = campaignRetrieveAnalyticsParams.startDate
+                timezone = campaignRetrieveAnalyticsParams.timezone
                 additionalHeaders = campaignRetrieveAnalyticsParams.additionalHeaders.toBuilder()
                 additionalQueryParams =
                     campaignRetrieveAnalyticsParams.additionalQueryParams.toBuilder()
@@ -147,7 +163,8 @@ private constructor(
          * `bounced`, `spamComplaints`, and per-email-type metrics. When `email` and an interval are
          * both requested, each `series` item also contains counts for emails sent during that
          * period. Combine `email` with `previousPeriod` to include the same email metrics in both
-         * windows.
+         * windows. `engagement` adds covered participant activity totals, comparisons, series, and
+         * breakdowns.
          */
         fun include(include: String?) = apply { this.include = include }
 
@@ -156,12 +173,20 @@ private constructor(
 
         /**
          * When set to `day`, `week`, or `month`, the response also includes a `series` array with
-         * per-period totals. Defaults to `total` (no series).
+         * per-period totals and uses the same bucket size for `engagement.series`. Defaults to
+         * `total` (no legacy series); `engagement.series` uses daily buckets when `interval` is
+         * `total` or omitted.
          */
         fun interval(interval: Interval?) = apply { this.interval = interval }
 
         /** Alias for calling [Builder.interval] with `interval.orElse(null)`. */
         fun interval(interval: Optional<Interval>) = interval(interval.getOrNull())
+
+        /** Limits engagement events to one client platform. Used only with `include=engagement`. */
+        fun platform(platform: Platform?) = apply { this.platform = platform }
+
+        /** Alias for calling [Builder.platform] with `platform.orElse(null)`. */
+        fun platform(platform: Optional<Platform>) = platform(platform.getOrNull())
 
         /**
          * Start date of the analytics timeframe as a Unix timestamp in milliseconds. Required if
@@ -178,6 +203,14 @@ private constructor(
 
         /** Alias for calling [Builder.startDate] with `startDate.orElse(null)`. */
         fun startDate(startDate: Optional<Long>) = startDate(startDate.getOrNull())
+
+        /**
+         * IANA timezone for engagement interval and distinct-day calculations. Defaults to `UTC`.
+         */
+        fun timezone(timezone: String?) = apply { this.timezone = timezone }
+
+        /** Alias for calling [Builder.timezone] with `timezone.orElse(null)`. */
+        fun timezone(timezone: Optional<String>) = timezone(timezone.getOrNull())
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -289,7 +322,9 @@ private constructor(
                 endDate,
                 include,
                 interval,
+                platform,
                 startDate,
+                timezone,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
             )
@@ -310,14 +345,18 @@ private constructor(
                 endDate?.let { put("endDate", it.toString()) }
                 include?.let { put("include", it) }
                 interval?.let { put("interval", it.toString()) }
+                platform?.let { put("platform", it.value) }
                 startDate?.let { put("startDate", it.toString()) }
+                timezone?.let { put("timezone", it) }
                 putAll(additionalQueryParams)
             }
             .build()
 
     /**
      * When set to `day`, `week`, or `month`, the response also includes a `series` array with
-     * per-period totals. Defaults to `total` (no series).
+     * per-period totals and uses the same bucket size for `engagement.series`. Defaults to `total`
+     * (no legacy series); `engagement.series` uses daily buckets when `interval` is `total` or
+     * omitted.
      */
     class Interval @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
@@ -452,6 +491,14 @@ private constructor(
         override fun toString() = value.toString()
     }
 
+    /** Client platform filter for participant engagement. */
+    enum class Platform(@get:JsonValue val value: String) {
+        ALL("ALL"),
+        WEB("WEB"),
+        IOS("IOS"),
+        ANDROID("ANDROID"),
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
@@ -463,7 +510,9 @@ private constructor(
             endDate == other.endDate &&
             include == other.include &&
             interval == other.interval &&
+            platform == other.platform &&
             startDate == other.startDate &&
+            timezone == other.timezone &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
@@ -475,11 +524,13 @@ private constructor(
             endDate,
             include,
             interval,
+            platform,
             startDate,
+            timezone,
             additionalHeaders,
             additionalQueryParams,
         )
 
     override fun toString() =
-        "CampaignRetrieveAnalyticsParams{id=$id, days=$days, endDate=$endDate, include=$include, interval=$interval, startDate=$startDate, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "CampaignRetrieveAnalyticsParams{id=$id, days=$days, endDate=$endDate, include=$include, interval=$interval, platform=$platform, startDate=$startDate, timezone=$timezone, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

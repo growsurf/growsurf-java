@@ -26,6 +26,7 @@ class ParticipantAnalyticsResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
     private val analytics: JsonField<Analytics>,
+    private val activation: JsonField<ParticipantActivationAnalytics>,
     private val endDate: JsonField<Long>,
     private val email: JsonField<EmailAnalytics>,
     private val ranks: JsonField<Ranks>,
@@ -40,6 +41,9 @@ private constructor(
         @JsonProperty("analytics")
         @ExcludeMissing
         analytics: JsonField<Analytics> = JsonMissing.of(),
+        @JsonProperty("activation")
+        @ExcludeMissing
+        activation: JsonField<ParticipantActivationAnalytics> = JsonMissing.of(),
         @JsonProperty("endDate") @ExcludeMissing endDate: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("email") @ExcludeMissing email: JsonField<EmailAnalytics> = JsonMissing.of(),
         @JsonProperty("ranks") @ExcludeMissing ranks: JsonField<Ranks> = JsonMissing.of(),
@@ -48,13 +52,27 @@ private constructor(
         @ExcludeMissing
         shareCount: JsonField<ShareCount> = JsonMissing.of(),
         @JsonProperty("startDate") @ExcludeMissing startDate: JsonField<Long> = JsonMissing.of(),
-    ) : this(analytics, endDate, email, ranks, series, shareCount, startDate, mutableMapOf())
+    ) : this(
+        analytics,
+        activation,
+        endDate,
+        email,
+        ranks,
+        series,
+        shareCount,
+        startDate,
+        mutableMapOf(),
+    )
 
     /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun analytics(): Analytics = analytics.getRequired("analytics")
+
+    /** Present only when `include` contains `activation`. */
+    fun activation(): Optional<ParticipantActivationAnalytics> =
+        activation.getOptional("activation")
 
     /**
      * Present only when `include` contains `series` or `email`. Window end (Unix ms).
@@ -104,6 +122,10 @@ private constructor(
      * Unlike [analytics], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("analytics") @ExcludeMissing fun _analytics(): JsonField<Analytics> = analytics
+
+    @JsonProperty("activation")
+    @ExcludeMissing
+    fun _activation(): JsonField<ParticipantActivationAnalytics> = activation
 
     /**
      * Returns the raw JSON value of [endDate].
@@ -175,6 +197,7 @@ private constructor(
     class Builder internal constructor() {
 
         private var analytics: JsonField<Analytics>? = null
+        private var activation: JsonField<ParticipantActivationAnalytics> = JsonMissing.of()
         private var endDate: JsonField<Long> = JsonMissing.of()
         private var email: JsonField<EmailAnalytics> = JsonMissing.of()
         private var ranks: JsonField<Ranks>? = null
@@ -186,6 +209,7 @@ private constructor(
         @JvmSynthetic
         internal fun from(participantAnalyticsResponse: ParticipantAnalyticsResponse) = apply {
             analytics = participantAnalyticsResponse.analytics
+            activation = participantAnalyticsResponse.activation
             endDate = participantAnalyticsResponse.endDate
             email = participantAnalyticsResponse.email
             ranks = participantAnalyticsResponse.ranks
@@ -205,6 +229,14 @@ private constructor(
          * value.
          */
         fun analytics(analytics: JsonField<Analytics>) = apply { this.analytics = analytics }
+
+        /** Present only when `include` contains `activation`. */
+        fun activation(activation: ParticipantActivationAnalytics) =
+            activation(JsonField.of(activation))
+
+        fun activation(activation: JsonField<ParticipantActivationAnalytics>) = apply {
+            this.activation = activation
+        }
 
         /** Present only when `include` contains `series` or `email`. Window end (Unix ms). */
         fun endDate(endDate: Long) = endDate(JsonField.of(endDate))
@@ -320,6 +352,7 @@ private constructor(
         fun build(): ParticipantAnalyticsResponse =
             ParticipantAnalyticsResponse(
                 checkRequired("analytics", analytics),
+                activation,
                 endDate,
                 email,
                 checkRequired("ranks", ranks),
@@ -346,6 +379,7 @@ private constructor(
         }
 
         analytics().validate()
+        activation().ifPresent { it.validate() }
         endDate()
         email().ifPresent { it.validate() }
         ranks().validate()
@@ -371,6 +405,7 @@ private constructor(
     @JvmSynthetic
     internal fun validity(): Int =
         (analytics.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (activation.asKnown().isPresent) 1 else 0) +
             (if (endDate.asKnown().isPresent) 1 else 0) +
             (email.asKnown().getOrNull()?.validity() ?: 0) +
             (ranks.asKnown().getOrNull()?.validity() ?: 0) +
@@ -1395,6 +1430,8 @@ private constructor(
         private val messengerShares: JsonField<Long>,
         private val participants: JsonField<Long>,
         private val periodStart: JsonField<Long>,
+        private val portalViews: JsonField<Long>,
+        private val shareActions: JsonField<Long>,
         private val pinterestShares: JsonField<Long>,
         private val qrcodeShares: JsonField<Long>,
         private val redditShares: JsonField<Long>,
@@ -1455,6 +1492,12 @@ private constructor(
             @JsonProperty("periodStart")
             @ExcludeMissing
             periodStart: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("portalViews")
+            @ExcludeMissing
+            portalViews: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("shareActions")
+            @ExcludeMissing
+            shareActions: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("pinterestShares")
             @ExcludeMissing
             pinterestShares: JsonField<Long> = JsonMissing.of(),
@@ -1523,6 +1566,8 @@ private constructor(
             messengerShares,
             participants,
             periodStart,
+            portalViews,
+            shareActions,
             pinterestShares,
             qrcodeShares,
             redditShares,
@@ -1621,6 +1666,12 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun periodStart(): Optional<Long> = periodStart.getOptional("periodStart")
+
+        /** Covered signed-in portal views, or empty outside known activation coverage. */
+        fun portalViews(): Optional<Long> = portalViews.getOptional("portalViews")
+
+        /** Covered share actions, or empty outside known activation coverage. */
+        fun shareActions(): Optional<Long> = shareActions.getOptional("shareActions")
 
         /**
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -1859,6 +1910,14 @@ private constructor(
         @ExcludeMissing
         fun _periodStart(): JsonField<Long> = periodStart
 
+        @JsonProperty("portalViews")
+        @ExcludeMissing
+        fun _portalViews(): JsonField<Long> = portalViews
+
+        @JsonProperty("shareActions")
+        @ExcludeMissing
+        fun _shareActions(): JsonField<Long> = shareActions
+
         /**
          * Returns the raw JSON value of [pinterestShares].
          *
@@ -2067,6 +2126,8 @@ private constructor(
             private var participants: JsonField<Long> = JsonMissing.of()
             private var email: JsonField<EmailAnalyticsCounts> = JsonMissing.of()
             private var periodStart: JsonField<Long> = JsonMissing.of()
+            private var portalViews: JsonField<Long> = JsonMissing.of()
+            private var shareActions: JsonField<Long> = JsonMissing.of()
             private var pinterestShares: JsonField<Long> = JsonMissing.of()
             private var qrcodeShares: JsonField<Long> = JsonMissing.of()
             private var redditShares: JsonField<Long> = JsonMissing.of()
@@ -2102,6 +2163,8 @@ private constructor(
                 participants = series.participants
                 email = series.email
                 periodStart = series.periodStart
+                portalViews = series.portalViews
+                shareActions = series.shareActions
                 pinterestShares = series.pinterestShares
                 qrcodeShares = series.qrcodeShares
                 redditShares = series.redditShares
@@ -2280,6 +2343,18 @@ private constructor(
              * supported value.
              */
             fun periodStart(periodStart: JsonField<Long>) = apply { this.periodStart = periodStart }
+
+            /** Covered signed-in portal views. */
+            fun portalViews(portalViews: Long) = portalViews(JsonField.of(portalViews))
+
+            fun portalViews(portalViews: JsonField<Long>) = apply { this.portalViews = portalViews }
+
+            /** Covered share actions. */
+            fun shareActions(shareActions: Long) = shareActions(JsonField.of(shareActions))
+
+            fun shareActions(shareActions: JsonField<Long>) = apply {
+                this.shareActions = shareActions
+            }
 
             fun pinterestShares(pinterestShares: Long) =
                 pinterestShares(JsonField.of(pinterestShares))
@@ -2566,6 +2641,8 @@ private constructor(
                     messengerShares,
                     participants,
                     periodStart,
+                    portalViews,
+                    shareActions,
                     pinterestShares,
                     qrcodeShares,
                     redditShares,
@@ -2608,6 +2685,8 @@ private constructor(
             messengerShares()
             participants()
             periodStart()
+            portalViews()
+            shareActions()
             pinterestShares()
             qrcodeShares()
             redditShares()
@@ -2652,6 +2731,8 @@ private constructor(
                 (if (messengerShares.asKnown().isPresent) 1 else 0) +
                 (if (participants.asKnown().isPresent) 1 else 0) +
                 (if (periodStart.asKnown().isPresent) 1 else 0) +
+                (if (portalViews.asKnown().isPresent) 1 else 0) +
+                (if (shareActions.asKnown().isPresent) 1 else 0) +
                 (if (pinterestShares.asKnown().isPresent) 1 else 0) +
                 (if (qrcodeShares.asKnown().isPresent) 1 else 0) +
                 (if (redditShares.asKnown().isPresent) 1 else 0) +
@@ -2690,6 +2771,8 @@ private constructor(
                 messengerShares == other.messengerShares &&
                 participants == other.participants &&
                 periodStart == other.periodStart &&
+                portalViews == other.portalViews &&
+                shareActions == other.shareActions &&
                 pinterestShares == other.pinterestShares &&
                 qrcodeShares == other.qrcodeShares &&
                 redditShares == other.redditShares &&
@@ -2726,6 +2809,8 @@ private constructor(
                 messengerShares,
                 participants,
                 periodStart,
+                portalViews,
+                shareActions,
                 pinterestShares,
                 qrcodeShares,
                 redditShares,
@@ -2751,7 +2836,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Series{androidNativeShares=$androidNativeShares, blueskyShares=$blueskyShares, copyRefLinkShares=$copyRefLinkShares, emailShares=$emailShares, email=$email, facebookShares=$facebookShares, impressions=$impressions, invites=$invites, iosNativeShares=$iosNativeShares, linkedInShares=$linkedInShares, messengerShares=$messengerShares, participants=$participants, periodStart=$periodStart, pinterestShares=$pinterestShares, qrcodeShares=$qrcodeShares, redditShares=$redditShares, referralCreditExpireds=$referralCreditExpireds, referralCreditPendings=$referralCreditPendings, referrals=$referrals, smsShares=$smsShares, telegramShares=$telegramShares, threadsShares=$threadsShares, totalCommissionCount=$totalCommissionCount, totalCommissions=$totalCommissions, totalRevenue=$totalRevenue, tumblrShares=$tumblrShares, twitterShares=$twitterShares, uniqueCommissionReferrals=$uniqueCommissionReferrals, uniqueImpressions=$uniqueImpressions, wechatShares=$wechatShares, whatsAppShares=$whatsAppShares, additionalProperties=$additionalProperties}"
+            "Series{androidNativeShares=$androidNativeShares, blueskyShares=$blueskyShares, copyRefLinkShares=$copyRefLinkShares, emailShares=$emailShares, email=$email, facebookShares=$facebookShares, impressions=$impressions, invites=$invites, iosNativeShares=$iosNativeShares, linkedInShares=$linkedInShares, messengerShares=$messengerShares, participants=$participants, periodStart=$periodStart, portalViews=$portalViews, shareActions=$shareActions, pinterestShares=$pinterestShares, qrcodeShares=$qrcodeShares, redditShares=$redditShares, referralCreditExpireds=$referralCreditExpireds, referralCreditPendings=$referralCreditPendings, referrals=$referrals, smsShares=$smsShares, telegramShares=$telegramShares, threadsShares=$threadsShares, totalCommissionCount=$totalCommissionCount, totalCommissions=$totalCommissions, totalRevenue=$totalRevenue, tumblrShares=$tumblrShares, twitterShares=$twitterShares, uniqueCommissionReferrals=$uniqueCommissionReferrals, uniqueImpressions=$uniqueImpressions, wechatShares=$wechatShares, whatsAppShares=$whatsAppShares, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {
@@ -2761,6 +2846,7 @@ private constructor(
 
         return other is ParticipantAnalyticsResponse &&
             analytics == other.analytics &&
+            activation == other.activation &&
             endDate == other.endDate &&
             email == other.email &&
             ranks == other.ranks &&
@@ -2773,6 +2859,7 @@ private constructor(
     private val hashCode: Int by lazy {
         Objects.hash(
             analytics,
+            activation,
             endDate,
             email,
             ranks,
@@ -2786,5 +2873,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ParticipantAnalyticsResponse{analytics=$analytics, endDate=$endDate, email=$email, ranks=$ranks, series=$series, shareCount=$shareCount, startDate=$startDate, additionalProperties=$additionalProperties}"
+        "ParticipantAnalyticsResponse{analytics=$analytics, activation=$activation, endDate=$endDate, email=$email, ranks=$ranks, series=$series, shareCount=$shareCount, startDate=$startDate, additionalProperties=$additionalProperties}"
 }

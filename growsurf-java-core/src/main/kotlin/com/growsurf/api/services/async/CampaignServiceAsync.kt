@@ -10,6 +10,7 @@ import com.growsurf.api.models.campaign.AffiliateApplicationListResponse
 import com.growsurf.api.models.campaign.AffiliateInvite
 import com.growsurf.api.models.campaign.AffiliateInviteListResponse
 import com.growsurf.api.models.campaign.Campaign
+import com.growsurf.api.models.campaign.CampaignActivationAnalyticsResponse
 import com.growsurf.api.models.campaign.CampaignCloneParams
 import com.growsurf.api.models.campaign.CampaignCreateAffiliateInviteParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenParams
@@ -25,6 +26,7 @@ import com.growsurf.api.models.campaign.CampaignListPayoutsParams
 import com.growsurf.api.models.campaign.CampaignListReferralsParams
 import com.growsurf.api.models.campaign.CampaignListResponse
 import com.growsurf.api.models.campaign.CampaignResendAffiliateInviteParams
+import com.growsurf.api.models.campaign.CampaignRetrieveActivationAnalyticsParams
 import com.growsurf.api.models.campaign.CampaignRetrieveAffiliateApplicationParams
 import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsParams
 import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsResponse
@@ -42,6 +44,7 @@ import com.growsurf.api.services.async.campaign.EmailsServiceAsync
 import com.growsurf.api.services.async.campaign.InstallationServiceAsync
 import com.growsurf.api.services.async.campaign.OptionsServiceAsync
 import com.growsurf.api.services.async.campaign.ParticipantServiceAsync
+import com.growsurf.api.services.async.campaign.ProgramResourcesServiceAsync
 import com.growsurf.api.services.async.campaign.RewardServiceAsync
 import com.growsurf.api.services.async.campaign.RewardsServiceAsync
 import com.growsurf.api.services.async.campaign.WebhooksServiceAsync
@@ -72,6 +75,9 @@ interface CampaignServiceAsync {
 
     /** Campaign reward (`CampaignReward`) configuration operations. */
     fun rewards(): RewardsServiceAsync
+
+    /** Program Resource management and secure FILE upload operations. */
+    fun resources(): ProgramResourcesServiceAsync
 
     /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
     fun design(): DesignServiceAsync
@@ -434,10 +440,9 @@ interface CampaignServiceAsync {
     /**
      * Retrieves analytics for a program. Pass `interval` to also get a time-series (`series`)
      * alongside the totals, and `include` to add previous-period totals, status breakdowns, derived
-     * rates, or email performance. Add `email` to `include` for `sent` (accepted for delivery),
-     * `delivered`, `opened`, `clicked`, `bounced`, and `spamComplaints` metrics plus per-email-type
-     * breakdowns. Email rates are ratios from `0` to `1`, and `isPartial` identifies windows that
-     * begin before complete coverage.
+     * rates, email performance, or participant engagement. Add `engagement` for covered activity
+     * totals, comparisons, series, and breakdowns. Availability states distinguish unknown values
+     * from measured zeroes.
      */
     fun retrieveAnalytics(id: String): CompletableFuture<CampaignRetrieveAnalyticsResponse> =
         retrieveAnalytics(id, CampaignRetrieveAnalyticsParams.none())
@@ -475,6 +480,52 @@ interface CampaignServiceAsync {
         requestOptions: RequestOptions,
     ): CompletableFuture<CampaignRetrieveAnalyticsResponse> =
         retrieveAnalytics(id, CampaignRetrieveAnalyticsParams.none(), requestOptions)
+
+    /** Retrieves activation cohorts while preserving explicit coverage availability states. */
+    fun retrieveActivationAnalytics(
+        id: String
+    ): CompletableFuture<CampaignActivationAnalyticsResponse> =
+        retrieveActivationAnalytics(id, CampaignRetrieveActivationAnalyticsParams.none())
+
+    /** @see retrieveActivationAnalytics */
+    fun retrieveActivationAnalytics(
+        id: String,
+        params: CampaignRetrieveActivationAnalyticsParams =
+            CampaignRetrieveActivationAnalyticsParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<CampaignActivationAnalyticsResponse> =
+        retrieveActivationAnalytics(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see retrieveActivationAnalytics */
+    fun retrieveActivationAnalytics(
+        id: String,
+        params: CampaignRetrieveActivationAnalyticsParams =
+            CampaignRetrieveActivationAnalyticsParams.none(),
+    ): CompletableFuture<CampaignActivationAnalyticsResponse> =
+        retrieveActivationAnalytics(id, params, RequestOptions.none())
+
+    /** @see retrieveActivationAnalytics */
+    fun retrieveActivationAnalytics(
+        params: CampaignRetrieveActivationAnalyticsParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): CompletableFuture<CampaignActivationAnalyticsResponse>
+
+    /** @see retrieveActivationAnalytics */
+    fun retrieveActivationAnalytics(
+        params: CampaignRetrieveActivationAnalyticsParams
+    ): CompletableFuture<CampaignActivationAnalyticsResponse> =
+        retrieveActivationAnalytics(params, RequestOptions.none())
+
+    /** @see retrieveActivationAnalytics */
+    fun retrieveActivationAnalytics(
+        id: String,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<CampaignActivationAnalyticsResponse> =
+        retrieveActivationAnalytics(
+            id,
+            CampaignRetrieveActivationAnalyticsParams.none(),
+            requestOptions,
+        )
 
     /**
      * Lists an affiliate program's applications, newest first. Applications exist on programs that
@@ -730,6 +781,9 @@ interface CampaignServiceAsync {
 
         /** Campaign reward (`CampaignReward`) configuration operations. */
         fun rewards(): RewardsServiceAsync.WithRawResponse
+
+        /** Program Resource management and secure FILE upload operations. */
+        fun resources(): ProgramResourcesServiceAsync.WithRawResponse
 
         /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
         fun design(): DesignServiceAsync.WithRawResponse
@@ -1178,6 +1232,52 @@ interface CampaignServiceAsync {
             requestOptions: RequestOptions,
         ): CompletableFuture<HttpResponseFor<CampaignRetrieveAnalyticsResponse>> =
             retrieveAnalytics(id, CampaignRetrieveAnalyticsParams.none(), requestOptions)
+
+        /** Raw response for `get /campaign/{id}/analytics/activation`. */
+        fun retrieveActivationAnalytics(
+            id: String
+        ): CompletableFuture<HttpResponseFor<CampaignActivationAnalyticsResponse>> =
+            retrieveActivationAnalytics(id, CampaignRetrieveActivationAnalyticsParams.none())
+
+        /** @see retrieveActivationAnalytics */
+        fun retrieveActivationAnalytics(
+            id: String,
+            params: CampaignRetrieveActivationAnalyticsParams =
+                CampaignRetrieveActivationAnalyticsParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<CampaignActivationAnalyticsResponse>> =
+            retrieveActivationAnalytics(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see retrieveActivationAnalytics */
+        fun retrieveActivationAnalytics(
+            id: String,
+            params: CampaignRetrieveActivationAnalyticsParams =
+                CampaignRetrieveActivationAnalyticsParams.none(),
+        ): CompletableFuture<HttpResponseFor<CampaignActivationAnalyticsResponse>> =
+            retrieveActivationAnalytics(id, params, RequestOptions.none())
+
+        /** @see retrieveActivationAnalytics */
+        fun retrieveActivationAnalytics(
+            params: CampaignRetrieveActivationAnalyticsParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): CompletableFuture<HttpResponseFor<CampaignActivationAnalyticsResponse>>
+
+        /** @see retrieveActivationAnalytics */
+        fun retrieveActivationAnalytics(
+            params: CampaignRetrieveActivationAnalyticsParams
+        ): CompletableFuture<HttpResponseFor<CampaignActivationAnalyticsResponse>> =
+            retrieveActivationAnalytics(params, RequestOptions.none())
+
+        /** @see retrieveActivationAnalytics */
+        fun retrieveActivationAnalytics(
+            id: String,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<CampaignActivationAnalyticsResponse>> =
+            retrieveActivationAnalytics(
+                id,
+                CampaignRetrieveActivationAnalyticsParams.none(),
+                requestOptions,
+            )
 
         /**
          * Returns a raw HTTP response for `get /campaign/{id}/affiliate-applications`, but is

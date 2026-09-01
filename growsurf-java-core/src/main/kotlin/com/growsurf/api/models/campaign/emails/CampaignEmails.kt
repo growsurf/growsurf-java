@@ -14,7 +14,8 @@ import java.util.Objects
  * Program Editor **Emails** tab configuration — the same surface as the dashboard. This is a large,
  * loosely-typed object modeled as free-form properties; the available fields depend on the program
  * type (each editable email template (subject, preheader, body, isEnabled) plus the settings block
- * (sender, contact, and design)). To see the full object with every field and its current value,
+ * (sender, contact, and design)). `offerClaimed` is available to both program types and sends while
+ * the Claim Offer Popup is enabled. To see the full object with every field and its current value,
  * retrieve the resource first, then send back only the fields you want to change.
  */
 class CampaignEmails

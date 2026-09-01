@@ -25,6 +25,7 @@ private constructor(
     private val analytics: JsonField<Analytics>,
     private val endDate: JsonField<Long>,
     private val email: JsonField<EmailAnalytics>,
+    private val engagement: JsonField<CampaignEngagementAnalytics>,
     private val previousPeriod: JsonField<PreviousPeriod>,
     private val rates: JsonField<Rates>,
     private val series: JsonField<List<Series>>,
@@ -40,6 +41,9 @@ private constructor(
         analytics: JsonField<Analytics> = JsonMissing.of(),
         @JsonProperty("endDate") @ExcludeMissing endDate: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("email") @ExcludeMissing email: JsonField<EmailAnalytics> = JsonMissing.of(),
+        @JsonProperty("engagement")
+        @ExcludeMissing
+        engagement: JsonField<CampaignEngagementAnalytics> = JsonMissing.of(),
         @JsonProperty("previousPeriod")
         @ExcludeMissing
         previousPeriod: JsonField<PreviousPeriod> = JsonMissing.of(),
@@ -53,6 +57,7 @@ private constructor(
         analytics,
         endDate,
         email,
+        engagement,
         previousPeriod,
         rates,
         series,
@@ -75,6 +80,9 @@ private constructor(
 
     /** Present only when `include` contains `email`. */
     fun email(): Optional<EmailAnalytics> = email.getOptional("email")
+
+    /** Present only when `include` contains `engagement`. */
+    fun engagement(): Optional<CampaignEngagementAnalytics> = engagement.getOptional("engagement")
 
     /**
      * Present only when `include` contains `previousPeriod`.
@@ -129,6 +137,10 @@ private constructor(
     @JsonProperty("endDate") @ExcludeMissing fun _endDate(): JsonField<Long> = endDate
 
     @JsonProperty("email") @ExcludeMissing fun _email(): JsonField<EmailAnalytics> = email
+
+    @JsonProperty("engagement")
+    @ExcludeMissing
+    fun _engagement(): JsonField<CampaignEngagementAnalytics> = engagement
 
     /**
      * Returns the raw JSON value of [previousPeriod].
@@ -203,6 +215,7 @@ private constructor(
         private var analytics: JsonField<Analytics>? = null
         private var endDate: JsonField<Long>? = null
         private var email: JsonField<EmailAnalytics> = JsonMissing.of()
+        private var engagement: JsonField<CampaignEngagementAnalytics> = JsonMissing.of()
         private var previousPeriod: JsonField<PreviousPeriod> = JsonMissing.of()
         private var rates: JsonField<Rates> = JsonMissing.of()
         private var series: JsonField<MutableList<Series>>? = null
@@ -216,6 +229,7 @@ private constructor(
                 analytics = campaignRetrieveAnalyticsResponse.analytics
                 endDate = campaignRetrieveAnalyticsResponse.endDate
                 email = campaignRetrieveAnalyticsResponse.email
+                engagement = campaignRetrieveAnalyticsResponse.engagement
                 previousPeriod = campaignRetrieveAnalyticsResponse.previousPeriod
                 rates = campaignRetrieveAnalyticsResponse.rates
                 series = campaignRetrieveAnalyticsResponse.series.map { it.toMutableList() }
@@ -250,6 +264,14 @@ private constructor(
         fun email(email: EmailAnalytics) = email(JsonField.of(email))
 
         fun email(email: JsonField<EmailAnalytics>) = apply { this.email = email }
+
+        /** Present only when `include` contains `engagement`. */
+        fun engagement(engagement: CampaignEngagementAnalytics) =
+            engagement(JsonField.of(engagement))
+
+        fun engagement(engagement: JsonField<CampaignEngagementAnalytics>) = apply {
+            this.engagement = engagement
+        }
 
         /** Present only when `include` contains `previousPeriod`. */
         fun previousPeriod(previousPeriod: PreviousPeriod) =
@@ -367,6 +389,7 @@ private constructor(
                 checkRequired("analytics", analytics),
                 checkRequired("endDate", endDate),
                 email,
+                engagement,
                 previousPeriod,
                 rates,
                 (series ?: JsonMissing.of()).map { it.toImmutable() },
@@ -394,6 +417,7 @@ private constructor(
         analytics().validate()
         endDate()
         email().ifPresent { it.validate() }
+        engagement().ifPresent { it.validate() }
         previousPeriod().ifPresent { it.validate() }
         rates().ifPresent { it.validate() }
         series().ifPresent { it.forEach { it.validate() } }
@@ -420,6 +444,7 @@ private constructor(
         (analytics.asKnown().getOrNull()?.validity() ?: 0) +
             (if (endDate.asKnown().isPresent) 1 else 0) +
             (email.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (engagement.asKnown().isPresent) 1 else 0) +
             (previousPeriod.asKnown().getOrNull()?.validity() ?: 0) +
             (rates.asKnown().getOrNull()?.validity() ?: 0) +
             (series.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
@@ -5278,6 +5303,7 @@ private constructor(
             analytics == other.analytics &&
             endDate == other.endDate &&
             email == other.email &&
+            engagement == other.engagement &&
             previousPeriod == other.previousPeriod &&
             rates == other.rates &&
             series == other.series &&
@@ -5291,6 +5317,7 @@ private constructor(
             analytics,
             endDate,
             email,
+            engagement,
             previousPeriod,
             rates,
             series,
@@ -5303,5 +5330,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "CampaignRetrieveAnalyticsResponse{analytics=$analytics, endDate=$endDate, email=$email, previousPeriod=$previousPeriod, rates=$rates, series=$series, startDate=$startDate, statusCounts=$statusCounts, additionalProperties=$additionalProperties}"
+        "CampaignRetrieveAnalyticsResponse{analytics=$analytics, endDate=$endDate, email=$email, engagement=$engagement, previousPeriod=$previousPeriod, rates=$rates, series=$series, startDate=$startDate, statusCounts=$statusCounts, additionalProperties=$additionalProperties}"
 }

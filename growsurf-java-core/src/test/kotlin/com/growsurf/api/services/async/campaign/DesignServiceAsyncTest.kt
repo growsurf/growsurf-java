@@ -33,6 +33,10 @@ internal class DesignServiceAsyncTest {
                 "id",
                 DesignUpdateParams.builder()
                     .putAdditionalBodyProperty(
+                        "participantAvatarStyle",
+                        JsonValue.from("CHARACTERS"),
+                    )
+                    .putAdditionalBodyProperty(
                         "login",
                         JsonValue.from(
                             mapOf(
