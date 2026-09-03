@@ -24,11 +24,11 @@ internal class ParticipantRequestPayoutDestinationConfirmationResponseTest {
 
         assertThat(participantRequestPayoutDestinationConfirmationResponse.expiresAt()).contains(0L)
         assertThat(participantRequestPayoutDestinationConfirmationResponse.provider())
-            .contains("PAYPAL")
+            .isEqualTo("PAYPAL")
         assertThat(participantRequestPayoutDestinationConfirmationResponse.providerDisplayName())
-            .contains("providerDisplayName")
+            .isEqualTo("providerDisplayName")
         assertThat(participantRequestPayoutDestinationConfirmationResponse.status())
-            .contains(
+            .isEqualTo(
                 ParticipantRequestPayoutDestinationConfirmationResponse.Status
                     .CONFIRMATION_REQUESTED
             )
@@ -65,10 +65,10 @@ internal class ParticipantRequestPayoutDestinationConfirmationResponseTest {
         val response =
             jsonMapper()
                 .readValue(
-                    """{"provider":"TESTBANK"}""",
+                    """{"provider":"TESTBANK","providerDisplayName":"Test Bank","status":"CONFIRMATION_REQUESTED","expiresAt":1752604800000}""",
                     jacksonTypeRef<ParticipantRequestPayoutDestinationConfirmationResponse>(),
                 )
 
-        assertThat(response.provider()).contains("TESTBANK")
+        assertThat(response.provider()).isEqualTo("TESTBANK")
     }
 }

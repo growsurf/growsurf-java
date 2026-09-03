@@ -4,7 +4,6 @@ package com.growsurf.api.models.campaign.participant
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.growsurf.api.core.jsonMapper
-import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -33,7 +32,7 @@ internal class ParticipantGetPayoutDestinationResponseTest {
                 .build()
 
         assertThat(participantGetPayoutDestinationResponse.activeProvider()).contains("PAYPAL")
-        assertThat(participantGetPayoutDestinationResponse.destinations().getOrNull())
+        assertThat(participantGetPayoutDestinationResponse.destinations())
             .containsExactly(
                 ParticipantGetPayoutDestinationResponse.Destination.builder()
                     .claimEmail("claimEmail")
@@ -48,7 +47,7 @@ internal class ParticipantGetPayoutDestinationResponseTest {
                     .status("status")
                     .build()
             )
-        assertThat(participantGetPayoutDestinationResponse.enabledProviders().getOrNull())
+        assertThat(participantGetPayoutDestinationResponse.enabledProviders())
             .containsExactly("PAYPAL")
     }
 
@@ -90,13 +89,13 @@ internal class ParticipantGetPayoutDestinationResponseTest {
         val response =
             jsonMapper()
                 .readValue(
-                    """{"activeProvider":"TESTBANK","enabledProviders":["TESTBANK"],"destinations":[{"provider":"TESTBANK"}]}""",
+                    """{"activeProvider":"TESTBANK","enabledProviders":["TESTBANK"],"destinations":[{"provider":"TESTBANK","providerDisplayName":"Test Bank","status":"ACTIVE","claimEmail":"richard@piedpiper.com","legalEntityType":"INDIVIDUAL","confirmedAt":1752000000000,"needsRepairReason":null}]}""",
                     jacksonTypeRef<ParticipantGetPayoutDestinationResponse>(),
                 )
 
         assertThat(response.activeProvider()).contains("TESTBANK")
-        assertThat(response.enabledProviders().get()).containsExactly("TESTBANK")
-        assertThat(response.destinations().get().single().provider()).contains("TESTBANK")
+        assertThat(response.enabledProviders()).containsExactly("TESTBANK")
+        assertThat(response.destinations().single().provider()).isEqualTo("TESTBANK")
     }
 
     @Test

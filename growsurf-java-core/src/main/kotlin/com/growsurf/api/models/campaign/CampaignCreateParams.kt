@@ -73,6 +73,20 @@ private constructor(
     fun currencyIso(): Optional<String> = body.currencyIso()
 
     /**
+     * What the program is for, which seeds share settings that suit that audience. Programs selling
+     * to businesses (`CUSTOMERS`, `USERS`, `B2B_SAAS_SELF_SERVICE`, `B2B_SAAS_ENTERPRISE`) start
+     * with the LinkedIn share button visible; consumer, financial, education, insurance,
+     * newsletter, and waitlist programs (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`,
+     * `ONLINE_EDUCATION`, `ONLINE_INSURANCE`, `SUBSCRIBERS`, `WAITLIST`) start with it hidden. Omit
+     * it and every share button keeps its standard default. Set only when the program is created;
+     * it is not accepted on update.
+     *
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun goal(): Optional<Goal> = body.goal()
+
+    /**
      * Optional inline rewards to create with the program.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -115,6 +129,13 @@ private constructor(
      * Unlike [currencyIso], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _currencyIso(): JsonField<String> = body._currencyIso()
+
+    /**
+     * Returns the raw JSON value of [goal].
+     *
+     * Unlike [goal], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _goal(): JsonField<Goal> = body._goal()
 
     /**
      * Returns the raw JSON value of [rewards].
@@ -236,6 +257,25 @@ private constructor(
          * value.
          */
         fun currencyIso(currencyIso: JsonField<String>) = apply { body.currencyIso(currencyIso) }
+
+        /**
+         * What the program is for, which seeds share settings that suit that audience. Programs
+         * selling to businesses (`CUSTOMERS`, `USERS`, `B2B_SAAS_SELF_SERVICE`,
+         * `B2B_SAAS_ENTERPRISE`) start with the LinkedIn share button visible; consumer, financial,
+         * education, insurance, newsletter, and waitlist programs (`B2C_SUBSCRIPTIONS`,
+         * `FINANCIAL_SERVICES`, `ONLINE_EDUCATION`, `ONLINE_INSURANCE`, `SUBSCRIBERS`, `WAITLIST`)
+         * start with it hidden. Omit it and every share button keeps its standard default. Set only
+         * when the program is created; it is not accepted on update.
+         */
+        fun goal(goal: Goal) = apply { body.goal(goal) }
+
+        /**
+         * Sets [Builder.goal] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.goal] with a well-typed [Goal] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun goal(goal: JsonField<Goal>) = apply { body.goal(goal) }
 
         /** Optional inline rewards to create with the program. */
         fun rewards(rewards: List<Reward>) = apply { body.rewards(rewards) }
@@ -411,6 +451,7 @@ private constructor(
         private val companyName: JsonField<String>,
         private val companyLogoImageUrl: JsonField<String>,
         private val currencyIso: JsonField<String>,
+        private val goal: JsonField<Goal>,
         private val rewards: JsonField<List<Reward>>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
@@ -428,10 +469,20 @@ private constructor(
             @JsonProperty("currencyISO")
             @ExcludeMissing
             currencyIso: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("goal") @ExcludeMissing goal: JsonField<Goal> = JsonMissing.of(),
             @JsonProperty("rewards")
             @ExcludeMissing
             rewards: JsonField<List<Reward>> = JsonMissing.of(),
-        ) : this(type, name, companyName, companyLogoImageUrl, currencyIso, rewards, mutableMapOf())
+        ) : this(
+            type,
+            name,
+            companyName,
+            companyLogoImageUrl,
+            currencyIso,
+            goal,
+            rewards,
+            mutableMapOf(),
+        )
 
         /**
          * The program type. Immutable after creation.
@@ -470,6 +521,20 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun currencyIso(): Optional<String> = currencyIso.getOptional("currencyISO")
+
+        /**
+         * What the program is for, which seeds share settings that suit that audience. Programs
+         * selling to businesses (`CUSTOMERS`, `USERS`, `B2B_SAAS_SELF_SERVICE`,
+         * `B2B_SAAS_ENTERPRISE`) start with the LinkedIn share button visible; consumer, financial,
+         * education, insurance, newsletter, and waitlist programs (`B2C_SUBSCRIPTIONS`,
+         * `FINANCIAL_SERVICES`, `ONLINE_EDUCATION`, `ONLINE_INSURANCE`, `SUBSCRIBERS`, `WAITLIST`)
+         * start with it hidden. Omit it and every share button keeps its standard default. Set only
+         * when the program is created; it is not accepted on update.
+         *
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun goal(): Optional<Goal> = goal.getOptional("goal")
 
         /**
          * Optional inline rewards to create with the program.
@@ -522,6 +587,13 @@ private constructor(
         fun _currencyIso(): JsonField<String> = currencyIso
 
         /**
+         * Returns the raw JSON value of [goal].
+         *
+         * Unlike [goal], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("goal") @ExcludeMissing fun _goal(): JsonField<Goal> = goal
+
+        /**
          * Returns the raw JSON value of [rewards].
          *
          * Unlike [rewards], this method doesn't throw if the JSON field has an unexpected type.
@@ -561,6 +633,7 @@ private constructor(
             private var companyName: JsonField<String> = JsonMissing.of()
             private var companyLogoImageUrl: JsonField<String> = JsonMissing.of()
             private var currencyIso: JsonField<String> = JsonMissing.of()
+            private var goal: JsonField<Goal> = JsonMissing.of()
             private var rewards: JsonField<MutableList<Reward>>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -571,6 +644,7 @@ private constructor(
                 companyName = body.companyName
                 companyLogoImageUrl = body.companyLogoImageUrl
                 currencyIso = body.currencyIso
+                goal = body.goal
                 rewards = body.rewards.map { it.toMutableList() }
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
@@ -643,6 +717,27 @@ private constructor(
                 this.currencyIso = currencyIso
             }
 
+            /**
+             * What the program is for, which seeds share settings that suit that audience. Programs
+             * selling to businesses (`CUSTOMERS`, `USERS`, `B2B_SAAS_SELF_SERVICE`,
+             * `B2B_SAAS_ENTERPRISE`) start with the LinkedIn share button visible; consumer,
+             * financial, education, insurance, newsletter, and waitlist programs
+             * (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`, `ONLINE_EDUCATION`, `ONLINE_INSURANCE`,
+             * `SUBSCRIBERS`, `WAITLIST`) start with it hidden. Omit it and every share button keeps
+             * its standard default. Set only when the program is created; it is not accepted on
+             * update.
+             */
+            fun goal(goal: Goal) = goal(JsonField.of(goal))
+
+            /**
+             * Sets [Builder.goal] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.goal] with a well-typed [Goal] value instead. This
+             * method is primarily for setting the field to an undocumented or not yet supported
+             * value.
+             */
+            fun goal(goal: JsonField<Goal>) = apply { this.goal = goal }
+
             /** Optional inline rewards to create with the program. */
             fun rewards(rewards: List<Reward>) = rewards(JsonField.of(rewards))
 
@@ -707,6 +802,7 @@ private constructor(
                     companyName,
                     companyLogoImageUrl,
                     currencyIso,
+                    goal,
                     (rewards ?: JsonMissing.of()).map { it.toImmutable() },
                     additionalProperties.toMutableMap(),
                 )
@@ -733,6 +829,7 @@ private constructor(
             companyName()
             companyLogoImageUrl()
             currencyIso()
+            goal().ifPresent { it.validate() }
             rewards().ifPresent { it.forEach { it.validate() } }
             validated = true
         }
@@ -758,6 +855,7 @@ private constructor(
                 (if (companyName.asKnown().isPresent) 1 else 0) +
                 (if (companyLogoImageUrl.asKnown().isPresent) 1 else 0) +
                 (if (currencyIso.asKnown().isPresent) 1 else 0) +
+                (goal.asKnown().getOrNull()?.validity() ?: 0) +
                 (rewards.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
 
         override fun equals(other: Any?): Boolean {
@@ -771,6 +869,7 @@ private constructor(
                 companyName == other.companyName &&
                 companyLogoImageUrl == other.companyLogoImageUrl &&
                 currencyIso == other.currencyIso &&
+                goal == other.goal &&
                 rewards == other.rewards &&
                 additionalProperties == other.additionalProperties
         }
@@ -782,6 +881,7 @@ private constructor(
                 companyName,
                 companyLogoImageUrl,
                 currencyIso,
+                goal,
                 rewards,
                 additionalProperties,
             )
@@ -790,7 +890,200 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{type=$type, name=$name, companyName=$companyName, companyLogoImageUrl=$companyLogoImageUrl, currencyIso=$currencyIso, rewards=$rewards, additionalProperties=$additionalProperties}"
+            "Body{type=$type, name=$name, companyName=$companyName, companyLogoImageUrl=$companyLogoImageUrl, currencyIso=$currencyIso, goal=$goal, rewards=$rewards, additionalProperties=$additionalProperties}"
+    }
+
+    /**
+     * What the program is for, which seeds share settings that suit that audience. Programs selling
+     * to businesses (`CUSTOMERS`, `USERS`, `B2B_SAAS_SELF_SERVICE`, `B2B_SAAS_ENTERPRISE`) start
+     * with the LinkedIn share button visible; consumer, financial, education, insurance,
+     * newsletter, and waitlist programs (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`,
+     * `ONLINE_EDUCATION`, `ONLINE_INSURANCE`, `SUBSCRIBERS`, `WAITLIST`) start with it hidden. Omit
+     * it and every share button keeps its standard default. Set only when the program is created;
+     * it is not accepted on update.
+     */
+    class Goal @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val CUSTOMERS = of("CUSTOMERS")
+
+            @JvmField val USERS = of("USERS")
+
+            @JvmField val SUBSCRIBERS = of("SUBSCRIBERS")
+
+            @JvmField val WAITLIST = of("WAITLIST")
+
+            @JvmField val B2B_SAAS_SELF_SERVICE = of("B2B_SAAS_SELF_SERVICE")
+
+            @JvmField val B2B_SAAS_ENTERPRISE = of("B2B_SAAS_ENTERPRISE")
+
+            @JvmField val B2C_SUBSCRIPTIONS = of("B2C_SUBSCRIPTIONS")
+
+            @JvmField val FINANCIAL_SERVICES = of("FINANCIAL_SERVICES")
+
+            @JvmField val ONLINE_EDUCATION = of("ONLINE_EDUCATION")
+
+            @JvmField val ONLINE_INSURANCE = of("ONLINE_INSURANCE")
+
+            @JvmStatic fun of(value: String) = Goal(JsonField.of(value))
+        }
+
+        /** An enum containing [Goal]'s known values. */
+        enum class Known {
+            CUSTOMERS,
+            USERS,
+            SUBSCRIBERS,
+            WAITLIST,
+            B2B_SAAS_SELF_SERVICE,
+            B2B_SAAS_ENTERPRISE,
+            B2C_SUBSCRIPTIONS,
+            FINANCIAL_SERVICES,
+            ONLINE_EDUCATION,
+            ONLINE_INSURANCE,
+        }
+
+        /**
+         * An enum containing [Goal]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [Goal] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            CUSTOMERS,
+            USERS,
+            SUBSCRIBERS,
+            WAITLIST,
+            B2B_SAAS_SELF_SERVICE,
+            B2B_SAAS_ENTERPRISE,
+            B2C_SUBSCRIPTIONS,
+            FINANCIAL_SERVICES,
+            ONLINE_EDUCATION,
+            ONLINE_INSURANCE,
+            /** An enum member indicating that [Goal] was instantiated with an unknown value. */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                CUSTOMERS -> Value.CUSTOMERS
+                USERS -> Value.USERS
+                SUBSCRIBERS -> Value.SUBSCRIBERS
+                WAITLIST -> Value.WAITLIST
+                B2B_SAAS_SELF_SERVICE -> Value.B2B_SAAS_SELF_SERVICE
+                B2B_SAAS_ENTERPRISE -> Value.B2B_SAAS_ENTERPRISE
+                B2C_SUBSCRIPTIONS -> Value.B2C_SUBSCRIPTIONS
+                FINANCIAL_SERVICES -> Value.FINANCIAL_SERVICES
+                ONLINE_EDUCATION -> Value.ONLINE_EDUCATION
+                ONLINE_INSURANCE -> Value.ONLINE_INSURANCE
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws GrowsurfInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                CUSTOMERS -> Known.CUSTOMERS
+                USERS -> Known.USERS
+                SUBSCRIBERS -> Known.SUBSCRIBERS
+                WAITLIST -> Known.WAITLIST
+                B2B_SAAS_SELF_SERVICE -> Known.B2B_SAAS_SELF_SERVICE
+                B2B_SAAS_ENTERPRISE -> Known.B2B_SAAS_ENTERPRISE
+                B2C_SUBSCRIPTIONS -> Known.B2C_SUBSCRIPTIONS
+                FINANCIAL_SERVICES -> Known.FINANCIAL_SERVICES
+                ONLINE_EDUCATION -> Known.ONLINE_EDUCATION
+                ONLINE_INSURANCE -> Known.ONLINE_INSURANCE
+                else -> throw GrowsurfInvalidDataException("Unknown Goal: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws GrowsurfInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                GrowsurfInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws GrowsurfInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): Goal = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: GrowsurfInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is Goal && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
     }
 
     /** The program type. Immutable after creation. */

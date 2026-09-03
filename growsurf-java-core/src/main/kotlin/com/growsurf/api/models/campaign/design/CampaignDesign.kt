@@ -52,6 +52,7 @@ constructor(
     @JsonProperty("backLinkText") private val backLinkText: String? = null,
     @JsonProperty("copyButtonText") private val copyButtonText: String? = null,
     @JsonProperty("copiedText") private val copiedText: String? = null,
+    @JsonProperty("emptyState") private val emptyState: String? = null,
     @JsonProperty("icon") private val icon: CampaignDesignResourcesIcon? = null,
 ) {
     /** Enables the destination. It stays hidden until one valid resource is published. */
@@ -72,6 +73,9 @@ constructor(
     /** TEXT resource copy confirmation. Maximum 100 characters. */
     fun copiedText(): Optional<String> = Optional.ofNullable(copiedText)
 
+    /** Shown in place of the list when no resources are published. Maximum 500 characters. */
+    fun emptyState(): Optional<String> = Optional.ofNullable(emptyState)
+
     fun icon(): Optional<CampaignDesignResourcesIcon> = Optional.ofNullable(icon)
 
     internal fun toMap(): Map<String, Any?> =
@@ -82,6 +86,7 @@ constructor(
             backLinkText?.let { put("backLinkText", it) }
             copyButtonText?.let { put("copyButtonText", it) }
             copiedText?.let { put("copiedText", it) }
+            emptyState?.let { put("emptyState", it) }
             icon?.let { put("icon", it.toMap()) }
         }
 }

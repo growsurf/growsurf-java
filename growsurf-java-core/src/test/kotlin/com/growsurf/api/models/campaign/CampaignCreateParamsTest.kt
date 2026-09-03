@@ -17,6 +17,7 @@ internal class CampaignCreateParamsTest {
             .companyName("companyName")
             .companyLogoImageUrl("companyLogoImageUrl")
             .currencyIso("currencyISO")
+            .goal(CampaignCreateParams.Goal.CUSTOMERS)
             .addReward(
                 CampaignCreateParams.Reward.builder()
                     .type(CampaignCreateParams.Reward.Type.SINGLE_SIDED)
@@ -34,6 +35,7 @@ internal class CampaignCreateParamsTest {
                 .type(CampaignCreateParams.Type.REFERRAL)
                 .name("name")
                 .companyName("companyName")
+                .goal(CampaignCreateParams.Goal.B2B_SAAS_SELF_SERVICE)
                 .addReward(
                     CampaignCreateParams.Reward.builder()
                         .type(CampaignCreateParams.Reward.Type.SINGLE_SIDED)
@@ -48,6 +50,7 @@ internal class CampaignCreateParamsTest {
         assertThat(body.type()).isEqualTo(CampaignCreateParams.Type.REFERRAL)
         assertThat(body.name()).contains("name")
         assertThat(body.companyName()).contains("companyName")
+        assertThat(body.goal()).contains(CampaignCreateParams.Goal.B2B_SAAS_SELF_SERVICE)
         assertThat(body.rewards().getOrNull())
             .containsExactly(
                 CampaignCreateParams.Reward.builder()

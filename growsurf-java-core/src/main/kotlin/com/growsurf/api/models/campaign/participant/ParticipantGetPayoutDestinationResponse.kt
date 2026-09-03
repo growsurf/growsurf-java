@@ -12,6 +12,7 @@ import com.growsurf.api.core.JsonField
 import com.growsurf.api.core.JsonMissing
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.checkKnown
+import com.growsurf.api.core.checkRequired
 import com.growsurf.api.core.toImmutable
 import com.growsurf.api.errors.GrowsurfInvalidDataException
 import java.util.Collections
@@ -55,7 +56,7 @@ private constructor(
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun destinations(): Optional<List<Destination>> = destinations.getOptional("destinations")
+    fun destinations(): List<Destination> = destinations.getRequired("destinations")
 
     /**
      * The payout providers enabled for this program.
@@ -63,8 +64,7 @@ private constructor(
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun enabledProviders(): Optional<List<String>> =
-        enabledProviders.getOptional("enabledProviders")
+    fun enabledProviders(): List<String> = enabledProviders.getRequired("enabledProviders")
 
     /**
      * Returns the raw JSON value of [activeProvider].
@@ -118,7 +118,7 @@ private constructor(
     /** A builder for [ParticipantGetPayoutDestinationResponse]. */
     class Builder internal constructor() {
 
-        private var activeProvider: JsonField<String> = JsonMissing.of()
+        private var activeProvider: JsonField<String>? = null
         private var destinations: JsonField<MutableList<Destination>>? = null
         private var enabledProviders: JsonField<MutableList<String>>? = null
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
@@ -236,9 +236,9 @@ private constructor(
          */
         fun build(): ParticipantGetPayoutDestinationResponse =
             ParticipantGetPayoutDestinationResponse(
-                activeProvider,
-                (destinations ?: JsonMissing.of()).map { it.toImmutable() },
-                (enabledProviders ?: JsonMissing.of()).map { it.toImmutable() },
+                checkRequired("activeProvider", activeProvider),
+                checkRequired("destinations", destinations).map { it.toImmutable() },
+                checkRequired("enabledProviders", enabledProviders).map { it.toImmutable() },
                 additionalProperties.toMutableMap(),
             )
     }
@@ -259,7 +259,7 @@ private constructor(
         }
 
         activeProvider()
-        destinations().ifPresent { it.forEach { it.validate() } }
+        destinations().forEach { it.validate() }
         enabledProviders()
         validated = true
     }
@@ -389,7 +389,7 @@ private constructor(
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun provider(): Optional<String> = provider.getOptional("provider")
+        fun provider(): String = provider.getRequired("provider")
 
         /**
          * The customer-facing provider name (e.g. "PayPal", "Wise").
@@ -397,8 +397,7 @@ private constructor(
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun providerDisplayName(): Optional<String> =
-            providerDisplayName.getOptional("providerDisplayName")
+        fun providerDisplayName(): String = providerDisplayName.getRequired("providerDisplayName")
 
         /**
          * The destination's current status: `NONE` (not set up), `PENDING_CONFIRMATION`,
@@ -408,7 +407,7 @@ private constructor(
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
-        fun status(): Optional<String> = status.getOptional("status")
+        fun status(): String = status.getRequired("status")
 
         /**
          * Returns the raw JSON value of [claimEmail].
@@ -493,13 +492,13 @@ private constructor(
         /** A builder for [Destination]. */
         class Builder internal constructor() {
 
-            private var claimEmail: JsonField<String> = JsonMissing.of()
-            private var confirmedAt: JsonField<Long> = JsonMissing.of()
-            private var legalEntityType: JsonField<LegalEntityType> = JsonMissing.of()
-            private var needsRepairReason: JsonField<String> = JsonMissing.of()
-            private var provider: JsonField<String> = JsonMissing.of()
-            private var providerDisplayName: JsonField<String> = JsonMissing.of()
-            private var status: JsonField<String> = JsonMissing.of()
+            private var claimEmail: JsonField<String>? = null
+            private var confirmedAt: JsonField<Long>? = null
+            private var legalEntityType: JsonField<LegalEntityType>? = null
+            private var needsRepairReason: JsonField<String>? = null
+            private var provider: JsonField<String>? = null
+            private var providerDisplayName: JsonField<String>? = null
+            private var status: JsonField<String>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -660,13 +659,13 @@ private constructor(
              */
             fun build(): Destination =
                 Destination(
-                    claimEmail,
-                    confirmedAt,
-                    legalEntityType,
-                    needsRepairReason,
-                    provider,
-                    providerDisplayName,
-                    status,
+                    checkRequired("claimEmail", claimEmail),
+                    checkRequired("confirmedAt", confirmedAt),
+                    checkRequired("legalEntityType", legalEntityType),
+                    checkRequired("needsRepairReason", needsRepairReason),
+                    checkRequired("provider", provider),
+                    checkRequired("providerDisplayName", providerDisplayName),
+                    checkRequired("status", status),
                     additionalProperties.toMutableMap(),
                 )
         }

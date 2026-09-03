@@ -11,6 +11,7 @@ import com.growsurf.api.core.ExcludeMissing
 import com.growsurf.api.core.JsonField
 import com.growsurf.api.core.JsonMissing
 import com.growsurf.api.core.JsonValue
+import com.growsurf.api.core.checkRequired
 import com.growsurf.api.errors.GrowsurfInvalidDataException
 import java.util.Collections
 import java.util.Objects
@@ -51,7 +52,7 @@ private constructor(
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun provider(): Optional<String> = provider.getOptional("provider")
+    fun provider(): String = provider.getRequired("provider")
 
     /**
      * The customer-facing provider name (e.g. "PayPal", "Wise").
@@ -59,8 +60,7 @@ private constructor(
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun providerDisplayName(): Optional<String> =
-        providerDisplayName.getOptional("providerDisplayName")
+    fun providerDisplayName(): String = providerDisplayName.getRequired("providerDisplayName")
 
     /**
      * Confirms the message was requested.
@@ -68,7 +68,7 @@ private constructor(
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
-    fun status(): Optional<Status> = status.getOptional("status")
+    fun status(): Status = status.getRequired("status")
 
     /**
      * Returns the raw JSON value of [expiresAt].
@@ -125,10 +125,10 @@ private constructor(
     /** A builder for [ParticipantRequestPayoutDestinationConfirmationResponse]. */
     class Builder internal constructor() {
 
-        private var expiresAt: JsonField<Long> = JsonMissing.of()
-        private var provider: JsonField<String> = JsonMissing.of()
-        private var providerDisplayName: JsonField<String> = JsonMissing.of()
-        private var status: JsonField<Status> = JsonMissing.of()
+        private var expiresAt: JsonField<Long>? = null
+        private var provider: JsonField<String>? = null
+        private var providerDisplayName: JsonField<String>? = null
+        private var status: JsonField<Status>? = null
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
@@ -231,10 +231,10 @@ private constructor(
          */
         fun build(): ParticipantRequestPayoutDestinationConfirmationResponse =
             ParticipantRequestPayoutDestinationConfirmationResponse(
-                expiresAt,
-                provider,
-                providerDisplayName,
-                status,
+                checkRequired("expiresAt", expiresAt),
+                checkRequired("provider", provider),
+                checkRequired("providerDisplayName", providerDisplayName),
+                checkRequired("status", status),
                 additionalProperties.toMutableMap(),
             )
     }
@@ -257,7 +257,7 @@ private constructor(
         expiresAt()
         provider()
         providerDisplayName()
-        status().ifPresent { it.validate() }
+        status().validate()
         validated = true
     }
 

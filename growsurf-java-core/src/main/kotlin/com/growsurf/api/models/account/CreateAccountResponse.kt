@@ -37,8 +37,9 @@ private constructor(
 
     /**
      * An API key for the new account. Use it as the `Bearer` token on subsequent requests. Locked
-     * (`403` `EMAIL_NOT_VERIFIED_ERROR`) until the account's email is verified, and rotated when
-     * the account owner first signs in to the GrowSurf dashboard.
+     * (`403` `EMAIL_NOT_VERIFIED_ERROR`) until the account's email is verified; verification
+     * unlocks this same key, so keep it and retry. It is replaced only when the account owner first
+     * signs in to the GrowSurf dashboard.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -127,8 +128,9 @@ private constructor(
 
         /**
          * An API key for the new account. Use it as the `Bearer` token on subsequent requests.
-         * Locked (`403` `EMAIL_NOT_VERIFIED_ERROR`) until the account's email is verified, and
-         * rotated when the account owner first signs in to the GrowSurf dashboard.
+         * Locked (`403` `EMAIL_NOT_VERIFIED_ERROR`) until the account's email is verified;
+         * verification unlocks this same key, so keep it and retry. It is replaced only when the
+         * account owner first signs in to the GrowSurf dashboard.
          */
         fun apiKey(apiKey: String) = apiKey(JsonField.of(apiKey))
 
