@@ -2,6 +2,9 @@
 
 package com.growsurf.api.models.campaign.emails
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.Params
 import com.growsurf.api.core.http.Headers
@@ -11,13 +14,30 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
+/** Writable sender settings. The response-only `fromEmail` is intentionally absent. */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+data class CampaignEmailSenderSettingsUpdate
+@JsonCreator
+constructor(
+    @JsonProperty("fromName") private val fromName: String? = null,
+    @JsonProperty("replyToEmail") private val replyToEmail: String? = null,
+)
+
+/** Writable email settings for a program. */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+data class CampaignEmailSettingsUpdate
+@JsonCreator
+constructor(
+    @JsonProperty("sender") private val sender: CampaignEmailSenderSettingsUpdate? = null,
+    @JsonProperty("contact") private val contact: CampaignEmailContactSettings? = null,
+    @JsonProperty("design") private val design: CampaignEmailDesignSettings? = null,
+)
+
 /**
  * Updates a program's Emails configuration (the dashboard Program Editor's Emails tab). Only the
- * fields you send are changed; anything you leave out is untouched. The body is a large,
- * loosely-typed partial object modeled as free-form properties — set fields via
- * [Builder.putAdditionalBodyProperty] / [Builder.additionalBodyProperties]. To see the full object
- * with every field and its current value, retrieve the resource first, then send back only the
- * fields you want to change.
+ * fields you send are changed; anything you leave out is untouched. Documented fields have typed
+ * setters. The contract remains open to future templates, which can use
+ * [Builder.putAdditionalBodyProperty].
  */
 class EmailUpdateParams
 private constructor(
@@ -68,6 +88,87 @@ private constructor(
 
         /** Alias for calling [Builder.id] with `id.orElse(null)`. */
         fun id(id: Optional<String>) = id(id.getOrNull())
+
+        fun welcomeNonReferred(value: CampaignEmailTemplate) = template("welcomeNonReferred", value)
+
+        fun welcomeReferred(value: CampaignEmailTemplate) = template("welcomeReferred", value)
+
+        fun offerClaimed(value: CampaignEmailTemplate) = template("offerClaimed", value)
+
+        fun referralLinkViewedFirstTime(value: CampaignEmailTemplate) =
+            template("referralLinkViewedFirstTime", value)
+
+        fun referralLinkUsed(value: CampaignEmailTemplate) = template("referralLinkUsed", value)
+
+        fun referredSignup(value: CampaignEmailTemplate) = template("referredSignup", value)
+
+        fun goalAchieved(value: CampaignEmailTemplate) = template("goalAchieved", value)
+
+        fun campaignEndedWinners(value: CampaignEmailTemplate) =
+            template("campaignEndedWinners", value)
+
+        fun campaignEndedNonWinners(value: CampaignEmailTemplate) =
+            template("campaignEndedNonWinners", value)
+
+        fun progressUpdateMonthly(value: CampaignEmailTemplate) =
+            template("progressUpdateMonthly", value)
+
+        fun commissionGenerated(value: CampaignEmailTemplate) =
+            template("commissionGenerated", value)
+
+        fun commissionAdjusted(value: CampaignEmailTemplate) = template("commissionAdjusted", value)
+
+        fun payoutPending(value: CampaignEmailTemplate) = template("payoutPending", value)
+
+        fun payoutSentSuccess(value: CampaignEmailTemplate) = template("payoutSentSuccess", value)
+
+        fun invite(value: CampaignInviteEmailTemplate) = apply {
+            additionalBodyProperties["invite"] = JsonValue.from(value)
+        }
+
+        fun loginLink(value: CampaignEmailTemplate) = template("loginLink", value)
+
+        fun payoutDestinationConfirmation(value: CampaignEmailTemplate) =
+            template("payoutDestinationConfirmation", value)
+
+        fun payoutDestinationChanged(value: CampaignEmailTemplate) =
+            template("payoutDestinationChanged", value)
+
+        fun taxInfoMissing(value: CampaignEmailTemplate) = template("taxInfoMissing", value)
+
+        fun taxInfoReceived(value: CampaignEmailTemplate) = template("taxInfoReceived", value)
+
+        fun taxInfoApproved(value: CampaignEmailTemplate) = template("taxInfoApproved", value)
+
+        fun taxInfoRejected(value: CampaignEmailTemplate) = template("taxInfoRejected", value)
+
+        fun affiliateApplicationReceived(value: CampaignEmailTemplate) =
+            template("affiliateApplicationReceived", value)
+
+        fun affiliateApplicationApproved(value: CampaignEmailTemplate) =
+            template("affiliateApplicationApproved", value)
+
+        fun affiliateApplicationDenied(value: CampaignEmailTemplate) =
+            template("affiliateApplicationDenied", value)
+
+        fun inviteAffiliate(value: CampaignEmailTemplate) = template("inviteAffiliate", value)
+
+        fun affiliateApplicationStatusLink(value: CampaignEmailTemplate) =
+            template("affiliateApplicationStatusLink", value)
+
+        fun affiliateApplicationEmailCorrection(value: CampaignEmailTemplate) =
+            template("affiliateApplicationEmailCorrection", value)
+
+        fun affiliateEmailChangeVerification(value: CampaignEmailTemplate) =
+            template("affiliateEmailChangeVerification", value)
+
+        fun settings(value: CampaignEmailSettingsUpdate) = apply {
+            additionalBodyProperties["settings"] = JsonValue.from(value)
+        }
+
+        private fun template(name: String, value: CampaignEmailTemplate) = apply {
+            additionalBodyProperties[name] = JsonValue.from(value)
+        }
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()

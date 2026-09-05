@@ -82,8 +82,9 @@ private constructor(
      */
     @get:JvmName("timeout") val timeout: Timeout,
     /**
-     * The maximum number of times to retry failed requests, with a short exponential backoff
-     * between requests.
+     * The maximum number of times to retry eligible failed requests, with a short exponential
+     * backoff between requests. Only `GET`, `HEAD`, and API-key rotation requests are eligible.
+     * API-key rotation uses a generated idempotency key.
      *
      * Only the following error types are retried:
      * - Connection errors (for example, due to a network connectivity problem)

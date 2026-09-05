@@ -11,6 +11,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockTest
 import com.growsurf.api.client.okhttp.GrowsurfOkHttpClient
 import com.growsurf.api.models.campaign.AnalyticsAvailability
 import com.growsurf.api.models.campaign.AnalyticsUnavailableReason
+import com.growsurf.api.models.campaign.CampaignActivationAnalyticsResponse
 import com.growsurf.api.models.campaign.CampaignRetrieveActivationAnalyticsParams
 import com.growsurf.api.models.campaign.CampaignRetrieveAnalyticsParams
 import com.growsurf.api.models.campaign.participant.ParticipantActivationAnalytics
@@ -22,6 +23,32 @@ import org.junit.jupiter.api.parallel.ResourceLock
 @WireMockTest
 @ResourceLock("https://github.com/wiremock/wiremock/issues/169")
 internal class ParticipantActivationEngagementAnalyticsContractTest {
+
+    @Test
+    fun stalledSegmentStageEnumsMatchContract() {
+        assertThat(
+                CampaignActivationAnalyticsResponse.StalledSegmentFromStage.values().map {
+                    it.value
+                }
+            )
+            .containsExactly(
+                "ELIGIBLE",
+                "PORTAL_VIEWED",
+                "SHARE_ACTION",
+                "UNIQUE_REFERRAL_VISIT",
+                "LEAD",
+            )
+        assertThat(
+                CampaignActivationAnalyticsResponse.StalledSegmentToStage.values().map { it.value }
+            )
+            .containsExactly(
+                "PORTAL_VIEWED",
+                "SHARE_ACTION",
+                "UNIQUE_REFERRAL_VISIT",
+                "LEAD",
+                "CREDITED_REFERRAL",
+            )
+    }
 
     @Test
     fun legacyAndOptInContractsPreserveUnknownValues(wmRuntimeInfo: WireMockRuntimeInfo) {

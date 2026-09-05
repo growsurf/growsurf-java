@@ -150,6 +150,19 @@ internal class ProgramResourcesServiceTest {
             .isInstanceOf(IllegalArgumentException::class.java)
             .hasMessageContaining("requires at least one field")
 
+        listOf(ProgramResourceType.FILE, ProgramResourceType.LINK, ProgramResourceType.TEXT)
+            .forEach { type ->
+                assertThatThrownBy {
+                        ProgramResourceUpdateParams.builder()
+                            .id("program-id")
+                            .resourceId("resource-id")
+                            .type(type)
+                            .build()
+                    }
+                    .isInstanceOf(IllegalArgumentException::class.java)
+                    .hasMessageContaining("requires its replacement content")
+            }
+
         assertThatThrownBy {
                 ProgramResourceUpdateParams.builder()
                     .id("program-id")

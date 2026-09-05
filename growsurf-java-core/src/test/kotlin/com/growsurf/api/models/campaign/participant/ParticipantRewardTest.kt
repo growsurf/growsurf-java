@@ -19,6 +19,7 @@ internal class ParticipantRewardTest {
                 .status(ParticipantReward.Status.PENDING)
                 .approved(true)
                 .approvedAt(0L)
+                .amount(25.5)
                 .commissionStructure(
                     CommissionStructure.builder()
                         .amount(0L)
@@ -42,6 +43,7 @@ internal class ParticipantRewardTest {
                         .type(CommissionStructure.Type.PERCENT)
                         .build()
                 )
+                .currencyIso("USD")
                 .fulfilledAt(0L)
                 .isAvailable(true)
                 .isFulfilled(true)
@@ -56,6 +58,7 @@ internal class ParticipantRewardTest {
         assertThat(participantReward.status()).isEqualTo(ParticipantReward.Status.PENDING)
         assertThat(participantReward.approved()).contains(true)
         assertThat(participantReward.approvedAt()).contains(0L)
+        assertThat(participantReward.amount()).contains(25.5)
         assertThat(participantReward.commissionStructure())
             .contains(
                 CommissionStructure.builder()
@@ -80,6 +83,7 @@ internal class ParticipantRewardTest {
                     .type(CommissionStructure.Type.PERCENT)
                     .build()
             )
+        assertThat(participantReward.currencyIso()).contains("USD")
         assertThat(participantReward.fulfilledAt()).contains(0L)
         assertThat(participantReward.isAvailable()).contains(true)
         assertThat(participantReward.isFulfilled()).contains(true)
@@ -99,6 +103,7 @@ internal class ParticipantRewardTest {
                 .status(ParticipantReward.Status.CANCELLED)
                 .approved(true)
                 .approvedAt(0L)
+                .amount(25.5)
                 .commissionStructure(
                     CommissionStructure.builder()
                         .amount(0L)
@@ -122,6 +127,7 @@ internal class ParticipantRewardTest {
                         .type(CommissionStructure.Type.PERCENT)
                         .build()
                 )
+                .currencyIso("USD")
                 .fulfilledAt(0L)
                 .isAvailable(true)
                 .isFulfilled(true)

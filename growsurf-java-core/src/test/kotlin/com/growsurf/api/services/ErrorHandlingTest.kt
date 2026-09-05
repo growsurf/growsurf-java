@@ -17,12 +17,14 @@ import com.growsurf.api.errors.BadRequestException
 import com.growsurf.api.errors.ConflictException
 import com.growsurf.api.errors.GrowsurfException
 import com.growsurf.api.errors.InternalServerException
+import com.growsurf.api.errors.LockedException
 import com.growsurf.api.errors.NotFoundException
 import com.growsurf.api.errors.PermissionDeniedException
 import com.growsurf.api.errors.RateLimitException
 import com.growsurf.api.errors.UnauthorizedException
 import com.growsurf.api.errors.UnexpectedStatusCodeException
 import com.growsurf.api.errors.UnprocessableEntityException
+import java.util.concurrent.ExecutionException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.entry
 import org.junit.jupiter.api.BeforeEach
@@ -226,6 +228,40 @@ internal class ErrorHandlingTest {
         assertThat(e.statusCode()).isEqualTo(409)
         assertThat(e.headers().toMap()).contains(entry(HEADER_NAME, listOf(HEADER_VALUE)))
         assertThat(e.body()).isEqualTo(ERROR_JSON)
+    }
+
+    @Test
+    fun campaignList423() {
+        val campaignService = client.campaign()
+        stubFor(
+            get(anyUrl())
+                .willReturn(
+                    status(423).withHeader(HEADER_NAME, HEADER_VALUE).withBody(ERROR_JSON_BYTES)
+                )
+        )
+
+        val e = assertThrows<LockedException> { campaignService.list() }
+
+        assertThat(e.statusCode()).isEqualTo(423)
+        assertThat(e.headers().toMap()).contains(entry(HEADER_NAME, listOf(HEADER_VALUE)))
+        assertThat(e.body()).isEqualTo(ERROR_JSON)
+    }
+
+    @Test
+    fun campaignList423Async() {
+        stubFor(
+            get(anyUrl())
+                .willReturn(
+                    status(423).withHeader(HEADER_NAME, HEADER_VALUE).withBody(ERROR_JSON_BYTES)
+                )
+        )
+
+        val e = assertThrows<ExecutionException> { client.async().campaign().list().get() }
+        val cause = e.cause as LockedException
+
+        assertThat(cause.statusCode()).isEqualTo(423)
+        assertThat(cause.headers().toMap()).contains(entry(HEADER_NAME, listOf(HEADER_VALUE)))
+        assertThat(cause.body()).isEqualTo(ERROR_JSON)
     }
 
     @Test

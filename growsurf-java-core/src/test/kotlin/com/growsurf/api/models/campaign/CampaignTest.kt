@@ -11,6 +11,14 @@ import org.junit.jupiter.api.Test
 internal class CampaignTest {
 
     @Test
+    fun statusIncludesEveryRuntimeValue() {
+        assertThat(Campaign.Status.PENDING.value()).isEqualTo(Campaign.Status.Value.PENDING)
+        assertThat(Campaign.Status.CANCELLED.value()).isEqualTo(Campaign.Status.Value.CANCELLED)
+        assertThat(Campaign.Status.PENDING.known()).isEqualTo(Campaign.Status.Known.PENDING)
+        assertThat(Campaign.Status.CANCELLED.known()).isEqualTo(Campaign.Status.Known.CANCELLED)
+    }
+
+    @Test
     fun create() {
         val campaign =
             Campaign.builder()

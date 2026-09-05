@@ -27,7 +27,9 @@ private constructor(
     private val status: JsonField<Status>,
     private val approved: JsonField<Boolean>,
     private val approvedAt: JsonField<Long>,
+    private val amount: JsonField<Double>,
     private val commissionStructure: JsonField<CommissionStructure>,
+    private val currencyIso: JsonField<String>,
     private val fulfilledAt: JsonField<Long>,
     private val isAvailable: JsonField<Boolean>,
     private val isFulfilled: JsonField<Boolean>,
@@ -45,9 +47,13 @@ private constructor(
         @JsonProperty("status") @ExcludeMissing status: JsonField<Status> = JsonMissing.of(),
         @JsonProperty("approved") @ExcludeMissing approved: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("approvedAt") @ExcludeMissing approvedAt: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("amount") @ExcludeMissing amount: JsonField<Double> = JsonMissing.of(),
         @JsonProperty("commissionStructure")
         @ExcludeMissing
         commissionStructure: JsonField<CommissionStructure> = JsonMissing.of(),
+        @JsonProperty("currencyISO")
+        @ExcludeMissing
+        currencyIso: JsonField<String> = JsonMissing.of(),
         @JsonProperty("fulfilledAt")
         @ExcludeMissing
         fulfilledAt: JsonField<Long> = JsonMissing.of(),
@@ -73,7 +79,9 @@ private constructor(
         status,
         approved,
         approvedAt,
+        amount,
         commissionStructure,
+        currencyIso,
         fulfilledAt,
         isAvailable,
         isFulfilled,
@@ -118,8 +126,20 @@ private constructor(
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
+    fun amount(): Optional<Double> = amount.getOptional("amount")
+
+    /**
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
     fun commissionStructure(): Optional<CommissionStructure> =
         commissionStructure.getOptional("commissionStructure")
+
+    /**
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun currencyIso(): Optional<String> = currencyIso.getOptional("currencyISO")
 
     /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -199,6 +219,13 @@ private constructor(
     @JsonProperty("approvedAt") @ExcludeMissing fun _approvedAt(): JsonField<Long> = approvedAt
 
     /**
+     * Returns the raw JSON value of [amount].
+     *
+     * Unlike [amount], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("amount") @ExcludeMissing fun _amount(): JsonField<Double> = amount
+
+    /**
      * Returns the raw JSON value of [commissionStructure].
      *
      * Unlike [commissionStructure], this method doesn't throw if the JSON field has an unexpected
@@ -207,6 +234,13 @@ private constructor(
     @JsonProperty("commissionStructure")
     @ExcludeMissing
     fun _commissionStructure(): JsonField<CommissionStructure> = commissionStructure
+
+    /**
+     * Returns the raw JSON value of [currencyIso].
+     *
+     * Unlike [currencyIso], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("currencyISO") @ExcludeMissing fun _currencyIso(): JsonField<String> = currencyIso
 
     /**
      * Returns the raw JSON value of [fulfilledAt].
@@ -296,7 +330,9 @@ private constructor(
         private var status: JsonField<Status>? = null
         private var approved: JsonField<Boolean> = JsonMissing.of()
         private var approvedAt: JsonField<Long> = JsonMissing.of()
+        private var amount: JsonField<Double> = JsonMissing.of()
         private var commissionStructure: JsonField<CommissionStructure> = JsonMissing.of()
+        private var currencyIso: JsonField<String> = JsonMissing.of()
         private var fulfilledAt: JsonField<Long> = JsonMissing.of()
         private var isAvailable: JsonField<Boolean> = JsonMissing.of()
         private var isFulfilled: JsonField<Boolean> = JsonMissing.of()
@@ -313,7 +349,9 @@ private constructor(
             status = participantReward.status
             approved = participantReward.approved
             approvedAt = participantReward.approvedAt
+            amount = participantReward.amount
             commissionStructure = participantReward.commissionStructure
+            currencyIso = participantReward.currencyIso
             fulfilledAt = participantReward.fulfilledAt
             isAvailable = participantReward.isAvailable
             isFulfilled = participantReward.isFulfilled
@@ -375,6 +413,16 @@ private constructor(
          */
         fun approvedAt(approvedAt: JsonField<Long>) = apply { this.approvedAt = approvedAt }
 
+        fun amount(amount: Double) = amount(JsonField.of(amount))
+
+        /**
+         * Sets [Builder.amount] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.amount] with a well-typed [Double] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun amount(amount: JsonField<Double>) = apply { this.amount = amount }
+
         fun commissionStructure(commissionStructure: CommissionStructure?) =
             commissionStructure(JsonField.ofNullable(commissionStructure))
 
@@ -394,6 +442,17 @@ private constructor(
         fun commissionStructure(commissionStructure: JsonField<CommissionStructure>) = apply {
             this.commissionStructure = commissionStructure
         }
+
+        fun currencyIso(currencyIso: String) = currencyIso(JsonField.of(currencyIso))
+
+        /**
+         * Sets [Builder.currencyIso] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.currencyIso] with a well-typed [String] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun currencyIso(currencyIso: JsonField<String>) = apply { this.currencyIso = currencyIso }
 
         fun fulfilledAt(fulfilledAt: Long) = fulfilledAt(JsonField.of(fulfilledAt))
 
@@ -511,7 +570,9 @@ private constructor(
                 checkRequired("status", status),
                 approved,
                 approvedAt,
+                amount,
                 commissionStructure,
+                currencyIso,
                 fulfilledAt,
                 isAvailable,
                 isFulfilled,
@@ -543,7 +604,9 @@ private constructor(
         status().validate()
         approved()
         approvedAt()
+        amount()
         commissionStructure().ifPresent { it.validate() }
+        currencyIso()
         fulfilledAt()
         isAvailable()
         isFulfilled()
@@ -574,7 +637,9 @@ private constructor(
             (status.asKnown().getOrNull()?.validity() ?: 0) +
             (if (approved.asKnown().isPresent) 1 else 0) +
             (if (approvedAt.asKnown().isPresent) 1 else 0) +
+            (if (amount.asKnown().isPresent) 1 else 0) +
             (commissionStructure.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (currencyIso.asKnown().isPresent) 1 else 0) +
             (if (fulfilledAt.asKnown().isPresent) 1 else 0) +
             (if (isAvailable.asKnown().isPresent) 1 else 0) +
             (if (isFulfilled.asKnown().isPresent) 1 else 0) +
@@ -736,7 +801,9 @@ private constructor(
             status == other.status &&
             approved == other.approved &&
             approvedAt == other.approvedAt &&
+            amount == other.amount &&
             commissionStructure == other.commissionStructure &&
+            currencyIso == other.currencyIso &&
             fulfilledAt == other.fulfilledAt &&
             isAvailable == other.isAvailable &&
             isFulfilled == other.isFulfilled &&
@@ -754,7 +821,9 @@ private constructor(
             status,
             approved,
             approvedAt,
+            amount,
             commissionStructure,
+            currencyIso,
             fulfilledAt,
             isAvailable,
             isFulfilled,
@@ -769,5 +838,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ParticipantReward{id=$id, rewardId=$rewardId, status=$status, approved=$approved, approvedAt=$approvedAt, commissionStructure=$commissionStructure, fulfilledAt=$fulfilledAt, isAvailable=$isAvailable, isFulfilled=$isFulfilled, isReferrer=$isReferrer, referredId=$referredId, referrerId=$referrerId, unread=$unread, additionalProperties=$additionalProperties}"
+        "ParticipantReward{id=$id, rewardId=$rewardId, status=$status, approved=$approved, approvedAt=$approvedAt, amount=$amount, commissionStructure=$commissionStructure, currencyIso=$currencyIso, fulfilledAt=$fulfilledAt, isAvailable=$isAvailable, isFulfilled=$isFulfilled, isReferrer=$isReferrer, referredId=$referredId, referrerId=$referrerId, unread=$unread, additionalProperties=$additionalProperties}"
 }

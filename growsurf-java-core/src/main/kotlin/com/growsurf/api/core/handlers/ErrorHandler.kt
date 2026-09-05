@@ -12,6 +12,7 @@ import com.growsurf.api.core.http.HttpResponse.Handler
 import com.growsurf.api.errors.BadRequestException
 import com.growsurf.api.errors.ConflictException
 import com.growsurf.api.errors.InternalServerException
+import com.growsurf.api.errors.LockedException
 import com.growsurf.api.errors.NotFoundException
 import com.growsurf.api.errors.PermissionDeniedException
 import com.growsurf.api.errors.RateLimitException
@@ -66,6 +67,11 @@ internal fun errorHandler(errorBodyHandler: Handler<JsonValue>): Handler<HttpRes
                         .build()
                 422 ->
                     throw UnprocessableEntityException.builder()
+                        .headers(response.headers())
+                        .body(errorBodyHandler.handle(response))
+                        .build()
+                423 ->
+                    throw LockedException.builder()
                         .headers(response.headers())
                         .body(errorBodyHandler.handle(response))
                         .build()

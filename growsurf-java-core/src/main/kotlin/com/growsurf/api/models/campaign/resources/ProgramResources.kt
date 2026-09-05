@@ -243,6 +243,9 @@ private fun validateProgramResourceWrite(body: Map<String, Any?>, creating: Bool
     require(type == null || suppliedTypes.isEmpty() || suppliedTypes.single() == type) {
         "Content fields must match the selected Program Resource type"
     }
+    require(creating || type == null || suppliedTypes.singleOrNull() == type) {
+        "Changing a Program Resource type requires its replacement content"
+    }
     require(!creating || suppliedTypes.singleOrNull() == type) {
         "Create requires content fields for the selected Program Resource type"
     }

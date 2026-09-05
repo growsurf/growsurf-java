@@ -2125,9 +2125,13 @@ private constructor(
 
             @JvmField val DRAFT = of("DRAFT")
 
+            @JvmField val PENDING = of("PENDING")
+
             @JvmField val IN_PROGRESS = of("IN_PROGRESS")
 
             @JvmField val COMPLETE = of("COMPLETE")
+
+            @JvmField val CANCELLED = of("CANCELLED")
 
             @JvmField val DELETED = of("DELETED")
 
@@ -2137,8 +2141,10 @@ private constructor(
         /** An enum containing [Status]'s known values. */
         enum class Known {
             DRAFT,
+            PENDING,
             IN_PROGRESS,
             COMPLETE,
+            CANCELLED,
             DELETED,
         }
 
@@ -2153,8 +2159,10 @@ private constructor(
          */
         enum class Value {
             DRAFT,
+            PENDING,
             IN_PROGRESS,
             COMPLETE,
+            CANCELLED,
             DELETED,
             /** An enum member indicating that [Status] was instantiated with an unknown value. */
             _UNKNOWN,
@@ -2170,8 +2178,10 @@ private constructor(
         fun value(): Value =
             when (this) {
                 DRAFT -> Value.DRAFT
+                PENDING -> Value.PENDING
                 IN_PROGRESS -> Value.IN_PROGRESS
                 COMPLETE -> Value.COMPLETE
+                CANCELLED -> Value.CANCELLED
                 DELETED -> Value.DELETED
                 else -> Value._UNKNOWN
             }
@@ -2188,8 +2198,10 @@ private constructor(
         fun known(): Known =
             when (this) {
                 DRAFT -> Known.DRAFT
+                PENDING -> Known.PENDING
                 IN_PROGRESS -> Known.IN_PROGRESS
                 COMPLETE -> Known.COMPLETE
+                CANCELLED -> Known.CANCELLED
                 DELETED -> Known.DELETED
                 else -> throw GrowsurfInvalidDataException("Unknown Status: $value")
             }

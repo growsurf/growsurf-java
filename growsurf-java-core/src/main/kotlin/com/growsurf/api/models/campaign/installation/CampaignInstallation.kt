@@ -3,20 +3,78 @@
 package com.growsurf.api.models.campaign.installation
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
+import com.fasterxml.jackson.annotation.JsonValue as JsonValueAnnotation
 import com.growsurf.api.core.ExcludeMissing
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.toImmutable
 import com.growsurf.api.errors.GrowsurfInvalidDataException
+import com.growsurf.api.models.campaign.configField
+import com.growsurf.api.models.campaign.putConfigField
 import java.util.Objects
+import java.util.Optional
+
+enum class CampaignInstallationReferralTrigger(@get:JsonValueAnnotation val value: String) {
+    CUSTOM("CUSTOM"),
+    ON_SIGNUP("ON_SIGNUP"),
+}
+
+enum class CampaignInstallationSignupEvent(@get:JsonValueAnnotation val value: String) {
+    FORM_DETECTION("FORM_DETECTION"),
+    PROGRAMMATIC("PROGRAMMATIC"),
+}
+
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+data class CampaignInstallationSignup
+@JsonCreator
+constructor(
+    @JsonProperty("isCustomForm") private val isCustomForm: Boolean? = null,
+    @JsonProperty("url") private val url: String? = null,
+    @JsonProperty("redirectAfterSignup") private val redirectAfterSignup: Boolean? = null,
+    @JsonProperty("redirectUrl") private val redirectUrl: String? = null,
+    @JsonProperty("trackInputFields") private val trackInputFields: Boolean? = null,
+) {
+    fun isCustomForm(): Optional<Boolean> = Optional.ofNullable(isCustomForm)
+
+    fun url(): Optional<String> = Optional.ofNullable(url)
+
+    fun redirectAfterSignup(): Optional<Boolean> = Optional.ofNullable(redirectAfterSignup)
+
+    fun redirectUrl(): Optional<String> = Optional.ofNullable(redirectUrl)
+
+    fun trackInputFields(): Optional<Boolean> = Optional.ofNullable(trackInputFields)
+}
+
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+data class CampaignInstallationMobile
+@JsonCreator
+constructor(
+    @JsonProperty("isEnabled") private val isEnabled: Boolean? = null,
+    @JsonProperty("publicKey") private val publicKey: String? = null,
+    @JsonProperty("iosAttributionUrl") private val iosAttributionUrl: String? = null,
+    @JsonProperty("iosAppStoreUrl") private val iosAppStoreUrl: String? = null,
+    @JsonProperty("androidPackageName") private val androidPackageName: String? = null,
+    @JsonProperty("androidAppStoreUrl") private val androidAppStoreUrl: String? = null,
+) {
+    fun isEnabled(): Optional<Boolean> = Optional.ofNullable(isEnabled)
+
+    /** Read-only publishable key returned by the API. */
+    fun publicKey(): Optional<String> = Optional.ofNullable(publicKey)
+
+    fun iosAttributionUrl(): Optional<String> = Optional.ofNullable(iosAttributionUrl)
+
+    fun iosAppStoreUrl(): Optional<String> = Optional.ofNullable(iosAppStoreUrl)
+
+    fun androidPackageName(): Optional<String> = Optional.ofNullable(androidPackageName)
+
+    fun androidAppStoreUrl(): Optional<String> = Optional.ofNullable(androidAppStoreUrl)
+}
 
 /**
- * Program Editor **Installation** tab configuration — the same surface as the dashboard. This is a
- * large, loosely-typed object modeled as free-form properties; the available fields depend on the
- * program type (the referral trigger (referral programs only), signup tracking method, share URL
- * and whitelist, custom-form signup settings, and mobile SDK settings). To see the full object with
- * every field and its current value, retrieve the resource first, then send back only the fields
- * you want to change.
+ * Program Editor **Installation** tab configuration. Documented fields are typed. The contract
+ * remains open to future installation settings, available through [_additionalProperties].
  */
 class CampaignInstallation
 @JsonCreator
@@ -24,6 +82,23 @@ private constructor(
     @com.fasterxml.jackson.annotation.JsonValue
     private val additionalProperties: Map<String, JsonValue>
 ) {
+
+    fun referralTrigger(): Optional<CampaignInstallationReferralTrigger> =
+        configField(additionalProperties, "referralTrigger")
+
+    fun signupEvent(): Optional<CampaignInstallationSignupEvent> =
+        configField(additionalProperties, "signupEvent")
+
+    fun shareUrl(): Optional<String> = configField(additionalProperties, "shareUrl")
+
+    fun useGrowSurfHostedLinks(): Optional<Boolean> =
+        configField(additionalProperties, "useGrowSurfHostedLinks")
+
+    fun allowedUrls(): Optional<List<String>> = configField(additionalProperties, "allowedUrls")
+
+    fun signup(): Optional<CampaignInstallationSignup> = configField(additionalProperties, "signup")
+
+    fun mobile(): Optional<CampaignInstallationMobile> = configField(additionalProperties, "mobile")
 
     @JsonAnyGetter
     @ExcludeMissing
@@ -45,6 +120,34 @@ private constructor(
         @JvmSynthetic
         internal fun from(installation: CampaignInstallation) = apply {
             additionalProperties = installation.additionalProperties.toMutableMap()
+        }
+
+        fun referralTrigger(value: CampaignInstallationReferralTrigger) = apply {
+            additionalProperties.putConfigField("referralTrigger", value)
+        }
+
+        fun signupEvent(value: CampaignInstallationSignupEvent) = apply {
+            additionalProperties.putConfigField("signupEvent", value)
+        }
+
+        fun shareUrl(value: String) = apply {
+            additionalProperties.putConfigField("shareUrl", value)
+        }
+
+        fun useGrowSurfHostedLinks(value: Boolean) = apply {
+            additionalProperties.putConfigField("useGrowSurfHostedLinks", value)
+        }
+
+        fun allowedUrls(value: List<String>) = apply {
+            additionalProperties.putConfigField("allowedUrls", value)
+        }
+
+        fun signup(value: CampaignInstallationSignup) = apply {
+            additionalProperties.putConfigField("signup", value)
+        }
+
+        fun mobile(value: CampaignInstallationMobile) = apply {
+            additionalProperties.putConfigField("mobile", value)
         }
 
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
@@ -89,6 +192,13 @@ private constructor(
             return@apply
         }
 
+        referralTrigger().orElse(null)
+        signupEvent().orElse(null)
+        shareUrl().orElse(null)
+        useGrowSurfHostedLinks().orElse(null)
+        allowedUrls().orElse(null)
+        signup().orElse(null)
+        mobile().orElse(null)
         validated = true
     }
 

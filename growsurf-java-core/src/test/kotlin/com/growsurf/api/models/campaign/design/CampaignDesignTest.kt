@@ -26,9 +26,18 @@ internal class CampaignDesignTest {
         )
 
     @Test
-    fun resourcesAreTypedWhileOtherDesignFieldsStayOpen() {
+    fun documentedDesignFieldsAreTypedWhileOpenSectionsStayForwardCompatible() {
         val design =
             CampaignDesign.builder()
+                .participantAvatarStyle(CampaignDesignParticipantAvatarStyle.CHARACTERS)
+                .login(ParticipantLoginDesign(heading = "Sign in", buttonText = "Send link"))
+                .referredExperience(
+                    CampaignDesignReferredExperience(
+                        offerPopupPlacement = CampaignDesignOfferPopupPlacement.BOTTOM,
+                        offerPopupDelaySeconds = CampaignDesignOfferPopupDelaySeconds.SECONDS_5,
+                        bannerPlacement = CampaignDesignBannerPlacement.TOP,
+                    )
+                )
                 .resources(resources)
                 .putAdditionalProperty(
                     "futureDesignSection",
@@ -37,6 +46,13 @@ internal class CampaignDesignTest {
                 .build()
 
         assertThat(design.resources().get().title()).contains("Resources")
+        assertThat(design.participantAvatarStyle())
+            .contains(CampaignDesignParticipantAvatarStyle.CHARACTERS)
+        assertThat(design.login().get().heading()).contains("Sign in")
+        assertThat(design.referredExperience().get().offerPopupPlacement())
+            .contains(CampaignDesignOfferPopupPlacement.BOTTOM)
+        assertThat(design.referredExperience().get().offerPopupDelaySeconds())
+            .contains(CampaignDesignOfferPopupDelaySeconds.SECONDS_5)
         assertThat(design.resources().get().icon().get().type())
             .contains(CampaignDesignResourcesIconType.IMAGE)
         assertThat(design._additionalProperties()).containsKey("futureDesignSection")
@@ -56,8 +72,14 @@ internal class CampaignDesignTest {
 
     @Test
     fun updateParamsSerializeResourcesAtThePublicFieldName() {
-        val params = DesignUpdateParams.builder().resources(resources).build()
+        val params =
+            DesignUpdateParams.builder()
+                .participantAvatarStyle(CampaignDesignParticipantAvatarStyle.CHARACTERS)
+                .login(ParticipantLoginDesign(heading = "Sign in"))
+                .resources(resources)
+                .build()
 
+        assertThat(params._body()).containsKeys("participantAvatarStyle", "login", "resources")
         assertThat(params._body()["resources"]?.asObject()).isPresent
         assertThat(params._body()["resources"]?.asObject()?.get()?.keys)
             .containsExactlyInAnyOrder(

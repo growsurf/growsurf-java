@@ -81,6 +81,22 @@ constructor(
         LEAD_NO_CREDITED_REFERRAL("LEAD_NO_CREDITED_REFERRAL"),
     }
 
+    enum class StalledSegmentFromStage(@get:JsonValue val value: String) {
+        ELIGIBLE("ELIGIBLE"),
+        PORTAL_VIEWED("PORTAL_VIEWED"),
+        SHARE_ACTION("SHARE_ACTION"),
+        UNIQUE_REFERRAL_VISIT("UNIQUE_REFERRAL_VISIT"),
+        LEAD("LEAD"),
+    }
+
+    enum class StalledSegmentToStage(@get:JsonValue val value: String) {
+        PORTAL_VIEWED("PORTAL_VIEWED"),
+        SHARE_ACTION("SHARE_ACTION"),
+        UNIQUE_REFERRAL_VISIT("UNIQUE_REFERRAL_VISIT"),
+        LEAD("LEAD"),
+        CREDITED_REFERRAL("CREDITED_REFERRAL"),
+    }
+
     enum class ImprovementAreaKey(@get:JsonValue val value: String) {
         PORTAL_ACCESS("PORTAL_ACCESS"),
         SHARING_EXPERIENCE("SHARING_EXPERIENCE"),
@@ -157,15 +173,15 @@ constructor(
     @JsonCreator
     constructor(
         @JsonProperty("key") private val key: StalledSegmentKey,
-        @JsonProperty("fromStage") private val fromStage: StageKey,
-        @JsonProperty("toStage") private val toStage: StageKey,
+        @JsonProperty("fromStage") private val fromStage: StalledSegmentFromStage,
+        @JsonProperty("toStage") private val toStage: StalledSegmentToStage,
         @JsonProperty("count") private val count: Long,
     ) {
         fun key(): StalledSegmentKey = key
 
-        fun fromStage(): StageKey = fromStage
+        fun fromStage(): StalledSegmentFromStage = fromStage
 
-        fun toStage(): StageKey = toStage
+        fun toStage(): StalledSegmentToStage = toStage
 
         fun count(): Long = count
 

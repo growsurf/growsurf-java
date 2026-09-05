@@ -2,6 +2,9 @@
 
 package com.growsurf.api.models.campaign.installation
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect
+import com.fasterxml.jackson.annotation.JsonCreator
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.Params
 import com.growsurf.api.core.http.Headers
@@ -11,13 +14,23 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
+/** Writable mobile SDK settings. The response-only `publicKey` is intentionally absent. */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+data class CampaignInstallationMobileUpdate
+@JsonCreator
+constructor(
+    @JsonProperty("isEnabled") private val isEnabled: Boolean? = null,
+    @JsonProperty("iosAttributionUrl") private val iosAttributionUrl: String? = null,
+    @JsonProperty("iosAppStoreUrl") private val iosAppStoreUrl: String? = null,
+    @JsonProperty("androidPackageName") private val androidPackageName: String? = null,
+    @JsonProperty("androidAppStoreUrl") private val androidAppStoreUrl: String? = null,
+)
+
 /**
  * Updates a program's Installation configuration (the dashboard Program Editor's Installation tab).
- * Only the fields you send are changed; anything you leave out is untouched. The body is a large,
- * loosely-typed partial object modeled as free-form properties — set fields via
- * [Builder.putAdditionalBodyProperty] / [Builder.additionalBodyProperties]. To see the full object
- * with every field and its current value, retrieve the resource first, then send back only the
- * fields you want to change.
+ * Only the fields you send are changed; anything you leave out is untouched. Documented fields have
+ * typed setters. The contract remains open to future settings, which can use
+ * [Builder.putAdditionalBodyProperty].
  */
 class InstallationUpdateParams
 private constructor(
@@ -69,6 +82,34 @@ private constructor(
 
         /** Alias for calling [Builder.id] with `id.orElse(null)`. */
         fun id(id: Optional<String>) = id(id.getOrNull())
+
+        fun referralTrigger(value: CampaignInstallationReferralTrigger) = apply {
+            additionalBodyProperties["referralTrigger"] = JsonValue.from(value)
+        }
+
+        fun signupEvent(value: CampaignInstallationSignupEvent) = apply {
+            additionalBodyProperties["signupEvent"] = JsonValue.from(value)
+        }
+
+        fun shareUrl(value: String) = apply {
+            additionalBodyProperties["shareUrl"] = JsonValue.from(value)
+        }
+
+        fun useGrowSurfHostedLinks(value: Boolean) = apply {
+            additionalBodyProperties["useGrowSurfHostedLinks"] = JsonValue.from(value)
+        }
+
+        fun allowedUrls(value: List<String>) = apply {
+            additionalBodyProperties["allowedUrls"] = JsonValue.from(value)
+        }
+
+        fun signup(value: CampaignInstallationSignup) = apply {
+            additionalBodyProperties["signup"] = JsonValue.from(value)
+        }
+
+        fun mobile(value: CampaignInstallationMobileUpdate) = apply {
+            additionalBodyProperties["mobile"] = JsonValue.from(value)
+        }
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()

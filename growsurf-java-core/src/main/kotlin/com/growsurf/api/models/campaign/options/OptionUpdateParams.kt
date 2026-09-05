@@ -13,11 +13,9 @@ import kotlin.jvm.optionals.getOrNull
 
 /**
  * Updates a program's Options configuration (the dashboard Program Editor's Options tab). Only the
- * fields you send are changed; anything you leave out is untouched. The body is a large,
- * loosely-typed partial object modeled as free-form properties — set fields via
- * [Builder.putAdditionalBodyProperty] / [Builder.additionalBodyProperties]. To see the full object
- * with every field and its current value, retrieve the resource first, then send back only the
- * fields you want to change.
+ * fields you send are changed; anything you leave out is untouched. Documented fields have typed
+ * setters. The contract remains open to future options, which can use
+ * [Builder.putAdditionalBodyProperty].
  */
 class OptionUpdateParams
 private constructor(
@@ -68,6 +66,80 @@ private constructor(
 
         /** Alias for calling [Builder.id] with `id.orElse(null)`. */
         fun id(id: Optional<String>) = id(id.getOrNull())
+
+        fun affiliateApplicationMode(value: CampaignOptionsAffiliateApplicationMode) = apply {
+            additionalBodyProperties["affiliateApplicationMode"] = JsonValue.from(value)
+        }
+
+        fun affiliateReapplicationPolicy(value: CampaignOptionsAffiliateReapplicationPolicy) =
+            apply {
+                additionalBodyProperties["affiliateReapplicationPolicy"] = JsonValue.from(value)
+            }
+
+        fun affiliateReapplicationCooldownDays(value: Long) = apply {
+            additionalBodyProperties["affiliateReapplicationCooldownDays"] = JsonValue.from(value)
+        }
+
+        fun affiliateApplicationReviewEstimateBusinessDays(value: Long?) = apply {
+            additionalBodyProperties["affiliateApplicationReviewEstimateBusinessDays"] =
+                JsonValue.from(value)
+        }
+
+        fun requireManualRewardApproval(value: Boolean) = apply {
+            additionalBodyProperties["requireManualRewardApproval"] = JsonValue.from(value)
+        }
+
+        fun autoFulfillRewards(value: Boolean) = apply {
+            additionalBodyProperties["autoFulfillRewards"] = JsonValue.from(value)
+        }
+
+        fun requireManualFraudApproval(value: Boolean) = apply {
+            additionalBodyProperties["requireManualFraudApproval"] = JsonValue.from(value)
+        }
+
+        fun autoBlockFraud(value: Boolean) = apply {
+            additionalBodyProperties["autoBlockFraud"] = JsonValue.from(value)
+        }
+
+        fun requireParticipantAuth(value: Boolean) = apply {
+            additionalBodyProperties["requireParticipantAuth"] = JsonValue.from(value)
+        }
+
+        fun enforceGdprCompliance(value: Boolean) = apply {
+            additionalBodyProperties["enforceGdprCompliance"] = JsonValue.from(value)
+        }
+
+        fun blockPaidAdsTraffic(value: Boolean) = apply {
+            additionalBodyProperties["blockPaidAdsTraffic"] = JsonValue.from(value)
+        }
+
+        fun attributionModel(value: CampaignOptionsAttributionModel) = apply {
+            additionalBodyProperties["attributionModel"] = JsonValue.from(value)
+        }
+
+        fun referralCookieWindowDays(value: CampaignOptionsReferralCookieWindowDays) = apply {
+            additionalBodyProperties["referralCookieWindowDays"] = JsonValue.from(value)
+        }
+
+        fun referralCreditWindowDays(value: CampaignOptionsReferralCreditWindowDays?) = apply {
+            additionalBodyProperties["referralCreditWindowDays"] = JsonValue.from(value)
+        }
+
+        fun payoutThreshold(value: Long?) = apply {
+            additionalBodyProperties["payoutThreshold"] = JsonValue.from(value)
+        }
+
+        fun fraud(value: CampaignOptionsFraud) = apply {
+            additionalBodyProperties["fraud"] = JsonValue.from(value)
+        }
+
+        fun taxDocumentation(value: CampaignOptionsTaxDocumentation) = apply {
+            additionalBodyProperties["taxDocumentation"] = JsonValue.from(value)
+        }
+
+        fun notificationEmails(value: CampaignOptionsNotificationEmails) = apply {
+            additionalBodyProperties["notificationEmails"] = JsonValue.from(value)
+        }
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()

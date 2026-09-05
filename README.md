@@ -3,17 +3,17 @@
 <!-- x-release-please-start-version -->
 
 [![Maven Central](https://img.shields.io/maven-central/v/com.growsurf.api/growsurf-java)](https://central.sonatype.com/artifact/com.growsurf.api/growsurf-java/1.4.0)
-[![javadoc](https://javadoc.io/badge2/com.growsurf.api/growsurf-java/1.4.0/javadoc.svg)](https://javadoc.io/doc/com.growsurf.api/growsurf-java/1.2.1)
+[![javadoc](https://javadoc.io/badge2/com.growsurf.api/growsurf-java/1.4.0/javadoc.svg)](https://javadoc.io/doc/com.growsurf.api/growsurf-java/1.4.0)
 
 <!-- x-release-please-end -->
 
-The Growsurf Java SDK provides convenient access to the [Growsurf REST API](https://growsurf.com/settings#contact_support) from applications written in Java.
+The Growsurf Java SDK provides convenient access to the [Growsurf REST API](https://docs.growsurf.com/developer-tools/rest-api/api-reference) from applications written in Java.
 
-It is generated with [Stainless](https://www.stainless.com/).
+This library was originally generated with [Stainless](https://www.stainless.com/) and is now maintained by GrowSurf.
 
 <!-- x-release-please-start-version -->
 
-The REST API documentation can be found on [growsurf.com](https://growsurf.com/settings#contact_support). Javadocs are available on [javadoc.io](https://javadoc.io/doc/com.growsurf.api/growsurf-java/1.4.0).
+The REST API documentation can be found in the [GrowSurf API reference](https://docs.growsurf.com/developer-tools/rest-api/api-reference). Javadocs are available on [javadoc.io](https://javadoc.io/doc/com.growsurf.api/growsurf-java/1.4.0).
 
 <!-- x-release-please-end -->
 
@@ -100,8 +100,10 @@ See this table for the available options:
 
 | Setter    | System property    | Environment variable | Required | Default value                   |
 | --------- | ------------------ | -------------------- | -------- | ------------------------------- |
-| `apiKey`  | `growsurf.apiKey`  | `GROWSURF_API_KEY`   | true     | -                               |
-| `baseUrl` | `growsurf.baseUrl` | `GROWSURF_BASE_URL`  | true     | `"https://api.growsurf.com/v2"` |
+| `apiKey`  | `growsurf.apiKey`  | `GROWSURF_API_KEY`   | Authenticated requests only | `""` |
+| `baseUrl` | `growsurf.baseUrl` | `GROWSURF_BASE_URL`  | false | `"https://api.growsurf.com/v2"` |
+
+`POST /accounts` does not require an API key. Every other endpoint does.
 
 System properties take precedence over environment variables.
 
@@ -212,7 +214,9 @@ The SDK throws custom unchecked exception types:
   | 401    | [`UnauthorizedException`](growsurf-java-core/src/main/kotlin/com/growsurf/api/errors/UnauthorizedException.kt)                 |
   | 403    | [`PermissionDeniedException`](growsurf-java-core/src/main/kotlin/com/growsurf/api/errors/PermissionDeniedException.kt)         |
   | 404    | [`NotFoundException`](growsurf-java-core/src/main/kotlin/com/growsurf/api/errors/NotFoundException.kt)                         |
+  | 409    | [`ConflictException`](growsurf-java-core/src/main/kotlin/com/growsurf/api/errors/ConflictException.kt)                         |
   | 422    | [`UnprocessableEntityException`](growsurf-java-core/src/main/kotlin/com/growsurf/api/errors/UnprocessableEntityException.kt)   |
+  | 423    | [`LockedException`](growsurf-java-core/src/main/kotlin/com/growsurf/api/errors/LockedException.kt)                             |
   | 429    | [`RateLimitException`](growsurf-java-core/src/main/kotlin/com/growsurf/api/errors/RateLimitException.kt)                       |
   | 5xx    | [`InternalServerException`](growsurf-java-core/src/main/kotlin/com/growsurf/api/errors/InternalServerException.kt)             |
   | others | [`UnexpectedStatusCodeException`](growsurf-java-core/src/main/kotlin/com/growsurf/api/errors/UnexpectedStatusCodeException.kt) |
@@ -275,9 +279,9 @@ Also note that there are bugs in older Jackson versions that can affect the SDK.
 
 ### Retries
 
-The SDK automatically retries 2 times by default, with a short exponential backoff between requests.
+The SDK retries eligible requests up to 2 times by default, with a short exponential backoff. Only `GET` and `HEAD` requests are retried. API-key rotation is also retried because the SDK generates and reuses an `Idempotency-Key` for that request. Other `POST`, `PUT`, `PATCH`, and `DELETE` requests are not retried automatically.
 
-Only the following error types are retried:
+For eligible requests, the following error types are retried:
 
 - Connection errors (for example, due to a network connectivity problem)
 - 408 Request Timeout
@@ -468,7 +472,8 @@ The most straightforward way to create a [`JsonValue`](growsurf-java-core/src/ma
 
 ```java
 import com.growsurf.api.core.JsonValue;
-import java.util.List;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 // Create primitive JSON values
@@ -478,29 +483,25 @@ JsonValue numberValue = JsonValue.from(42);
 JsonValue stringValue = JsonValue.from("Hello World!");
 
 // Create a JSON array value equivalent to `["Hello", "World"]`
-JsonValue arrayValue = JsonValue.from(List.of(
+JsonValue arrayValue = JsonValue.from(Arrays.asList(
   "Hello", "World"
 ));
 
 // Create a JSON object value equivalent to `{ "a": 1, "b": 2 }`
-JsonValue objectValue = JsonValue.from(Map.of(
-  "a", 1,
-  "b", 2
-));
+Map<String, Object> objectValues = new HashMap<>();
+objectValues.put("a", 1);
+objectValues.put("b", 2);
+JsonValue objectValue = JsonValue.from(objectValues);
 
 // Create an arbitrarily nested JSON equivalent to:
 // {
 //   "a": [1, 2],
 //   "b": [3, 4]
 // }
-JsonValue complexValue = JsonValue.from(Map.of(
-  "a", List.of(
-    1, 2
-  ),
-  "b", List.of(
-    3, 4
-  )
-));
+Map<String, Object> complexValues = new HashMap<>();
+complexValues.put("a", Arrays.asList(1, 2));
+complexValues.put("b", Arrays.asList(3, 4));
+JsonValue complexValue = JsonValue.from(complexValues);
 ```
 
 Normally a `Builder` class's `build` method will throw [`IllegalStateException`](https://docs.oracle.com/javase/8/docs/api/java/lang/IllegalStateException.html) if any required parameter or property is unset.

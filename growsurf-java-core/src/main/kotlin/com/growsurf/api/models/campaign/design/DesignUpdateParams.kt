@@ -14,10 +14,9 @@ import kotlin.jvm.optionals.getOrNull
 /**
  * Updates a program's design configuration, including the payout-destination confirmation page copy
  * configured from payout integration cards. Only the fields you send are changed; anything you
- * leave out is untouched (arrays such as `signup.fields` replace wholesale). The body is a large,
- * loosely-typed partial object modeled as free-form properties — set fields via
- * [Builder.putAdditionalBodyProperty] / [Builder.additionalBodyProperties]. Retrieve the configured
- * fields first, then send back only the fields you want to change.
+ * leave out is untouched (arrays such as `signup.fields` replace wholesale). Documented fields have
+ * typed setters where the REST contract defines their structure. Open design sections and future
+ * fields can use [Builder.putAdditionalBodyProperty].
  */
 class DesignUpdateParams
 private constructor(
@@ -68,6 +67,50 @@ private constructor(
 
         /** Alias for calling [Builder.id] with `id.orElse(null)`. */
         fun id(id: Optional<String>) = id(id.getOrNull())
+
+        fun participantAvatarStyle(value: CampaignDesignParticipantAvatarStyle) = apply {
+            additionalBodyProperties["participantAvatarStyle"] = JsonValue.from(value)
+        }
+
+        fun window(value: Map<String, JsonValue>) = objectField("window", value)
+
+        fun header(value: Map<String, JsonValue>) = objectField("header", value)
+
+        fun stats(value: Map<String, JsonValue>) = objectField("stats", value)
+
+        fun share(value: Map<String, JsonValue>) = objectField("share", value)
+
+        fun signup(value: Map<String, JsonValue>) = objectField("signup", value)
+
+        fun login(value: ParticipantLoginDesign) = apply {
+            additionalBodyProperties["login"] = JsonValue.from(value)
+        }
+
+        fun payoutDestinationConfirmation(value: PayoutDestinationConfirmationDesign) = apply {
+            additionalBodyProperties["payoutDestinationConfirmation"] = JsonValue.from(value)
+        }
+
+        fun countryLabels(value: Map<String, String?>) = apply {
+            additionalBodyProperties["countryLabels"] = JsonValue.from(value)
+        }
+
+        fun referralStatus(value: Map<String, JsonValue>) = objectField("referralStatus", value)
+
+        fun leaderboard(value: Map<String, JsonValue>) = objectField("leaderboard", value)
+
+        fun referredExperience(value: CampaignDesignReferredExperience) = apply {
+            additionalBodyProperties["referredExperience"] = JsonValue.from(value)
+        }
+
+        fun referralSummary(value: Map<String, JsonValue>) = objectField("referralSummary", value)
+
+        fun affiliateSummary(value: Map<String, JsonValue>) = objectField("affiliateSummary", value)
+
+        fun commissions(value: Map<String, JsonValue>) = objectField("commissions", value)
+
+        fun payouts(value: Map<String, JsonValue>) = objectField("payouts", value)
+
+        fun rewards(value: Map<String, JsonValue>) = objectField("rewards", value)
 
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
@@ -175,6 +218,19 @@ private constructor(
         /** Sets the complete participant Resources presentation settings. */
         fun resources(resources: CampaignDesignResources) = apply {
             additionalBodyProperties["resources"] = JsonValue.from(resources.toMap())
+        }
+
+        fun participantSettings(value: Map<String, JsonValue>) =
+            objectField("participantSettings", value)
+
+        fun landingPages(value: Map<String, JsonValue>) = objectField("landingPages", value)
+
+        fun theme(value: CampaignDesignTheme) = apply {
+            additionalBodyProperties["theme"] = JsonValue.from(value)
+        }
+
+        private fun objectField(name: String, value: Map<String, JsonValue>) = apply {
+            additionalBodyProperties[name] = JsonValue.from(value)
         }
 
         fun putAdditionalBodyProperty(key: String, value: JsonValue) = apply {
