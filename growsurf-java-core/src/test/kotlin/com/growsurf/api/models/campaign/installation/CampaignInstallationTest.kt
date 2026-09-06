@@ -1,11 +1,61 @@
 package com.growsurf.api.models.campaign.installation
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import com.growsurf.api.core.JsonField
+import com.growsurf.api.core.JsonNull
 import com.growsurf.api.core.jsonMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 internal class CampaignInstallationTest {
+
+    @Test
+    fun nullableUpdatesPreserveExplicitClearsAndOmitMissingFields() {
+        val mapper = jsonMapper()
+        val mobile = CampaignInstallationMobileUpdate(iosAttributionUrl = JsonNull.of())
+        val params = InstallationUpdateParams.builder().mobile(mobile).build()
+
+        assertThat(mapper.readTree(mapper.writeValueAsString(params._body())))
+            .isEqualTo(mapper.readTree("""{"mobile":{"iosAttributionUrl":null}}"""))
+        assertThat(
+                mapper.readValue(
+                    mapper.writeValueAsString(mobile),
+                    CampaignInstallationMobileUpdate::class.java,
+                )
+            )
+            .isEqualTo(mobile)
+    }
+
+    @Test
+    fun nestedConfigPreservesAdditionalFieldsWithoutWeakeningKnownTypes() {
+        val mapper = jsonMapper()
+        val json =
+            """{"mobile":{"isEnabled":true,"futureSetting":{"value":null},"additionalProperties":true}}"""
+        val installation = mapper.readValue(json, CampaignInstallation::class.java)
+        val mobile = installation.mobile().get()
+
+        assertThat(mobile.isEnabled()).contains(true)
+        assertThat(mapper.readTree(mapper.writeValueAsString(mobile.copy())))
+            .isEqualTo(mapper.readTree(json).get("mobile"))
+        org.assertj.core.api.Assertions.assertThatThrownBy {
+                mapper
+                    .readValue(
+                        """{"mobile":{"isEnabled":"invalid","futureSetting":true}}""",
+                        CampaignInstallation::class.java,
+                    )
+                    .mobile()
+            }
+            .isInstanceOf(com.growsurf.api.errors.GrowsurfInvalidDataException::class.java)
+        org.assertj.core.api.Assertions.assertThatThrownBy {
+                mapper
+                    .readValue(
+                        """{"mobile":{"iosAttributionUrl":123}}""",
+                        CampaignInstallation::class.java,
+                    )
+                    .mobile()
+            }
+            .isInstanceOf(com.growsurf.api.errors.GrowsurfInvalidDataException::class.java)
+    }
 
     @Test
     fun typedFieldsRoundtripAndUpdateParamsUseContractNames() {
@@ -36,7 +86,7 @@ internal class CampaignInstallationTest {
                 .mobile(
                     CampaignInstallationMobileUpdate(
                         isEnabled = true,
-                        iosAttributionUrl = "https://piedpiper.app.link/referral",
+                        iosAttributionUrl = JsonField.of("https://piedpiper.app.link/referral"),
                     )
                 )
                 .build()

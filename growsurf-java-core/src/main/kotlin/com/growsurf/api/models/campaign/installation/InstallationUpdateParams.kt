@@ -2,9 +2,14 @@
 
 package com.growsurf.api.models.campaign.installation
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.growsurf.api.core.ExcludeMissing
+import com.growsurf.api.core.JsonField
+import com.growsurf.api.core.JsonMissing
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.Params
 import com.growsurf.api.core.http.Headers
@@ -17,14 +22,59 @@ import kotlin.jvm.optionals.getOrNull
 /** Writable mobile SDK settings. The response-only `publicKey` is intentionally absent. */
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class CampaignInstallationMobileUpdate
-@JsonCreator
 constructor(
     @JsonProperty("isEnabled") private val isEnabled: Boolean? = null,
-    @JsonProperty("iosAttributionUrl") private val iosAttributionUrl: String? = null,
-    @JsonProperty("iosAppStoreUrl") private val iosAppStoreUrl: String? = null,
-    @JsonProperty("androidPackageName") private val androidPackageName: String? = null,
-    @JsonProperty("androidAppStoreUrl") private val androidAppStoreUrl: String? = null,
-)
+    @JsonProperty("iosAttributionUrl")
+    @ExcludeMissing
+    private val iosAttributionUrl: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("iosAppStoreUrl")
+    @ExcludeMissing
+    private val iosAppStoreUrl: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("androidPackageName")
+    @ExcludeMissing
+    private val androidPackageName: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("androidAppStoreUrl")
+    @ExcludeMissing
+    private val androidAppStoreUrl: JsonField<String> = JsonMissing.of(),
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
+) {
+    // Validate known values without conflating an omitted field with an explicit clear.
+    init {
+        iosAttributionUrl.getOptional("iosAttributionUrl")
+        iosAppStoreUrl.getOptional("iosAppStoreUrl")
+        androidPackageName.getOptional("androidPackageName")
+        androidAppStoreUrl.getOptional("androidAppStoreUrl")
+    }
+
+    @JsonCreator
+    constructor(
+        @JsonProperty("isEnabled") isEnabled: Boolean? = null,
+        @JsonProperty("iosAttributionUrl")
+        @ExcludeMissing
+        iosAttributionUrl: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("iosAppStoreUrl")
+        @ExcludeMissing
+        iosAppStoreUrl: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("androidPackageName")
+        @ExcludeMissing
+        androidPackageName: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("androidAppStoreUrl")
+        @ExcludeMissing
+        androidAppStoreUrl: JsonField<String> = JsonMissing.of(),
+    ) : this(
+        isEnabled,
+        iosAttributionUrl,
+        iosAppStoreUrl,
+        androidPackageName,
+        androidAppStoreUrl,
+        mutableMapOf(),
+    )
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+}
 
 /**
  * Updates a program's Installation configuration (the dashboard Program Editor's Installation tab).

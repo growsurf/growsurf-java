@@ -3,11 +3,14 @@
 package com.growsurf.api.models.campaign.options
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonValue as JsonValueAnnotation
 import com.growsurf.api.core.ExcludeMissing
+import com.growsurf.api.core.JsonField
+import com.growsurf.api.core.JsonMissing
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.toImmutable
 import com.growsurf.api.errors.GrowsurfInvalidDataException
@@ -59,23 +62,44 @@ enum class CampaignOptionsReferralCreditWindowDays(@get:JsonValueAnnotation val 
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class CampaignOptionsRecaptcha
-@JsonCreator
 constructor(
     @JsonProperty("isEnabled") private val isEnabled: Boolean? = null,
-    @JsonProperty("siteKey") private val siteKey: String? = null,
-    @JsonProperty("secretKey") private val secretKey: String? = null,
+    @JsonProperty("siteKey")
+    @ExcludeMissing
+    private val siteKey: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("secretKey")
+    @ExcludeMissing
+    private val secretKey: JsonField<String> = JsonMissing.of(),
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
 ) {
+    // Validate known values without conflating an omitted field with an explicit clear.
+    init {
+        siteKey.getOptional("siteKey")
+        secretKey.getOptional("secretKey")
+    }
+
+    @JsonCreator
+    constructor(
+        @JsonProperty("isEnabled") isEnabled: Boolean? = null,
+        @JsonProperty("siteKey") @ExcludeMissing siteKey: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("secretKey") @ExcludeMissing secretKey: JsonField<String> = JsonMissing.of(),
+    ) : this(isEnabled, siteKey, secretKey, mutableMapOf())
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+
     fun isEnabled(): Optional<Boolean> = Optional.ofNullable(isEnabled)
 
-    fun siteKey(): Optional<String> = Optional.ofNullable(siteKey)
+    fun siteKey(): Optional<String> = siteKey.getOptional("siteKey")
 
     /** Write-only. The API never returns this value. */
-    fun secretKey(): Optional<String> = Optional.ofNullable(secretKey)
+    fun secretKey(): Optional<String> = secretKey.getOptional("secretKey")
 }
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class CampaignOptionsFraud
-@JsonCreator
 constructor(
     @JsonProperty("blockedEmails") private val blockedEmails: List<String>? = null,
     @JsonProperty("blockedIps") private val blockedIps: List<String>? = null,
@@ -90,7 +114,45 @@ constructor(
     @JsonProperty("maxSignupsPerIp2Min") private val maxSignupsPerIp2Min: Long? = null,
     @JsonProperty("maxSignupsPerIp10Min") private val maxSignupsPerIp10Min: Long? = null,
     @JsonProperty("recaptcha") private val recaptcha: CampaignOptionsRecaptcha? = null,
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
 ) {
+    @JsonCreator
+    constructor(
+        @JsonProperty("blockedEmails") blockedEmails: List<String>? = null,
+        @JsonProperty("blockedIps") blockedIps: List<String>? = null,
+        @JsonProperty("blockedCountries") blockedCountries: List<String>? = null,
+        @JsonProperty("allowedEmails") allowedEmails: List<String>? = null,
+        @JsonProperty("allowedIps") allowedIps: List<String>? = null,
+        @JsonProperty("allowedCountries") allowedCountries: List<String>? = null,
+        @JsonProperty("blockBurnerEmails") blockBurnerEmails: Boolean? = null,
+        @JsonProperty("blockDataCenterIps") blockDataCenterIps: Boolean? = null,
+        @JsonProperty("blockHighRiskReferrers") blockHighRiskReferrers: Boolean? = null,
+        @JsonProperty("autoBlockHighRiskIps") autoBlockHighRiskIps: Boolean? = null,
+        @JsonProperty("maxSignupsPerIp2Min") maxSignupsPerIp2Min: Long? = null,
+        @JsonProperty("maxSignupsPerIp10Min") maxSignupsPerIp10Min: Long? = null,
+        @JsonProperty("recaptcha") recaptcha: CampaignOptionsRecaptcha? = null,
+    ) : this(
+        blockedEmails,
+        blockedIps,
+        blockedCountries,
+        allowedEmails,
+        allowedIps,
+        allowedCountries,
+        blockBurnerEmails,
+        blockDataCenterIps,
+        blockHighRiskReferrers,
+        autoBlockHighRiskIps,
+        maxSignupsPerIp2Min,
+        maxSignupsPerIp10Min,
+        recaptcha,
+        mutableMapOf(),
+    )
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+
     fun blockedEmails(): Optional<List<String>> = Optional.ofNullable(blockedEmails)
 
     fun blockedIps(): Optional<List<String>> = Optional.ofNullable(blockedIps)
@@ -120,40 +182,100 @@ constructor(
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class CampaignOptionsTaxDocumentation
-@JsonCreator
 constructor(
-    @JsonProperty("companyName") private val companyName: String? = null,
-    @JsonProperty("vatNumber") private val vatNumber: String? = null,
-    @JsonProperty("addressLine1") private val addressLine1: String? = null,
-    @JsonProperty("addressLine2") private val addressLine2: String? = null,
-    @JsonProperty("city") private val city: String? = null,
-    @JsonProperty("state") private val state: String? = null,
-    @JsonProperty("postalCode") private val postalCode: String? = null,
-    @JsonProperty("country") private val country: String? = null,
+    @JsonProperty("companyName")
+    @ExcludeMissing
+    private val companyName: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("vatNumber")
+    @ExcludeMissing
+    private val vatNumber: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("addressLine1")
+    @ExcludeMissing
+    private val addressLine1: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("addressLine2")
+    @ExcludeMissing
+    private val addressLine2: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("city") @ExcludeMissing private val city: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("state") @ExcludeMissing private val state: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("postalCode")
+    @ExcludeMissing
+    private val postalCode: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("country")
+    @ExcludeMissing
+    private val country: JsonField<String> = JsonMissing.of(),
     @JsonProperty("collectAffiliateVat") private val collectAffiliateVat: Boolean? = null,
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
 ) {
-    fun companyName(): Optional<String> = Optional.ofNullable(companyName)
+    // Validate known values without conflating an omitted field with an explicit clear.
+    init {
+        companyName.getOptional("companyName")
+        vatNumber.getOptional("vatNumber")
+        addressLine1.getOptional("addressLine1")
+        addressLine2.getOptional("addressLine2")
+        city.getOptional("city")
+        state.getOptional("state")
+        postalCode.getOptional("postalCode")
+        country.getOptional("country")
+    }
 
-    fun vatNumber(): Optional<String> = Optional.ofNullable(vatNumber)
+    @JsonCreator
+    constructor(
+        @JsonProperty("companyName")
+        @ExcludeMissing
+        companyName: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("vatNumber") @ExcludeMissing vatNumber: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("addressLine1")
+        @ExcludeMissing
+        addressLine1: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("addressLine2")
+        @ExcludeMissing
+        addressLine2: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("city") @ExcludeMissing city: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("state") @ExcludeMissing state: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("postalCode")
+        @ExcludeMissing
+        postalCode: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("country") @ExcludeMissing country: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("collectAffiliateVat") collectAffiliateVat: Boolean? = null,
+    ) : this(
+        companyName,
+        vatNumber,
+        addressLine1,
+        addressLine2,
+        city,
+        state,
+        postalCode,
+        country,
+        collectAffiliateVat,
+        mutableMapOf(),
+    )
 
-    fun addressLine1(): Optional<String> = Optional.ofNullable(addressLine1)
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
 
-    fun addressLine2(): Optional<String> = Optional.ofNullable(addressLine2)
+    fun companyName(): Optional<String> = companyName.getOptional("companyName")
 
-    fun city(): Optional<String> = Optional.ofNullable(city)
+    fun vatNumber(): Optional<String> = vatNumber.getOptional("vatNumber")
 
-    fun state(): Optional<String> = Optional.ofNullable(state)
+    fun addressLine1(): Optional<String> = addressLine1.getOptional("addressLine1")
 
-    fun postalCode(): Optional<String> = Optional.ofNullable(postalCode)
+    fun addressLine2(): Optional<String> = addressLine2.getOptional("addressLine2")
 
-    fun country(): Optional<String> = Optional.ofNullable(country)
+    fun city(): Optional<String> = city.getOptional("city")
+
+    fun state(): Optional<String> = state.getOptional("state")
+
+    fun postalCode(): Optional<String> = postalCode.getOptional("postalCode")
+
+    fun country(): Optional<String> = country.getOptional("country")
 
     fun collectAffiliateVat(): Optional<Boolean> = Optional.ofNullable(collectAffiliateVat)
 }
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class CampaignOptionsNotificationEvents
-@JsonCreator
 constructor(
     @JsonProperty("PARTICIPANT_REACHED_A_GOAL")
     private val participantReachedAGoal: Boolean? = null,
@@ -173,7 +295,47 @@ constructor(
     @JsonProperty("MONTHLY_PAYOUT_REMINDER") private val monthlyPayoutReminder: Boolean? = null,
     @JsonProperty("AFFILIATE_APPLICATIONS_PENDING_REVIEW")
     private val affiliateApplicationsPendingReview: Boolean? = null,
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
 ) {
+    @JsonCreator
+    constructor(
+        @JsonProperty("PARTICIPANT_REACHED_A_GOAL") participantReachedAGoal: Boolean? = null,
+        @JsonProperty("NEW_PARTICIPANT_ADDED_NON_REFERRED")
+        newParticipantAddedNonReferred: Boolean? = null,
+        @JsonProperty("NEW_PARTICIPANT_ADDED_REFERRED")
+        newParticipantAddedReferred: Boolean? = null,
+        @JsonProperty("CAMPAIGN_ENDED") campaignEnded: Boolean? = null,
+        @JsonProperty("WEEKLY_PERFORMANCE_REPORT") weeklyPerformanceReport: Boolean? = null,
+        @JsonProperty("MONTHLY_PERFORMANCE_REPORT") monthlyPerformanceReport: Boolean? = null,
+        @JsonProperty("NEW_COMMISSION_ADDED") newCommissionAdded: Boolean? = null,
+        @JsonProperty("COMMISSION_ADJUSTED") commissionAdjusted: Boolean? = null,
+        @JsonProperty("NEW_PAYOUT_ISSUED") newPayoutIssued: Boolean? = null,
+        @JsonProperty("AFFILIATE_BATCH_PAYOUT_COMPLETED")
+        affiliateBatchPayoutCompleted: Boolean? = null,
+        @JsonProperty("MONTHLY_PAYOUT_REMINDER") monthlyPayoutReminder: Boolean? = null,
+        @JsonProperty("AFFILIATE_APPLICATIONS_PENDING_REVIEW")
+        affiliateApplicationsPendingReview: Boolean? = null,
+    ) : this(
+        participantReachedAGoal,
+        newParticipantAddedNonReferred,
+        newParticipantAddedReferred,
+        campaignEnded,
+        weeklyPerformanceReport,
+        monthlyPerformanceReport,
+        newCommissionAdded,
+        commissionAdjusted,
+        newPayoutIssued,
+        affiliateBatchPayoutCompleted,
+        monthlyPayoutReminder,
+        affiliateApplicationsPendingReview,
+        mutableMapOf(),
+    )
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+
     fun participantReachedAGoal(): Optional<Boolean> = Optional.ofNullable(participantReachedAGoal)
 
     fun newParticipantAddedNonReferred(): Optional<Boolean> =
@@ -206,11 +368,22 @@ constructor(
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class CampaignOptionsNotificationEmails
-@JsonCreator
 constructor(
     @JsonProperty("recipients") private val recipients: List<String>? = null,
     @JsonProperty("events") private val events: CampaignOptionsNotificationEvents? = null,
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
 ) {
+    @JsonCreator
+    constructor(
+        @JsonProperty("recipients") recipients: List<String>? = null,
+        @JsonProperty("events") events: CampaignOptionsNotificationEvents? = null,
+    ) : this(recipients, events, mutableMapOf())
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+
     fun recipients(): Optional<List<String>> = Optional.ofNullable(recipients)
 
     fun events(): Optional<CampaignOptionsNotificationEvents> = Optional.ofNullable(events)

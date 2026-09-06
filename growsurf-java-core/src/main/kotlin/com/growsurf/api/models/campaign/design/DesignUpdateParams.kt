@@ -217,7 +217,7 @@ private constructor(
 
         /** Sets the complete participant Resources presentation settings. */
         fun resources(resources: CampaignDesignResources) = apply {
-            additionalBodyProperties["resources"] = JsonValue.from(resources.toMap())
+            additionalBodyProperties["resources"] = JsonValue.from(resources)
         }
 
         fun participantSettings(value: Map<String, JsonValue>) =

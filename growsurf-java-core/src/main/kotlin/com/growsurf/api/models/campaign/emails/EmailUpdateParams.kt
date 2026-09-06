@@ -2,6 +2,8 @@
 
 package com.growsurf.api.models.campaign.emails
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
@@ -17,21 +19,44 @@ import kotlin.jvm.optionals.getOrNull
 /** Writable sender settings. The response-only `fromEmail` is intentionally absent. */
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class CampaignEmailSenderSettingsUpdate
-@JsonCreator
 constructor(
     @JsonProperty("fromName") private val fromName: String? = null,
     @JsonProperty("replyToEmail") private val replyToEmail: String? = null,
-)
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
+) {
+    @JsonCreator
+    constructor(
+        @JsonProperty("fromName") fromName: String? = null,
+        @JsonProperty("replyToEmail") replyToEmail: String? = null,
+    ) : this(fromName, replyToEmail, mutableMapOf())
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+}
 
 /** Writable email settings for a program. */
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class CampaignEmailSettingsUpdate
-@JsonCreator
 constructor(
     @JsonProperty("sender") private val sender: CampaignEmailSenderSettingsUpdate? = null,
     @JsonProperty("contact") private val contact: CampaignEmailContactSettings? = null,
     @JsonProperty("design") private val design: CampaignEmailDesignSettings? = null,
-)
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
+) {
+    @JsonCreator
+    constructor(
+        @JsonProperty("sender") sender: CampaignEmailSenderSettingsUpdate? = null,
+        @JsonProperty("contact") contact: CampaignEmailContactSettings? = null,
+        @JsonProperty("design") design: CampaignEmailDesignSettings? = null,
+    ) : this(sender, contact, design, mutableMapOf())
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+}
 
 /**
  * Updates a program's Emails configuration (the dashboard Program Editor's Emails tab). Only the

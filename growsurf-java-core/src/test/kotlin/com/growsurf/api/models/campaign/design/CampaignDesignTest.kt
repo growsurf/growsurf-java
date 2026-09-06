@@ -3,6 +3,8 @@
 package com.growsurf.api.models.campaign.design
 
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
+import com.growsurf.api.core.JsonField
+import com.growsurf.api.core.JsonNull
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.jsonMapper
 import org.assertj.core.api.Assertions.assertThat
@@ -10,18 +12,40 @@ import org.junit.jupiter.api.Test
 
 internal class CampaignDesignTest {
 
+    @Test
+    fun nestedDesignPreservesClearsAndAdditionalFields() {
+        val mapper = jsonMapper()
+        val params =
+            DesignUpdateParams.builder()
+                .resources(
+                    CampaignDesignResources(
+                        icon = CampaignDesignResourcesIcon(imageUrl = JsonNull.of())
+                    )
+                )
+                .build()
+        assertThat(mapper.readTree(mapper.writeValueAsString(params._body())))
+            .isEqualTo(mapper.readTree("""{"resources":{"icon":{"imageUrl":null}}}"""))
+
+        val json =
+            """{"resources":{"title":"Resources","icon":{"type":"IMAGE","imageUrl":null,"futureIcon":true},"futureResources":{"value":null}}}"""
+        val design = mapper.readValue(json, CampaignDesign::class.java)
+        assertThat(design.resources().get().title()).contains("Resources")
+        assertThat(mapper.readTree(mapper.writeValueAsString(design.resources().get().copy())))
+            .isEqualTo(mapper.readTree(json).get("resources"))
+    }
+
     private val resources =
         CampaignDesignResources(
             isPublicDisplayed = true,
-            title = "Resources",
-            viewResourcesLinkText = "View resources",
-            backLinkText = "Back",
-            copyButtonText = "Copy",
-            copiedText = "Copied",
+            title = JsonField.of("Resources"),
+            viewResourcesLinkText = JsonField.of("View resources"),
+            backLinkText = JsonField.of("Back"),
+            copyButtonText = JsonField.of("Copy"),
+            copiedText = JsonField.of("Copied"),
             icon =
                 CampaignDesignResourcesIcon(
                     type = CampaignDesignResourcesIconType.IMAGE,
-                    imageUrl = "https://example.com/resources-icon.png",
+                    imageUrl = JsonField.of("https://example.com/resources-icon.png"),
                 ),
         )
 

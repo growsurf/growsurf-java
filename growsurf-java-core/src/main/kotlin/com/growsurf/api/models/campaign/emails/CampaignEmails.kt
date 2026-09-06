@@ -3,10 +3,13 @@
 package com.growsurf.api.models.campaign.emails
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.growsurf.api.core.ExcludeMissing
+import com.growsurf.api.core.JsonField
+import com.growsurf.api.core.JsonMissing
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.toImmutable
 import com.growsurf.api.errors.GrowsurfInvalidDataException
@@ -17,13 +20,26 @@ import java.util.Optional
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class CampaignEmailTemplate
-@JsonCreator
 constructor(
     @JsonProperty("subject") private val subject: String? = null,
     @JsonProperty("preheader") private val preheader: String? = null,
     @JsonProperty("body") private val body: String? = null,
     @JsonProperty("isEnabled") private val isEnabled: Boolean? = null,
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
 ) {
+    @JsonCreator
+    constructor(
+        @JsonProperty("subject") subject: String? = null,
+        @JsonProperty("preheader") preheader: String? = null,
+        @JsonProperty("body") body: String? = null,
+        @JsonProperty("isEnabled") isEnabled: Boolean? = null,
+    ) : this(subject, preheader, body, isEnabled, mutableMapOf())
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+
     fun subject(): Optional<String> = Optional.ofNullable(subject)
 
     fun preheader(): Optional<String> = Optional.ofNullable(preheader)
@@ -35,14 +51,28 @@ constructor(
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class CampaignInviteEmailTemplate
-@JsonCreator
 constructor(
     @JsonProperty("subject") private val subject: String? = null,
     @JsonProperty("preheader") private val preheader: String? = null,
     @JsonProperty("body") private val body: String? = null,
     @JsonProperty("isEnabled") private val isEnabled: Boolean? = null,
     @JsonProperty("useCompanyReplyTo") private val useCompanyReplyTo: Boolean? = null,
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
 ) {
+    @JsonCreator
+    constructor(
+        @JsonProperty("subject") subject: String? = null,
+        @JsonProperty("preheader") preheader: String? = null,
+        @JsonProperty("body") body: String? = null,
+        @JsonProperty("isEnabled") isEnabled: Boolean? = null,
+        @JsonProperty("useCompanyReplyTo") useCompanyReplyTo: Boolean? = null,
+    ) : this(subject, preheader, body, isEnabled, useCompanyReplyTo, mutableMapOf())
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+
     fun subject(): Optional<String> = Optional.ofNullable(subject)
 
     fun preheader(): Optional<String> = Optional.ofNullable(preheader)
@@ -56,12 +86,24 @@ constructor(
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class CampaignEmailSenderSettings
-@JsonCreator
 constructor(
     @JsonProperty("fromName") private val fromName: String? = null,
     @JsonProperty("replyToEmail") private val replyToEmail: String? = null,
     @JsonProperty("fromEmail") private val fromEmail: String? = null,
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
 ) {
+    @JsonCreator
+    constructor(
+        @JsonProperty("fromName") fromName: String? = null,
+        @JsonProperty("replyToEmail") replyToEmail: String? = null,
+        @JsonProperty("fromEmail") fromEmail: String? = null,
+    ) : this(fromName, replyToEmail, fromEmail, mutableMapOf())
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+
     fun fromName(): Optional<String> = Optional.ofNullable(fromName)
 
     fun replyToEmail(): Optional<String> = Optional.ofNullable(replyToEmail)
@@ -72,46 +114,122 @@ constructor(
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class CampaignEmailContactSettings
-@JsonCreator
 constructor(
     @JsonProperty("companyName") private val companyName: String? = null,
     @JsonProperty("addressLine1") private val addressLine1: String? = null,
-    @JsonProperty("addressLine2") private val addressLine2: String? = null,
+    @JsonProperty("addressLine2")
+    @ExcludeMissing
+    private val addressLine2: JsonField<String> = JsonMissing.of(),
     @JsonProperty("city") private val city: String? = null,
-    @JsonProperty("state") private val state: String? = null,
-    @JsonProperty("postalCode") private val postalCode: String? = null,
-    @JsonProperty("country") private val country: String? = null,
+    @JsonProperty("state") @ExcludeMissing private val state: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("postalCode")
+    @ExcludeMissing
+    private val postalCode: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("country")
+    @ExcludeMissing
+    private val country: JsonField<String> = JsonMissing.of(),
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
 ) {
+    // Validate known values without conflating an omitted field with an explicit clear.
+    init {
+        addressLine2.getOptional("addressLine2")
+        state.getOptional("state")
+        postalCode.getOptional("postalCode")
+        country.getOptional("country")
+    }
+
+    @JsonCreator
+    constructor(
+        @JsonProperty("companyName") companyName: String? = null,
+        @JsonProperty("addressLine1") addressLine1: String? = null,
+        @JsonProperty("addressLine2")
+        @ExcludeMissing
+        addressLine2: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("city") city: String? = null,
+        @JsonProperty("state") @ExcludeMissing state: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("postalCode")
+        @ExcludeMissing
+        postalCode: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("country") @ExcludeMissing country: JsonField<String> = JsonMissing.of(),
+    ) : this(
+        companyName,
+        addressLine1,
+        addressLine2,
+        city,
+        state,
+        postalCode,
+        country,
+        mutableMapOf(),
+    )
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+
     fun companyName(): Optional<String> = Optional.ofNullable(companyName)
 
     fun addressLine1(): Optional<String> = Optional.ofNullable(addressLine1)
 
-    fun addressLine2(): Optional<String> = Optional.ofNullable(addressLine2)
+    fun addressLine2(): Optional<String> = addressLine2.getOptional("addressLine2")
 
     fun city(): Optional<String> = Optional.ofNullable(city)
 
-    fun state(): Optional<String> = Optional.ofNullable(state)
+    fun state(): Optional<String> = state.getOptional("state")
 
-    fun postalCode(): Optional<String> = Optional.ofNullable(postalCode)
+    fun postalCode(): Optional<String> = postalCode.getOptional("postalCode")
 
-    fun country(): Optional<String> = Optional.ofNullable(country)
+    fun country(): Optional<String> = country.getOptional("country")
 }
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class CampaignEmailDesignSettings
-@JsonCreator
 constructor(
-    @JsonProperty("header") private val header: String? = null,
-    @JsonProperty("footer") private val footer: String? = null,
+    @JsonProperty("header")
+    @ExcludeMissing
+    private val header: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("footer")
+    @ExcludeMissing
+    private val footer: JsonField<String> = JsonMissing.of(),
     @JsonProperty("unsubscribePromotional") private val unsubscribePromotional: String? = null,
     @JsonProperty("unsubscribeInvite") private val unsubscribeInvite: String? = null,
     @JsonProperty("unsubscribeAffiliateInvite")
     private val unsubscribeAffiliateInvite: String? = null,
     @JsonProperty("unsubscribeTransactional") private val unsubscribeTransactional: String? = null,
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
 ) {
-    fun header(): Optional<String> = Optional.ofNullable(header)
+    // Validate known values without conflating an omitted field with an explicit clear.
+    init {
+        header.getOptional("header")
+        footer.getOptional("footer")
+    }
 
-    fun footer(): Optional<String> = Optional.ofNullable(footer)
+    @JsonCreator
+    constructor(
+        @JsonProperty("header") @ExcludeMissing header: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("footer") @ExcludeMissing footer: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("unsubscribePromotional") unsubscribePromotional: String? = null,
+        @JsonProperty("unsubscribeInvite") unsubscribeInvite: String? = null,
+        @JsonProperty("unsubscribeAffiliateInvite") unsubscribeAffiliateInvite: String? = null,
+        @JsonProperty("unsubscribeTransactional") unsubscribeTransactional: String? = null,
+    ) : this(
+        header,
+        footer,
+        unsubscribePromotional,
+        unsubscribeInvite,
+        unsubscribeAffiliateInvite,
+        unsubscribeTransactional,
+        mutableMapOf(),
+    )
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+
+    fun header(): Optional<String> = header.getOptional("header")
+
+    fun footer(): Optional<String> = footer.getOptional("footer")
 
     fun unsubscribePromotional(): Optional<String> = Optional.ofNullable(unsubscribePromotional)
 
@@ -125,12 +243,24 @@ constructor(
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class CampaignEmailSettings
-@JsonCreator
 constructor(
     @JsonProperty("sender") private val sender: CampaignEmailSenderSettings? = null,
     @JsonProperty("contact") private val contact: CampaignEmailContactSettings? = null,
     @JsonProperty("design") private val design: CampaignEmailDesignSettings? = null,
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
 ) {
+    @JsonCreator
+    constructor(
+        @JsonProperty("sender") sender: CampaignEmailSenderSettings? = null,
+        @JsonProperty("contact") contact: CampaignEmailContactSettings? = null,
+        @JsonProperty("design") design: CampaignEmailDesignSettings? = null,
+    ) : this(sender, contact, design, mutableMapOf())
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+
     fun sender(): Optional<CampaignEmailSenderSettings> = Optional.ofNullable(sender)
 
     fun contact(): Optional<CampaignEmailContactSettings> = Optional.ofNullable(contact)

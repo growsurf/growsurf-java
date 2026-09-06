@@ -3,6 +3,7 @@
 package com.growsurf.api.services.blocking.campaign
 
 import com.growsurf.api.client.okhttp.GrowsurfOkHttpClient
+import com.growsurf.api.core.JsonField
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.models.campaign.design.CampaignDesignResources
 import com.growsurf.api.models.campaign.design.CampaignDesignResourcesIcon
@@ -41,15 +42,16 @@ internal class DesignServiceTest {
                     .resources(
                         CampaignDesignResources(
                             isPublicDisplayed = true,
-                            title = "Resources",
-                            viewResourcesLinkText = "View resources",
-                            backLinkText = "Back",
-                            copyButtonText = "Copy",
-                            copiedText = "Copied",
+                            title = JsonField.of("Resources"),
+                            viewResourcesLinkText = JsonField.of("View resources"),
+                            backLinkText = JsonField.of("Back"),
+                            copyButtonText = JsonField.of("Copy"),
+                            copiedText = JsonField.of("Copied"),
                             icon =
                                 CampaignDesignResourcesIcon(
                                     type = CampaignDesignResourcesIconType.IMAGE,
-                                    imageUrl = "https://example.com/resources-icon.png",
+                                    imageUrl =
+                                        JsonField.of("https://example.com/resources-icon.png"),
                                 ),
                         )
                     )

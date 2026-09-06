@@ -132,6 +132,30 @@ To send a request to the Growsurf API, build an instance of some `Params` class 
 
 For example, `client.campaign().list(...)` should be called with an instance of `CampaignListParams`, and it will return an instance of `CampaignListResponse`.
 
+### Clearing nullable configuration fields
+
+Nested configuration models distinguish omitted fields from explicit `null` values.
+Use `JsonField.of(value)` to set a nullable string, `JsonNull.of()` to clear it,
+and `JsonMissing.of()` to leave it unchanged. Kotlin constructors default to omission.
+For example, this clears only the iOS attribution URL:
+
+```java
+import com.growsurf.api.core.JsonMissing;
+import com.growsurf.api.core.JsonNull;
+import com.growsurf.api.models.campaign.installation.CampaignInstallationMobileUpdate;
+import com.growsurf.api.models.campaign.installation.InstallationUpdateParams;
+
+client.campaign().installation().update(
+    "campaign-id",
+    InstallationUpdateParams.builder()
+        .mobile(new CampaignInstallationMobileUpdate(
+            null, JsonNull.of(), JsonMissing.of(), JsonMissing.of(), JsonMissing.of()))
+        .build());
+```
+
+Nested configuration responses preserve unknown fields in `_additionalProperties()`
+and when copied or serialized, so new API fields do not break existing readers.
+
 ## Immutability
 
 Each class in the SDK has an associated [builder](https://blogs.oracle.com/javamagazine/post/exploring-joshua-blochs-builder-design-pattern-in-java) or factory method for constructing it.

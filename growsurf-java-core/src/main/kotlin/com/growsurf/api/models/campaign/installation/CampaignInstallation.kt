@@ -3,11 +3,14 @@
 package com.growsurf.api.models.campaign.installation
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter
+import com.fasterxml.jackson.annotation.JsonAnySetter
 import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonValue as JsonValueAnnotation
 import com.growsurf.api.core.ExcludeMissing
+import com.growsurf.api.core.JsonField
+import com.growsurf.api.core.JsonMissing
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.toImmutable
 import com.growsurf.api.errors.GrowsurfInvalidDataException
@@ -28,48 +31,121 @@ enum class CampaignInstallationSignupEvent(@get:JsonValueAnnotation val value: S
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class CampaignInstallationSignup
-@JsonCreator
 constructor(
     @JsonProperty("isCustomForm") private val isCustomForm: Boolean? = null,
-    @JsonProperty("url") private val url: String? = null,
+    @JsonProperty("url") @ExcludeMissing private val url: JsonField<String> = JsonMissing.of(),
     @JsonProperty("redirectAfterSignup") private val redirectAfterSignup: Boolean? = null,
-    @JsonProperty("redirectUrl") private val redirectUrl: String? = null,
+    @JsonProperty("redirectUrl")
+    @ExcludeMissing
+    private val redirectUrl: JsonField<String> = JsonMissing.of(),
     @JsonProperty("trackInputFields") private val trackInputFields: Boolean? = null,
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
 ) {
+    // Validate known values without conflating an omitted field with an explicit clear.
+    init {
+        url.getOptional("url")
+        redirectUrl.getOptional("redirectUrl")
+    }
+
+    @JsonCreator
+    constructor(
+        @JsonProperty("isCustomForm") isCustomForm: Boolean? = null,
+        @JsonProperty("url") @ExcludeMissing url: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("redirectAfterSignup") redirectAfterSignup: Boolean? = null,
+        @JsonProperty("redirectUrl")
+        @ExcludeMissing
+        redirectUrl: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("trackInputFields") trackInputFields: Boolean? = null,
+    ) : this(isCustomForm, url, redirectAfterSignup, redirectUrl, trackInputFields, mutableMapOf())
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+
     fun isCustomForm(): Optional<Boolean> = Optional.ofNullable(isCustomForm)
 
-    fun url(): Optional<String> = Optional.ofNullable(url)
+    fun url(): Optional<String> = url.getOptional("url")
 
     fun redirectAfterSignup(): Optional<Boolean> = Optional.ofNullable(redirectAfterSignup)
 
-    fun redirectUrl(): Optional<String> = Optional.ofNullable(redirectUrl)
+    fun redirectUrl(): Optional<String> = redirectUrl.getOptional("redirectUrl")
 
     fun trackInputFields(): Optional<Boolean> = Optional.ofNullable(trackInputFields)
 }
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class CampaignInstallationMobile
-@JsonCreator
 constructor(
     @JsonProperty("isEnabled") private val isEnabled: Boolean? = null,
     @JsonProperty("publicKey") private val publicKey: String? = null,
-    @JsonProperty("iosAttributionUrl") private val iosAttributionUrl: String? = null,
-    @JsonProperty("iosAppStoreUrl") private val iosAppStoreUrl: String? = null,
-    @JsonProperty("androidPackageName") private val androidPackageName: String? = null,
-    @JsonProperty("androidAppStoreUrl") private val androidAppStoreUrl: String? = null,
+    @JsonProperty("iosAttributionUrl")
+    @ExcludeMissing
+    private val iosAttributionUrl: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("iosAppStoreUrl")
+    @ExcludeMissing
+    private val iosAppStoreUrl: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("androidPackageName")
+    @ExcludeMissing
+    private val androidPackageName: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("androidAppStoreUrl")
+    @ExcludeMissing
+    private val androidAppStoreUrl: JsonField<String> = JsonMissing.of(),
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
 ) {
+    // Validate known values without conflating an omitted field with an explicit clear.
+    init {
+        iosAttributionUrl.getOptional("iosAttributionUrl")
+        iosAppStoreUrl.getOptional("iosAppStoreUrl")
+        androidPackageName.getOptional("androidPackageName")
+        androidAppStoreUrl.getOptional("androidAppStoreUrl")
+    }
+
+    @JsonCreator
+    constructor(
+        @JsonProperty("isEnabled") isEnabled: Boolean? = null,
+        @JsonProperty("publicKey") publicKey: String? = null,
+        @JsonProperty("iosAttributionUrl")
+        @ExcludeMissing
+        iosAttributionUrl: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("iosAppStoreUrl")
+        @ExcludeMissing
+        iosAppStoreUrl: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("androidPackageName")
+        @ExcludeMissing
+        androidPackageName: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("androidAppStoreUrl")
+        @ExcludeMissing
+        androidAppStoreUrl: JsonField<String> = JsonMissing.of(),
+    ) : this(
+        isEnabled,
+        publicKey,
+        iosAttributionUrl,
+        iosAppStoreUrl,
+        androidPackageName,
+        androidAppStoreUrl,
+        mutableMapOf(),
+    )
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+
     fun isEnabled(): Optional<Boolean> = Optional.ofNullable(isEnabled)
 
     /** Read-only publishable key returned by the API. */
     fun publicKey(): Optional<String> = Optional.ofNullable(publicKey)
 
-    fun iosAttributionUrl(): Optional<String> = Optional.ofNullable(iosAttributionUrl)
+    fun iosAttributionUrl(): Optional<String> = iosAttributionUrl.getOptional("iosAttributionUrl")
 
-    fun iosAppStoreUrl(): Optional<String> = Optional.ofNullable(iosAppStoreUrl)
+    fun iosAppStoreUrl(): Optional<String> = iosAppStoreUrl.getOptional("iosAppStoreUrl")
 
-    fun androidPackageName(): Optional<String> = Optional.ofNullable(androidPackageName)
+    fun androidPackageName(): Optional<String> =
+        androidPackageName.getOptional("androidPackageName")
 
-    fun androidAppStoreUrl(): Optional<String> = Optional.ofNullable(androidAppStoreUrl)
+    fun androidAppStoreUrl(): Optional<String> =
+        androidAppStoreUrl.getOptional("androidAppStoreUrl")
 }
 
 /**
