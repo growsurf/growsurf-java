@@ -117,18 +117,26 @@ private constructor(
     fun paymentIntentId(): Optional<String> = body.paymentIntentId()
 
     /**
-     * Positive amount for this individual refund, no greater than the sale amount, in minor units. Record it with `refundId` on each original refund to support cancellation and out-of-order amendments. A cancellation may omit an already recorded amount. Missing or conflicting refund history returns `409` without applying the cancellation. Newly observed higher cumulative refunds and incomplete coverage are retained for reconciliation.
+     * Positive amount for this individual refund, no greater than the sale amount, in minor units.
+     * Record it with `refundId` on each original refund to support cancellation and out-of-order
+     * amendments. A cancellation may omit an already recorded amount. Missing or conflicting refund
+     * history returns `409` without applying the cancellation. Newly observed higher cumulative
+     * refunds and incomplete coverage are retained for reconciliation.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
     fun refundAmount(): Optional<Long> = body.refundAmount()
-    /** Confirm only after every original refund ID and amount is recorded, including canceled refunds. */
+
+    /**
+     * Confirm only after every original refund ID and amount is recorded, including canceled
+     * refunds.
+     */
     fun refundHistoryComplete(): Optional<Boolean> = body.refundHistoryComplete()
 
     /**
-     * Stable per-refund identifier. Required when canceling a refund or changing the
-     * refunded total after a cancellation. Reuse the original refund's identifier for its cancellation.
+     * Stable per-refund identifier. Required when canceling a refund or changing the refunded total
+     * after a cancellation. Reuse the original refund's identifier for its cancellation.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -233,6 +241,7 @@ private constructor(
      * Unlike [refundAmount], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _refundAmount(): JsonField<Long> = body._refundAmount()
+
     fun _refundHistoryComplete(): JsonField<Boolean> = body._refundHistoryComplete()
 
     /**
@@ -469,9 +478,19 @@ private constructor(
             body.paymentIntentId(paymentIntentId)
         }
 
-        /** Positive amount for this individual refund, no greater than the sale amount, in minor units. Record it with `refundId` on each original refund to support cancellation and out-of-order amendments. A cancellation may omit an already recorded amount. Missing or conflicting refund history returns `409` without applying the cancellation. Newly observed higher cumulative refunds and incomplete coverage are retained for reconciliation. */
+        /**
+         * Positive amount for this individual refund, no greater than the sale amount, in minor
+         * units. Record it with `refundId` on each original refund to support cancellation and
+         * out-of-order amendments. A cancellation may omit an already recorded amount. Missing or
+         * conflicting refund history returns `409` without applying the cancellation. Newly
+         * observed higher cumulative refunds and incomplete coverage are retained for
+         * reconciliation.
+         */
         fun refundAmount(refundAmount: Long) = apply { body.refundAmount(refundAmount) }
-        fun refundHistoryComplete(refundHistoryComplete: Boolean) = apply { body.refundHistoryComplete(refundHistoryComplete) }
+
+        fun refundHistoryComplete(refundHistoryComplete: Boolean) = apply {
+            body.refundHistoryComplete(refundHistoryComplete)
+        }
 
         /**
          * Sets [Builder.refundAmount] to an arbitrary JSON value.
@@ -481,11 +500,14 @@ private constructor(
          * value.
          */
         fun refundAmount(refundAmount: JsonField<Long>) = apply { body.refundAmount(refundAmount) }
-        fun refundHistoryComplete(refundHistoryComplete: JsonField<Boolean>) = apply { body.refundHistoryComplete(refundHistoryComplete) }
+
+        fun refundHistoryComplete(refundHistoryComplete: JsonField<Boolean>) = apply {
+            body.refundHistoryComplete(refundHistoryComplete)
+        }
 
         /**
-         * Stable per-refund identifier. Required when canceling a refund or changing the
-         * refunded total after a cancellation. Reuse the original refund's identifier for its cancellation.
+         * Stable per-refund identifier. Required when canceling a refund or changing the refunded
+         * total after a cancellation. Reuse the original refund's identifier for its cancellation.
          */
         fun refundId(refundId: String) = apply { body.refundId(refundId) }
 
@@ -845,17 +867,24 @@ private constructor(
         fun paymentIntentId(): Optional<String> = paymentIntentId.getOptional("paymentIntentId")
 
         /**
-         * Positive amount for this individual refund, no greater than the sale amount, in minor units. Record it with `refundId` on each original refund to support cancellation and out-of-order amendments. A cancellation may omit an already recorded amount. Missing or conflicting refund history returns `409` without applying the cancellation. Newly observed higher cumulative refunds and incomplete coverage are retained for reconciliation.
+         * Positive amount for this individual refund, no greater than the sale amount, in minor
+         * units. Record it with `refundId` on each original refund to support cancellation and
+         * out-of-order amendments. A cancellation may omit an already recorded amount. Missing or
+         * conflicting refund history returns `409` without applying the cancellation. Newly
+         * observed higher cumulative refunds and incomplete coverage are retained for
+         * reconciliation.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
         fun refundAmount(): Optional<Long> = refundAmount.getOptional("refundAmount")
-        fun refundHistoryComplete(): Optional<Boolean> = refundHistoryComplete.getOptional("refundHistoryComplete")
+
+        fun refundHistoryComplete(): Optional<Boolean> =
+            refundHistoryComplete.getOptional("refundHistoryComplete")
 
         /**
-         * Stable per-refund identifier. Required when canceling a refund or changing the
-         * refunded total after a cancellation. Reuse the original refund's identifier for its cancellation.
+         * Stable per-refund identifier. Required when canceling a refund or changing the refunded
+         * total after a cancellation. Reuse the original refund's identifier for its cancellation.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -976,6 +1005,7 @@ private constructor(
         @JsonProperty("refundAmount")
         @ExcludeMissing
         fun _refundAmount(): JsonField<Long> = refundAmount
+
         @JsonProperty("refundHistoryComplete")
         @ExcludeMissing
         fun _refundHistoryComplete(): JsonField<Boolean> = refundHistoryComplete
@@ -1215,9 +1245,18 @@ private constructor(
                 this.paymentIntentId = paymentIntentId
             }
 
-            /** Positive amount for this individual refund, no greater than the sale amount, in minor units. Record it with `refundId` on each original refund to support cancellation and out-of-order amendments. A cancellation may omit an already recorded amount. Missing or conflicting refund history returns `409` without applying the cancellation. Newly observed higher cumulative refunds and incomplete coverage are retained for reconciliation. */
+            /**
+             * Positive amount for this individual refund, no greater than the sale amount, in minor
+             * units. Record it with `refundId` on each original refund to support cancellation and
+             * out-of-order amendments. A cancellation may omit an already recorded amount. Missing
+             * or conflicting refund history returns `409` without applying the cancellation. Newly
+             * observed higher cumulative refunds and incomplete coverage are retained for
+             * reconciliation.
+             */
             fun refundAmount(refundAmount: Long) = refundAmount(JsonField.of(refundAmount))
-            fun refundHistoryComplete(refundHistoryComplete: Boolean) = refundHistoryComplete(JsonField.of(refundHistoryComplete))
+
+            fun refundHistoryComplete(refundHistoryComplete: Boolean) =
+                refundHistoryComplete(JsonField.of(refundHistoryComplete))
 
             /**
              * Sets [Builder.refundAmount] to an arbitrary JSON value.
@@ -1229,13 +1268,15 @@ private constructor(
             fun refundAmount(refundAmount: JsonField<Long>) = apply {
                 this.refundAmount = refundAmount
             }
+
             fun refundHistoryComplete(refundHistoryComplete: JsonField<Boolean>) = apply {
                 this.refundHistoryComplete = refundHistoryComplete
             }
 
             /**
              * Stable per-refund identifier. Required when canceling a refund or changing the
-             * refunded total after a cancellation. Reuse the original refund's identifier for its cancellation.
+             * refunded total after a cancellation. Reuse the original refund's identifier for its
+             * cancellation.
              */
             fun refundId(refundId: String) = refundId(JsonField.of(refundId))
 
