@@ -158,7 +158,10 @@ private constructor(
      */
     fun transactionId(): Optional<String> = body.transactionId()
 
-    /** Connected provider: `stripe`, `chargebee` or `recurly`. Requires `transactionId` and `testMode`. */
+    /**
+     * Connected provider: `stripe`, `chargebee` or `recurly`. Requires `transactionId` and
+     * `testMode`.
+     */
     fun paymentProvider(): Optional<String> = body.paymentProvider()
 
     /** `true` for test or `false` for live. Requires `paymentProvider`. */
@@ -548,7 +551,9 @@ private constructor(
 
         fun transactionId(transactionId: String) = apply { body.transactionId(transactionId) }
 
-        fun paymentProvider(paymentProvider: String) = apply { body.paymentProvider(paymentProvider) }
+        fun paymentProvider(paymentProvider: String) = apply {
+            body.paymentProvider(paymentProvider)
+        }
 
         fun testMode(testMode: Boolean) = apply { body.testMode(testMode) }
 
@@ -567,9 +572,7 @@ private constructor(
             body.paymentProvider(paymentProvider)
         }
 
-        fun testMode(testMode: JsonField<Boolean>) = apply {
-            body.testMode(testMode)
-        }
+        fun testMode(testMode: JsonField<Boolean>) = apply { body.testMode(testMode) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -938,7 +941,10 @@ private constructor(
          */
         fun transactionId(): Optional<String> = transactionId.getOptional("transactionId")
 
-        /** Connected provider: `stripe`, `chargebee` or `recurly`. Requires `transactionId` and `testMode`. */
+        /**
+         * Connected provider: `stripe`, `chargebee` or `recurly`. Requires `transactionId` and
+         * `testMode`.
+         */
         fun paymentProvider(): Optional<String> = paymentProvider.getOptional("paymentProvider")
 
         /** `true` for test or `false` for live. Requires `paymentProvider`. */
@@ -1079,9 +1085,7 @@ private constructor(
         @ExcludeMissing
         fun _paymentProvider(): JsonField<String> = paymentProvider
 
-        @JsonProperty("testMode")
-        @ExcludeMissing
-        fun _testMode(): JsonField<Boolean> = testMode
+        @JsonProperty("testMode") @ExcludeMissing fun _testMode(): JsonField<Boolean> = testMode
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -1358,7 +1362,8 @@ private constructor(
 
             fun transactionId(transactionId: String) = transactionId(JsonField.of(transactionId))
 
-            fun paymentProvider(paymentProvider: String) = paymentProvider(JsonField.of(paymentProvider))
+            fun paymentProvider(paymentProvider: String) =
+                paymentProvider(JsonField.of(paymentProvider))
 
             fun testMode(testMode: Boolean) = testMode(JsonField.of(testMode))
 
@@ -1377,9 +1382,7 @@ private constructor(
                 this.paymentProvider = paymentProvider
             }
 
-            fun testMode(testMode: JsonField<Boolean>) = apply {
-                this.testMode = testMode
-            }
+            fun testMode(testMode: JsonField<Boolean>) = apply { this.testMode = testMode }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
