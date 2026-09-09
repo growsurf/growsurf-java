@@ -65,6 +65,8 @@ internal class ParticipantRefundTransactionParamsTest {
                 .refundId("refundId")
                 .refundStatus("refundStatus")
                 .transactionId("transactionId")
+                .paymentProvider("recurly")
+                .testMode(false)
                 .build()
 
         val body = params._body()
@@ -85,6 +87,8 @@ internal class ParticipantRefundTransactionParamsTest {
         assertThat(body.refundId()).contains("refundId")
         assertThat(body.refundStatus()).contains("refundStatus")
         assertThat(body.transactionId()).contains("transactionId")
+        assertThat(body.paymentProvider()).contains("recurly")
+        assertThat(body.testMode()).contains(false)
     }
 
     @Test

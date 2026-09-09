@@ -101,6 +101,8 @@ internal class ParticipantRecordTransactionParamsTest {
                         .build()
                 )
                 .transactionId("transactionId")
+                .paymentProvider("chargebee")
+                .testMode(false)
                 .build()
 
         val body = params._body()
@@ -138,6 +140,8 @@ internal class ParticipantRecordTransactionParamsTest {
                     .build()
             )
         assertThat(body.transactionId()).contains("transactionId")
+        assertThat(body.paymentProvider()).contains("chargebee")
+        assertThat(body.testMode()).contains(false)
     }
 
     @Test

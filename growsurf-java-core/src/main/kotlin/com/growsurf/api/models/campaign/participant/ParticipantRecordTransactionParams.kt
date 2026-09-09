@@ -183,6 +183,12 @@ private constructor(
      */
     fun transactionId(): Optional<String> = body.transactionId()
 
+    /** Connected provider: `stripe`, `chargebee` or `recurly`. Requires `transactionId` and `testMode`. */
+    fun paymentProvider(): Optional<String> = body.paymentProvider()
+
+    /** `true` for test or `false` for live. Requires `paymentProvider`. */
+    fun testMode(): Optional<Boolean> = body.testMode()
+
     /**
      * Returns the raw JSON value of [currency].
      *
@@ -345,6 +351,10 @@ private constructor(
      * Unlike [transactionId], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _transactionId(): JsonField<String> = body._transactionId()
+
+    fun _paymentProvider(): JsonField<String> = body._paymentProvider()
+
+    fun _testMode(): JsonField<Boolean> = body._testMode()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -696,6 +706,10 @@ private constructor(
 
         fun transactionId(transactionId: String) = apply { body.transactionId(transactionId) }
 
+        fun paymentProvider(paymentProvider: String) = apply { body.paymentProvider(paymentProvider) }
+
+        fun testMode(testMode: Boolean) = apply { body.testMode(testMode) }
+
         /**
          * Sets [Builder.transactionId] to an arbitrary JSON value.
          *
@@ -705,6 +719,14 @@ private constructor(
          */
         fun transactionId(transactionId: JsonField<String>) = apply {
             body.transactionId(transactionId)
+        }
+
+        fun paymentProvider(paymentProvider: JsonField<String>) = apply {
+            body.paymentProvider(paymentProvider)
+        }
+
+        fun testMode(testMode: JsonField<Boolean>) = apply {
+            body.testMode(testMode)
         }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
@@ -887,6 +909,8 @@ private constructor(
         private val totalTaxAmounts: JsonField<List<TotalTaxAmount>>,
         private val totalTaxes: JsonField<List<TotalTax>>,
         private val transactionId: JsonField<String>,
+        private val paymentProvider: JsonField<String>,
+        private val testMode: JsonField<Boolean>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -957,6 +981,12 @@ private constructor(
             @JsonProperty("transactionId")
             @ExcludeMissing
             transactionId: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("paymentProvider")
+            @ExcludeMissing
+            paymentProvider: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("testMode")
+            @ExcludeMissing
+            testMode: JsonField<Boolean> = JsonMissing.of(),
         ) : this(
             currency,
             grossAmount,
@@ -981,6 +1011,8 @@ private constructor(
             totalTaxAmounts,
             totalTaxes,
             transactionId,
+            paymentProvider,
+            testMode,
             mutableMapOf(),
         )
 
@@ -1124,6 +1156,12 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun transactionId(): Optional<String> = transactionId.getOptional("transactionId")
+
+        /** Connected provider: `stripe`, `chargebee` or `recurly`. Requires `transactionId` and `testMode`. */
+        fun paymentProvider(): Optional<String> = paymentProvider.getOptional("paymentProvider")
+
+        /** `true` for test or `false` for live. Requires `paymentProvider`. */
+        fun testMode(): Optional<Boolean> = testMode.getOptional("testMode")
 
         /**
          * Returns the raw JSON value of [currency].
@@ -1323,6 +1361,14 @@ private constructor(
         @ExcludeMissing
         fun _transactionId(): JsonField<String> = transactionId
 
+        @JsonProperty("paymentProvider")
+        @ExcludeMissing
+        fun _paymentProvider(): JsonField<String> = paymentProvider
+
+        @JsonProperty("testMode")
+        @ExcludeMissing
+        fun _testMode(): JsonField<Boolean> = testMode
+
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
             additionalProperties.put(key, value)
@@ -1375,6 +1421,8 @@ private constructor(
             private var totalTaxAmounts: JsonField<MutableList<TotalTaxAmount>>? = null
             private var totalTaxes: JsonField<MutableList<TotalTax>>? = null
             private var transactionId: JsonField<String> = JsonMissing.of()
+            private var paymentProvider: JsonField<String> = JsonMissing.of()
+            private var testMode: JsonField<Boolean> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -1402,6 +1450,8 @@ private constructor(
                 totalTaxAmounts = body.totalTaxAmounts.map { it.toMutableList() }
                 totalTaxes = body.totalTaxes.map { it.toMutableList() }
                 transactionId = body.transactionId
+                paymentProvider = body.paymentProvider
+                testMode = body.testMode
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
@@ -1698,6 +1748,10 @@ private constructor(
 
             fun transactionId(transactionId: String) = transactionId(JsonField.of(transactionId))
 
+            fun paymentProvider(paymentProvider: String) = paymentProvider(JsonField.of(paymentProvider))
+
+            fun testMode(testMode: Boolean) = testMode(JsonField.of(testMode))
+
             /**
              * Sets [Builder.transactionId] to an arbitrary JSON value.
              *
@@ -1707,6 +1761,14 @@ private constructor(
              */
             fun transactionId(transactionId: JsonField<String>) = apply {
                 this.transactionId = transactionId
+            }
+
+            fun paymentProvider(paymentProvider: JsonField<String>) = apply {
+                this.paymentProvider = paymentProvider
+            }
+
+            fun testMode(testMode: JsonField<Boolean>) = apply {
+                this.testMode = testMode
             }
 
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
@@ -1766,6 +1828,8 @@ private constructor(
                     (totalTaxAmounts ?: JsonMissing.of()).map { it.toImmutable() },
                     (totalTaxes ?: JsonMissing.of()).map { it.toImmutable() },
                     transactionId,
+                    paymentProvider,
+                    testMode,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -1809,6 +1873,8 @@ private constructor(
             totalTaxAmounts().ifPresent { it.forEach { it.validate() } }
             totalTaxes().ifPresent { it.forEach { it.validate() } }
             transactionId()
+            paymentProvider()
+            testMode()
             validated = true
         }
 
@@ -1850,6 +1916,8 @@ private constructor(
                 (if (totalTaxAmount.asKnown().isPresent) 1 else 0) +
                 (totalTaxAmounts.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
                 (totalTaxes.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0) +
+                (if (paymentProvider.asKnown().isPresent) 1 else 0) +
+                (if (testMode.asKnown().isPresent) 1 else 0) +
                 (if (transactionId.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
@@ -1881,6 +1949,8 @@ private constructor(
                 totalTaxAmounts == other.totalTaxAmounts &&
                 totalTaxes == other.totalTaxes &&
                 transactionId == other.transactionId &&
+                paymentProvider == other.paymentProvider &&
+                testMode == other.testMode &&
                 additionalProperties == other.additionalProperties
         }
 
@@ -1909,6 +1979,8 @@ private constructor(
                 totalTaxAmounts,
                 totalTaxes,
                 transactionId,
+                paymentProvider,
+                testMode,
                 additionalProperties,
             )
         }
@@ -1916,7 +1988,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{currency=$currency, grossAmount=$grossAmount, amountCashNet=$amountCashNet, amountPaid=$amountPaid, chargeId=$chargeId, customerId=$customerId, description=$description, externalId=$externalId, invoiceId=$invoiceId, invoiceSubtotalExcludingTax=$invoiceSubtotalExcludingTax, invoiceTotal=$invoiceTotal, invoiceTotalExcludingTax=$invoiceTotalExcludingTax, netAmount=$netAmount, orderId=$orderId, paidAt=$paidAt, paymentId=$paymentId, paymentIntentId=$paymentIntentId, subscriptionId=$subscriptionId, taxAmount=$taxAmount, totalTaxAmount=$totalTaxAmount, totalTaxAmounts=$totalTaxAmounts, totalTaxes=$totalTaxes, transactionId=$transactionId, additionalProperties=$additionalProperties}"
+            "Body{currency=$currency, grossAmount=$grossAmount, amountCashNet=$amountCashNet, amountPaid=$amountPaid, chargeId=$chargeId, customerId=$customerId, description=$description, externalId=$externalId, invoiceId=$invoiceId, invoiceSubtotalExcludingTax=$invoiceSubtotalExcludingTax, invoiceTotal=$invoiceTotal, invoiceTotalExcludingTax=$invoiceTotalExcludingTax, netAmount=$netAmount, orderId=$orderId, paidAt=$paidAt, paymentId=$paymentId, paymentIntentId=$paymentIntentId, subscriptionId=$subscriptionId, taxAmount=$taxAmount, totalTaxAmount=$totalTaxAmount, totalTaxAmounts=$totalTaxAmounts, totalTaxes=$totalTaxes, transactionId=$transactionId, paymentProvider=$paymentProvider, testMode=$testMode, additionalProperties=$additionalProperties}"
     }
 
     class TotalTaxAmount
