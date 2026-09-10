@@ -43,6 +43,7 @@ import com.growsurf.api.services.blocking.campaign.CommissionService
 import com.growsurf.api.services.blocking.campaign.DesignService
 import com.growsurf.api.services.blocking.campaign.EmailsService
 import com.growsurf.api.services.blocking.campaign.InstallationService
+import com.growsurf.api.services.blocking.campaign.IntegrationsService
 import com.growsurf.api.services.blocking.campaign.OptionsService
 import com.growsurf.api.services.blocking.campaign.ParticipantService
 import com.growsurf.api.services.blocking.campaign.ProgramResourcesService
@@ -90,6 +91,9 @@ interface CampaignService {
 
     /** Program Editor Installation tab (`CampaignInstallation`) configuration operations. */
     fun installation(): InstallationService
+
+    /** Integration status (connecting an integration is done in the GrowSurf dashboard). */
+    fun integrations(): IntegrationsService
 
     /** Program webhook configuration (create, update, delete, and test webhooks). */
     fun webhooks(): WebhooksService
@@ -749,6 +753,9 @@ interface CampaignService {
 
         /** Program Editor Installation tab (`CampaignInstallation`) configuration operations. */
         fun installation(): InstallationService.WithRawResponse
+
+        /** Integration status (connecting an integration is done in the GrowSurf dashboard). */
+        fun integrations(): IntegrationsService.WithRawResponse
 
         /** Program webhook configuration (create, update, delete, and test webhooks). */
         fun webhooks(): WebhooksService.WithRawResponse

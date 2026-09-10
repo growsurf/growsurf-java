@@ -57,6 +57,8 @@ import com.growsurf.api.services.blocking.campaign.EmailsService
 import com.growsurf.api.services.blocking.campaign.EmailsServiceImpl
 import com.growsurf.api.services.blocking.campaign.InstallationService
 import com.growsurf.api.services.blocking.campaign.InstallationServiceImpl
+import com.growsurf.api.services.blocking.campaign.IntegrationsService
+import com.growsurf.api.services.blocking.campaign.IntegrationsServiceImpl
 import com.growsurf.api.services.blocking.campaign.OptionsService
 import com.growsurf.api.services.blocking.campaign.OptionsServiceImpl
 import com.growsurf.api.services.blocking.campaign.ParticipantService
@@ -99,6 +101,7 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
 
     private val installation: InstallationService by lazy { InstallationServiceImpl(clientOptions) }
 
+    private val integrations: IntegrationsService by lazy { IntegrationsServiceImpl(clientOptions) }
     private val webhooks: WebhooksService by lazy { WebhooksServiceImpl(clientOptions) }
 
     override fun withRawResponse(): CampaignService.WithRawResponse = withRawResponse
@@ -131,6 +134,9 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
 
     /** Program Editor Installation tab (`CampaignInstallation`) configuration operations. */
     override fun installation(): InstallationService = installation
+
+    /** Integration status (connecting an integration is done in the GrowSurf dashboard). */
+    override fun integrations(): IntegrationsService = integrations
 
     /** Program webhook configuration (create, update, delete, and test webhooks). */
     override fun webhooks(): WebhooksService = webhooks
@@ -308,6 +314,10 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
             InstallationServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val integrations: IntegrationsService.WithRawResponse by lazy {
+            IntegrationsServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val webhooks: WebhooksService.WithRawResponse by lazy {
             WebhooksServiceImpl.WithRawResponseImpl(clientOptions)
         }
@@ -344,6 +354,9 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
 
         /** Program Editor Installation tab (`CampaignInstallation`) configuration operations. */
         override fun installation(): InstallationService.WithRawResponse = installation
+
+        /** Integration status (connecting an integration is done in the GrowSurf dashboard). */
+        override fun integrations(): IntegrationsService.WithRawResponse = integrations
 
         /** Program webhook configuration (create, update, delete, and test webhooks). */
         override fun webhooks(): WebhooksService.WithRawResponse = webhooks

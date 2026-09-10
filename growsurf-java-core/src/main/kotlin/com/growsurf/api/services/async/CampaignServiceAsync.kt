@@ -42,6 +42,7 @@ import com.growsurf.api.services.async.campaign.CommissionServiceAsync
 import com.growsurf.api.services.async.campaign.DesignServiceAsync
 import com.growsurf.api.services.async.campaign.EmailsServiceAsync
 import com.growsurf.api.services.async.campaign.InstallationServiceAsync
+import com.growsurf.api.services.async.campaign.IntegrationsServiceAsync
 import com.growsurf.api.services.async.campaign.OptionsServiceAsync
 import com.growsurf.api.services.async.campaign.ParticipantServiceAsync
 import com.growsurf.api.services.async.campaign.ProgramResourcesServiceAsync
@@ -90,6 +91,9 @@ interface CampaignServiceAsync {
 
     /** Program Editor Installation tab (`CampaignInstallation`) configuration operations. */
     fun installation(): InstallationServiceAsync
+
+    /** Integration status (connecting an integration is done in the GrowSurf dashboard). */
+    fun integrations(): IntegrationsServiceAsync
 
     /** Program webhook configuration (create, update, delete, and test webhooks). */
     fun webhooks(): WebhooksServiceAsync
@@ -796,6 +800,9 @@ interface CampaignServiceAsync {
 
         /** Program Editor Installation tab (`CampaignInstallation`) configuration operations. */
         fun installation(): InstallationServiceAsync.WithRawResponse
+
+        /** Integration status (connecting an integration is done in the GrowSurf dashboard). */
+        fun integrations(): IntegrationsServiceAsync.WithRawResponse
 
         /** Program webhook configuration (create, update, delete, and test webhooks). */
         fun webhooks(): WebhooksServiceAsync.WithRawResponse

@@ -57,6 +57,8 @@ import com.growsurf.api.services.async.campaign.EmailsServiceAsync
 import com.growsurf.api.services.async.campaign.EmailsServiceAsyncImpl
 import com.growsurf.api.services.async.campaign.InstallationServiceAsync
 import com.growsurf.api.services.async.campaign.InstallationServiceAsyncImpl
+import com.growsurf.api.services.async.campaign.IntegrationsServiceAsync
+import com.growsurf.api.services.async.campaign.IntegrationsServiceAsyncImpl
 import com.growsurf.api.services.async.campaign.OptionsServiceAsync
 import com.growsurf.api.services.async.campaign.OptionsServiceAsyncImpl
 import com.growsurf.api.services.async.campaign.ParticipantServiceAsync
@@ -106,6 +108,9 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
         InstallationServiceAsyncImpl(clientOptions)
     }
 
+    private val integrations: IntegrationsServiceAsync by lazy {
+        IntegrationsServiceAsyncImpl(clientOptions)
+    }
     private val webhooks: WebhooksServiceAsync by lazy { WebhooksServiceAsyncImpl(clientOptions) }
 
     override fun withRawResponse(): CampaignServiceAsync.WithRawResponse = withRawResponse
@@ -138,6 +143,9 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
 
     /** Program Editor Installation tab (`CampaignInstallation`) configuration operations. */
     override fun installation(): InstallationServiceAsync = installation
+
+    /** Integration status (connecting an integration is done in the GrowSurf dashboard). */
+    override fun integrations(): IntegrationsServiceAsync = integrations
 
     /** Program webhook configuration (create, update, delete, and test webhooks). */
     override fun webhooks(): WebhooksServiceAsync = webhooks
@@ -332,6 +340,10 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
             InstallationServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val integrations: IntegrationsServiceAsync.WithRawResponse by lazy {
+            IntegrationsServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val webhooks: WebhooksServiceAsync.WithRawResponse by lazy {
             WebhooksServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
@@ -368,6 +380,9 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
 
         /** Program Editor Installation tab (`CampaignInstallation`) configuration operations. */
         override fun installation(): InstallationServiceAsync.WithRawResponse = installation
+
+        /** Integration status (connecting an integration is done in the GrowSurf dashboard). */
+        override fun integrations(): IntegrationsServiceAsync.WithRawResponse = integrations
 
         /** Program webhook configuration (create, update, delete, and test webhooks). */
         override fun webhooks(): WebhooksServiceAsync.WithRawResponse = webhooks
