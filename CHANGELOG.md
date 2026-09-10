@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.5.1](https://github.com/growsurf/growsurf-java/compare/v1.5.0...v1.5.1) (2026-09-10)
+
+
+### Chores
+
+* merge main (release 1.5.0) into dev ([01c3638](https://github.com/growsurf/growsurf-java/commit/01c3638786f3506a79d8f5ada1d0c80c49f63a7a))
+
+
+### Documentation
+
+* **api:** warn that a new account API key cannot be recovered ([bf11e43](https://github.com/growsurf/growsurf-java/commit/bf11e43e241c6476987d94d8013c1fa30d48a0fe))
+
+
+### Styles
+
+* apply ktfmt to account KDoc ([7460709](https://github.com/growsurf/growsurf-java/commit/7460709b5e5f83b02b1d375629bb6c1477ac2aba))
+
 ## [1.5.0](https://github.com/growsurf/growsurf-java/compare/v1.4.0...v1.5.0) (2026-09-10)
 
 
