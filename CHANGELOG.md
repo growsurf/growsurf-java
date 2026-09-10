@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.5.0](https://github.com/growsurf/growsurf-java/compare/v1.4.0...v1.5.0) (2026-09-10)
+
+
+### Features
+
+* **api:** add campaign integrations list endpoint ([93c08d5](https://github.com/growsurf/growsurf-java/commit/93c08d5640256362fd4ceca1f3587d122483fed9))
+* **api:** add EMBEDDABLE_ELEMENT portal view source ([34e544b](https://github.com/growsurf/growsurf-java/commit/34e544bad893d2bf70aca7bcc3469df217a63e79))
+* **api:** add paymentProvider and testMode to transaction params ([d808e0a](https://github.com/growsurf/growsurf-java/commit/d808e0a12bd09c25e117af92f7d4208b4654dae5))
+* **api:** add refundHistoryComplete to refund transaction params ([84e79b0](https://github.com/growsurf/growsurf-java/commit/84e79b0eb500a1056d8f100ae8e3d4d8674092f4))
+* **api:** add typed Program Editor config models, LockedException, and hand-maintained docs ([a57024e](https://github.com/growsurf/growsurf-java/commit/a57024edb7c2eaa23c9f2180e92e3c1f0b6b9ddd))
+* **api:** sync analytics and program resources ([78f117e](https://github.com/growsurf/growsurf-java/commit/78f117e9c13e8bf1e35f1ed240d8c293956f09bc))
+
+
+### Bug Fixes
+
+* **api:** preserve nullable and unknown nested configuration fields ([de3173d](https://github.com/growsurf/growsurf-java/commit/de3173d8cfbe39a37c596e628c31105f2cc4d4c2))
+
+
+### Styles
+
+* apply ktfmt to transaction params ([970fd74](https://github.com/growsurf/growsurf-java/commit/970fd743a94fe67903238571df3c6327efccc784))
+
 ## [1.4.0](https://github.com/growsurf/growsurf-java/compare/v1.3.0...v1.4.0) (2026-08-25)
 
 
