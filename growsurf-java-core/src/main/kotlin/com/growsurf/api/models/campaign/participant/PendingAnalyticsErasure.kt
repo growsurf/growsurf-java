@@ -14,45 +14,42 @@ import com.growsurf.api.core.checkRequired
 import com.growsurf.api.errors.GrowsurfInvalidDataException
 import java.util.Collections
 import java.util.Objects
-import java.util.Optional
-import kotlin.jvm.optionals.getOrNull
 
-class ParticipantDeleteResponse
+class PendingAnalyticsErasure
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
 private constructor(
-    private val success: JsonField<Boolean>,
-    private val analyticsErasure: JsonField<PendingAnalyticsErasure>,
+    private val status: JsonField<String>,
+    private val operationId: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
     @JsonCreator
     private constructor(
-        @JsonProperty("success") @ExcludeMissing success: JsonField<Boolean> = JsonMissing.of(),
-        @JsonProperty("analyticsErasure")
+        @JsonProperty("status") @ExcludeMissing status: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("operationId")
         @ExcludeMissing
-        analyticsErasure: JsonField<PendingAnalyticsErasure> = JsonMissing.of(),
-    ) : this(success, analyticsErasure, mutableMapOf())
+        operationId: JsonField<String> = JsonMissing.of(),
+    ) : this(status, operationId, mutableMapOf())
 
     /**
+     * Analytics erasure has been accepted but is not confirmed complete.
+     *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
-    fun success(): Boolean = success.getRequired("success")
+    fun status(): String = status.getRequired("status")
 
     /**
-     * Returns the raw JSON value of [success].
+     * Returns the raw JSON value of [status].
      *
-     * Unlike [success], this method doesn't throw if the JSON field has an unexpected type.
+     * Unlike [status], this method doesn't throw if the JSON field has an unexpected type.
      */
-    @JsonProperty("success") @ExcludeMissing fun _success(): JsonField<Boolean> = success
+    @JsonProperty("status") @ExcludeMissing fun _status(): JsonField<String> = status
 
-    /** Analytics erasure is pending. Do not repeat successful deletions. */
-    fun analyticsErasure(): Optional<PendingAnalyticsErasure> =
-        analyticsErasure.getOptional("analyticsErasure")
+    /** Opaque reference for support inquiries about this analytics erasure. */
+    fun operationId(): String = operationId.getRequired("operationId")
 
-    @JsonProperty("analyticsErasure")
-    @ExcludeMissing
-    fun _analyticsErasure(): JsonField<PendingAnalyticsErasure> = analyticsErasure
+    @JsonProperty("operationId") @ExcludeMissing fun _operationId(): JsonField<String> = operationId
 
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -69,46 +66,44 @@ private constructor(
     companion object {
 
         /**
-         * Returns a mutable builder for constructing an instance of [ParticipantDeleteResponse].
+         * Returns a mutable builder for constructing an instance of [PendingAnalyticsErasure].
          *
          * The following fields are required:
          * ```java
-         * .success()
+         * .status()
+         * .operationId()
          * ```
          */
         @JvmStatic fun builder() = Builder()
     }
 
-    /** A builder for [ParticipantDeleteResponse]. */
+    /** A builder for [PendingAnalyticsErasure]. */
     class Builder internal constructor() {
 
-        private var success: JsonField<Boolean>? = null
-        private var analyticsErasure: JsonField<PendingAnalyticsErasure> = JsonMissing.of()
+        private var status: JsonField<String>? = null
+        private var operationId: JsonField<String>? = null
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
-        internal fun from(participantDeleteResponse: ParticipantDeleteResponse) = apply {
-            success = participantDeleteResponse.success
-            analyticsErasure = participantDeleteResponse.analyticsErasure
-            additionalProperties = participantDeleteResponse.additionalProperties.toMutableMap()
+        internal fun from(pendingAnalyticsErasure: PendingAnalyticsErasure) = apply {
+            status = pendingAnalyticsErasure.status
+            operationId = pendingAnalyticsErasure.operationId
+            additionalProperties = pendingAnalyticsErasure.additionalProperties.toMutableMap()
         }
 
-        fun success(success: Boolean) = success(JsonField.of(success))
+        fun status(status: String) = status(JsonField.of(status))
 
         /**
-         * Sets [Builder.success] to an arbitrary JSON value.
+         * Sets [Builder.status] to an arbitrary JSON value.
          *
-         * You should usually call [Builder.success] with a well-typed [Boolean] value instead. This
+         * You should usually call [Builder.status] with a well-typed [String] value instead. This
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
-        fun success(success: JsonField<Boolean>) = apply { this.success = success }
+        fun status(status: JsonField<String>) = apply { this.status = status }
 
-        fun analyticsErasure(analyticsErasure: PendingAnalyticsErasure?) =
-            analyticsErasure(JsonField.ofNullable(analyticsErasure))
+        fun operationId(operationId: String) = operationId(JsonField.of(operationId))
 
-        fun analyticsErasure(analyticsErasure: JsonField<PendingAnalyticsErasure>) = apply {
-            this.analyticsErasure = analyticsErasure
-        }
+        fun operationId(operationId: JsonField<String>) = apply { this.operationId = operationId }
 
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
@@ -130,21 +125,22 @@ private constructor(
         }
 
         /**
-         * Returns an immutable instance of [ParticipantDeleteResponse].
+         * Returns an immutable instance of [PendingAnalyticsErasure].
          *
          * Further updates to this [Builder] will not mutate the returned instance.
          *
          * The following fields are required:
          * ```java
-         * .success()
+         * .status()
+         * .operationId()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
          */
-        fun build(): ParticipantDeleteResponse =
-            ParticipantDeleteResponse(
-                checkRequired("success", success),
-                analyticsErasure,
+        fun build(): PendingAnalyticsErasure =
+            PendingAnalyticsErasure(
+                checkRequired("status", status),
+                checkRequired("operationId", operationId),
                 additionalProperties.toMutableMap(),
             )
     }
@@ -159,13 +155,13 @@ private constructor(
      * @throws GrowsurfInvalidDataException if any value type in this object doesn't match its
      *   expected type.
      */
-    fun validate(): ParticipantDeleteResponse = apply {
+    fun validate(): PendingAnalyticsErasure = apply {
         if (validated) {
             return@apply
         }
 
-        success()
-        analyticsErasure().ifPresent { it.validate() }
+        status()
+        operationId()
         validated = true
     }
 
@@ -184,26 +180,23 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (analyticsErasure.asKnown().getOrNull()?.validity() ?: 0) +
-            (if (success.asKnown().isPresent) 1 else 0)
+        (if (status.asKnown().isPresent) 1 else 0) + (if (operationId.asKnown().isPresent) 1 else 0)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
             return true
         }
 
-        return other is ParticipantDeleteResponse &&
-            analyticsErasure == other.analyticsErasure &&
-            success == other.success &&
+        return other is PendingAnalyticsErasure &&
+            status == other.status &&
+            operationId == other.operationId &&
             additionalProperties == other.additionalProperties
     }
 
-    private val hashCode: Int by lazy {
-        Objects.hash(success, analyticsErasure, additionalProperties)
-    }
+    private val hashCode: Int by lazy { Objects.hash(status, operationId, additionalProperties) }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ParticipantDeleteResponse{analyticsErasure=$analyticsErasure, success=$success, additionalProperties=$additionalProperties}"
+        "PendingAnalyticsErasure{status=$status, operationId=$operationId, additionalProperties=$additionalProperties}"
 }

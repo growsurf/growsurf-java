@@ -25,14 +25,20 @@ class ParticipantBulkDeleteResponse
 private constructor(
     private val summary: JsonField<Summary>,
     private val results: JsonField<List<Result>>,
+    private val analyticsErasure: JsonField<PendingAnalyticsErasure>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
     @JsonCreator
     private constructor(
         @JsonProperty("summary") @ExcludeMissing summary: JsonField<Summary> = JsonMissing.of(),
-        @JsonProperty("results") @ExcludeMissing results: JsonField<List<Result>> = JsonMissing.of(),
-    ) : this(summary, results, mutableMapOf())
+        @JsonProperty("results")
+        @ExcludeMissing
+        results: JsonField<List<Result>> = JsonMissing.of(),
+        @JsonProperty("analyticsErasure")
+        @ExcludeMissing
+        analyticsErasure: JsonField<PendingAnalyticsErasure> = JsonMissing.of(),
+    ) : this(summary, results, analyticsErasure, mutableMapOf())
 
     /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
@@ -61,6 +67,14 @@ private constructor(
      * Unlike [results], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("results") @ExcludeMissing fun _results(): JsonField<List<Result>> = results
+
+    /** Analytics erasure is pending. Do not repeat successful deletions. */
+    fun analyticsErasure(): Optional<PendingAnalyticsErasure> =
+        analyticsErasure.getOptional("analyticsErasure")
+
+    @JsonProperty("analyticsErasure")
+    @ExcludeMissing
+    fun _analyticsErasure(): JsonField<PendingAnalyticsErasure> = analyticsErasure
 
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -94,12 +108,14 @@ private constructor(
 
         private var summary: JsonField<Summary>? = null
         private var results: JsonField<MutableList<Result>>? = null
+        private var analyticsErasure: JsonField<PendingAnalyticsErasure> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
         internal fun from(participantBulkDeleteResponse: ParticipantBulkDeleteResponse) = apply {
             summary = participantBulkDeleteResponse.summary
             results = participantBulkDeleteResponse.results.map { it.toMutableList() }
+            analyticsErasure = participantBulkDeleteResponse.analyticsErasure
             additionalProperties = participantBulkDeleteResponse.additionalProperties.toMutableMap()
         }
 
@@ -139,6 +155,13 @@ private constructor(
                 }
         }
 
+        fun analyticsErasure(analyticsErasure: PendingAnalyticsErasure?) =
+            analyticsErasure(JsonField.ofNullable(analyticsErasure))
+
+        fun analyticsErasure(analyticsErasure: JsonField<PendingAnalyticsErasure>) = apply {
+            this.analyticsErasure = analyticsErasure
+        }
+
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
             putAllAdditionalProperties(additionalProperties)
@@ -175,6 +198,7 @@ private constructor(
             ParticipantBulkDeleteResponse(
                 checkRequired("summary", summary),
                 checkRequired("results", results).map { it.toImmutable() },
+                analyticsErasure,
                 additionalProperties.toMutableMap(),
             )
     }
@@ -196,6 +220,7 @@ private constructor(
 
         summary().validate()
         results().forEach { it.validate() }
+        analyticsErasure().ifPresent { it.validate() }
         validated = true
     }
 
@@ -214,7 +239,8 @@ private constructor(
      */
     @JvmSynthetic
     internal fun validity(): Int =
-        (summary.asKnown().getOrNull()?.validity() ?: 0) +
+        (analyticsErasure.asKnown().getOrNull()?.validity() ?: 0) +
+            (summary.asKnown().getOrNull()?.validity() ?: 0) +
             (results.asKnown().getOrNull()?.sumOf { it.validity().toInt() } ?: 0)
 
     class Summary
@@ -1111,15 +1137,18 @@ private constructor(
         }
 
         return other is ParticipantBulkDeleteResponse &&
+            analyticsErasure == other.analyticsErasure &&
             summary == other.summary &&
             results == other.results &&
             additionalProperties == other.additionalProperties
     }
 
-    private val hashCode: Int by lazy { Objects.hash(summary, results, additionalProperties) }
+    private val hashCode: Int by lazy {
+        Objects.hash(summary, results, analyticsErasure, additionalProperties)
+    }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ParticipantBulkDeleteResponse{summary=$summary, results=$results, additionalProperties=$additionalProperties}"
+        "ParticipantBulkDeleteResponse{analyticsErasure=$analyticsErasure, summary=$summary, results=$results, additionalProperties=$additionalProperties}"
 }
