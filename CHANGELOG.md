@@ -1,5 +1,22 @@
 # Changelog
 
+## [1.6.0](https://github.com/growsurf/growsurf-java/compare/v1.5.1...v1.6.0) (2026-09-14)
+
+
+### Features
+
+* **api:** add pending analyticsErasure to participant delete responses ([3b3f1f2](https://github.com/growsurf/growsurf-java/commit/3b3f1f219f17ee487f9dfae2b875740a6c80413e))
+
+
+### Bug Fixes
+
+* **core:** deserialize absent fields as JsonMissing under R8 ([eddda2d](https://github.com/growsurf/growsurf-java/commit/eddda2d09967b8e3715bba96c98355f234cec26d))
+
+
+### Chores
+
+* merge dev into main ([b9492c6](https://github.com/growsurf/growsurf-java/commit/b9492c65d9ab0fc938b709089234836dbd51ea41))
+
 ## [1.5.1](https://github.com/growsurf/growsurf-java/compare/v1.5.0...v1.5.1) (2026-09-10)
 
 
