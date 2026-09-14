@@ -258,6 +258,21 @@ sealed class JsonField<out T : Any> {
                 ?: JsonValue.fromJsonNode(node)
 
         override fun getNullValue(context: DeserializationContext): JsonField<*> = JsonNull.of()
+
+        /**
+         * Returns the value to use when the property is absent from the JSON entirely.
+         *
+         * Jackson normally never reaches this because each generated model's [JsonCreator]
+         * constructor declares a `JsonMissing.of()` Kotlin default for every property, and
+         * jackson-module-kotlin omits absent parameters so that default applies. Those defaults are
+         * only reachable through Kotlin reflection, which needs the `kotlin.Metadata` annotation
+         * that R8 strips from classes it only keeps members of. Without this override an absent
+         * property then falls back to [getNullValue] and deserializes to [JsonNull], so a
+         * round-tripped model is unequal to the original and an unset required field reports "is
+         * null" instead of "is not set".
+         */
+        override fun getAbsentValue(context: DeserializationContext): JsonField<*> =
+            JsonMissing.of()
     }
 }
 
