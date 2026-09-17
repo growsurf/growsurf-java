@@ -14,6 +14,7 @@ class CampaignListParticipantsParams
 private constructor(
     private val id: String?,
     private val limit: Long?,
+    private val metadata: Map<String, String>?,
     private val nextId: String?,
     private val additionalHeaders: Headers,
     private val additionalQueryParams: QueryParams,
@@ -23,6 +24,13 @@ private constructor(
 
     /** Number of results to return. Maximum 100. */
     fun limit(): Optional<Long> = Optional.ofNullable(limit)
+
+    /**
+     * Return only participants whose metadata matches every given key and value exactly. Send each
+     * pair as `metadata[key]=value`. Up to 3 keys per request. Values compare as strings, which is
+     * how metadata is stored.
+     */
+    fun metadata(): Optional<Map<String, String>> = Optional.ofNullable(metadata)
 
     /** ID to start the next paged result set with. */
     fun nextId(): Optional<String> = Optional.ofNullable(nextId)
@@ -51,6 +59,7 @@ private constructor(
 
         private var id: String? = null
         private var limit: Long? = null
+        private var metadata: Map<String, String>? = null
         private var nextId: String? = null
         private var additionalHeaders: Headers.Builder = Headers.builder()
         private var additionalQueryParams: QueryParams.Builder = QueryParams.builder()
@@ -59,6 +68,7 @@ private constructor(
         internal fun from(campaignListParticipantsParams: CampaignListParticipantsParams) = apply {
             id = campaignListParticipantsParams.id
             limit = campaignListParticipantsParams.limit
+            metadata = campaignListParticipantsParams.metadata
             nextId = campaignListParticipantsParams.nextId
             additionalHeaders = campaignListParticipantsParams.additionalHeaders.toBuilder()
             additionalQueryParams = campaignListParticipantsParams.additionalQueryParams.toBuilder()
@@ -81,6 +91,16 @@ private constructor(
 
         /** Alias for calling [Builder.limit] with `limit.orElse(null)`. */
         fun limit(limit: Optional<Long>) = limit(limit.getOrNull())
+
+        /**
+         * Return only participants whose metadata matches every given key and value exactly. Send
+         * each pair as `metadata[key]=value`. Up to 3 keys per request. Values compare as strings,
+         * which is how metadata is stored.
+         */
+        fun metadata(metadata: Map<String, String>?) = apply { this.metadata = metadata }
+
+        /** Alias for calling [Builder.metadata] with `metadata.orElse(null)`. */
+        fun metadata(metadata: Optional<Map<String, String>>) = metadata(metadata.getOrNull())
 
         /** ID to start the next paged result set with. */
         fun nextId(nextId: String?) = apply { this.nextId = nextId }
@@ -195,6 +215,7 @@ private constructor(
             CampaignListParticipantsParams(
                 id,
                 limit,
+                metadata,
                 nextId,
                 additionalHeaders.build(),
                 additionalQueryParams.build(),
@@ -213,6 +234,8 @@ private constructor(
         QueryParams.builder()
             .apply {
                 limit?.let { put("limit", it.toString()) }
+                // Deep-object style: each entry is sent as `metadata[<key>]=<value>`.
+                metadata?.forEach { (key, value) -> put("metadata[$key]", value) }
                 nextId?.let { put("nextId", it) }
                 putAll(additionalQueryParams)
             }
@@ -226,14 +249,15 @@ private constructor(
         return other is CampaignListParticipantsParams &&
             id == other.id &&
             limit == other.limit &&
+            metadata == other.metadata &&
             nextId == other.nextId &&
             additionalHeaders == other.additionalHeaders &&
             additionalQueryParams == other.additionalQueryParams
     }
 
     override fun hashCode(): Int =
-        Objects.hash(id, limit, nextId, additionalHeaders, additionalQueryParams)
+        Objects.hash(id, limit, metadata, nextId, additionalHeaders, additionalQueryParams)
 
     override fun toString() =
-        "CampaignListParticipantsParams{id=$id, limit=$limit, nextId=$nextId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
+        "CampaignListParticipantsParams{id=$id, limit=$limit, metadata=$metadata, nextId=$nextId, additionalHeaders=$additionalHeaders, additionalQueryParams=$additionalQueryParams}"
 }

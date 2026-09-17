@@ -10,7 +10,12 @@ internal class CampaignListParticipantsParamsTest {
 
     @Test
     fun create() {
-        CampaignListParticipantsParams.builder().id("id").limit(1L).nextId("nextId").build()
+        CampaignListParticipantsParams.builder()
+            .id("id")
+            .limit(1L)
+            .metadata(mapOf("customerId" to "12345"))
+            .nextId("nextId")
+            .build()
     }
 
     @Test
@@ -25,12 +30,24 @@ internal class CampaignListParticipantsParamsTest {
     @Test
     fun queryParams() {
         val params =
-            CampaignListParticipantsParams.builder().id("id").limit(1L).nextId("nextId").build()
+            CampaignListParticipantsParams.builder()
+                .id("id")
+                .limit(1L)
+                .metadata(mapOf("customerId" to "12345", "plan" to "pro"))
+                .nextId("nextId")
+                .build()
 
         val queryParams = params._queryParams()
 
         assertThat(queryParams)
-            .isEqualTo(QueryParams.builder().put("limit", "1").put("nextId", "nextId").build())
+            .isEqualTo(
+                QueryParams.builder()
+                    .put("limit", "1")
+                    .put("metadata[customerId]", "12345")
+                    .put("metadata[plan]", "pro")
+                    .put("nextId", "nextId")
+                    .build()
+            )
     }
 
     @Test
