@@ -44,7 +44,7 @@ configure<MavenPublishBaseExtension> {
     pom {
         name.set("GrowSurf REST API")
         description.set("Public GrowSurf REST API for managing programs, participants, referrals,\nrewards, affiliate commissions, payouts, and analytics.\n\nAll endpoints require an API key in the `Authorization: Bearer <api_key>`\nheader.")
-        url.set("https://growsurf.com/settings#contact_support")
+        url.set("https://growsurf.com/")
 
         licenses {
             license {
