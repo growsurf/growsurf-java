@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.7.1](https://github.com/growsurf/growsurf-java/compare/v1.7.0...v1.7.1) (2026-09-18)
+
+
+### Bug Fixes
+
+* **package:** point package homepage at growsurf.com ([5f9a214](https://github.com/growsurf/growsurf-java/commit/5f9a2146f1e619facbbc5967f6c36d6ae072bc81))
+
+
+### Chores
+
+* merge dev into main ([960acf4](https://github.com/growsurf/growsurf-java/commit/960acf42dd0bd6b0e05babfec861f75358a3cc19))
+
 ## [1.7.0](https://github.com/growsurf/growsurf-java/compare/v1.6.0...v1.7.0) (2026-09-17)
 
 
