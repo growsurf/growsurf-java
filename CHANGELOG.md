@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.8.1](https://github.com/growsurf/growsurf-java/compare/v1.8.0...v1.8.1) (2026-09-19)
+
+
+### Chores
+
+* merge dev into main ([bd59d55](https://github.com/growsurf/growsurf-java/commit/bd59d55d114282d677c27a0e638111e062381ed5))
+* merge dev into main ([07ce1e3](https://github.com/growsurf/growsurf-java/commit/07ce1e3449bb3dd2d6440f879feeeac11bbf1187))
+
+
+### Documentation
+
+* **api:** document the starter rewards each campaign goal seeds ([b12bba5](https://github.com/growsurf/growsurf-java/commit/b12bba5c47256213f5bdbc4678bd59dc80f5e8b1))
+* **api:** document the starter rewards each campaign goal seeds ([26f2052](https://github.com/growsurf/growsurf-java/commit/26f2052b13acdab310a43084808b1f26f109053e))
+
 ## [1.8.0](https://github.com/growsurf/growsurf-java/compare/v1.7.1...v1.8.0) (2026-09-19)
 
 
