@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.8.0](https://github.com/growsurf/growsurf-java/compare/v1.7.1...v1.8.0) (2026-09-19)
+
+
+### Features
+
+* **api:** add campaign design widget section and healthcare goals ([4c03196](https://github.com/growsurf/growsurf-java/commit/4c03196189e6540889d6e481c419ee576a89cea9))
+
+
+### Chores
+
+* merge dev into main ([b3661b7](https://github.com/growsurf/growsurf-java/commit/b3661b77b7a906f535d28ad5e54004e333883048))
+
 ## [1.7.1](https://github.com/growsurf/growsurf-java/compare/v1.7.0...v1.7.1) (2026-09-18)
 
 

@@ -8,7 +8,7 @@ repositories {
 
 allprojects {
     group = "com.growsurf.api"
-    version = "1.7.1" // x-release-please-version
+    version = "1.8.0" // x-release-please-version
 }
 
 subprojects {
