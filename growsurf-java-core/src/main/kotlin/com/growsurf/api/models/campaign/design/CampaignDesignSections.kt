@@ -62,6 +62,55 @@ enum class CampaignDesignReferrerNameFormat(@get:JsonValueAnnotation val value: 
     FIRST_LAST("FIRST_LAST"),
 }
 
+enum class CampaignDesignWidgetAppearance(@get:JsonValueAnnotation val value: String) {
+    BUTTON("BUTTON"),
+    CARD("CARD"),
+}
+
+enum class CampaignDesignWidgetPlacement(@get:JsonValueAnnotation val value: String) {
+    TOP_LEFT("TOP_LEFT"),
+    TOP_CENTER("TOP_CENTER"),
+    TOP_RIGHT("TOP_RIGHT"),
+    BOTTOM_LEFT("BOTTOM_LEFT"),
+    BOTTOM_CENTER("BOTTOM_CENTER"),
+    BOTTOM_RIGHT("BOTTOM_RIGHT"),
+}
+
+enum class CampaignDesignWidgetReveal(@get:JsonValueAnnotation val value: String) {
+    IMMEDIATE("IMMEDIATE"),
+    DELAY("DELAY"),
+    SCROLL("SCROLL"),
+}
+
+enum class CampaignDesignWidgetMarkKey(@get:JsonValueAnnotation val value: String) {
+    GIFT("GIFT"),
+    TICKET("TICKET"),
+    DISCOUNT("DISCOUNT"),
+    CASH("CASH"),
+    PERK("PERK"),
+    SHARE("SHARE"),
+    LINK("LINK"),
+    INVITE("INVITE"),
+    FRIENDS("FRIENDS"),
+    THANKS("THANKS"),
+}
+
+/**
+ * `DEFAULT` is the old GrowSurf image: a program already set to it keeps it and can read it back,
+ * but it cannot be set.
+ */
+enum class CampaignDesignWidgetIcon(@get:JsonValueAnnotation val value: String) {
+    CUSTOM("CUSTOM"),
+    NONE("NONE"),
+    DEFAULT("DEFAULT"),
+}
+
+enum class CampaignDesignWidgetPageRuleMode(@get:JsonValueAnnotation val value: String) {
+    ALL("ALL"),
+    ONLY("ONLY"),
+    EXCEPT("EXCEPT"),
+}
+
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class ParticipantLoginDesign
 constructor(
@@ -715,20 +764,262 @@ constructor(
     fun backgroundColor(): Optional<String> = backgroundColor.getOptional("backgroundColor")
 }
 
+/** Which pages the website widget appears on. */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+data class CampaignDesignWidgetPageRules
+constructor(
+    @JsonProperty("mode") private val mode: CampaignDesignWidgetPageRuleMode? = null,
+    @JsonProperty("patterns") private val patterns: List<String>? = null,
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
+) {
+    @JsonCreator
+    constructor(
+        @JsonProperty("mode") mode: CampaignDesignWidgetPageRuleMode? = null,
+        @JsonProperty("patterns") patterns: List<String>? = null,
+    ) : this(mode, patterns, mutableMapOf())
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+
+    fun mode(): Optional<CampaignDesignWidgetPageRuleMode> = Optional.ofNullable(mode)
+
+    fun patterns(): Optional<List<String>> = Optional.ofNullable(patterns)
+}
+
+/**
+ * The website widget — the invite that sits in a corner of your own site. It renders as a button or
+ * as a card, and its card folds back into the button when a visitor closes it. Both audience
+ * switches start off, so a program shows nothing until you turn one on.
+ */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+data class CampaignDesignWidget
+constructor(
+    @JsonProperty("isShownToNewVisitors") private val isShownToNewVisitors: Boolean? = null,
+    @JsonProperty("isShownToParticipants") private val isShownToParticipants: Boolean? = null,
+    @JsonProperty("appearance") private val appearance: CampaignDesignWidgetAppearance? = null,
+    @JsonProperty("isArtShown") private val isArtShown: Boolean? = null,
+    @JsonProperty("artImageUrl")
+    @ExcludeMissing
+    private val artImageUrl: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("newVisitorText")
+    @ExcludeMissing
+    private val newVisitorText: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("participantText")
+    @ExcludeMissing
+    private val participantText: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("newVisitorDescription")
+    @ExcludeMissing
+    private val newVisitorDescription: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("participantDescription")
+    @ExcludeMissing
+    private val participantDescription: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("buttonText")
+    @ExcludeMissing
+    private val buttonText: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("markKey")
+    @ExcludeMissing
+    private val markKey: JsonField<CampaignDesignWidgetMarkKey> = JsonMissing.of(),
+    @JsonProperty("icon") private val icon: CampaignDesignWidgetIcon? = null,
+    @JsonProperty("iconImageUrl")
+    @ExcludeMissing
+    private val iconImageUrl: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("placement") private val placement: CampaignDesignWidgetPlacement? = null,
+    @JsonProperty("offsetSide") private val offsetSide: Long? = null,
+    @JsonProperty("offsetEdge") private val offsetEdge: Long? = null,
+    @JsonProperty("reveal") private val reveal: CampaignDesignWidgetReveal? = null,
+    @JsonProperty("revealDelaySeconds") private val revealDelaySeconds: Long? = null,
+    @JsonProperty("returnAfterDays") private val returnAfterDays: Long? = null,
+    @JsonProperty("isHiddenOnMobile") private val isHiddenOnMobile: Boolean? = null,
+    @JsonProperty("pageRules") private val pageRules: CampaignDesignWidgetPageRules? = null,
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
+) {
+    // Validate known values without conflating an omitted field with an explicit clear.
+    init {
+        artImageUrl.getOptional("artImageUrl")
+        newVisitorText.getOptional("newVisitorText")
+        participantText.getOptional("participantText")
+        newVisitorDescription.getOptional("newVisitorDescription")
+        participantDescription.getOptional("participantDescription")
+        buttonText.getOptional("buttonText")
+        markKey.getOptional("markKey")
+        iconImageUrl.getOptional("iconImageUrl")
+    }
+
+    @JsonCreator
+    constructor(
+        @JsonProperty("isShownToNewVisitors") isShownToNewVisitors: Boolean? = null,
+        @JsonProperty("isShownToParticipants") isShownToParticipants: Boolean? = null,
+        @JsonProperty("appearance") appearance: CampaignDesignWidgetAppearance? = null,
+        @JsonProperty("isArtShown") isArtShown: Boolean? = null,
+        @JsonProperty("artImageUrl")
+        @ExcludeMissing
+        artImageUrl: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("newVisitorText")
+        @ExcludeMissing
+        newVisitorText: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("participantText")
+        @ExcludeMissing
+        participantText: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("newVisitorDescription")
+        @ExcludeMissing
+        newVisitorDescription: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("participantDescription")
+        @ExcludeMissing
+        participantDescription: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("buttonText")
+        @ExcludeMissing
+        buttonText: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("markKey")
+        @ExcludeMissing
+        markKey: JsonField<CampaignDesignWidgetMarkKey> = JsonMissing.of(),
+        @JsonProperty("icon") icon: CampaignDesignWidgetIcon? = null,
+        @JsonProperty("iconImageUrl")
+        @ExcludeMissing
+        iconImageUrl: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("placement") placement: CampaignDesignWidgetPlacement? = null,
+        @JsonProperty("offsetSide") offsetSide: Long? = null,
+        @JsonProperty("offsetEdge") offsetEdge: Long? = null,
+        @JsonProperty("reveal") reveal: CampaignDesignWidgetReveal? = null,
+        @JsonProperty("revealDelaySeconds") revealDelaySeconds: Long? = null,
+        @JsonProperty("returnAfterDays") returnAfterDays: Long? = null,
+        @JsonProperty("isHiddenOnMobile") isHiddenOnMobile: Boolean? = null,
+        @JsonProperty("pageRules") pageRules: CampaignDesignWidgetPageRules? = null,
+    ) : this(
+        isShownToNewVisitors,
+        isShownToParticipants,
+        appearance,
+        isArtShown,
+        artImageUrl,
+        newVisitorText,
+        participantText,
+        newVisitorDescription,
+        participantDescription,
+        buttonText,
+        markKey,
+        icon,
+        iconImageUrl,
+        placement,
+        offsetSide,
+        offsetEdge,
+        reveal,
+        revealDelaySeconds,
+        returnAfterDays,
+        isHiddenOnMobile,
+        pageRules,
+        mutableMapOf(),
+    )
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+
+    fun isShownToNewVisitors(): Optional<Boolean> = Optional.ofNullable(isShownToNewVisitors)
+
+    fun isShownToParticipants(): Optional<Boolean> = Optional.ofNullable(isShownToParticipants)
+
+    fun appearance(): Optional<CampaignDesignWidgetAppearance> = Optional.ofNullable(appearance)
+
+    fun isArtShown(): Optional<Boolean> = Optional.ofNullable(isArtShown)
+
+    fun artImageUrl(): Optional<String> = artImageUrl.getOptional("artImageUrl")
+
+    fun newVisitorText(): Optional<String> = newVisitorText.getOptional("newVisitorText")
+
+    fun participantText(): Optional<String> = participantText.getOptional("participantText")
+
+    fun newVisitorDescription(): Optional<String> =
+        newVisitorDescription.getOptional("newVisitorDescription")
+
+    fun participantDescription(): Optional<String> =
+        participantDescription.getOptional("participantDescription")
+
+    fun buttonText(): Optional<String> = buttonText.getOptional("buttonText")
+
+    fun markKey(): Optional<CampaignDesignWidgetMarkKey> = markKey.getOptional("markKey")
+
+    fun icon(): Optional<CampaignDesignWidgetIcon> = Optional.ofNullable(icon)
+
+    fun iconImageUrl(): Optional<String> = iconImageUrl.getOptional("iconImageUrl")
+
+    fun placement(): Optional<CampaignDesignWidgetPlacement> = Optional.ofNullable(placement)
+
+    fun offsetSide(): Optional<Long> = Optional.ofNullable(offsetSide)
+
+    fun offsetEdge(): Optional<Long> = Optional.ofNullable(offsetEdge)
+
+    fun reveal(): Optional<CampaignDesignWidgetReveal> = Optional.ofNullable(reveal)
+
+    fun revealDelaySeconds(): Optional<Long> = Optional.ofNullable(revealDelaySeconds)
+
+    fun returnAfterDays(): Optional<Long> = Optional.ofNullable(returnAfterDays)
+
+    fun isHiddenOnMobile(): Optional<Boolean> = Optional.ofNullable(isHiddenOnMobile)
+
+    fun pageRules(): Optional<CampaignDesignWidgetPageRules> = Optional.ofNullable(pageRules)
+}
+
+/** Website widget theme colors. */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+data class CampaignDesignWidgetTheme
+constructor(
+    @JsonProperty("color") @ExcludeMissing private val color: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("backgroundColor")
+    @ExcludeMissing
+    private val backgroundColor: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("borderRadius")
+    @ExcludeMissing
+    private val borderRadius: JsonField<String> = JsonMissing.of(),
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
+) {
+    // Validate known values without conflating an omitted field with an explicit clear.
+    init {
+        color.getOptional("color")
+        backgroundColor.getOptional("backgroundColor")
+        borderRadius.getOptional("borderRadius")
+    }
+
+    @JsonCreator
+    constructor(
+        @JsonProperty("color") @ExcludeMissing color: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("backgroundColor")
+        @ExcludeMissing
+        backgroundColor: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("borderRadius")
+        @ExcludeMissing
+        borderRadius: JsonField<String> = JsonMissing.of(),
+    ) : this(color, backgroundColor, borderRadius, mutableMapOf())
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+
+    fun color(): Optional<String> = color.getOptional("color")
+
+    fun backgroundColor(): Optional<String> = backgroundColor.getOptional("backgroundColor")
+
+    fun borderRadius(): Optional<String> = borderRadius.getOptional("borderRadius")
+}
+
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class CampaignDesignTheme
 constructor(
     @JsonProperty("referredExperienceOfferPopup")
     private val referredExperienceOfferPopup: CampaignDesignReferredExperienceOfferPopupTheme? =
         null,
+    @JsonProperty("widget") private val widget: CampaignDesignWidgetTheme? = null,
     @field:JsonAnySetter
     private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
 ) {
     @JsonCreator
     constructor(
         @JsonProperty("referredExperienceOfferPopup")
-        referredExperienceOfferPopup: CampaignDesignReferredExperienceOfferPopupTheme? = null
-    ) : this(referredExperienceOfferPopup, mutableMapOf())
+        referredExperienceOfferPopup: CampaignDesignReferredExperienceOfferPopupTheme? = null,
+        @JsonProperty("widget") widget: CampaignDesignWidgetTheme? = null,
+    ) : this(referredExperienceOfferPopup, widget, mutableMapOf())
 
     /** Returns additional fields supplied by the API. */
     @JsonAnyGetter
@@ -736,4 +1027,6 @@ constructor(
 
     fun referredExperienceOfferPopup(): Optional<CampaignDesignReferredExperienceOfferPopupTheme> =
         Optional.ofNullable(referredExperienceOfferPopup)
+
+    fun widget(): Optional<CampaignDesignWidgetTheme> = Optional.ofNullable(widget)
 }

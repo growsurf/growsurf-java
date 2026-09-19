@@ -64,6 +64,8 @@ private constructor(
     fun referredExperience(): Optional<CampaignDesignReferredExperience> =
         configField(additionalProperties, "referredExperience")
 
+    fun widget(): Optional<CampaignDesignWidget> = configField(additionalProperties, "widget")
+
     fun referralSummary(): Optional<Map<String, JsonValue>> =
         configField(additionalProperties, "referralSummary")
 
@@ -145,6 +147,10 @@ private constructor(
 
         fun referredExperience(value: CampaignDesignReferredExperience) = apply {
             additionalProperties.putConfigField("referredExperience", value)
+        }
+
+        fun widget(value: CampaignDesignWidget) = apply {
+            additionalProperties.putConfigField("widget", value)
         }
 
         fun referralSummary(value: Map<String, JsonValue>) = objectField("referralSummary", value)
