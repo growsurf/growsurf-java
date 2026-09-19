@@ -73,16 +73,22 @@ private constructor(
     fun currencyIso(): Optional<String> = body.currencyIso()
 
     /**
-     * What the program is for, which seeds share settings that suit that audience. Programs whose
-     * participants refer other businesses (`CUSTOMERS`, `USERS`, `B2B_SAAS_SELF_SERVICE`,
-     * `B2B_SAAS_ENTERPRISE`, `HEALTHCARE_PROVIDERS`) start with the LinkedIn share button visible;
-     * consumer, financial, education, insurance, telehealth, newsletter, and waitlist programs
-     * (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`, `ONLINE_EDUCATION`, `INSURANCE`,
-     * `ONLINE_INSURANCE`, `TELEHEALTH`, `SUBSCRIBERS`, `WAITLIST`) start with it hidden.
-     * `TELEHEALTH` is for consumer telehealth and wellness subscriptions; `HEALTHCARE_PROVIDERS` is
-     * for provider networks and clinician-facing products. `INSURANCE` replaces `ONLINE_INSURANCE`,
-     * which is still accepted. Omit it and every share button keeps its standard default. Set only
-     * when the program is created; it is not accepted on update.
+     * What the program is for, which seeds the share buttons and the starter rewards that suit that
+     * audience. Programs whose participants refer other businesses (`CUSTOMERS`, `USERS`,
+     * `B2B_SAAS_SELF_SERVICE`, `B2B_SAAS_ENTERPRISE`, `HEALTHCARE_PROVIDERS`) start with the
+     * LinkedIn share button visible; consumer, financial, education, insurance, telehealth,
+     * newsletter, and waitlist programs (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`,
+     * `ONLINE_EDUCATION`, `INSURANCE`, `ONLINE_INSURANCE`, `TELEHEALTH`, `SUBSCRIBERS`, `WAITLIST`)
+     * start with it hidden, and each goal also sets the rest of its share buttons to suit that
+     * audience. When you create a program without `rewards`, the goal also decides the starter
+     * rewards: most goals get one double-sided reward, `HEALTHCARE_PROVIDERS` gets a single-sided
+     * reward, `SUBSCRIBERS` gets a four-step milestone ladder, and `WAITLIST` gets a leaderboard.
+     * Every one arrives switched off with a placeholder name, so the program awards nothing until
+     * you set the amount and turn one on. `TELEHEALTH` is for consumer telehealth and wellness
+     * subscriptions; `HEALTHCARE_PROVIDERS` is for provider networks and clinician-facing products.
+     * `INSURANCE` replaces `ONLINE_INSURANCE`, which is still accepted. Omit it and every share
+     * button keeps its standard default. Set only when the program is created; it is not accepted
+     * on update.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -262,17 +268,22 @@ private constructor(
         fun currencyIso(currencyIso: JsonField<String>) = apply { body.currencyIso(currencyIso) }
 
         /**
-         * What the program is for, which seeds share settings that suit that audience. Programs
-         * whose participants refer other businesses (`CUSTOMERS`, `USERS`, `B2B_SAAS_SELF_SERVICE`,
-         * `B2B_SAAS_ENTERPRISE`, `HEALTHCARE_PROVIDERS`) start with the LinkedIn share button
-         * visible; consumer, financial, education, insurance, telehealth, newsletter, and waitlist
-         * programs (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`, `ONLINE_EDUCATION`, `INSURANCE`,
-         * `ONLINE_INSURANCE`, `TELEHEALTH`, `SUBSCRIBERS`, `WAITLIST`) start with it hidden.
-         * `TELEHEALTH` is for consumer telehealth and wellness subscriptions;
-         * `HEALTHCARE_PROVIDERS` is for provider networks and clinician-facing products.
-         * `INSURANCE` replaces `ONLINE_INSURANCE`, which is still accepted. Omit it and every share
-         * button keeps its standard default. Set only when the program is created; it is not
-         * accepted on update.
+         * What the program is for, which seeds the share buttons and the starter rewards that suit
+         * that audience. Programs whose participants refer other businesses (`CUSTOMERS`, `USERS`,
+         * `B2B_SAAS_SELF_SERVICE`, `B2B_SAAS_ENTERPRISE`, `HEALTHCARE_PROVIDERS`) start with the
+         * LinkedIn share button visible; consumer, financial, education, insurance, telehealth,
+         * newsletter, and waitlist programs (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`,
+         * `ONLINE_EDUCATION`, `INSURANCE`, `ONLINE_INSURANCE`, `TELEHEALTH`, `SUBSCRIBERS`,
+         * `WAITLIST`) start with it hidden, and each goal also sets the rest of its share buttons
+         * to suit that audience. When you create a program without `rewards`, the goal also decides
+         * the starter rewards: most goals get one double-sided reward, `HEALTHCARE_PROVIDERS` gets
+         * a single-sided reward, `SUBSCRIBERS` gets a four-step milestone ladder, and `WAITLIST`
+         * gets a leaderboard. Every one arrives switched off with a placeholder name, so the
+         * program awards nothing until you set the amount and turn one on. `TELEHEALTH` is for
+         * consumer telehealth and wellness subscriptions; `HEALTHCARE_PROVIDERS` is for provider
+         * networks and clinician-facing products. `INSURANCE` replaces `ONLINE_INSURANCE`, which is
+         * still accepted. Omit it and every share button keeps its standard default. Set only when
+         * the program is created; it is not accepted on update.
          */
         fun goal(goal: Goal) = apply { body.goal(goal) }
 
@@ -530,17 +541,22 @@ private constructor(
         fun currencyIso(): Optional<String> = currencyIso.getOptional("currencyISO")
 
         /**
-         * What the program is for, which seeds share settings that suit that audience. Programs
-         * whose participants refer other businesses (`CUSTOMERS`, `USERS`, `B2B_SAAS_SELF_SERVICE`,
-         * `B2B_SAAS_ENTERPRISE`, `HEALTHCARE_PROVIDERS`) start with the LinkedIn share button
-         * visible; consumer, financial, education, insurance, telehealth, newsletter, and waitlist
-         * programs (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`, `ONLINE_EDUCATION`, `INSURANCE`,
-         * `ONLINE_INSURANCE`, `TELEHEALTH`, `SUBSCRIBERS`, `WAITLIST`) start with it hidden.
-         * `TELEHEALTH` is for consumer telehealth and wellness subscriptions;
-         * `HEALTHCARE_PROVIDERS` is for provider networks and clinician-facing products.
-         * `INSURANCE` replaces `ONLINE_INSURANCE`, which is still accepted. Omit it and every share
-         * button keeps its standard default. Set only when the program is created; it is not
-         * accepted on update.
+         * What the program is for, which seeds the share buttons and the starter rewards that suit
+         * that audience. Programs whose participants refer other businesses (`CUSTOMERS`, `USERS`,
+         * `B2B_SAAS_SELF_SERVICE`, `B2B_SAAS_ENTERPRISE`, `HEALTHCARE_PROVIDERS`) start with the
+         * LinkedIn share button visible; consumer, financial, education, insurance, telehealth,
+         * newsletter, and waitlist programs (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`,
+         * `ONLINE_EDUCATION`, `INSURANCE`, `ONLINE_INSURANCE`, `TELEHEALTH`, `SUBSCRIBERS`,
+         * `WAITLIST`) start with it hidden, and each goal also sets the rest of its share buttons
+         * to suit that audience. When you create a program without `rewards`, the goal also decides
+         * the starter rewards: most goals get one double-sided reward, `HEALTHCARE_PROVIDERS` gets
+         * a single-sided reward, `SUBSCRIBERS` gets a four-step milestone ladder, and `WAITLIST`
+         * gets a leaderboard. Every one arrives switched off with a placeholder name, so the
+         * program awards nothing until you set the amount and turn one on. `TELEHEALTH` is for
+         * consumer telehealth and wellness subscriptions; `HEALTHCARE_PROVIDERS` is for provider
+         * networks and clinician-facing products. `INSURANCE` replaces `ONLINE_INSURANCE`, which is
+         * still accepted. Omit it and every share button keeps its standard default. Set only when
+         * the program is created; it is not accepted on update.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -729,17 +745,23 @@ private constructor(
             }
 
             /**
-             * What the program is for, which seeds share settings that suit that audience. Programs
-             * whose participants refer other businesses (`CUSTOMERS`, `USERS`,
-             * `B2B_SAAS_SELF_SERVICE`, `B2B_SAAS_ENTERPRISE`, `HEALTHCARE_PROVIDERS`) start with
-             * the LinkedIn share button visible; consumer, financial, education, insurance,
-             * telehealth, newsletter, and waitlist programs (`B2C_SUBSCRIPTIONS`,
+             * What the program is for, which seeds the share buttons and the starter rewards that
+             * suit that audience. Programs whose participants refer other businesses (`CUSTOMERS`,
+             * `USERS`, `B2B_SAAS_SELF_SERVICE`, `B2B_SAAS_ENTERPRISE`, `HEALTHCARE_PROVIDERS`)
+             * start with the LinkedIn share button visible; consumer, financial, education,
+             * insurance, telehealth, newsletter, and waitlist programs (`B2C_SUBSCRIPTIONS`,
              * `FINANCIAL_SERVICES`, `ONLINE_EDUCATION`, `INSURANCE`, `ONLINE_INSURANCE`,
-             * `TELEHEALTH`, `SUBSCRIBERS`, `WAITLIST`) start with it hidden. `TELEHEALTH` is for
-             * consumer telehealth and wellness subscriptions; `HEALTHCARE_PROVIDERS` is for
-             * provider networks and clinician-facing products. `INSURANCE` replaces
-             * `ONLINE_INSURANCE`, which is still accepted. Omit it and every share button keeps its
-             * standard default. Set only when the program is created; it is not accepted on update.
+             * `TELEHEALTH`, `SUBSCRIBERS`, `WAITLIST`) start with it hidden, and each goal also
+             * sets the rest of its share buttons to suit that audience. When you create a program
+             * without `rewards`, the goal also decides the starter rewards: most goals get one
+             * double-sided reward, `HEALTHCARE_PROVIDERS` gets a single-sided reward, `SUBSCRIBERS`
+             * gets a four-step milestone ladder, and `WAITLIST` gets a leaderboard. Every one
+             * arrives switched off with a placeholder name, so the program awards nothing until you
+             * set the amount and turn one on. `TELEHEALTH` is for consumer telehealth and wellness
+             * subscriptions; `HEALTHCARE_PROVIDERS` is for provider networks and clinician-facing
+             * products. `INSURANCE` replaces `ONLINE_INSURANCE`, which is still accepted. Omit it
+             * and every share button keeps its standard default. Set only when the program is
+             * created; it is not accepted on update.
              */
             fun goal(goal: Goal) = goal(JsonField.of(goal))
 
@@ -908,16 +930,22 @@ private constructor(
     }
 
     /**
-     * What the program is for, which seeds share settings that suit that audience. Programs whose
-     * participants refer other businesses (`CUSTOMERS`, `USERS`, `B2B_SAAS_SELF_SERVICE`,
-     * `B2B_SAAS_ENTERPRISE`, `HEALTHCARE_PROVIDERS`) start with the LinkedIn share button visible;
-     * consumer, financial, education, insurance, telehealth, newsletter, and waitlist programs
-     * (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`, `ONLINE_EDUCATION`, `INSURANCE`,
-     * `ONLINE_INSURANCE`, `TELEHEALTH`, `SUBSCRIBERS`, `WAITLIST`) start with it hidden.
-     * `TELEHEALTH` is for consumer telehealth and wellness subscriptions; `HEALTHCARE_PROVIDERS` is
-     * for provider networks and clinician-facing products. `INSURANCE` replaces `ONLINE_INSURANCE`,
-     * which is still accepted. Omit it and every share button keeps its standard default. Set only
-     * when the program is created; it is not accepted on update.
+     * What the program is for, which seeds the share buttons and the starter rewards that suit that
+     * audience. Programs whose participants refer other businesses (`CUSTOMERS`, `USERS`,
+     * `B2B_SAAS_SELF_SERVICE`, `B2B_SAAS_ENTERPRISE`, `HEALTHCARE_PROVIDERS`) start with the
+     * LinkedIn share button visible; consumer, financial, education, insurance, telehealth,
+     * newsletter, and waitlist programs (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`,
+     * `ONLINE_EDUCATION`, `INSURANCE`, `ONLINE_INSURANCE`, `TELEHEALTH`, `SUBSCRIBERS`, `WAITLIST`)
+     * start with it hidden, and each goal also sets the rest of its share buttons to suit that
+     * audience. When you create a program without `rewards`, the goal also decides the starter
+     * rewards: most goals get one double-sided reward, `HEALTHCARE_PROVIDERS` gets a single-sided
+     * reward, `SUBSCRIBERS` gets a four-step milestone ladder, and `WAITLIST` gets a leaderboard.
+     * Every one arrives switched off with a placeholder name, so the program awards nothing until
+     * you set the amount and turn one on. `TELEHEALTH` is for consumer telehealth and wellness
+     * subscriptions; `HEALTHCARE_PROVIDERS` is for provider networks and clinician-facing products.
+     * `INSURANCE` replaces `ONLINE_INSURANCE`, which is still accepted. Omit it and every share
+     * button keeps its standard default. Set only when the program is created; it is not accepted
+     * on update.
      */
     class Goal @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
