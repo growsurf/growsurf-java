@@ -26,6 +26,15 @@ internal class CampaignDesignTest {
         assertThat(mapper.readTree(mapper.writeValueAsString(params._body())))
             .isEqualTo(mapper.readTree("""{"resources":{"icon":{"imageUrl":null}}}"""))
 
+        // `markKey` is nullable in the contract: sending null clears the widget's drawing, while
+        // every field left alone must stay out of the PATCH body entirely.
+        val widgetParams =
+            DesignUpdateParams.builder()
+                .widget(CampaignDesignWidget(markKey = JsonNull.of()))
+                .build()
+        assertThat(mapper.readTree(mapper.writeValueAsString(widgetParams._body())))
+            .isEqualTo(mapper.readTree("""{"widget":{"markKey":null}}"""))
+
         val json =
             """{"resources":{"title":"Resources","icon":{"type":"IMAGE","imageUrl":null,"futureIcon":true},"futureResources":{"value":null}}}"""
         val design = mapper.readValue(json, CampaignDesign::class.java)

@@ -73,13 +73,16 @@ private constructor(
     fun currencyIso(): Optional<String> = body.currencyIso()
 
     /**
-     * What the program is for, which seeds share settings that suit that audience. Programs selling
-     * to businesses (`CUSTOMERS`, `USERS`, `B2B_SAAS_SELF_SERVICE`, `B2B_SAAS_ENTERPRISE`) start
-     * with the LinkedIn share button visible; consumer, financial, education, insurance,
-     * newsletter, and waitlist programs (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`,
-     * `ONLINE_EDUCATION`, `ONLINE_INSURANCE`, `SUBSCRIBERS`, `WAITLIST`) start with it hidden. Omit
-     * it and every share button keeps its standard default. Set only when the program is created;
-     * it is not accepted on update.
+     * What the program is for, which seeds share settings that suit that audience. Programs whose
+     * participants refer other businesses (`CUSTOMERS`, `USERS`, `B2B_SAAS_SELF_SERVICE`,
+     * `B2B_SAAS_ENTERPRISE`, `HEALTHCARE_PROVIDERS`) start with the LinkedIn share button visible;
+     * consumer, financial, education, insurance, telehealth, newsletter, and waitlist programs
+     * (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`, `ONLINE_EDUCATION`, `INSURANCE`,
+     * `ONLINE_INSURANCE`, `TELEHEALTH`, `SUBSCRIBERS`, `WAITLIST`) start with it hidden.
+     * `TELEHEALTH` is for consumer telehealth and wellness subscriptions; `HEALTHCARE_PROVIDERS` is
+     * for provider networks and clinician-facing products. `INSURANCE` replaces `ONLINE_INSURANCE`,
+     * which is still accepted. Omit it and every share button keeps its standard default. Set only
+     * when the program is created; it is not accepted on update.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -260,12 +263,16 @@ private constructor(
 
         /**
          * What the program is for, which seeds share settings that suit that audience. Programs
-         * selling to businesses (`CUSTOMERS`, `USERS`, `B2B_SAAS_SELF_SERVICE`,
-         * `B2B_SAAS_ENTERPRISE`) start with the LinkedIn share button visible; consumer, financial,
-         * education, insurance, newsletter, and waitlist programs (`B2C_SUBSCRIPTIONS`,
-         * `FINANCIAL_SERVICES`, `ONLINE_EDUCATION`, `ONLINE_INSURANCE`, `SUBSCRIBERS`, `WAITLIST`)
-         * start with it hidden. Omit it and every share button keeps its standard default. Set only
-         * when the program is created; it is not accepted on update.
+         * whose participants refer other businesses (`CUSTOMERS`, `USERS`, `B2B_SAAS_SELF_SERVICE`,
+         * `B2B_SAAS_ENTERPRISE`, `HEALTHCARE_PROVIDERS`) start with the LinkedIn share button
+         * visible; consumer, financial, education, insurance, telehealth, newsletter, and waitlist
+         * programs (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`, `ONLINE_EDUCATION`, `INSURANCE`,
+         * `ONLINE_INSURANCE`, `TELEHEALTH`, `SUBSCRIBERS`, `WAITLIST`) start with it hidden.
+         * `TELEHEALTH` is for consumer telehealth and wellness subscriptions;
+         * `HEALTHCARE_PROVIDERS` is for provider networks and clinician-facing products.
+         * `INSURANCE` replaces `ONLINE_INSURANCE`, which is still accepted. Omit it and every share
+         * button keeps its standard default. Set only when the program is created; it is not
+         * accepted on update.
          */
         fun goal(goal: Goal) = apply { body.goal(goal) }
 
@@ -524,12 +531,16 @@ private constructor(
 
         /**
          * What the program is for, which seeds share settings that suit that audience. Programs
-         * selling to businesses (`CUSTOMERS`, `USERS`, `B2B_SAAS_SELF_SERVICE`,
-         * `B2B_SAAS_ENTERPRISE`) start with the LinkedIn share button visible; consumer, financial,
-         * education, insurance, newsletter, and waitlist programs (`B2C_SUBSCRIPTIONS`,
-         * `FINANCIAL_SERVICES`, `ONLINE_EDUCATION`, `ONLINE_INSURANCE`, `SUBSCRIBERS`, `WAITLIST`)
-         * start with it hidden. Omit it and every share button keeps its standard default. Set only
-         * when the program is created; it is not accepted on update.
+         * whose participants refer other businesses (`CUSTOMERS`, `USERS`, `B2B_SAAS_SELF_SERVICE`,
+         * `B2B_SAAS_ENTERPRISE`, `HEALTHCARE_PROVIDERS`) start with the LinkedIn share button
+         * visible; consumer, financial, education, insurance, telehealth, newsletter, and waitlist
+         * programs (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`, `ONLINE_EDUCATION`, `INSURANCE`,
+         * `ONLINE_INSURANCE`, `TELEHEALTH`, `SUBSCRIBERS`, `WAITLIST`) start with it hidden.
+         * `TELEHEALTH` is for consumer telehealth and wellness subscriptions;
+         * `HEALTHCARE_PROVIDERS` is for provider networks and clinician-facing products.
+         * `INSURANCE` replaces `ONLINE_INSURANCE`, which is still accepted. Omit it and every share
+         * button keeps its standard default. Set only when the program is created; it is not
+         * accepted on update.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -719,13 +730,16 @@ private constructor(
 
             /**
              * What the program is for, which seeds share settings that suit that audience. Programs
-             * selling to businesses (`CUSTOMERS`, `USERS`, `B2B_SAAS_SELF_SERVICE`,
-             * `B2B_SAAS_ENTERPRISE`) start with the LinkedIn share button visible; consumer,
-             * financial, education, insurance, newsletter, and waitlist programs
-             * (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`, `ONLINE_EDUCATION`, `ONLINE_INSURANCE`,
-             * `SUBSCRIBERS`, `WAITLIST`) start with it hidden. Omit it and every share button keeps
-             * its standard default. Set only when the program is created; it is not accepted on
-             * update.
+             * whose participants refer other businesses (`CUSTOMERS`, `USERS`,
+             * `B2B_SAAS_SELF_SERVICE`, `B2B_SAAS_ENTERPRISE`, `HEALTHCARE_PROVIDERS`) start with
+             * the LinkedIn share button visible; consumer, financial, education, insurance,
+             * telehealth, newsletter, and waitlist programs (`B2C_SUBSCRIPTIONS`,
+             * `FINANCIAL_SERVICES`, `ONLINE_EDUCATION`, `INSURANCE`, `ONLINE_INSURANCE`,
+             * `TELEHEALTH`, `SUBSCRIBERS`, `WAITLIST`) start with it hidden. `TELEHEALTH` is for
+             * consumer telehealth and wellness subscriptions; `HEALTHCARE_PROVIDERS` is for
+             * provider networks and clinician-facing products. `INSURANCE` replaces
+             * `ONLINE_INSURANCE`, which is still accepted. Omit it and every share button keeps its
+             * standard default. Set only when the program is created; it is not accepted on update.
              */
             fun goal(goal: Goal) = goal(JsonField.of(goal))
 
@@ -894,13 +908,16 @@ private constructor(
     }
 
     /**
-     * What the program is for, which seeds share settings that suit that audience. Programs selling
-     * to businesses (`CUSTOMERS`, `USERS`, `B2B_SAAS_SELF_SERVICE`, `B2B_SAAS_ENTERPRISE`) start
-     * with the LinkedIn share button visible; consumer, financial, education, insurance,
-     * newsletter, and waitlist programs (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`,
-     * `ONLINE_EDUCATION`, `ONLINE_INSURANCE`, `SUBSCRIBERS`, `WAITLIST`) start with it hidden. Omit
-     * it and every share button keeps its standard default. Set only when the program is created;
-     * it is not accepted on update.
+     * What the program is for, which seeds share settings that suit that audience. Programs whose
+     * participants refer other businesses (`CUSTOMERS`, `USERS`, `B2B_SAAS_SELF_SERVICE`,
+     * `B2B_SAAS_ENTERPRISE`, `HEALTHCARE_PROVIDERS`) start with the LinkedIn share button visible;
+     * consumer, financial, education, insurance, telehealth, newsletter, and waitlist programs
+     * (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`, `ONLINE_EDUCATION`, `INSURANCE`,
+     * `ONLINE_INSURANCE`, `TELEHEALTH`, `SUBSCRIBERS`, `WAITLIST`) start with it hidden.
+     * `TELEHEALTH` is for consumer telehealth and wellness subscriptions; `HEALTHCARE_PROVIDERS` is
+     * for provider networks and clinician-facing products. `INSURANCE` replaces `ONLINE_INSURANCE`,
+     * which is still accepted. Omit it and every share button keeps its standard default. Set only
+     * when the program is created; it is not accepted on update.
      */
     class Goal @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
@@ -934,7 +951,13 @@ private constructor(
 
             @JvmField val ONLINE_EDUCATION = of("ONLINE_EDUCATION")
 
+            @JvmField val INSURANCE = of("INSURANCE")
+
             @JvmField val ONLINE_INSURANCE = of("ONLINE_INSURANCE")
+
+            @JvmField val TELEHEALTH = of("TELEHEALTH")
+
+            @JvmField val HEALTHCARE_PROVIDERS = of("HEALTHCARE_PROVIDERS")
 
             @JvmStatic fun of(value: String) = Goal(JsonField.of(value))
         }
@@ -950,7 +973,10 @@ private constructor(
             B2C_SUBSCRIPTIONS,
             FINANCIAL_SERVICES,
             ONLINE_EDUCATION,
+            INSURANCE,
             ONLINE_INSURANCE,
+            TELEHEALTH,
+            HEALTHCARE_PROVIDERS,
         }
 
         /**
@@ -972,7 +998,10 @@ private constructor(
             B2C_SUBSCRIPTIONS,
             FINANCIAL_SERVICES,
             ONLINE_EDUCATION,
+            INSURANCE,
             ONLINE_INSURANCE,
+            TELEHEALTH,
+            HEALTHCARE_PROVIDERS,
             /** An enum member indicating that [Goal] was instantiated with an unknown value. */
             _UNKNOWN,
         }
@@ -995,7 +1024,10 @@ private constructor(
                 B2C_SUBSCRIPTIONS -> Value.B2C_SUBSCRIPTIONS
                 FINANCIAL_SERVICES -> Value.FINANCIAL_SERVICES
                 ONLINE_EDUCATION -> Value.ONLINE_EDUCATION
+                INSURANCE -> Value.INSURANCE
                 ONLINE_INSURANCE -> Value.ONLINE_INSURANCE
+                TELEHEALTH -> Value.TELEHEALTH
+                HEALTHCARE_PROVIDERS -> Value.HEALTHCARE_PROVIDERS
                 else -> Value._UNKNOWN
             }
 
@@ -1019,7 +1051,10 @@ private constructor(
                 B2C_SUBSCRIPTIONS -> Known.B2C_SUBSCRIPTIONS
                 FINANCIAL_SERVICES -> Known.FINANCIAL_SERVICES
                 ONLINE_EDUCATION -> Known.ONLINE_EDUCATION
+                INSURANCE -> Known.INSURANCE
                 ONLINE_INSURANCE -> Known.ONLINE_INSURANCE
+                TELEHEALTH -> Known.TELEHEALTH
+                HEALTHCARE_PROVIDERS -> Known.HEALTHCARE_PROVIDERS
                 else -> throw GrowsurfInvalidDataException("Unknown Goal: $value")
             }
 

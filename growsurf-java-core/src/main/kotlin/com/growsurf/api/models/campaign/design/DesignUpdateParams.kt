@@ -102,6 +102,10 @@ private constructor(
             additionalBodyProperties["referredExperience"] = JsonValue.from(value)
         }
 
+        fun widget(value: CampaignDesignWidget) = apply {
+            additionalBodyProperties["widget"] = JsonValue.from(value)
+        }
+
         fun referralSummary(value: Map<String, JsonValue>) = objectField("referralSummary", value)
 
         fun affiliateSummary(value: Map<String, JsonValue>) = objectField("affiliateSummary", value)
