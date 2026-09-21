@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.9.0](https://github.com/growsurf/growsurf-java/compare/v1.8.1...v1.9.0) (2026-09-21)
+
+
+### Features
+
+* **api:** add referral-flow screenshot capture and participant leadCount ([d401c14](https://github.com/growsurf/growsurf-java/commit/d401c14b242fd896d990caa69eab3c81b012d50d))
+
+
+### Chores
+
+* merge origin/main ([a582d40](https://github.com/growsurf/growsurf-java/commit/a582d40fb5a628e84efde5a904327b347f5f5a70))
+
 ## [1.8.1](https://github.com/growsurf/growsurf-java/compare/v1.8.0...v1.8.1) (2026-09-19)
 
 
