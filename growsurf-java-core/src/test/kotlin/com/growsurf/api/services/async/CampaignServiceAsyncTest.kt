@@ -91,6 +91,18 @@ internal class CampaignServiceAsyncTest {
 
     @Disabled("Mock server tests are disabled")
     @Test
+    fun captureReferralFlowScreenshots() {
+        val client = GrowsurfOkHttpClientAsync.builder().apiKey("My API Key").build()
+        val campaignServiceAsync = client.campaign()
+
+        val responseFuture = campaignServiceAsync.captureReferralFlowScreenshots("id")
+
+        val response = responseFuture.get()
+        response.validate()
+    }
+
+    @Disabled("Mock server tests are disabled")
+    @Test
     fun createMobileParticipantToken() {
         val client = GrowsurfOkHttpClientAsync.builder().apiKey("My API Key").build()
         val campaignServiceAsync = client.campaign()

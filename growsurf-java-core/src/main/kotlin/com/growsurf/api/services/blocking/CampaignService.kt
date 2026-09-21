@@ -12,6 +12,7 @@ import com.growsurf.api.models.campaign.AffiliateInvite
 import com.growsurf.api.models.campaign.AffiliateInviteListResponse
 import com.growsurf.api.models.campaign.Campaign
 import com.growsurf.api.models.campaign.CampaignActivationAnalyticsResponse
+import com.growsurf.api.models.campaign.CampaignCaptureReferralFlowScreenshotsParams
 import com.growsurf.api.models.campaign.CampaignCloneParams
 import com.growsurf.api.models.campaign.CampaignCreateAffiliateInviteParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenParams
@@ -38,6 +39,7 @@ import com.growsurf.api.models.campaign.CampaignUpdateParams
 import com.growsurf.api.models.campaign.ParticipantCommissionList
 import com.growsurf.api.models.campaign.ParticipantList
 import com.growsurf.api.models.campaign.ParticipantPayoutList
+import com.growsurf.api.models.campaign.ReferralFlowScreenshotsResponse
 import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.services.blocking.campaign.CommissionService
 import com.growsurf.api.services.blocking.campaign.DesignService
@@ -171,6 +173,57 @@ interface CampaignService {
     /** @see clone */
     fun clone(id: String, requestOptions: RequestOptions): Campaign =
         clone(id, CampaignCloneParams.none(), requestOptions)
+
+    /**
+     * Renders the program's current saved configuration into two preview images: the referrer
+     * window a participant sees, and the referred-friend experience. Use them to show a person what
+     * the draft looks like before anything launches. The images render GrowSurf's own preview, not
+     * the program's installed website, so they do not prove an installation. Each URL is private
+     * and expires; capture again when you need a fresh view. Only the account owner's credential
+     * can capture screenshots, and the endpoint takes no request body.
+     */
+    fun captureReferralFlowScreenshots(id: String): ReferralFlowScreenshotsResponse =
+        captureReferralFlowScreenshots(id, CampaignCaptureReferralFlowScreenshotsParams.none())
+
+    /** @see captureReferralFlowScreenshots */
+    fun captureReferralFlowScreenshots(
+        id: String,
+        params: CampaignCaptureReferralFlowScreenshotsParams =
+            CampaignCaptureReferralFlowScreenshotsParams.none(),
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ReferralFlowScreenshotsResponse =
+        captureReferralFlowScreenshots(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see captureReferralFlowScreenshots */
+    fun captureReferralFlowScreenshots(
+        id: String,
+        params: CampaignCaptureReferralFlowScreenshotsParams =
+            CampaignCaptureReferralFlowScreenshotsParams.none(),
+    ): ReferralFlowScreenshotsResponse =
+        captureReferralFlowScreenshots(id, params, RequestOptions.none())
+
+    /** @see captureReferralFlowScreenshots */
+    fun captureReferralFlowScreenshots(
+        params: CampaignCaptureReferralFlowScreenshotsParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ReferralFlowScreenshotsResponse
+
+    /** @see captureReferralFlowScreenshots */
+    fun captureReferralFlowScreenshots(
+        params: CampaignCaptureReferralFlowScreenshotsParams
+    ): ReferralFlowScreenshotsResponse =
+        captureReferralFlowScreenshots(params, RequestOptions.none())
+
+    /** @see captureReferralFlowScreenshots */
+    fun captureReferralFlowScreenshots(
+        id: String,
+        requestOptions: RequestOptions,
+    ): ReferralFlowScreenshotsResponse =
+        captureReferralFlowScreenshots(
+            id,
+            CampaignCaptureReferralFlowScreenshotsParams.none(),
+            requestOptions,
+        )
 
     /** Retrieves a program for the given program ID. */
     fun retrieve(id: String): Campaign = retrieve(id, CampaignRetrieveParams.none())
@@ -852,6 +905,61 @@ interface CampaignService {
         @MustBeClosed
         fun clone(id: String, requestOptions: RequestOptions): HttpResponseFor<Campaign> =
             clone(id, CampaignCloneParams.none(), requestOptions)
+
+        /**
+         * Returns a raw HTTP response for `post /campaign/{id}/referral-flow-screenshots`, but is
+         * otherwise the same as [CampaignService.captureReferralFlowScreenshots].
+         */
+        @MustBeClosed
+        fun captureReferralFlowScreenshots(
+            id: String
+        ): HttpResponseFor<ReferralFlowScreenshotsResponse> =
+            captureReferralFlowScreenshots(id, CampaignCaptureReferralFlowScreenshotsParams.none())
+
+        /** @see captureReferralFlowScreenshots */
+        @MustBeClosed
+        fun captureReferralFlowScreenshots(
+            id: String,
+            params: CampaignCaptureReferralFlowScreenshotsParams =
+                CampaignCaptureReferralFlowScreenshotsParams.none(),
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ReferralFlowScreenshotsResponse> =
+            captureReferralFlowScreenshots(params.toBuilder().id(id).build(), requestOptions)
+
+        /** @see captureReferralFlowScreenshots */
+        @MustBeClosed
+        fun captureReferralFlowScreenshots(
+            id: String,
+            params: CampaignCaptureReferralFlowScreenshotsParams =
+                CampaignCaptureReferralFlowScreenshotsParams.none(),
+        ): HttpResponseFor<ReferralFlowScreenshotsResponse> =
+            captureReferralFlowScreenshots(id, params, RequestOptions.none())
+
+        /** @see captureReferralFlowScreenshots */
+        @MustBeClosed
+        fun captureReferralFlowScreenshots(
+            params: CampaignCaptureReferralFlowScreenshotsParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ReferralFlowScreenshotsResponse>
+
+        /** @see captureReferralFlowScreenshots */
+        @MustBeClosed
+        fun captureReferralFlowScreenshots(
+            params: CampaignCaptureReferralFlowScreenshotsParams
+        ): HttpResponseFor<ReferralFlowScreenshotsResponse> =
+            captureReferralFlowScreenshots(params, RequestOptions.none())
+
+        /** @see captureReferralFlowScreenshots */
+        @MustBeClosed
+        fun captureReferralFlowScreenshots(
+            id: String,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<ReferralFlowScreenshotsResponse> =
+            captureReferralFlowScreenshots(
+                id,
+                CampaignCaptureReferralFlowScreenshotsParams.none(),
+                requestOptions,
+            )
 
         /**
          * Returns a raw HTTP response for `get /campaign/{id}`, but is otherwise the same as

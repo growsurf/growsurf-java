@@ -22,6 +22,7 @@ import com.growsurf.api.models.campaign.AffiliateInvite
 import com.growsurf.api.models.campaign.AffiliateInviteListResponse
 import com.growsurf.api.models.campaign.Campaign
 import com.growsurf.api.models.campaign.CampaignActivationAnalyticsResponse
+import com.growsurf.api.models.campaign.CampaignCaptureReferralFlowScreenshotsParams
 import com.growsurf.api.models.campaign.CampaignCloneParams
 import com.growsurf.api.models.campaign.CampaignCreateAffiliateInviteParams
 import com.growsurf.api.models.campaign.CampaignCreateMobileParticipantTokenParams
@@ -48,6 +49,7 @@ import com.growsurf.api.models.campaign.CampaignUpdateParams
 import com.growsurf.api.models.campaign.ParticipantCommissionList
 import com.growsurf.api.models.campaign.ParticipantList
 import com.growsurf.api.models.campaign.ParticipantPayoutList
+import com.growsurf.api.models.campaign.ReferralFlowScreenshotsResponse
 import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.services.async.campaign.CommissionServiceAsync
 import com.growsurf.api.services.async.campaign.CommissionServiceAsyncImpl
@@ -170,6 +172,15 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
     ): CompletableFuture<Campaign> =
         // post /campaign/{id}/clone
         withRawResponse().clone(params, requestOptions).thenApply { it.parse() }
+
+    override fun captureReferralFlowScreenshots(
+        params: CampaignCaptureReferralFlowScreenshotsParams,
+        requestOptions: RequestOptions,
+    ): CompletableFuture<ReferralFlowScreenshotsResponse> =
+        // post /campaign/{id}/referral-flow-screenshots
+        withRawResponse().captureReferralFlowScreenshots(params, requestOptions).thenApply {
+            it.parse()
+        }
 
     override fun retrieve(
         params: CampaignRetrieveParams,
@@ -477,6 +488,41 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
                     errorHandler.handle(response).parseable {
                         response
                             .use { cloneHandler.handle(it) }
+                            .also {
+                                if (requestOptions.responseValidation!!) {
+                                    it.validate()
+                                }
+                            }
+                    }
+                }
+        }
+
+        private val captureReferralFlowScreenshotsHandler:
+            Handler<ReferralFlowScreenshotsResponse> =
+            jsonHandler<ReferralFlowScreenshotsResponse>(clientOptions.jsonMapper)
+
+        override fun captureReferralFlowScreenshots(
+            params: CampaignCaptureReferralFlowScreenshotsParams,
+            requestOptions: RequestOptions,
+        ): CompletableFuture<HttpResponseFor<ReferralFlowScreenshotsResponse>> {
+            // We check here instead of in the params builder because this can be specified
+            // positionally or in the params class.
+            checkRequired("id", params.id().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("campaign", params._pathParam(0), "referral-flow-screenshots")
+                    .apply { params._body().ifPresent { body(json(clientOptions.jsonMapper, it)) } }
+                    .build()
+                    .prepareAsync(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            return request
+                .thenComposeAsync { clientOptions.httpClient.executeAsync(it, requestOptions) }
+                .thenApply { response ->
+                    errorHandler.handle(response).parseable {
+                        response
+                            .use { captureReferralFlowScreenshotsHandler.handle(it) }
                             .also {
                                 if (requestOptions.responseValidation!!) {
                                     it.validate()

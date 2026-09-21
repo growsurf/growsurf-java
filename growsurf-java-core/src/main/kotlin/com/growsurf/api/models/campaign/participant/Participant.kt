@@ -46,6 +46,7 @@ private constructor(
     private val isNew: JsonField<Boolean>,
     private val isWinner: JsonField<Boolean>,
     private val lastName: JsonField<String>,
+    private val leadCount: JsonField<Long>,
     private val metadata: JsonField<Metadata>,
     private val mobileInstanceId: JsonField<String>,
     private val monthlyReferrals: JsonField<List<String>>,
@@ -119,6 +120,7 @@ private constructor(
         @JsonProperty("isNew") @ExcludeMissing isNew: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("isWinner") @ExcludeMissing isWinner: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("lastName") @ExcludeMissing lastName: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("leadCount") @ExcludeMissing leadCount: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("metadata") @ExcludeMissing metadata: JsonField<Metadata> = JsonMissing.of(),
         @JsonProperty("mobileInstanceId")
         @ExcludeMissing
@@ -194,6 +196,7 @@ private constructor(
         isNew,
         isWinner,
         lastName,
+        leadCount,
         metadata,
         mobileInstanceId,
         monthlyReferrals,
@@ -367,6 +370,15 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun lastName(): Optional<String> = lastName.getOptional("lastName")
+
+    /**
+     * The number of pending referrals the participant made that have not converted into successful
+     * referrals yet.
+     *
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun leadCount(): Optional<Long> = leadCount.getOptional("leadCount")
 
     /**
      * Shallow custom metadata object.
@@ -682,6 +694,13 @@ private constructor(
     @JsonProperty("lastName") @ExcludeMissing fun _lastName(): JsonField<String> = lastName
 
     /**
+     * Returns the raw JSON value of [leadCount].
+     *
+     * Unlike [leadCount], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("leadCount") @ExcludeMissing fun _leadCount(): JsonField<Long> = leadCount
+
+    /**
      * Returns the raw JSON value of [metadata].
      *
      * Unlike [metadata], this method doesn't throw if the JSON field has an unexpected type.
@@ -906,6 +925,7 @@ private constructor(
         private var isNew: JsonField<Boolean> = JsonMissing.of()
         private var isWinner: JsonField<Boolean> = JsonMissing.of()
         private var lastName: JsonField<String> = JsonMissing.of()
+        private var leadCount: JsonField<Long> = JsonMissing.of()
         private var metadata: JsonField<Metadata> = JsonMissing.of()
         private var mobileInstanceId: JsonField<String> = JsonMissing.of()
         private var monthlyReferrals: JsonField<MutableList<String>>? = null
@@ -952,6 +972,7 @@ private constructor(
             isNew = participant.isNew
             isWinner = participant.isWinner
             lastName = participant.lastName
+            leadCount = participant.leadCount
             metadata = participant.metadata
             mobileInstanceId = participant.mobileInstanceId
             monthlyReferrals = participant.monthlyReferrals.map { it.toMutableList() }
@@ -1304,6 +1325,20 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun lastName(lastName: JsonField<String>) = apply { this.lastName = lastName }
+
+        /**
+         * The number of pending referrals the participant made that have not converted into
+         * successful referrals yet.
+         */
+        fun leadCount(leadCount: Long) = leadCount(JsonField.of(leadCount))
+
+        /**
+         * Sets [Builder.leadCount] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.leadCount] with a well-typed [Long] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun leadCount(leadCount: JsonField<Long>) = apply { this.leadCount = leadCount }
 
         /** Shallow custom metadata object. */
         fun metadata(metadata: Metadata) = metadata(JsonField.of(metadata))
@@ -1670,6 +1705,7 @@ private constructor(
                 isNew,
                 isWinner,
                 lastName,
+                leadCount,
                 metadata,
                 mobileInstanceId,
                 (monthlyReferrals ?: JsonMissing.of()).map { it.toImmutable() },
@@ -1731,6 +1767,7 @@ private constructor(
         isNew()
         isWinner()
         lastName()
+        leadCount()
         metadata().ifPresent { it.validate() }
         mobileInstanceId()
         monthlyReferrals()
@@ -1791,6 +1828,7 @@ private constructor(
             (if (isNew.asKnown().isPresent) 1 else 0) +
             (if (isWinner.asKnown().isPresent) 1 else 0) +
             (if (lastName.asKnown().isPresent) 1 else 0) +
+            (if (leadCount.asKnown().isPresent) 1 else 0) +
             (metadata.asKnown().getOrNull()?.validity() ?: 0) +
             (if (mobileInstanceId.asKnown().isPresent) 1 else 0) +
             (monthlyReferrals.asKnown().getOrNull()?.size ?: 0) +
@@ -2366,6 +2404,7 @@ private constructor(
         private val ipAddress: JsonField<String>,
         private val isWinner: JsonField<Boolean>,
         private val lastName: JsonField<String>,
+        private val leadCount: JsonField<Long>,
         private val metadata: JsonField<Metadata>,
         private val monthlyRank: JsonField<Long>,
         private val monthlyReferralCount: JsonField<Long>,
@@ -2418,6 +2457,9 @@ private constructor(
             @JsonProperty("lastName")
             @ExcludeMissing
             lastName: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("leadCount")
+            @ExcludeMissing
+            leadCount: JsonField<Long> = JsonMissing.of(),
             @JsonProperty("metadata")
             @ExcludeMissing
             metadata: JsonField<Metadata> = JsonMissing.of(),
@@ -2474,6 +2516,7 @@ private constructor(
             ipAddress,
             isWinner,
             lastName,
+            leadCount,
             metadata,
             monthlyRank,
             monthlyReferralCount,
@@ -2564,6 +2607,15 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun lastName(): Optional<String> = lastName.getOptional("lastName")
+
+        /**
+         * The number of pending referrals the participant made that have not converted into
+         * successful referrals yet.
+         *
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun leadCount(): Optional<Long> = leadCount.getOptional("leadCount")
 
         /**
          * Shallow custom metadata object.
@@ -2761,6 +2813,13 @@ private constructor(
         @JsonProperty("lastName") @ExcludeMissing fun _lastName(): JsonField<String> = lastName
 
         /**
+         * Returns the raw JSON value of [leadCount].
+         *
+         * Unlike [leadCount], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("leadCount") @ExcludeMissing fun _leadCount(): JsonField<Long> = leadCount
+
+        /**
          * Returns the raw JSON value of [metadata].
          *
          * Unlike [metadata], this method doesn't throw if the JSON field has an unexpected type.
@@ -2931,6 +2990,7 @@ private constructor(
             private var ipAddress: JsonField<String> = JsonMissing.of()
             private var isWinner: JsonField<Boolean> = JsonMissing.of()
             private var lastName: JsonField<String> = JsonMissing.of()
+            private var leadCount: JsonField<Long> = JsonMissing.of()
             private var metadata: JsonField<Metadata> = JsonMissing.of()
             private var monthlyRank: JsonField<Long> = JsonMissing.of()
             private var monthlyReferralCount: JsonField<Long> = JsonMissing.of()
@@ -2962,6 +3022,7 @@ private constructor(
                 ipAddress = referrer.ipAddress
                 isWinner = referrer.isWinner
                 lastName = referrer.lastName
+                leadCount = referrer.leadCount
                 metadata = referrer.metadata
                 monthlyRank = referrer.monthlyRank
                 monthlyReferralCount = referrer.monthlyReferralCount
@@ -3134,6 +3195,21 @@ private constructor(
              * supported value.
              */
             fun lastName(lastName: JsonField<String>) = apply { this.lastName = lastName }
+
+            /**
+             * The number of pending referrals the participant made that have not converted into
+             * successful referrals yet.
+             */
+            fun leadCount(leadCount: Long) = leadCount(JsonField.of(leadCount))
+
+            /**
+             * Sets [Builder.leadCount] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.leadCount] with a well-typed [Long] value instead.
+             * This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun leadCount(leadCount: JsonField<Long>) = apply { this.leadCount = leadCount }
 
             /** Shallow custom metadata object. */
             fun metadata(metadata: Metadata) = metadata(JsonField.of(metadata))
@@ -3392,6 +3468,7 @@ private constructor(
                     ipAddress,
                     isWinner,
                     lastName,
+                    leadCount,
                     metadata,
                     monthlyRank,
                     monthlyReferralCount,
@@ -3439,6 +3516,7 @@ private constructor(
             ipAddress()
             isWinner()
             lastName()
+            leadCount()
             metadata().ifPresent { it.validate() }
             monthlyRank()
             monthlyReferralCount()
@@ -3485,6 +3563,7 @@ private constructor(
                 (if (ipAddress.asKnown().isPresent) 1 else 0) +
                 (if (isWinner.asKnown().isPresent) 1 else 0) +
                 (if (lastName.asKnown().isPresent) 1 else 0) +
+                (if (leadCount.asKnown().isPresent) 1 else 0) +
                 (metadata.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (monthlyRank.asKnown().isPresent) 1 else 0) +
                 (if (monthlyReferralCount.asKnown().isPresent) 1 else 0) +
@@ -3744,6 +3823,7 @@ private constructor(
                 ipAddress == other.ipAddress &&
                 isWinner == other.isWinner &&
                 lastName == other.lastName &&
+                leadCount == other.leadCount &&
                 metadata == other.metadata &&
                 monthlyRank == other.monthlyRank &&
                 monthlyReferralCount == other.monthlyReferralCount &&
@@ -3776,6 +3856,7 @@ private constructor(
                 ipAddress,
                 isWinner,
                 lastName,
+                leadCount,
                 metadata,
                 monthlyRank,
                 monthlyReferralCount,
@@ -3798,7 +3879,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Referrer{id=$id, createdAt=$createdAt, email=$email, fingerprint=$fingerprint, firstName=$firstName, fraudReasonCode=$fraudReasonCode, fraudRiskLevel=$fraudRiskLevel, impressionCount=$impressionCount, inviteCount=$inviteCount, ipAddress=$ipAddress, isWinner=$isWinner, lastName=$lastName, metadata=$metadata, monthlyRank=$monthlyRank, monthlyReferralCount=$monthlyReferralCount, monthlyReferrals=$monthlyReferrals, prevMonthlyRank=$prevMonthlyRank, prevMonthlyReferralCount=$prevMonthlyReferralCount, rank=$rank, referralCount=$referralCount, referrals=$referrals, referralSource=$referralSource, referralStatus=$referralStatus, shareCount=$shareCount, shareUrl=$shareUrl, uniqueImpressionCount=$uniqueImpressionCount, unsubscribed=$unsubscribed, additionalProperties=$additionalProperties}"
+            "Referrer{id=$id, createdAt=$createdAt, email=$email, fingerprint=$fingerprint, firstName=$firstName, fraudReasonCode=$fraudReasonCode, fraudRiskLevel=$fraudRiskLevel, impressionCount=$impressionCount, inviteCount=$inviteCount, ipAddress=$ipAddress, isWinner=$isWinner, lastName=$lastName, leadCount=$leadCount, metadata=$metadata, monthlyRank=$monthlyRank, monthlyReferralCount=$monthlyReferralCount, monthlyReferrals=$monthlyReferrals, prevMonthlyRank=$prevMonthlyRank, prevMonthlyReferralCount=$prevMonthlyReferralCount, rank=$rank, referralCount=$referralCount, referrals=$referrals, referralSource=$referralSource, referralStatus=$referralStatus, shareCount=$shareCount, shareUrl=$shareUrl, uniqueImpressionCount=$uniqueImpressionCount, unsubscribed=$unsubscribed, additionalProperties=$additionalProperties}"
     }
 
     class ShareCount
@@ -3938,6 +4019,7 @@ private constructor(
             isNew == other.isNew &&
             isWinner == other.isWinner &&
             lastName == other.lastName &&
+            leadCount == other.leadCount &&
             metadata == other.metadata &&
             mobileInstanceId == other.mobileInstanceId &&
             monthlyReferrals == other.monthlyReferrals &&
@@ -3985,6 +4067,7 @@ private constructor(
             isNew,
             isWinner,
             lastName,
+            leadCount,
             metadata,
             mobileInstanceId,
             monthlyReferrals,
@@ -4011,5 +4094,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Participant{id=$id, email=$email, monthlyRank=$monthlyRank, monthlyReferralCount=$monthlyReferralCount, rank=$rank, referralCount=$referralCount, rewards=$rewards, shareUrl=$shareUrl, affiliateEnrollmentSource=$affiliateEnrollmentSource, affiliateStatus=$affiliateStatus, allMatchingFraudsters=$allMatchingFraudsters, createdAt=$createdAt, fingerprint=$fingerprint, firstName=$firstName, fraudReasonCode=$fraudReasonCode, fraudRiskLevel=$fraudRiskLevel, impressionCount=$impressionCount, inviteCount=$inviteCount, ipAddress=$ipAddress, isAffiliate=$isAffiliate, isNew=$isNew, isWinner=$isWinner, lastName=$lastName, metadata=$metadata, mobileInstanceId=$mobileInstanceId, monthlyReferrals=$monthlyReferrals, notes=$notes, payoutSettings=$payoutSettings, paypalEmailAddress=$paypalEmailAddress, prevMonthlyRank=$prevMonthlyRank, prevMonthlyReferralCount=$prevMonthlyReferralCount, referrals=$referrals, referralSource=$referralSource, referralStatus=$referralStatus, referredBy=$referredBy, referrer=$referrer, shareCount=$shareCount, uniqueImpressionCount=$uniqueImpressionCount, unreadCommissionsCount=$unreadCommissionsCount, unreadPayoutsCount=$unreadPayoutsCount, unsubscribed=$unsubscribed, vanityKeys=$vanityKeys, additionalProperties=$additionalProperties}"
+        "Participant{id=$id, email=$email, monthlyRank=$monthlyRank, monthlyReferralCount=$monthlyReferralCount, rank=$rank, referralCount=$referralCount, rewards=$rewards, shareUrl=$shareUrl, affiliateEnrollmentSource=$affiliateEnrollmentSource, affiliateStatus=$affiliateStatus, allMatchingFraudsters=$allMatchingFraudsters, createdAt=$createdAt, fingerprint=$fingerprint, firstName=$firstName, fraudReasonCode=$fraudReasonCode, fraudRiskLevel=$fraudRiskLevel, impressionCount=$impressionCount, inviteCount=$inviteCount, ipAddress=$ipAddress, isAffiliate=$isAffiliate, isNew=$isNew, isWinner=$isWinner, lastName=$lastName, leadCount=$leadCount, metadata=$metadata, mobileInstanceId=$mobileInstanceId, monthlyReferrals=$monthlyReferrals, notes=$notes, payoutSettings=$payoutSettings, paypalEmailAddress=$paypalEmailAddress, prevMonthlyRank=$prevMonthlyRank, prevMonthlyReferralCount=$prevMonthlyReferralCount, referrals=$referrals, referralSource=$referralSource, referralStatus=$referralStatus, referredBy=$referredBy, referrer=$referrer, shareCount=$shareCount, uniqueImpressionCount=$uniqueImpressionCount, unreadCommissionsCount=$unreadCommissionsCount, unreadPayoutsCount=$unreadPayoutsCount, unsubscribed=$unsubscribed, vanityKeys=$vanityKeys, additionalProperties=$additionalProperties}"
 }

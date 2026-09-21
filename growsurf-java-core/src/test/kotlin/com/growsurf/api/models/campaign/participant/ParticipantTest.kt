@@ -94,6 +94,7 @@ internal class ParticipantTest {
                 .isNew(true)
                 .isWinner(true)
                 .lastName("lastName")
+                .leadCount(0L)
                 .metadata(
                     Participant.Metadata.builder()
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -130,6 +131,7 @@ internal class ParticipantTest {
                         .ipAddress("ipAddress")
                         .isWinner(true)
                         .lastName("lastName")
+                        .leadCount(0L)
                         .metadata(
                             Participant.Referrer.Metadata.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -231,6 +233,7 @@ internal class ParticipantTest {
         assertThat(participant.isNew()).contains(true)
         assertThat(participant.isWinner()).contains(true)
         assertThat(participant.lastName()).contains("lastName")
+        assertThat(participant.leadCount()).contains(0L)
         assertThat(participant.metadata())
             .contains(
                 Participant.Metadata.builder()
@@ -268,6 +271,7 @@ internal class ParticipantTest {
                     .ipAddress("ipAddress")
                     .isWinner(true)
                     .lastName("lastName")
+                    .leadCount(0L)
                     .metadata(
                         Participant.Referrer.Metadata.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -373,6 +377,7 @@ internal class ParticipantTest {
                 .isNew(true)
                 .isWinner(true)
                 .lastName("lastName")
+                .leadCount(0L)
                 .metadata(
                     Participant.Metadata.builder()
                         .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -409,6 +414,7 @@ internal class ParticipantTest {
                         .ipAddress("ipAddress")
                         .isWinner(true)
                         .lastName("lastName")
+                        .leadCount(0L)
                         .metadata(
                             Participant.Referrer.Metadata.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))

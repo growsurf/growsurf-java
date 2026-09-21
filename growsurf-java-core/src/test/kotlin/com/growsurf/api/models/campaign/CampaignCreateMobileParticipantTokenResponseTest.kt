@@ -85,6 +85,7 @@ internal class CampaignCreateMobileParticipantTokenResponseTest {
                         .isNew(true)
                         .isWinner(true)
                         .lastName("lastName")
+                        .leadCount(0L)
                         .metadata(
                             Participant.Metadata.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -121,6 +122,7 @@ internal class CampaignCreateMobileParticipantTokenResponseTest {
                                 .ipAddress("ipAddress")
                                 .isWinner(true)
                                 .lastName("lastName")
+                                .leadCount(0L)
                                 .metadata(
                                     Participant.Referrer.Metadata.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -228,6 +230,7 @@ internal class CampaignCreateMobileParticipantTokenResponseTest {
                     .isNew(true)
                     .isWinner(true)
                     .lastName("lastName")
+                    .leadCount(0L)
                     .metadata(
                         Participant.Metadata.builder()
                             .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -264,6 +267,7 @@ internal class CampaignCreateMobileParticipantTokenResponseTest {
                             .ipAddress("ipAddress")
                             .isWinner(true)
                             .lastName("lastName")
+                            .leadCount(0L)
                             .metadata(
                                 Participant.Referrer.Metadata.builder()
                                     .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -376,6 +380,7 @@ internal class CampaignCreateMobileParticipantTokenResponseTest {
                         .isNew(true)
                         .isWinner(true)
                         .lastName("lastName")
+                        .leadCount(0L)
                         .metadata(
                             Participant.Metadata.builder()
                                 .putAdditionalProperty("foo", JsonValue.from("bar"))
@@ -412,6 +417,7 @@ internal class CampaignCreateMobileParticipantTokenResponseTest {
                                 .ipAddress("ipAddress")
                                 .isWinner(true)
                                 .lastName("lastName")
+                                .leadCount(0L)
                                 .metadata(
                                     Participant.Referrer.Metadata.builder()
                                         .putAdditionalProperty("foo", JsonValue.from("bar"))
