@@ -106,6 +106,8 @@ private constructor(
             additionalBodyProperties["widget"] = JsonValue.from(value)
         }
 
+        fun trafficInsights(value: Map<String, JsonValue>) = objectField("trafficInsights", value)
+
         fun referralSummary(value: Map<String, JsonValue>) = objectField("referralSummary", value)
 
         fun affiliateSummary(value: Map<String, JsonValue>) = objectField("affiliateSummary", value)
