@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.0](https://github.com/growsurf/growsurf-java/compare/v1.9.0...v1.10.0) (2026-09-23)
+
+
+### Features
+
+* **api:** update SDK campaign contracts and request handling ([86ffd31](https://github.com/growsurf/growsurf-java/commit/86ffd310ec9ab830a34fb35b2b6805ef22aa7b51))
+
 ## [1.9.0](https://github.com/growsurf/growsurf-java/compare/v1.8.1...v1.9.0) (2026-09-21)
 
 
