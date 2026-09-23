@@ -20,12 +20,13 @@ import java.util.Optional
  * while `affiliateSummary`, `commissions`, and `payouts` are affiliate-only). `participantSettings`
  * is available to both program types; its manual payout and Wise fields are affiliate-only.
  * `referredExperience` includes the Claim Offer Popup for both program types, with its colors under
- * `theme.referredExperienceOfferPopup`. `GET` returns the fields configured for the program;
- * `payoutDestinationConfirmation` is omitted when no confirmation fields are stored. Stored `null`
- * fields are returned as `null`; omitted and `null` fields use localized defaults. `PATCH` back
- * only the sections or fields you want to change (arrays such as `signup.fields` replace
- * wholesale). Documented fields are typed where the REST contract defines their structure. Design
- * sections whose contract is intentionally open remain maps, as do future fields.
+ * `theme.referredExperienceOfferPopup`. `trafficInsights` is the participant Traffic report. `GET`
+ * returns the fields configured for the program; `payoutDestinationConfirmation` is omitted when no
+ * confirmation fields are stored. Stored `null` fields are returned as `null`; omitted and `null`
+ * fields use localized defaults. `PATCH` back only the sections or fields you want to change
+ * (arrays such as `signup.fields` replace wholesale). Documented fields are typed where the REST
+ * contract defines their structure. Design sections whose contract is intentionally open remain
+ * maps, as do future fields.
  */
 class CampaignDesign
 @JsonCreator
@@ -65,6 +66,15 @@ private constructor(
         configField(additionalProperties, "referredExperience")
 
     fun widget(): Optional<CampaignDesignWidget> = configField(additionalProperties, "widget")
+
+    /**
+     * The participant Traffic report: visits to a participant's share link and where they came
+     * from. It starts on for new affiliate programs and hidden for referral programs. `GET` returns
+     * every setting with its default copy; a `PATCH` changes only the settings you send, and its
+     * labels cannot be blank.
+     */
+    fun trafficInsights(): Optional<Map<String, JsonValue>> =
+        configField(additionalProperties, "trafficInsights")
 
     fun referralSummary(): Optional<Map<String, JsonValue>> =
         configField(additionalProperties, "referralSummary")
@@ -153,6 +163,8 @@ private constructor(
             additionalProperties.putConfigField("widget", value)
         }
 
+        fun trafficInsights(value: Map<String, JsonValue>) = objectField("trafficInsights", value)
+
         fun referralSummary(value: Map<String, JsonValue>) = objectField("referralSummary", value)
 
         fun affiliateSummary(value: Map<String, JsonValue>) = objectField("affiliateSummary", value)
@@ -235,6 +247,7 @@ private constructor(
         referralStatus().orElse(null)
         leaderboard().orElse(null)
         referredExperience().orElse(null)
+        trafficInsights().orElse(null)
         referralSummary().orElse(null)
         affiliateSummary().orElse(null)
         commissions().orElse(null)
