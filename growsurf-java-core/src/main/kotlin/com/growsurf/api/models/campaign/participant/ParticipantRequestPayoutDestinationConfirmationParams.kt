@@ -475,6 +475,8 @@ private constructor(
 
             @JvmField val PAYPAL = of("PAYPAL")
 
+            @JvmField val VENMO = of("VENMO")
+
             @JvmField val WISECOM = of("WISECOM")
 
             @JvmStatic fun of(value: String) = Provider(JsonField.of(value))
@@ -483,6 +485,7 @@ private constructor(
         /** An enum containing [Provider]'s known values. */
         enum class Known {
             PAYPAL,
+            VENMO,
             WISECOM,
         }
 
@@ -497,6 +500,7 @@ private constructor(
          */
         enum class Value {
             PAYPAL,
+            VENMO,
             WISECOM,
             /** An enum member indicating that [Provider] was instantiated with an unknown value. */
             _UNKNOWN,
@@ -512,6 +516,7 @@ private constructor(
         fun value(): Value =
             when (this) {
                 PAYPAL -> Value.PAYPAL
+                VENMO -> Value.VENMO
                 WISECOM -> Value.WISECOM
                 else -> Value._UNKNOWN
             }
@@ -528,6 +533,7 @@ private constructor(
         fun known(): Known =
             when (this) {
                 PAYPAL -> Known.PAYPAL
+                VENMO -> Known.VENMO
                 WISECOM -> Known.WISECOM
                 else -> throw GrowsurfInvalidDataException("Unknown Provider: $value")
             }

@@ -161,6 +161,10 @@ private constructor(
             additionalBodyProperties["mobile"] = JsonValue.from(value)
         }
 
+        fun instructionSelections(value: Map<String, Any?>) = apply {
+            additionalBodyProperties["instructionSelections"] = JsonValue.from(value)
+        }
+
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
             putAllAdditionalHeaders(additionalHeaders)
