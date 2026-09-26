@@ -66,6 +66,7 @@ internal class CampaignInstallationTest {
                 .signupEvent(CampaignInstallationSignupEvent.PROGRAMMATIC)
                 .shareUrl("https://piedpiper.com")
                 .mobile(mobile)
+                .instructionSelections(mapOf("platform" to "ios", "stepProviders" to mapOf("step2Referral" to "stripe")))
                 .build()
 
         val mapper = jsonMapper()
@@ -78,11 +79,13 @@ internal class CampaignInstallationTest {
         assertThat(roundtripped.signupEvent())
             .contains(CampaignInstallationSignupEvent.PROGRAMMATIC)
         assertThat(roundtripped.mobile().get().publicKey()).contains("gspk_test")
+        assertThat(roundtripped.instructionSelections().get()["platform"]?.asString()).contains("ios")
 
         val params =
             InstallationUpdateParams.builder()
                 .signupEvent(CampaignInstallationSignupEvent.PROGRAMMATIC)
                 .shareUrl("https://piedpiper.com")
+                .instructionSelections(mapOf("platform" to "ios"))
                 .mobile(
                     CampaignInstallationMobileUpdate(
                         isEnabled = true,
@@ -90,7 +93,7 @@ internal class CampaignInstallationTest {
                     )
                 )
                 .build()
-        assertThat(params._body()).containsKeys("signupEvent", "shareUrl", "mobile")
+        assertThat(params._body()).containsKeys("signupEvent", "shareUrl", "mobile", "instructionSelections")
         assertThat(params._body()["mobile"]?.asObject()?.get()?.keys)
             .containsExactlyInAnyOrder("isEnabled", "iosAttributionUrl")
     }

@@ -84,7 +84,8 @@ interface RewardsService {
     /**
      * Retrieves configured Campaign Rewards, including switched-off rewards and rewards whose group
      * is not selected. Deleted rewards are excluded. The campaign response's embedded rewards array
-     * includes only enabled, visible rewards.
+     * includes only enabled, visible rewards. A reward can be earned only when it also appears in the
+     * campaign response's embedded `rewards` array.
      */
     fun list(id: String): CampaignRewardListResponse = list(id, RewardListParams.none())
 

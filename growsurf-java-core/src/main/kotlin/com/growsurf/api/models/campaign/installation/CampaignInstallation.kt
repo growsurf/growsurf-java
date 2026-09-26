@@ -176,6 +176,10 @@ private constructor(
 
     fun mobile(): Optional<CampaignInstallationMobile> = configField(additionalProperties, "mobile")
 
+    /** Saved choices shown in the Program Editor installation guide. */
+    fun instructionSelections(): Optional<Map<String, JsonValue>> =
+        configField(additionalProperties, "instructionSelections")
+
     @JsonAnyGetter
     @ExcludeMissing
     fun _additionalProperties(): Map<String, JsonValue> = additionalProperties
@@ -224,6 +228,10 @@ private constructor(
 
         fun mobile(value: CampaignInstallationMobile) = apply {
             additionalProperties.putConfigField("mobile", value)
+        }
+
+        fun instructionSelections(value: Map<String, Any?>) = apply {
+            additionalProperties.putConfigField("instructionSelections", value)
         }
 
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
