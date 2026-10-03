@@ -52,9 +52,8 @@ private constructor(
      * welcomeReferred, goalAchieved, campaignEndedWinners, campaignEndedNonWinners,
      * progressUpdateMonthly. Affiliate programs: welcomeNonReferred, referralLinkViewedFirstTime,
      * referredSignup, commissionGenerated, commissionAdjusted, payoutPending, payoutSentSuccess,
-     * progressUpdateMonthly.
-     * `welcomeNonReferred` can only be sent to advocates or approved, enrolled affiliates in a
-     * program that has not ended.
+     * progressUpdateMonthly. `welcomeNonReferred` can only be sent to advocates or approved,
+     * enrolled affiliates in a program that has not ended.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -188,9 +187,8 @@ private constructor(
          * referredSignup, welcomeReferred, goalAchieved, campaignEndedWinners,
          * campaignEndedNonWinners, progressUpdateMonthly. Affiliate programs: welcomeNonReferred,
          * referralLinkViewedFirstTime, referredSignup, commissionGenerated, commissionAdjusted,
-         * payoutPending, payoutSentSuccess, progressUpdateMonthly.
-         * `welcomeNonReferred` can only be sent to advocates or approved, enrolled affiliates in a
-         * program that has not ended.
+         * payoutPending, payoutSentSuccess, progressUpdateMonthly. `welcomeNonReferred` can only be
+         * sent to advocates or approved, enrolled affiliates in a program that has not ended.
          */
         fun emailType(emailType: String) = apply { body.emailType(emailType) }
 
@@ -424,9 +422,8 @@ private constructor(
          * referredSignup, welcomeReferred, goalAchieved, campaignEndedWinners,
          * campaignEndedNonWinners, progressUpdateMonthly. Affiliate programs: welcomeNonReferred,
          * referralLinkViewedFirstTime, referredSignup, commissionGenerated, commissionAdjusted,
-         * payoutPending, payoutSentSuccess, progressUpdateMonthly.
-         * `welcomeNonReferred` can only be sent to advocates or approved, enrolled affiliates in a
-         * program that has not ended.
+         * payoutPending, payoutSentSuccess, progressUpdateMonthly. `welcomeNonReferred` can only be
+         * sent to advocates or approved, enrolled affiliates in a program that has not ended.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -539,9 +536,8 @@ private constructor(
              * campaignEndedWinners, campaignEndedNonWinners, progressUpdateMonthly. Affiliate
              * programs: welcomeNonReferred, referralLinkViewedFirstTime, referredSignup,
              * commissionGenerated, commissionAdjusted, payoutPending, payoutSentSuccess,
-             * progressUpdateMonthly.
-             * `welcomeNonReferred` can only be sent to advocates or approved, enrolled affiliates
-             * in a program that has not ended.
+             * progressUpdateMonthly. `welcomeNonReferred` can only be sent to advocates or
+             * approved, enrolled affiliates in a program that has not ended.
              */
             fun emailType(emailType: String) = emailType(JsonField.of(emailType))
 
