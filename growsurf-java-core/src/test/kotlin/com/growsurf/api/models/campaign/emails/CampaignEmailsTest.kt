@@ -69,7 +69,9 @@ internal class CampaignEmailsTest {
                 )
                 .build()
         assertThat(params._body()).containsKeys("welcomeNonReferred", "settings")
-        assertThat(mapper.readTree(mapper.writeValueAsString(params._body())).get("followUpReminder"))
+        assertThat(
+                mapper.readTree(mapper.writeValueAsString(params._body())).get("followUpReminder")
+            )
             .isEqualTo(mapper.readTree("""{"isEnabled":true,"delayDays":7}"""))
         val sender = params._body()["settings"]?.asObject()?.get()?.get("sender")?.asObject()?.get()
         assertThat(sender?.keys).containsExactlyInAnyOrder("fromName", "replyToEmail")
