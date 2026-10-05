@@ -120,6 +120,10 @@ private constructor(
 
         fun offerClaimed(value: CampaignEmailTemplate) = template("offerClaimed", value)
 
+        fun followUpReminder(value: CampaignFollowUpReminderEmailTemplate) = apply {
+            additionalBodyProperties["followUpReminder"] = JsonValue.from(value)
+        }
+
         fun referralLinkViewedFirstTime(value: CampaignEmailTemplate) =
             template("referralLinkViewedFirstTime", value)
 
