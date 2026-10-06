@@ -219,6 +219,10 @@ constructor(
 }
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+/**
+ * New programs include read-only `layoutMode=INLINE` in [_additionalProperties]. Their email
+ * bodies require `{{emailFooter}}`; `{{emailHeader}}` is optional. Older programs omit the mode.
+ */
 data class CampaignEmailDesignSettings
 constructor(
     @JsonProperty("header")
