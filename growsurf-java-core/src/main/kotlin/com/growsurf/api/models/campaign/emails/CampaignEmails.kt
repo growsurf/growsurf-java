@@ -50,6 +50,42 @@ constructor(
 }
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+data class CampaignFollowUpReminderEmailTemplate
+constructor(
+    @JsonProperty("subject") private val subject: String? = null,
+    @JsonProperty("preheader") private val preheader: String? = null,
+    @JsonProperty("body") private val body: String? = null,
+    @JsonProperty("isEnabled") private val isEnabled: Boolean? = null,
+    @JsonProperty("delayDays") private val delayDays: Long? = null,
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
+) {
+    @JsonCreator
+    constructor(
+        @JsonProperty("subject") subject: String? = null,
+        @JsonProperty("preheader") preheader: String? = null,
+        @JsonProperty("body") body: String? = null,
+        @JsonProperty("isEnabled") isEnabled: Boolean? = null,
+        @JsonProperty("delayDays") delayDays: Long? = null,
+    ) : this(subject, preheader, body, isEnabled, delayDays, mutableMapOf())
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+
+    fun subject(): Optional<String> = Optional.ofNullable(subject)
+
+    fun preheader(): Optional<String> = Optional.ofNullable(preheader)
+
+    fun body(): Optional<String> = Optional.ofNullable(body)
+
+    fun isEnabled(): Optional<Boolean> = Optional.ofNullable(isEnabled)
+
+    /** Reminder delay in days: 2–30, default 3. */
+    fun delayDays(): Optional<Long> = Optional.ofNullable(delayDays)
+}
+
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class CampaignInviteEmailTemplate
 constructor(
     @JsonProperty("subject") private val subject: String? = null,
@@ -183,6 +219,10 @@ constructor(
 }
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+/**
+ * New programs include read-only `layoutMode=INLINE` in [_additionalProperties]. Their email bodies
+ * require `{{emailFooter}}`; `{{emailHeader}}` is optional. Older programs omit the mode.
+ */
 data class CampaignEmailDesignSettings
 constructor(
     @JsonProperty("header")
@@ -285,6 +325,10 @@ private constructor(
 
     fun offerClaimed(): Optional<CampaignEmailTemplate> = field("offerClaimed")
 
+    /** Optional reminder to the referrer about contacts who have not signed up. */
+    fun followUpReminder(): Optional<CampaignFollowUpReminderEmailTemplate> =
+        configField(additionalProperties, "followUpReminder")
+
     fun referralLinkViewedFirstTime(): Optional<CampaignEmailTemplate> =
         field("referralLinkViewedFirstTime")
 
@@ -380,6 +424,10 @@ private constructor(
         fun welcomeReferred(value: CampaignEmailTemplate) = template("welcomeReferred", value)
 
         fun offerClaimed(value: CampaignEmailTemplate) = template("offerClaimed", value)
+
+        fun followUpReminder(value: CampaignFollowUpReminderEmailTemplate) = apply {
+            additionalProperties.putConfigField("followUpReminder", value)
+        }
 
         fun referralLinkViewedFirstTime(value: CampaignEmailTemplate) =
             template("referralLinkViewedFirstTime", value)
@@ -501,6 +549,7 @@ private constructor(
         welcomeNonReferred().orElse(null)
         welcomeReferred().orElse(null)
         offerClaimed().orElse(null)
+        followUpReminder().orElse(null)
         referralLinkViewedFirstTime().orElse(null)
         referralLinkUsed().orElse(null)
         referredSignup().orElse(null)

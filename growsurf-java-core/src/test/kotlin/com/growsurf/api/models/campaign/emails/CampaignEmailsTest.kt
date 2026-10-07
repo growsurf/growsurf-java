@@ -43,17 +43,21 @@ internal class CampaignEmailsTest {
                 body = "<p>Hello {{firstName}}</p>",
                 isEnabled = true,
             )
-        val emails = CampaignEmails.builder().welcomeNonReferred(template).build()
+        val reminder = CampaignFollowUpReminderEmailTemplate(isEnabled = true, delayDays = 7L)
+        val emails =
+            CampaignEmails.builder().welcomeNonReferred(template).followUpReminder(reminder).build()
 
         val mapper = jsonMapper()
         val roundtripped =
             mapper.readValue(mapper.writeValueAsString(emails), jacksonTypeRef<CampaignEmails>())
 
         assertThat(roundtripped.welcomeNonReferred().get().subject()).contains("Welcome")
+        assertThat(roundtripped.followUpReminder().get().delayDays()).contains(7L)
 
         val params =
             EmailUpdateParams.builder()
                 .welcomeNonReferred(template)
+                .followUpReminder(reminder)
                 .settings(
                     CampaignEmailSettingsUpdate(
                         sender =
@@ -65,6 +69,10 @@ internal class CampaignEmailsTest {
                 )
                 .build()
         assertThat(params._body()).containsKeys("welcomeNonReferred", "settings")
+        assertThat(
+                mapper.readTree(mapper.writeValueAsString(params._body())).get("followUpReminder")
+            )
+            .isEqualTo(mapper.readTree("""{"isEnabled":true,"delayDays":7}"""))
         val sender = params._body()["settings"]?.asObject()?.get()?.get("sender")?.asObject()?.get()
         assertThat(sender?.keys).containsExactlyInAnyOrder("fromName", "replyToEmail")
     }
