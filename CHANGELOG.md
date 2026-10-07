@@ -1,5 +1,29 @@
 # Changelog
 
+## [1.12.0](https://github.com/growsurf/growsurf-java/compare/v1.11.0...v1.12.0) (2026-10-07)
+
+
+### Features
+
+* add follow-up reminder email configuration ([01f8161](https://github.com/growsurf/growsurf-java/commit/01f8161f6fffd47a5d6e4a1c27438669b040cd12))
+
+
+### Bug Fixes
+
+* support follow-up reminder email updates ([a2df9f5](https://github.com/growsurf/growsurf-java/commit/a2df9f58675054d598b52322c1027cb9deeacbf2))
+
+
+### Chores
+
+* prepare SDK 1.12.0 ([c10dcb2](https://github.com/growsurf/growsurf-java/commit/c10dcb23cc6bb0da415f4c99fc41e2a8e0ce3ff8))
+* release 1.12.0 ([83da59e](https://github.com/growsurf/growsurf-java/commit/83da59e47530306bc82a89241198996b31dc8634))
+
+
+### Documentation
+
+* clarify welcome email recipient eligibility ([46a02d1](https://github.com/growsurf/growsurf-java/commit/46a02d18d250368d86dd989684cc46344a2fc207))
+* describe inline email layout and required footer token ([b8d6a23](https://github.com/growsurf/growsurf-java/commit/b8d6a236ad4e7b389f96ab23e9a51f06d7e4b87b))
+
 ## [1.11.0](https://github.com/growsurf/growsurf-java/compare/v1.10.0...v1.11.0) (2026-09-27)
 
 
