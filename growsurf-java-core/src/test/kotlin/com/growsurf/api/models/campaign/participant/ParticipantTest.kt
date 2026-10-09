@@ -6,6 +6,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.jsonMapper
 import com.growsurf.api.models.campaign.CommissionStructure
+import com.growsurf.api.models.campaign.Language
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -93,6 +94,7 @@ internal class ParticipantTest {
                 .ipAddress("ipAddress")
                 .isNew(true)
                 .isWinner(true)
+                .language(Language.ES)
                 .lastName("lastName")
                 .leadCount(0L)
                 .metadata(
@@ -232,6 +234,7 @@ internal class ParticipantTest {
         assertThat(participant.ipAddress()).contains("ipAddress")
         assertThat(participant.isNew()).contains(true)
         assertThat(participant.isWinner()).contains(true)
+        assertThat(participant.language()).contains(Language.ES)
         assertThat(participant.lastName()).contains("lastName")
         assertThat(participant.leadCount()).contains(0L)
         assertThat(participant.metadata())
@@ -376,6 +379,7 @@ internal class ParticipantTest {
                 .ipAddress("ipAddress")
                 .isNew(true)
                 .isWinner(true)
+                .language(Language.ES)
                 .lastName("lastName")
                 .leadCount(0L)
                 .metadata(

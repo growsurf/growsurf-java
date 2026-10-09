@@ -12,7 +12,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Removes a manually approved participant reward that has not already been approved. */
+/** Removes a participant reward that requires manual approval and has not yet been approved. */
 class RewardDeleteParams
 private constructor(
     private val id: String,

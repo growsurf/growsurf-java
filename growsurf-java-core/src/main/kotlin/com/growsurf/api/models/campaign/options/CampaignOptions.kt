@@ -14,6 +14,7 @@ import com.growsurf.api.core.JsonMissing
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.toImmutable
 import com.growsurf.api.errors.GrowsurfInvalidDataException
+import com.growsurf.api.models.campaign.Language
 import com.growsurf.api.models.campaign.configField
 import com.growsurf.api.models.campaign.putConfigField
 import java.util.Objects
@@ -390,6 +391,52 @@ constructor(
 }
 
 /**
+ * The languages your program runs in (Options > Languages in the dashboard). Participants see the
+ * program in their language, and their emails follow it.
+ */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+data class CampaignOptionsLanguages
+constructor(
+    @JsonProperty("baseLanguage") private val baseLanguage: Language? = null,
+    @JsonProperty("additionalLanguages") private val additionalLanguages: List<Language>? = null,
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
+) {
+    @JsonCreator
+    constructor(
+        @JsonProperty("baseLanguage") baseLanguage: Language? = null,
+        @JsonProperty("additionalLanguages") additionalLanguages: List<Language>? = null,
+    ) : this(baseLanguage, additionalLanguages, mutableMapOf())
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+
+    /**
+     * The language you write the program in. Participants see it when their language isn't one of
+     * the program's languages, and for any text you haven't translated. Defaults to `en`.
+     */
+    fun baseLanguage(): Optional<Language> = Optional.ofNullable(baseLanguage)
+
+    /**
+     * Other languages participants can see, besides `baseLanguage`. Send the full list; send an
+     * empty list to turn them all off. Turning languages on requires the Business plan or higher.
+     * Translations are managed in the dashboard and are kept when you remove a language.
+     */
+    fun additionalLanguages(): Optional<List<Language>> = Optional.ofNullable(additionalLanguages)
+
+    /**
+     * Validates that every language is one this SDK version knows.
+     *
+     * @throws GrowsurfInvalidDataException if a language code is unknown.
+     */
+    fun validate(): CampaignOptionsLanguages = apply {
+        baseLanguage?.validate()
+        additionalLanguages?.forEach { it.validate() }
+    }
+}
+
+/**
  * Program Editor **Options** tab configuration. Documented fields are typed. The contract remains
  * open to future options, which are available through [_additionalProperties].
  */
@@ -450,6 +497,13 @@ private constructor(
 
     fun notificationEmails(): Optional<CampaignOptionsNotificationEmails> =
         configField(additionalProperties, "notificationEmails")
+
+    /**
+     * The languages your program runs in. Turning on additional languages requires the Business
+     * plan or higher.
+     */
+    fun languages(): Optional<CampaignOptionsLanguages> =
+        configField(additionalProperties, "languages")
 
     @JsonAnyGetter
     @ExcludeMissing
@@ -549,6 +603,10 @@ private constructor(
             additionalProperties.putConfigField("notificationEmails", value)
         }
 
+        fun languages(value: CampaignOptionsLanguages) = apply {
+            additionalProperties.putConfigField("languages", value)
+        }
+
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
             putAllAdditionalProperties(additionalProperties)
@@ -609,6 +667,7 @@ private constructor(
         fraud().orElse(null)
         taxDocumentation().orElse(null)
         notificationEmails().orElse(null)
+        languages().ifPresent { it.validate() }
         validated = true
     }
 

@@ -20,7 +20,7 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Approves a manually approved reward earned by a participant. */
+/** Approves a participant reward that requires manual approval. */
 class RewardApproveParams
 private constructor(
     private val id: String,

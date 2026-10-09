@@ -288,7 +288,7 @@ ProGuard and R8 should automatically detect and use the published rules, but you
 
 ## Jackson
 
-The SDK depends on [Jackson](https://github.com/FasterXML/jackson) for JSON serialization/deserialization. It is compatible with version 2.14.0 or higher, but depends on version 2.18.9 by default.
+The SDK depends on [Jackson](https://github.com/FasterXML/jackson) for JSON serialization/deserialization. It is compatible with version 2.14.0 or higher, but depends on version 2.18.11 by default.
 
 The SDK throws an exception if it detects an incompatible Jackson version at runtime (e.g. if the default version was overridden in your Maven or Gradle config).
 

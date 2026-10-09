@@ -5,6 +5,7 @@ package com.growsurf.api.models.campaign.participant
 import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.jsonMapper
+import com.growsurf.api.models.campaign.Language
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -18,6 +19,7 @@ internal class CreateTest {
                 .fingerprint("fingerprint")
                 .firstName("firstName")
                 .ipAddress("ipAddress")
+                .language(Language.ES)
                 .lastName("lastName")
                 .metadata(
                     Create.Metadata.builder()
@@ -33,6 +35,7 @@ internal class CreateTest {
         assertThat(create.fingerprint()).contains("fingerprint")
         assertThat(create.firstName()).contains("firstName")
         assertThat(create.ipAddress()).contains("ipAddress")
+        assertThat(create.language()).contains(Language.ES)
         assertThat(create.lastName()).contains("lastName")
         assertThat(create.metadata())
             .contains(
@@ -54,6 +57,7 @@ internal class CreateTest {
                 .fingerprint("fingerprint")
                 .firstName("firstName")
                 .ipAddress("ipAddress")
+                .language(Language.ES)
                 .lastName("lastName")
                 .metadata(
                     Create.Metadata.builder()

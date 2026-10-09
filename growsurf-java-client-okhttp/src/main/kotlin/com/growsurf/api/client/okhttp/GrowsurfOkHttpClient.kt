@@ -140,8 +140,8 @@ class GrowsurfOkHttpClient private constructor() {
          * If this is set, then [trustManager] must also be set.
          *
          * If unset, then the system default is used. Most applications should not call this method,
-         * and instead use the system default. The default include special optimizations that can be
-         * lost if the implementation is modified.
+         * and instead use the system default. The defaults include special optimizations that can
+         * be lost if the implementation is modified.
          */
         fun sslSocketFactory(sslSocketFactory: SSLSocketFactory?) = apply {
             this.sslSocketFactory = sslSocketFactory
@@ -157,8 +157,8 @@ class GrowsurfOkHttpClient private constructor() {
          * If this is set, then [sslSocketFactory] must also be set.
          *
          * If unset, then the system default is used. Most applications should not call this method,
-         * and instead use the system default. The default include special optimizations that can be
-         * lost if the implementation is modified.
+         * and instead use the system default. The defaults include special optimizations that can
+         * be lost if the implementation is modified.
          */
         fun trustManager(trustManager: X509TrustManager?) = apply {
             this.trustManager = trustManager

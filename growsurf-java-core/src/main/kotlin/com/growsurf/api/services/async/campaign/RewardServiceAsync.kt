@@ -29,7 +29,7 @@ interface RewardServiceAsync {
      */
     fun withOptions(modifier: Consumer<ClientOptions.Builder>): RewardServiceAsync
 
-    /** Removes a manually approved participant reward that has not already been approved. */
+    /** Removes a participant reward that requires manual approval and has not yet been approved. */
     fun delete(
         rewardId: String,
         params: RewardDeleteParams,
@@ -54,7 +54,7 @@ interface RewardServiceAsync {
     ): CompletableFuture<RewardDeleteResponse>
 
     /**
-     * Approves a manually approved reward earned by a participant. This requires `reward:write`.
+     * Approves a participant reward that requires manual approval. This requires `reward:write`.
      * When the request also sets `fulfill` to `true`, it additionally requires `reward:fulfill`.
      */
     fun approve(

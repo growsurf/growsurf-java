@@ -3,6 +3,9 @@
 package com.growsurf.api.models.campaign.participant
 
 import com.growsurf.api.core.JsonValue
+import com.growsurf.api.core.jsonMapper
+import com.growsurf.api.models.campaign.Language
+import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -17,6 +20,7 @@ internal class ParticipantUpdateParamsTest {
             .affiliateStatus(ParticipantUpdateParams.AffiliateStatus.APPROVED)
             .email("dev@stainless.com")
             .firstName("Gavin")
+            .language(Language.PT_BR)
             .lastName("Belson")
             .metadata(
                 ParticipantUpdateParams.Metadata.builder()
@@ -53,6 +57,7 @@ internal class ParticipantUpdateParamsTest {
                 .affiliateStatus(ParticipantUpdateParams.AffiliateStatus.APPROVED)
                 .email("dev@stainless.com")
                 .firstName("Gavin")
+                .language(Language.PT_BR)
                 .lastName("Belson")
                 .metadata(
                     ParticipantUpdateParams.Metadata.builder()
@@ -71,6 +76,7 @@ internal class ParticipantUpdateParamsTest {
             .contains(ParticipantUpdateParams.AffiliateStatus.APPROVED)
         assertThat(body.email()).contains("dev@stainless.com")
         assertThat(body.firstName()).contains("Gavin")
+        assertThat(body.language()).contains(Language.PT_BR)
         assertThat(body.lastName()).contains("Belson")
         assertThat(body.metadata())
             .contains(
@@ -83,6 +89,30 @@ internal class ParticipantUpdateParamsTest {
         assertThat(body.referredBy()).contains("referredBy")
         assertThat(body.unsubscribed()).contains(false)
         assertThat(body.vanityKeys().getOrNull()).containsExactly("_1k--w2KifJ1")
+    }
+
+    @Test
+    fun bodyCanResetLanguageWithNull() {
+        val params =
+            ParticipantUpdateParams.builder()
+                .id("id")
+                .participantIdOrEmail("participantIdOrEmail")
+                .language(Optional.empty())
+                .build()
+
+        val jsonMapper = jsonMapper()
+        // `null` must reach the API so the participant uses the program's base language.
+        assertThat(jsonMapper.writeValueAsString(params._body())).isEqualTo("""{"language":null}""")
+        assertThat(
+                jsonMapper.writeValueAsString(
+                    ParticipantUpdateParams.builder()
+                        .id("id")
+                        .language(Language.PT_BR)
+                        .build()
+                        ._body()
+                )
+            )
+            .isEqualTo("""{"language":"pt-BR"}""")
     }
 
     @Test
