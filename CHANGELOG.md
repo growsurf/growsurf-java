@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.13.0](https://github.com/growsurf/growsurf-java/compare/v1.12.0...v1.13.0) (2026-10-09)
+
+
+### Features
+
+* add program and participant language support ([eefbf3e](https://github.com/growsurf/growsurf-java/commit/eefbf3e83792113967e4c1358f1b5e2986dd2a61))
+* add program languages and update SDK clients and guidance ([4f5621a](https://github.com/growsurf/growsurf-java/commit/4f5621a210cb6ca507fab3ddaa8adfd29e691604))
+
 ## [1.12.0](https://github.com/growsurf/growsurf-java/compare/v1.11.0...v1.12.0) (2026-10-07)
 
 
