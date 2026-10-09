@@ -141,6 +141,14 @@ private constructor(
             additionalBodyProperties["notificationEmails"] = JsonValue.from(value)
         }
 
+        /**
+         * The languages your program runs in. Turning on additional languages requires the Business
+         * plan or higher.
+         */
+        fun languages(value: CampaignOptionsLanguages) = apply {
+            additionalBodyProperties["languages"] = JsonValue.from(value)
+        }
+
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
             putAllAdditionalHeaders(additionalHeaders)

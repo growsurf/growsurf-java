@@ -15,6 +15,7 @@ import com.growsurf.api.core.checkKnown
 import com.growsurf.api.core.checkRequired
 import com.growsurf.api.core.toImmutable
 import com.growsurf.api.errors.GrowsurfInvalidDataException
+import com.growsurf.api.models.campaign.Language
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -45,6 +46,7 @@ private constructor(
     private val isAffiliate: JsonField<Boolean>,
     private val isNew: JsonField<Boolean>,
     private val isWinner: JsonField<Boolean>,
+    private val language: JsonField<Language>,
     private val lastName: JsonField<String>,
     private val leadCount: JsonField<Long>,
     private val metadata: JsonField<Metadata>,
@@ -119,6 +121,7 @@ private constructor(
         isAffiliate: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("isNew") @ExcludeMissing isNew: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("isWinner") @ExcludeMissing isWinner: JsonField<Boolean> = JsonMissing.of(),
+        @JsonProperty("language") @ExcludeMissing language: JsonField<Language> = JsonMissing.of(),
         @JsonProperty("lastName") @ExcludeMissing lastName: JsonField<String> = JsonMissing.of(),
         @JsonProperty("leadCount") @ExcludeMissing leadCount: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("metadata") @ExcludeMissing metadata: JsonField<Metadata> = JsonMissing.of(),
@@ -195,6 +198,7 @@ private constructor(
         isAffiliate,
         isNew,
         isWinner,
+        language,
         lastName,
         leadCount,
         metadata,
@@ -364,6 +368,15 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun isWinner(): Optional<Boolean> = isWinner.getOptional("isWinner")
+
+    /**
+     * The language of the participant's portal and program emails. The program's base language
+     * unless the participant (or you) picked another of the program's languages.
+     *
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun language(): Optional<Language> = language.getOptional("language")
 
     /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -687,6 +700,13 @@ private constructor(
     @JsonProperty("isWinner") @ExcludeMissing fun _isWinner(): JsonField<Boolean> = isWinner
 
     /**
+     * Returns the raw JSON value of [language].
+     *
+     * Unlike [language], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("language") @ExcludeMissing fun _language(): JsonField<Language> = language
+
+    /**
      * Returns the raw JSON value of [lastName].
      *
      * Unlike [lastName], this method doesn't throw if the JSON field has an unexpected type.
@@ -924,6 +944,7 @@ private constructor(
         private var isAffiliate: JsonField<Boolean> = JsonMissing.of()
         private var isNew: JsonField<Boolean> = JsonMissing.of()
         private var isWinner: JsonField<Boolean> = JsonMissing.of()
+        private var language: JsonField<Language> = JsonMissing.of()
         private var lastName: JsonField<String> = JsonMissing.of()
         private var leadCount: JsonField<Long> = JsonMissing.of()
         private var metadata: JsonField<Metadata> = JsonMissing.of()
@@ -971,6 +992,7 @@ private constructor(
             isAffiliate = participant.isAffiliate
             isNew = participant.isNew
             isWinner = participant.isWinner
+            language = participant.language
             lastName = participant.lastName
             leadCount = participant.leadCount
             metadata = participant.metadata
@@ -1312,6 +1334,21 @@ private constructor(
          * value.
          */
         fun isWinner(isWinner: JsonField<Boolean>) = apply { this.isWinner = isWinner }
+
+        /**
+         * The language of the participant's portal and program emails. The program's base language
+         * unless the participant (or you) picked another of the program's languages.
+         */
+        fun language(language: Language) = language(JsonField.of(language))
+
+        /**
+         * Sets [Builder.language] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.language] with a well-typed [Language] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun language(language: JsonField<Language>) = apply { this.language = language }
 
         fun lastName(lastName: String?) = lastName(JsonField.ofNullable(lastName))
 
@@ -1704,6 +1741,7 @@ private constructor(
                 isAffiliate,
                 isNew,
                 isWinner,
+                language,
                 lastName,
                 leadCount,
                 metadata,
@@ -1766,6 +1804,7 @@ private constructor(
         isAffiliate()
         isNew()
         isWinner()
+        language().ifPresent { it.validate() }
         lastName()
         leadCount()
         metadata().ifPresent { it.validate() }
@@ -1827,6 +1866,7 @@ private constructor(
             (if (isAffiliate.asKnown().isPresent) 1 else 0) +
             (if (isNew.asKnown().isPresent) 1 else 0) +
             (if (isWinner.asKnown().isPresent) 1 else 0) +
+            (language.asKnown().getOrNull()?.validity() ?: 0) +
             (if (lastName.asKnown().isPresent) 1 else 0) +
             (if (leadCount.asKnown().isPresent) 1 else 0) +
             (metadata.asKnown().getOrNull()?.validity() ?: 0) +
@@ -4018,6 +4058,7 @@ private constructor(
             isAffiliate == other.isAffiliate &&
             isNew == other.isNew &&
             isWinner == other.isWinner &&
+            language == other.language &&
             lastName == other.lastName &&
             leadCount == other.leadCount &&
             metadata == other.metadata &&
@@ -4066,6 +4107,7 @@ private constructor(
             isAffiliate,
             isNew,
             isWinner,
+            language,
             lastName,
             leadCount,
             metadata,
@@ -4094,5 +4136,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Participant{id=$id, email=$email, monthlyRank=$monthlyRank, monthlyReferralCount=$monthlyReferralCount, rank=$rank, referralCount=$referralCount, rewards=$rewards, shareUrl=$shareUrl, affiliateEnrollmentSource=$affiliateEnrollmentSource, affiliateStatus=$affiliateStatus, allMatchingFraudsters=$allMatchingFraudsters, createdAt=$createdAt, fingerprint=$fingerprint, firstName=$firstName, fraudReasonCode=$fraudReasonCode, fraudRiskLevel=$fraudRiskLevel, impressionCount=$impressionCount, inviteCount=$inviteCount, ipAddress=$ipAddress, isAffiliate=$isAffiliate, isNew=$isNew, isWinner=$isWinner, lastName=$lastName, leadCount=$leadCount, metadata=$metadata, mobileInstanceId=$mobileInstanceId, monthlyReferrals=$monthlyReferrals, notes=$notes, payoutSettings=$payoutSettings, paypalEmailAddress=$paypalEmailAddress, prevMonthlyRank=$prevMonthlyRank, prevMonthlyReferralCount=$prevMonthlyReferralCount, referrals=$referrals, referralSource=$referralSource, referralStatus=$referralStatus, referredBy=$referredBy, referrer=$referrer, shareCount=$shareCount, uniqueImpressionCount=$uniqueImpressionCount, unreadCommissionsCount=$unreadCommissionsCount, unreadPayoutsCount=$unreadPayoutsCount, unsubscribed=$unsubscribed, vanityKeys=$vanityKeys, additionalProperties=$additionalProperties}"
+        "Participant{id=$id, email=$email, monthlyRank=$monthlyRank, monthlyReferralCount=$monthlyReferralCount, rank=$rank, referralCount=$referralCount, rewards=$rewards, shareUrl=$shareUrl, affiliateEnrollmentSource=$affiliateEnrollmentSource, affiliateStatus=$affiliateStatus, allMatchingFraudsters=$allMatchingFraudsters, createdAt=$createdAt, fingerprint=$fingerprint, firstName=$firstName, fraudReasonCode=$fraudReasonCode, fraudRiskLevel=$fraudRiskLevel, impressionCount=$impressionCount, inviteCount=$inviteCount, ipAddress=$ipAddress, isAffiliate=$isAffiliate, isNew=$isNew, isWinner=$isWinner, language=$language, lastName=$lastName, leadCount=$leadCount, metadata=$metadata, mobileInstanceId=$mobileInstanceId, monthlyReferrals=$monthlyReferrals, notes=$notes, payoutSettings=$payoutSettings, paypalEmailAddress=$paypalEmailAddress, prevMonthlyRank=$prevMonthlyRank, prevMonthlyReferralCount=$prevMonthlyReferralCount, referrals=$referrals, referralSource=$referralSource, referralStatus=$referralStatus, referredBy=$referredBy, referrer=$referrer, shareCount=$shareCount, uniqueImpressionCount=$uniqueImpressionCount, unreadCommissionsCount=$unreadCommissionsCount, unreadPayoutsCount=$unreadPayoutsCount, unsubscribed=$unsubscribed, vanityKeys=$vanityKeys, additionalProperties=$additionalProperties}"
 }

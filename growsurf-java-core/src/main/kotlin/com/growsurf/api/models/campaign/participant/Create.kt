@@ -14,6 +14,7 @@ import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.checkRequired
 import com.growsurf.api.core.toImmutable
 import com.growsurf.api.errors.GrowsurfInvalidDataException
+import com.growsurf.api.models.campaign.Language
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -27,6 +28,7 @@ private constructor(
     private val firstName: JsonField<String>,
     private val ipAddress: JsonField<String>,
     private val isAffiliate: JsonField<Boolean>,
+    private val language: JsonField<Language>,
     private val lastName: JsonField<String>,
     private val metadata: JsonField<Metadata>,
     private val mobileInstanceId: JsonField<String>,
@@ -46,6 +48,7 @@ private constructor(
         @JsonProperty("isAffiliate")
         @ExcludeMissing
         isAffiliate: JsonField<Boolean> = JsonMissing.of(),
+        @JsonProperty("language") @ExcludeMissing language: JsonField<Language> = JsonMissing.of(),
         @JsonProperty("lastName") @ExcludeMissing lastName: JsonField<String> = JsonMissing.of(),
         @JsonProperty("metadata") @ExcludeMissing metadata: JsonField<Metadata> = JsonMissing.of(),
         @JsonProperty("mobileInstanceId")
@@ -61,6 +64,7 @@ private constructor(
         firstName,
         ipAddress,
         isAffiliate,
+        language,
         lastName,
         metadata,
         mobileInstanceId,
@@ -102,6 +106,15 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun isAffiliate(): Optional<Boolean> = isAffiliate.getOptional("isAffiliate")
+
+    /**
+     * The language of the participant's portal and program emails. Must be one of the program's
+     * languages. Applied only when this request creates the participant.
+     *
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun language(): Optional<Language> = language.getOptional("language")
 
     /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -183,6 +196,13 @@ private constructor(
     fun _isAffiliate(): JsonField<Boolean> = isAffiliate
 
     /**
+     * Returns the raw JSON value of [language].
+     *
+     * Unlike [language], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("language") @ExcludeMissing fun _language(): JsonField<Language> = language
+
+    /**
      * Returns the raw JSON value of [lastName].
      *
      * Unlike [lastName], this method doesn't throw if the JSON field has an unexpected type.
@@ -255,6 +275,7 @@ private constructor(
         private var firstName: JsonField<String> = JsonMissing.of()
         private var ipAddress: JsonField<String> = JsonMissing.of()
         private var isAffiliate: JsonField<Boolean> = JsonMissing.of()
+        private var language: JsonField<Language> = JsonMissing.of()
         private var lastName: JsonField<String> = JsonMissing.of()
         private var metadata: JsonField<Metadata> = JsonMissing.of()
         private var mobileInstanceId: JsonField<String> = JsonMissing.of()
@@ -269,6 +290,7 @@ private constructor(
             firstName = create.firstName
             ipAddress = create.ipAddress
             isAffiliate = create.isAffiliate
+            language = create.language
             lastName = create.lastName
             metadata = create.metadata
             mobileInstanceId = create.mobileInstanceId
@@ -335,6 +357,21 @@ private constructor(
          * value.
          */
         fun isAffiliate(isAffiliate: JsonField<Boolean>) = apply { this.isAffiliate = isAffiliate }
+
+        /**
+         * The language of the participant's portal and program emails. Must be one of the program's
+         * languages. Applied only when this request creates the participant.
+         */
+        fun language(language: Language) = language(JsonField.of(language))
+
+        /**
+         * Sets [Builder.language] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.language] with a well-typed [Language] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun language(language: JsonField<Language>) = apply { this.language = language }
 
         fun lastName(lastName: String) = lastName(JsonField.of(lastName))
 
@@ -446,6 +483,7 @@ private constructor(
                 firstName,
                 ipAddress,
                 isAffiliate,
+                language,
                 lastName,
                 metadata,
                 mobileInstanceId,
@@ -475,6 +513,7 @@ private constructor(
         firstName()
         ipAddress()
         isAffiliate()
+        language().ifPresent { it.validate() }
         lastName()
         metadata().ifPresent { it.validate() }
         mobileInstanceId()
@@ -503,6 +542,7 @@ private constructor(
             (if (firstName.asKnown().isPresent) 1 else 0) +
             (if (ipAddress.asKnown().isPresent) 1 else 0) +
             (if (isAffiliate.asKnown().isPresent) 1 else 0) +
+            (language.asKnown().getOrNull()?.validity() ?: 0) +
             (if (lastName.asKnown().isPresent) 1 else 0) +
             (metadata.asKnown().getOrNull()?.validity() ?: 0) +
             (if (mobileInstanceId.asKnown().isPresent) 1 else 0) +
@@ -769,6 +809,7 @@ private constructor(
             firstName == other.firstName &&
             ipAddress == other.ipAddress &&
             isAffiliate == other.isAffiliate &&
+            language == other.language &&
             lastName == other.lastName &&
             metadata == other.metadata &&
             mobileInstanceId == other.mobileInstanceId &&
@@ -784,6 +825,7 @@ private constructor(
             firstName,
             ipAddress,
             isAffiliate,
+            language,
             lastName,
             metadata,
             mobileInstanceId,
@@ -796,5 +838,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Create{email=$email, fingerprint=$fingerprint, firstName=$firstName, ipAddress=$ipAddress, isAffiliate=$isAffiliate, lastName=$lastName, metadata=$metadata, mobileInstanceId=$mobileInstanceId, referralStatus=$referralStatus, referredBy=$referredBy, additionalProperties=$additionalProperties}"
+        "Create{email=$email, fingerprint=$fingerprint, firstName=$firstName, ipAddress=$ipAddress, isAffiliate=$isAffiliate, language=$language, lastName=$lastName, metadata=$metadata, mobileInstanceId=$mobileInstanceId, referralStatus=$referralStatus, referredBy=$referredBy, additionalProperties=$additionalProperties}"
 }

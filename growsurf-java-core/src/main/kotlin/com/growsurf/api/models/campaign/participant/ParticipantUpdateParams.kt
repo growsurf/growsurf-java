@@ -18,6 +18,7 @@ import com.growsurf.api.core.http.Headers
 import com.growsurf.api.core.http.QueryParams
 import com.growsurf.api.core.toImmutable
 import com.growsurf.api.errors.GrowsurfInvalidDataException
+import com.growsurf.api.models.campaign.Language
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -62,6 +63,16 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun firstName(): Optional<String> = body.firstName()
+
+    /**
+     * The language of the participant's portal and program emails. Must be one of the program's
+     * languages (see `languages` in the program options). Send the base language or `null` to use
+     * the program's base language.
+     *
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun language(): Optional<Language> = body.language()
 
     /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -129,6 +140,13 @@ private constructor(
      * Unlike [firstName], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _firstName(): JsonField<String> = body._firstName()
+
+    /**
+     * Returns the raw JSON value of [language].
+     *
+     * Unlike [language], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    fun _language(): JsonField<Language> = body._language()
 
     /**
      * Returns the raw JSON value of [lastName].
@@ -241,6 +259,7 @@ private constructor(
          * - [affiliateStatus]
          * - [email]
          * - [firstName]
+         * - [language]
          * - [lastName]
          * - [metadata]
          * - [referralStatus]
@@ -287,6 +306,25 @@ private constructor(
          * value.
          */
         fun firstName(firstName: JsonField<String>) = apply { body.firstName(firstName) }
+
+        /**
+         * The language of the participant's portal and program emails. Must be one of the program's
+         * languages (see `languages` in the program options). Send the base language or `null` to
+         * use the program's base language.
+         */
+        fun language(language: Language?) = apply { body.language(language) }
+
+        /** Alias for calling [Builder.language] with `language.orElse(null)`. */
+        fun language(language: Optional<Language>) = language(language.getOrNull())
+
+        /**
+         * Sets [Builder.language] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.language] with a well-typed [Language] value instead.
+         * This method is primarily for setting the field to an undocumented or not yet supported
+         * value.
+         */
+        fun language(language: JsonField<Language>) = apply { body.language(language) }
 
         fun lastName(lastName: String) = apply { body.lastName(lastName) }
 
@@ -539,6 +577,7 @@ private constructor(
         private val affiliateStatus: JsonField<AffiliateStatus>,
         private val email: JsonField<String>,
         private val firstName: JsonField<String>,
+        private val language: JsonField<Language>,
         private val lastName: JsonField<String>,
         private val metadata: JsonField<Metadata>,
         private val notes: JsonField<String>,
@@ -558,6 +597,9 @@ private constructor(
             @JsonProperty("firstName")
             @ExcludeMissing
             firstName: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("language")
+            @ExcludeMissing
+            language: JsonField<Language> = JsonMissing.of(),
             @JsonProperty("lastName")
             @ExcludeMissing
             lastName: JsonField<String> = JsonMissing.of(),
@@ -581,6 +623,7 @@ private constructor(
             affiliateStatus,
             email,
             firstName,
+            language,
             lastName,
             metadata,
             notes,
@@ -612,6 +655,16 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun firstName(): Optional<String> = firstName.getOptional("firstName")
+
+        /**
+         * The language of the participant's portal and program emails. Must be one of the program's
+         * languages (see `languages` in the program options). Send the base language or `null` to
+         * use the program's base language.
+         *
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun language(): Optional<Language> = language.getOptional("language")
 
         /**
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -684,6 +737,13 @@ private constructor(
          * Unlike [firstName], this method doesn't throw if the JSON field has an unexpected type.
          */
         @JsonProperty("firstName") @ExcludeMissing fun _firstName(): JsonField<String> = firstName
+
+        /**
+         * Returns the raw JSON value of [language].
+         *
+         * Unlike [language], this method doesn't throw if the JSON field has an unexpected type.
+         */
+        @JsonProperty("language") @ExcludeMissing fun _language(): JsonField<Language> = language
 
         /**
          * Returns the raw JSON value of [lastName].
@@ -768,6 +828,7 @@ private constructor(
             private var affiliateStatus: JsonField<AffiliateStatus> = JsonMissing.of()
             private var email: JsonField<String> = JsonMissing.of()
             private var firstName: JsonField<String> = JsonMissing.of()
+            private var language: JsonField<Language> = JsonMissing.of()
             private var lastName: JsonField<String> = JsonMissing.of()
             private var metadata: JsonField<Metadata> = JsonMissing.of()
             private var notes: JsonField<String> = JsonMissing.of()
@@ -782,6 +843,7 @@ private constructor(
                 affiliateStatus = body.affiliateStatus
                 email = body.email
                 firstName = body.firstName
+                language = body.language
                 lastName = body.lastName
                 metadata = body.metadata
                 notes = body.notes
@@ -832,6 +894,25 @@ private constructor(
              * supported value.
              */
             fun firstName(firstName: JsonField<String>) = apply { this.firstName = firstName }
+
+            /**
+             * The language of the participant's portal and program emails. Must be one of the
+             * program's languages (see `languages` in the program options). Send the base language
+             * or `null` to use the program's base language.
+             */
+            fun language(language: Language?) = language(JsonField.ofNullable(language))
+
+            /** Alias for calling [Builder.language] with `language.orElse(null)`. */
+            fun language(language: Optional<Language>) = language(language.getOrNull())
+
+            /**
+             * Sets [Builder.language] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.language] with a well-typed [Language] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun language(language: JsonField<Language>) = apply { this.language = language }
 
             fun lastName(lastName: String) = lastName(JsonField.of(lastName))
 
@@ -963,6 +1044,7 @@ private constructor(
                     affiliateStatus,
                     email,
                     firstName,
+                    language,
                     lastName,
                     metadata,
                     notes,
@@ -993,6 +1075,7 @@ private constructor(
             affiliateStatus().ifPresent { it.validate() }
             email()
             firstName()
+            language().ifPresent { it.validate() }
             lastName()
             metadata().ifPresent { it.validate() }
             notes()
@@ -1022,6 +1105,7 @@ private constructor(
             (affiliateStatus.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (email.asKnown().isPresent) 1 else 0) +
                 (if (firstName.asKnown().isPresent) 1 else 0) +
+                (language.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (lastName.asKnown().isPresent) 1 else 0) +
                 (metadata.asKnown().getOrNull()?.validity() ?: 0) +
                 (if (notes.asKnown().isPresent) 1 else 0) +
@@ -1039,6 +1123,7 @@ private constructor(
                 affiliateStatus == other.affiliateStatus &&
                 email == other.email &&
                 firstName == other.firstName &&
+                language == other.language &&
                 lastName == other.lastName &&
                 metadata == other.metadata &&
                 notes == other.notes &&
@@ -1054,6 +1139,7 @@ private constructor(
                 affiliateStatus,
                 email,
                 firstName,
+                language,
                 lastName,
                 metadata,
                 notes,
@@ -1068,7 +1154,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{affiliateStatus=$affiliateStatus, email=$email, firstName=$firstName, lastName=$lastName, metadata=$metadata, notes=$notes, referralStatus=$referralStatus, referredBy=$referredBy, unsubscribed=$unsubscribed, vanityKeys=$vanityKeys, additionalProperties=$additionalProperties}"
+            "Body{affiliateStatus=$affiliateStatus, email=$email, firstName=$firstName, language=$language, lastName=$lastName, metadata=$metadata, notes=$notes, referralStatus=$referralStatus, referredBy=$referredBy, unsubscribed=$unsubscribed, vanityKeys=$vanityKeys, additionalProperties=$additionalProperties}"
     }
 
     /** Shallow custom metadata object. */

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.growsurf.api.core.JsonNull
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.jsonMapper
+import com.growsurf.api.models.campaign.Language
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -60,6 +61,37 @@ internal class CampaignOptionsTest {
                 .fraud(fraud)
                 .build()
         assertThat(params._body()).containsKeys("attributionModel", "fraud")
+    }
+
+    @Test
+    fun languagesUseContractCodesInResponsesAndUpdates() {
+        val mapper = jsonMapper()
+        val options =
+            mapper.readValue(
+                """{"languages":{"baseLanguage":"en","additionalLanguages":["es","pt-BR","zh-CN"]}}""",
+                CampaignOptions::class.java,
+            )
+
+        assertThat(options.languages().get().baseLanguage()).contains(Language.EN)
+        assertThat(options.languages().get().additionalLanguages().get())
+            .containsExactly(Language.ES, Language.PT_BR, Language.ZH_CN)
+        assertThat(options.isValid()).isTrue()
+
+        val params =
+            OptionUpdateParams.builder()
+                .languages(
+                    CampaignOptionsLanguages(
+                        baseLanguage = Language.EN,
+                        additionalLanguages = listOf(Language.PT_BR),
+                    )
+                )
+                .build()
+        assertThat(mapper.readTree(mapper.writeValueAsString(params._body())))
+            .isEqualTo(
+                mapper.readTree(
+                    """{"languages":{"baseLanguage":"en","additionalLanguages":["pt-BR"]}}"""
+                )
+            )
     }
 
     @Test
