@@ -66,7 +66,10 @@ interface EmailsService {
      * are left untouched. You may only write the email templates the dashboard exposes for the
      * program type — writing a template that is not available for the program type returns a `400`.
      * Some fields are read-only (`settings.sender.fromEmail`, whose custom value requires dashboard
-     * domain verification).
+     * domain verification). Changes to participant email content are checked before saving.
+     * Rejected content returns `400`; if the check is unavailable, `503` asks you to retry. Neither
+     * response saves the change. A concurrent edit can return `409`; reload the program before
+     * retrying.
      */
     fun update(id: String, params: EmailUpdateParams): CampaignEmails =
         update(id, params, RequestOptions.none())

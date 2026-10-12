@@ -29,10 +29,10 @@ interface OptionsServiceAsync {
 
     /**
      * Retrieves a program's options — the same surface as the dashboard Program Editor's
-     * **Options** tab. Includes reward/fraud approval, anti-fraud lists + toggles, referral
-     * cookie/credit windows, reCAPTCHA, affiliate enrollment + application review, payout
-     * threshold + tax settings (affiliate only), and notification-email settings.
-     * `fraud.recaptcha.secretKey` is never returned.
+     * **Options** tab. Includes the attribution model, reward/fraud approval, anti-fraud lists +
+     * toggles, referral cookie/credit windows, reCAPTCHA, affiliate enrollment + application
+     * review, payout threshold + tax settings (affiliate only), notification-email settings, and
+     * the program's languages. `fraud.recaptcha.secretKey` is never returned.
      */
     fun retrieve(id: String): CompletableFuture<CampaignOptions> =
         retrieve(id, OptionRetrieveParams.none())
@@ -71,7 +71,12 @@ interface OptionsServiceAsync {
      * `affiliateApplicationMode`/`affiliateReapplicationPolicy` and
      * `payoutThreshold`/`taxDocumentation` are affiliate-only, and affiliate programs require
      * `requireParticipantAuth: true`). `fraud.recaptcha.secretKey` is write-only.
-     * `referralCreditWindowDays: null` means "never expires".
+     * `referralCreditWindowDays: null` means "never expires". Turning on
+     * `languages.additionalLanguages` requires the Business plan or higher. While any are on, every
+     * `languages` change, including turning them off, requires it too (`403` otherwise). Changes to
+     * participant email content are checked before saving. Rejected content returns `400`; if the
+     * check is unavailable, `503` asks you to retry. Neither response saves the change. A
+     * concurrent edit can return `409`; reload the program before retrying.
      */
     fun update(id: String, params: OptionUpdateParams): CompletableFuture<CampaignOptions> =
         update(id, params, RequestOptions.none())
