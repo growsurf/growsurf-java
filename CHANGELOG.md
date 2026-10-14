@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.14.0](https://github.com/growsurf/growsurf-java/compare/v1.13.0...v1.14.0) (2026-10-14)
+
+
+### Features
+
+* add language picker flag option ([18e3fa4](https://github.com/growsurf/growsurf-java/commit/18e3fa46f3d20d14db2853b318236f4ccf7ad1a6))
+* add language picker flag option ([44e3982](https://github.com/growsurf/growsurf-java/commit/44e3982e3f1241b124b88e24be4598dbc8a8f8d9))
+
+
+### Bug Fixes
+
+* preserve language options binary compatibility ([29dd92a](https://github.com/growsurf/growsurf-java/commit/29dd92abb8af00a8ad81b94053618acde576ee40))
+
+
+### Documentation
+
+* note Business plan covers any language change while languages are on ([505f9fc](https://github.com/growsurf/growsurf-java/commit/505f9fc6481425fbeaee08e747168d8f7144f7da))
+* sync SDK comments with the REST API contract ([1b2fcd6](https://github.com/growsurf/growsurf-java/commit/1b2fcd6202fc8f9ca2d650cebbbffa9c7a315495))
+
 ## [1.13.0](https://github.com/growsurf/growsurf-java/compare/v1.12.0...v1.13.0) (2026-10-09)
 
 
