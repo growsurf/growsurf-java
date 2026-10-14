@@ -11,6 +11,57 @@ import org.junit.jupiter.api.Test
 internal class CampaignOptionsTest {
 
     @Test
+    fun languagesPreservePublishedJvmSignatures() {
+        val type = CampaignOptionsLanguages::class.java
+        val fields = mutableMapOf("showFlags" to JsonValue.from(true))
+        val original =
+            type
+                .getConstructor(Language::class.java, List::class.java, Map::class.java)
+                .newInstance(Language.EN, listOf(Language.ES), fields)
+        val copied =
+            type
+                .getDeclaredMethod("copy", Language::class.java, List::class.java, Map::class.java)
+                .invoke(original, Language.EN, listOf(Language.ES), fields)
+                as CampaignOptionsLanguages
+        val defaultCopied =
+            type
+                .getDeclaredMethod(
+                    "copy\$default",
+                    type,
+                    Language::class.java,
+                    List::class.java,
+                    Map::class.java,
+                    Int::class.javaPrimitiveType,
+                    Any::class.java,
+                )
+                .invoke(null, original, null, null, null, 7, null) as CampaignOptionsLanguages
+
+        assertThat(copied.additionalLanguages().get()).containsExactly(Language.ES)
+        assertThat(defaultCopied._additionalProperties())
+            .containsEntry("showFlags", JsonValue.from(true))
+        assertThat(
+                type
+                    .getConstructor(Language::class.java, List::class.java)
+                    .newInstance(Language.EN, listOf(Language.ES))
+                    .baseLanguage()
+            )
+            .contains(Language.EN)
+        assertThat(
+                type
+                    .getConstructor(
+                        Language::class.java,
+                        List::class.java,
+                        Map::class.java,
+                        Int::class.javaPrimitiveType,
+                        Class.forName("kotlin.jvm.internal.DefaultConstructorMarker"),
+                    )
+                    .newInstance(null, null, null, 7, null)
+                    ._additionalProperties()
+            )
+            .isEmpty()
+    }
+
+    @Test
     fun nestedOptionsPreserveClearsAndAdditionalFields() {
         val mapper = jsonMapper()
         val params =
@@ -68,13 +119,16 @@ internal class CampaignOptionsTest {
         val mapper = jsonMapper()
         val options =
             mapper.readValue(
-                """{"languages":{"baseLanguage":"en","additionalLanguages":["es","pt-BR","zh-CN"]}}""",
+                """{"languages":{"baseLanguage":"en","additionalLanguages":["es","pt-BR","zh-CN"],"showFlags":false}}""",
                 CampaignOptions::class.java,
             )
 
         assertThat(options.languages().get().baseLanguage()).contains(Language.EN)
         assertThat(options.languages().get().additionalLanguages().get())
             .containsExactly(Language.ES, Language.PT_BR, Language.ZH_CN)
+        assertThat(options.languages().get().showFlags()).contains(false)
+        assertThat(options.languages().get().copy().showFlags()).contains(false)
+        assertThat(CampaignOptionsLanguages().showFlags()).isEmpty()
         assertThat(options.isValid()).isTrue()
 
         val params =
@@ -83,13 +137,14 @@ internal class CampaignOptionsTest {
                     CampaignOptionsLanguages(
                         baseLanguage = Language.EN,
                         additionalLanguages = listOf(Language.PT_BR),
+                        showFlags = true,
                     )
                 )
                 .build()
         assertThat(mapper.readTree(mapper.writeValueAsString(params._body())))
             .isEqualTo(
                 mapper.readTree(
-                    """{"languages":{"baseLanguage":"en","additionalLanguages":["pt-BR"]}}"""
+                    """{"languages":{"baseLanguage":"en","additionalLanguages":["pt-BR"],"showFlags":true}}"""
                 )
             )
     }
