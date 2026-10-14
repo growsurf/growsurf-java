@@ -399,6 +399,7 @@ data class CampaignOptionsLanguages
 constructor(
     @JsonProperty("baseLanguage") private val baseLanguage: Language? = null,
     @JsonProperty("additionalLanguages") private val additionalLanguages: List<Language>? = null,
+    @JsonProperty("showFlags") private val showFlags: Boolean? = null,
     @field:JsonAnySetter
     private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
 ) {
@@ -406,7 +407,14 @@ constructor(
     constructor(
         @JsonProperty("baseLanguage") baseLanguage: Language? = null,
         @JsonProperty("additionalLanguages") additionalLanguages: List<Language>? = null,
-    ) : this(baseLanguage, additionalLanguages, mutableMapOf())
+        @JsonProperty("showFlags") showFlags: Boolean? = null,
+    ) : this(baseLanguage, additionalLanguages, showFlags, mutableMapOf())
+
+    /** Keeps the two-argument constructor available to Java callers of earlier versions. */
+    constructor(
+        baseLanguage: Language?,
+        additionalLanguages: List<Language>?,
+    ) : this(baseLanguage, additionalLanguages, null, mutableMapOf())
 
     /** Returns additional fields supplied by the API. */
     @JsonAnyGetter
@@ -425,6 +433,12 @@ constructor(
      * when you remove a language.
      */
     fun additionalLanguages(): Optional<List<Language>> = Optional.ofNullable(additionalLanguages)
+
+    /**
+     * Shows a flag next to each language name in the language picker participants use. New programs
+     * start with `false`.
+     */
+    fun showFlags(): Optional<Boolean> = Optional.ofNullable(showFlags)
 
     /**
      * Validates that every language is one this SDK version knows.
