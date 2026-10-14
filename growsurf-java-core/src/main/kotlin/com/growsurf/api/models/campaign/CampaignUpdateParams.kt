@@ -25,7 +25,10 @@ import kotlin.jvm.optionals.getOrNull
  * `urlId` are immutable. Status changes are validated against the allowed transitions; the program
  * cannot be deleted via this endpoint. Editor-tab configuration (design, emails, options,
  * installation) is edited via the dedicated config sub-resources (e.g. `PATCH
- * /campaign/{id}/emails`), not here.
+ * /campaign/{id}/emails`), not here. Changes to participant email content are checked before
+ * saving. Rejected content returns `400`; if the check is unavailable, `503` asks you to retry.
+ * Neither response saves the change. A concurrent edit can return `409`; reload the program before
+ * retrying.
  */
 class CampaignUpdateParams
 private constructor(

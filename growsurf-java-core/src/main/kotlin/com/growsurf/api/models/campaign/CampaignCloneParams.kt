@@ -13,7 +13,8 @@ import kotlin.jvm.optionals.getOrNull
 
 /**
  * Clones an existing program into a new `DRAFT` program. Integrations and credentials are not
- * copied; active rewards are cloned.
+ * copied; active rewards are cloned. A concurrent edit to the program can return `409`; retry the
+ * clone.
  */
 class CampaignCloneParams
 private constructor(

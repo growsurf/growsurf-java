@@ -35,7 +35,8 @@ interface RewardsServiceAsync {
      * Creates a new campaign reward (`CampaignReward`) with a GrowSurf-assigned ID. The reward type
      * must be compatible with the program type (affiliate programs support only `AFFILIATE`
      * rewards; referral programs support all other types). Enabling an active reward of a type
-     * automatically enables that reward type on the program.
+     * automatically enables that reward type on the program. A concurrent edit can return `409`;
+     * reload the program before retrying.
      */
     fun create(id: String, params: RewardCreateParams): CompletableFuture<Reward> =
         create(id, params, RequestOptions.none())
@@ -61,7 +62,10 @@ interface RewardsServiceAsync {
      * Updates an existing campaign reward (`CampaignReward`). The reward `type` is immutable and
      * cannot be changed. When the update replaces `metadata`, renamed keys automatically rewrite
      * any `{{campaignReward[…]}}` references in campaign copy; removing a key that campaign copy
-     * still references returns a `409` listing the referencing fields.
+     * still references returns a `409` listing the referencing fields. Changes to participant email
+     * content are checked before saving. Rejected content returns `400`; if the check is
+     * unavailable, `503` asks you to retry. Neither response saves the change. A concurrent edit
+     * can return `409`; reload the program before retrying.
      */
     fun update(campaignRewardId: String, params: RewardUpdateParams): CompletableFuture<Reward> =
         update(campaignRewardId, params, RequestOptions.none())

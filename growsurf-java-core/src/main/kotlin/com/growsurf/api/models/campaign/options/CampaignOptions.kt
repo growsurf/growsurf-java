@@ -408,6 +408,18 @@ constructor(
         @JsonProperty("additionalLanguages") additionalLanguages: List<Language>? = null,
     ) : this(baseLanguage, additionalLanguages, mutableMapOf())
 
+    // Keep new fields in the existing map so published constructor and copy JVM signatures remain
+    // valid.
+    constructor(
+        showFlags: Boolean,
+        baseLanguage: Language? = null,
+        additionalLanguages: List<Language>? = null,
+    ) : this(
+        baseLanguage,
+        additionalLanguages,
+        mutableMapOf("showFlags" to JsonValue.from(showFlags)),
+    )
+
     /** Returns additional fields supplied by the API. */
     @JsonAnyGetter
     fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
@@ -420,10 +432,18 @@ constructor(
 
     /**
      * Other languages participants can see, besides `baseLanguage`. Send the full list; send an
-     * empty list to turn them all off. Turning languages on requires the Business plan or higher.
-     * Translations are managed in the dashboard and are kept when you remove a language.
+     * empty list to turn them all off. Turning languages on, and any change while they are on,
+     * requires the Business plan or higher. Translations are managed in the dashboard and are kept
+     * when you remove a language.
      */
     fun additionalLanguages(): Optional<List<Language>> = Optional.ofNullable(additionalLanguages)
+
+    /**
+     * Shows a flag next to each language name in the language picker participants use. New programs
+     * start with `false`.
+     */
+    fun showFlags(): Optional<Boolean> =
+        additionalProperties["showFlags"]?.asBoolean() ?: Optional.empty()
 
     /**
      * Validates that every language is one this SDK version knows.

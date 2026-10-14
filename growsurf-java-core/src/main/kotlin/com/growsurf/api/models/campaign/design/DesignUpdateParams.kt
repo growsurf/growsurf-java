@@ -16,7 +16,10 @@ import kotlin.jvm.optionals.getOrNull
  * configured from payout integration cards. Only the fields you send are changed; anything you
  * leave out is untouched (arrays such as `signup.fields` replace wholesale). Documented fields have
  * typed setters where the REST contract defines their structure. Open design sections and future
- * fields can use [Builder.putAdditionalBodyProperty].
+ * fields can use [Builder.putAdditionalBodyProperty]. Changes to participant email content are
+ * checked before saving. Rejected content returns `400`; if the check is unavailable, `503` asks
+ * you to retry. Neither response saves the change. A concurrent edit can return `409`; reload the
+ * program before retrying.
  */
 class DesignUpdateParams
 private constructor(
