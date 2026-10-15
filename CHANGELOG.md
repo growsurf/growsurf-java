@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.15.0](https://github.com/growsurf/growsurf-java/compare/v1.14.0...v1.15.0) (2026-10-15)
+
+
+### Features
+
+* support 25 additional program languages ([4bd856e](https://github.com/growsurf/growsurf-java/commit/4bd856e4ebefde02e15770891fbc43d5a1af88cb))
+* support 25 additional program languages ([6850892](https://github.com/growsurf/growsurf-java/commit/68508927abd4a7faffbdd8c2173baf66e0038ebe))
+
 ## [1.14.0](https://github.com/growsurf/growsurf-java/compare/v1.13.0...v1.14.0) (2026-10-14)
 
 
