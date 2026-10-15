@@ -45,6 +45,56 @@ class Language @JsonCreator private constructor(private val value: JsonField<Str
 
         @JvmField val ID = of("id")
 
+        @JvmField val DA = of("da")
+
+        @JvmField val NB = of("nb")
+
+        @JvmField val NN = of("nn")
+
+        @JvmField val FI = of("fi")
+
+        @JvmField val IS = of("is")
+
+        @JvmField val CS = of("cs")
+
+        @JvmField val SK = of("sk")
+
+        @JvmField val HU = of("hu")
+
+        @JvmField val RO = of("ro")
+
+        @JvmField val HR = of("hr")
+
+        @JvmField val SL = of("sl")
+
+        @JvmField val ET = of("et")
+
+        @JvmField val LV = of("lv")
+
+        @JvmField val LT = of("lt")
+
+        @JvmField val EL = of("el")
+
+        @JvmField val BG = of("bg")
+
+        @JvmField val UK = of("uk")
+
+        @JvmField val RU = of("ru")
+
+        @JvmField val PT_PT = of("pt-PT")
+
+        @JvmField val CA = of("ca")
+
+        @JvmField val VI = of("vi")
+
+        @JvmField val MS = of("ms")
+
+        @JvmField val FIL = of("fil")
+
+        @JvmField val AF = of("af")
+
+        @JvmField val SW = of("sw")
+
         @JvmStatic fun of(value: String) = Language(JsonField.of(value))
     }
 
@@ -63,6 +113,31 @@ class Language @JsonCreator private constructor(private val value: JsonField<Str
         KO,
         ZH_CN,
         ID,
+        DA,
+        NB,
+        NN,
+        FI,
+        IS,
+        CS,
+        SK,
+        HU,
+        RO,
+        HR,
+        SL,
+        ET,
+        LV,
+        LT,
+        EL,
+        BG,
+        UK,
+        RU,
+        PT_PT,
+        CA,
+        VI,
+        MS,
+        FIL,
+        AF,
+        SW,
     }
 
     enum class Value {
@@ -80,6 +155,31 @@ class Language @JsonCreator private constructor(private val value: JsonField<Str
         KO,
         ZH_CN,
         ID,
+        DA,
+        NB,
+        NN,
+        FI,
+        IS,
+        CS,
+        SK,
+        HU,
+        RO,
+        HR,
+        SL,
+        ET,
+        LV,
+        LT,
+        EL,
+        BG,
+        UK,
+        RU,
+        PT_PT,
+        CA,
+        VI,
+        MS,
+        FIL,
+        AF,
+        SW,
         _UNKNOWN,
     }
 
@@ -99,6 +199,31 @@ class Language @JsonCreator private constructor(private val value: JsonField<Str
             KO -> Value.KO
             ZH_CN -> Value.ZH_CN
             ID -> Value.ID
+            DA -> Value.DA
+            NB -> Value.NB
+            NN -> Value.NN
+            FI -> Value.FI
+            IS -> Value.IS
+            CS -> Value.CS
+            SK -> Value.SK
+            HU -> Value.HU
+            RO -> Value.RO
+            HR -> Value.HR
+            SL -> Value.SL
+            ET -> Value.ET
+            LV -> Value.LV
+            LT -> Value.LT
+            EL -> Value.EL
+            BG -> Value.BG
+            UK -> Value.UK
+            RU -> Value.RU
+            PT_PT -> Value.PT_PT
+            CA -> Value.CA
+            VI -> Value.VI
+            MS -> Value.MS
+            FIL -> Value.FIL
+            AF -> Value.AF
+            SW -> Value.SW
             else -> Value._UNKNOWN
         }
 
@@ -118,6 +243,31 @@ class Language @JsonCreator private constructor(private val value: JsonField<Str
             KO -> Known.KO
             ZH_CN -> Known.ZH_CN
             ID -> Known.ID
+            DA -> Known.DA
+            NB -> Known.NB
+            NN -> Known.NN
+            FI -> Known.FI
+            IS -> Known.IS
+            CS -> Known.CS
+            SK -> Known.SK
+            HU -> Known.HU
+            RO -> Known.RO
+            HR -> Known.HR
+            SL -> Known.SL
+            ET -> Known.ET
+            LV -> Known.LV
+            LT -> Known.LT
+            EL -> Known.EL
+            BG -> Known.BG
+            UK -> Known.UK
+            RU -> Known.RU
+            PT_PT -> Known.PT_PT
+            CA -> Known.CA
+            VI -> Known.VI
+            MS -> Known.MS
+            FIL -> Known.FIL
+            AF -> Known.AF
+            SW -> Known.SW
             else -> throw GrowsurfInvalidDataException("Unknown Language: $value")
         }
 
