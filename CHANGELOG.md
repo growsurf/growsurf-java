@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.16.0](https://github.com/growsurf/growsurf-java/compare/v1.15.0...v1.16.0) (2026-10-18)
+
+
+### Features
+
+* add widget clickAction to campaign design; clarify participant deletion cleanup ([6d8a5c3](https://github.com/growsurf/growsurf-java/commit/6d8a5c3706db9be9cd51b20992c01b43a33bd3f3))
+* add widget clickAction to campaign design; clarify participant deletion cleanup ([0c8b7f0](https://github.com/growsurf/growsurf-java/commit/0c8b7f0d298420fa9b46208495cda0d600fd27e2))
+
+
+### Bug Fixes
+
+* keep widget constructor binary compatible by reading clickAction from additional properties ([75f193d](https://github.com/growsurf/growsurf-java/commit/75f193dca5ea3e6c7813219c45a328bbf3a752ea))
+
+
+### Styles
+
+* wrap participant deletion KDoc to ktfmt width ([b67c2ff](https://github.com/growsurf/growsurf-java/commit/b67c2ff592916d3caa3f419dbf9837e3255576cb))
+
 ## [1.15.0](https://github.com/growsurf/growsurf-java/compare/v1.14.0...v1.15.0) (2026-10-15)
 
 
