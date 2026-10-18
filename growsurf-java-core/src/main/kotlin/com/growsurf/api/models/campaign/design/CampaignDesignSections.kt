@@ -111,6 +111,12 @@ enum class CampaignDesignWidgetPageRuleMode(@get:JsonValueAnnotation val value: 
     EXCEPT("EXCEPT"),
 }
 
+/** What opens when someone clicks the widget. */
+enum class CampaignDesignWidgetClickAction(@get:JsonValueAnnotation val value: String) {
+    WINDOW("WINDOW"),
+    PROGRAM_PAGE("PROGRAM_PAGE"),
+}
+
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class ParticipantLoginDesign
 constructor(
@@ -959,6 +965,17 @@ constructor(
     fun isHiddenOnMobile(): Optional<Boolean> = Optional.ofNullable(isHiddenOnMobile)
 
     fun pageRules(): Optional<CampaignDesignWidgetPageRules> = Optional.ofNullable(pageRules)
+
+    /**
+     * What opens when someone clicks the widget. Read from additional properties so the published
+     * constructor and `copy` signatures stay binary compatible.
+     */
+    fun clickAction(): Optional<CampaignDesignWidgetClickAction> =
+        additionalProperties["clickAction"]?.asString()?.flatMap { value ->
+            Optional.ofNullable(
+                CampaignDesignWidgetClickAction.values().firstOrNull { it.value == value }
+            )
+        } ?: Optional.empty()
 }
 
 /** Website widget theme colors. */
