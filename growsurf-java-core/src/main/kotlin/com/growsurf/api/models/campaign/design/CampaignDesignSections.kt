@@ -839,7 +839,6 @@ constructor(
     @JsonProperty("returnAfterDays") private val returnAfterDays: Long? = null,
     @JsonProperty("isHiddenOnMobile") private val isHiddenOnMobile: Boolean? = null,
     @JsonProperty("pageRules") private val pageRules: CampaignDesignWidgetPageRules? = null,
-    @JsonProperty("clickAction") private val clickAction: CampaignDesignWidgetClickAction? = null,
     @field:JsonAnySetter
     private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
 ) {
@@ -894,7 +893,6 @@ constructor(
         @JsonProperty("returnAfterDays") returnAfterDays: Long? = null,
         @JsonProperty("isHiddenOnMobile") isHiddenOnMobile: Boolean? = null,
         @JsonProperty("pageRules") pageRules: CampaignDesignWidgetPageRules? = null,
-        @JsonProperty("clickAction") clickAction: CampaignDesignWidgetClickAction? = null,
     ) : this(
         isShownToNewVisitors,
         isShownToParticipants,
@@ -917,7 +915,6 @@ constructor(
         returnAfterDays,
         isHiddenOnMobile,
         pageRules,
-        clickAction,
         mutableMapOf(),
     )
 
@@ -969,7 +966,16 @@ constructor(
 
     fun pageRules(): Optional<CampaignDesignWidgetPageRules> = Optional.ofNullable(pageRules)
 
-    fun clickAction(): Optional<CampaignDesignWidgetClickAction> = Optional.ofNullable(clickAction)
+    /**
+     * What opens when someone clicks the widget. Read from additional properties so the published
+     * constructor and `copy` signatures stay binary compatible.
+     */
+    fun clickAction(): Optional<CampaignDesignWidgetClickAction> =
+        additionalProperties["clickAction"]?.asString()?.flatMap { value ->
+            Optional.ofNullable(
+                CampaignDesignWidgetClickAction.values().firstOrNull { it.value == value }
+            )
+        } ?: Optional.empty()
 }
 
 /** Website widget theme colors. */
