@@ -113,7 +113,11 @@ interface ParticipantService {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): Participant
 
-    /** Removes participant access immediately by GrowSurf participant ID or email address. Related record cleanup completes automatically. Do not repeat a successful deletion to finish cleanup. */
+    /**
+     * Removes participant access immediately by GrowSurf participant ID or email address. Related
+     * record cleanup completes automatically. Do not repeat a successful deletion to finish
+     * cleanup.
+     */
     fun delete(
         participantIdOrEmail: String,
         params: ParticipantDeleteParams,
@@ -145,7 +149,8 @@ interface ParticipantService {
      * a GrowSurf participant ID or an email address (mixed lists are allowed). Up to `200` entries
      * per request — chunk larger lists across multiple calls. The response reports a per-row
      * `status` for every submitted entry, so a `200` can include rows that were `NOT_FOUND` or
-     * failed. Deletion is permanent. Successful rows lose participant access immediately; related record cleanup completes automatically, subject to required financial record retention.
+     * failed. Deletion is permanent. Successful rows lose participant access immediately; related
+     * record cleanup completes automatically, subject to required financial record retention.
      */
     fun bulkDelete(id: String, params: ParticipantBulkDeleteParams): ParticipantBulkDeleteResponse =
         bulkDelete(id, params, RequestOptions.none())
