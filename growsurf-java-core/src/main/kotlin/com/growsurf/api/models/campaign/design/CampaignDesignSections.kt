@@ -111,6 +111,12 @@ enum class CampaignDesignWidgetPageRuleMode(@get:JsonValueAnnotation val value: 
     EXCEPT("EXCEPT"),
 }
 
+/** What opens when someone clicks the widget. */
+enum class CampaignDesignWidgetClickAction(@get:JsonValueAnnotation val value: String) {
+    WINDOW("WINDOW"),
+    PROGRAM_PAGE("PROGRAM_PAGE"),
+}
+
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 data class ParticipantLoginDesign
 constructor(
@@ -833,6 +839,7 @@ constructor(
     @JsonProperty("returnAfterDays") private val returnAfterDays: Long? = null,
     @JsonProperty("isHiddenOnMobile") private val isHiddenOnMobile: Boolean? = null,
     @JsonProperty("pageRules") private val pageRules: CampaignDesignWidgetPageRules? = null,
+    @JsonProperty("clickAction") private val clickAction: CampaignDesignWidgetClickAction? = null,
     @field:JsonAnySetter
     private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
 ) {
@@ -887,6 +894,7 @@ constructor(
         @JsonProperty("returnAfterDays") returnAfterDays: Long? = null,
         @JsonProperty("isHiddenOnMobile") isHiddenOnMobile: Boolean? = null,
         @JsonProperty("pageRules") pageRules: CampaignDesignWidgetPageRules? = null,
+        @JsonProperty("clickAction") clickAction: CampaignDesignWidgetClickAction? = null,
     ) : this(
         isShownToNewVisitors,
         isShownToParticipants,
@@ -909,6 +917,7 @@ constructor(
         returnAfterDays,
         isHiddenOnMobile,
         pageRules,
+        clickAction,
         mutableMapOf(),
     )
 
@@ -959,6 +968,8 @@ constructor(
     fun isHiddenOnMobile(): Optional<Boolean> = Optional.ofNullable(isHiddenOnMobile)
 
     fun pageRules(): Optional<CampaignDesignWidgetPageRules> = Optional.ofNullable(pageRules)
+
+    fun clickAction(): Optional<CampaignDesignWidgetClickAction> = Optional.ofNullable(clickAction)
 }
 
 /** Website widget theme colors. */
