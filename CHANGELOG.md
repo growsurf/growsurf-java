@@ -1,5 +1,23 @@
 # Changelog
 
+## [1.18.0](https://github.com/growsurf/growsurf-java/compare/v1.17.0...v1.18.0) (2026-10-19)
+
+
+### Features
+
+* support resource empty-state graphics ([c3977da](https://github.com/growsurf/growsurf-java/commit/c3977daae28a7e8dc99cf1391c6ed4c08795ad00))
+* support resource empty-state graphics ([e3da112](https://github.com/growsurf/growsurf-java/commit/e3da11242e78d2ee41d9141fe8a073e6a0472d67))
+
+
+### Bug Fixes
+
+* preserve resource design constructor compatibility ([f4ca613](https://github.com/growsurf/growsurf-java/commit/f4ca61367c924c82075184659968128ccf741f35))
+
+
+### Styles
+
+* format resource graphic configuration ([328f537](https://github.com/growsurf/growsurf-java/commit/328f537cf6a87cfa56e33bf7f9794019be06cc85))
+
 ## [1.17.0](https://github.com/growsurf/growsurf-java/compare/v1.16.0...v1.17.0) (2026-10-19)
 
 
