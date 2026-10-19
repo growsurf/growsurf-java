@@ -156,6 +156,9 @@ constructor(
 
     fun icon(): Optional<CampaignDesignResourcesIcon> = Optional.ofNullable(icon)
 
-    /** Empty-section graphic: `type` (`DEFAULT`, `IMAGE`, `NONE`), starter `key`, and `imageUrl`. */
-    fun emptyStateGraphic(): Optional<Map<String, JsonValue>> = Optional.ofNullable(emptyStateGraphic)
+    /**
+     * Empty-section graphic: `type` (`DEFAULT`, `IMAGE`, `NONE`), starter `key`, and `imageUrl`.
+     */
+    fun emptyStateGraphic(): Optional<Map<String, JsonValue>> =
+        Optional.ofNullable(emptyStateGraphic)
 }
