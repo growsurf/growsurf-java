@@ -151,4 +151,12 @@ constructor(
     fun emptyState(): Optional<String> = emptyState.getOptional("emptyState")
 
     fun icon(): Optional<CampaignDesignResourcesIcon> = Optional.ofNullable(icon)
+
+    /**
+     * Empty-section graphic: `type` (`DEFAULT`, `IMAGE`, `NONE`), starter `key`, and `imageUrl`.
+     */
+    // Preserve existing constructor and copy signatures by keeping this additive field in the open
+    // map.
+    fun emptyStateGraphic(): Optional<Map<String, JsonValue>> =
+        additionalProperties["emptyStateGraphic"]?.asObject() ?: Optional.empty()
 }
