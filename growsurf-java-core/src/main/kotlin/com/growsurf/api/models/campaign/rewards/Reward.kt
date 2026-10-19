@@ -39,6 +39,7 @@ private constructor(
     private val description: JsonField<String>,
     private val event: JsonField<RewardEvent>,
     private val imageUrl: JsonField<String>,
+    private val imageIconKey: JsonField<ImageIconKey>,
     private val isVisible: JsonField<Boolean>,
     private val limit: JsonField<Long>,
     private val limitDuration: JsonField<LimitDuration>,
@@ -77,6 +78,9 @@ private constructor(
         description: JsonField<String> = JsonMissing.of(),
         @JsonProperty("event") @ExcludeMissing event: JsonField<RewardEvent> = JsonMissing.of(),
         @JsonProperty("imageUrl") @ExcludeMissing imageUrl: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("imageIconKey")
+        @ExcludeMissing
+        imageIconKey: JsonField<ImageIconKey> = JsonMissing.of(),
         @JsonProperty("isVisible") @ExcludeMissing isVisible: JsonField<Boolean> = JsonMissing.of(),
         @JsonProperty("limit") @ExcludeMissing limit: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("limitDuration")
@@ -119,6 +123,7 @@ private constructor(
         description,
         event,
         imageUrl,
+        imageIconKey,
         isVisible,
         limit,
         limitDuration,
@@ -217,6 +222,14 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun imageUrl(): Optional<String> = imageUrl.getOptional("imageUrl")
+
+    /**
+     * The starter icon shown for the reward, or `null` when `imageUrl` is your own image.
+     *
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun imageIconKey(): Optional<ImageIconKey> = imageIconKey.getOptional("imageIconKey")
 
     /**
      * Whether the reward is enabled. When `false`, the reward is disabled: it is hidden from
@@ -414,6 +427,15 @@ private constructor(
     @JsonProperty("imageUrl") @ExcludeMissing fun _imageUrl(): JsonField<String> = imageUrl
 
     /**
+     * Returns the raw JSON value of [imageIconKey].
+     *
+     * Unlike [imageIconKey], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("imageIconKey")
+    @ExcludeMissing
+    fun _imageIconKey(): JsonField<ImageIconKey> = imageIconKey
+
+    /**
      * Returns the raw JSON value of [isVisible].
      *
      * Unlike [isVisible], this method doesn't throw if the JSON field has an unexpected type.
@@ -566,6 +588,7 @@ private constructor(
         private var description: JsonField<String> = JsonMissing.of()
         private var event: JsonField<RewardEvent> = JsonMissing.of()
         private var imageUrl: JsonField<String> = JsonMissing.of()
+        private var imageIconKey: JsonField<ImageIconKey> = JsonMissing.of()
         private var isVisible: JsonField<Boolean> = JsonMissing.of()
         private var limit: JsonField<Long> = JsonMissing.of()
         private var limitDuration: JsonField<LimitDuration> = JsonMissing.of()
@@ -593,6 +616,7 @@ private constructor(
             description = reward.description
             event = reward.event
             imageUrl = reward.imageUrl
+            imageIconKey = reward.imageIconKey
             isVisible = reward.isVisible
             limit = reward.limit
             limitDuration = reward.limitDuration
@@ -769,6 +793,25 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun imageUrl(imageUrl: JsonField<String>) = apply { this.imageUrl = imageUrl }
+
+        /** The starter icon shown for the reward, or `null` when `imageUrl` is your own image. */
+        fun imageIconKey(imageIconKey: ImageIconKey?) =
+            imageIconKey(JsonField.ofNullable(imageIconKey))
+
+        /** Alias for calling [Builder.imageIconKey] with `imageIconKey.orElse(null)`. */
+        fun imageIconKey(imageIconKey: Optional<ImageIconKey>) =
+            imageIconKey(imageIconKey.getOrNull())
+
+        /**
+         * Sets [Builder.imageIconKey] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.imageIconKey] with a well-typed [ImageIconKey] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun imageIconKey(imageIconKey: JsonField<ImageIconKey>) = apply {
+            this.imageIconKey = imageIconKey
+        }
 
         /**
          * Whether the reward is enabled. When `false`, the reward is disabled: it is hidden from
@@ -1092,6 +1135,7 @@ private constructor(
                 description,
                 event,
                 imageUrl,
+                imageIconKey,
                 isVisible,
                 limit,
                 limitDuration,
@@ -1134,6 +1178,7 @@ private constructor(
         description()
         event().ifPresent { it.validate() }
         imageUrl()
+        imageIconKey().ifPresent { it.validate() }
         isVisible()
         limit()
         limitDuration().ifPresent { it.validate() }
@@ -1175,6 +1220,7 @@ private constructor(
             (if (description.asKnown().isPresent) 1 else 0) +
             (event.asKnown().getOrNull()?.validity() ?: 0) +
             (if (imageUrl.asKnown().isPresent) 1 else 0) +
+            (imageIconKey.asKnown().getOrNull()?.validity() ?: 0) +
             (if (isVisible.asKnown().isPresent) 1 else 0) +
             (if (limit.asKnown().isPresent) 1 else 0) +
             (limitDuration.asKnown().getOrNull()?.validity() ?: 0) +
@@ -1453,6 +1499,266 @@ private constructor(
         override fun toString() = value.toString()
     }
 
+    /** The starter icon shown for the reward, or `null` when `imageUrl` is your own image. */
+    class ImageIconKey @JsonCreator private constructor(private val value: JsonField<String>) :
+        Enum {
+
+        /**
+         * Returns this class instance's raw value.
+         *
+         * This is usually only useful if this instance was deserialized from data that doesn't
+         * match any known member, and you want to know that value. For example, if the SDK is on an
+         * older version than the API, then the API may respond with new members that the SDK is
+         * unaware of.
+         */
+        @com.fasterxml.jackson.annotation.JsonValue fun _value(): JsonField<String> = value
+
+        companion object {
+
+            @JvmField val GIFT_1 = of("GIFT_1")
+
+            @JvmField val GIFT_2 = of("GIFT_2")
+
+            @JvmField val GIFT_3 = of("GIFT_3")
+
+            @JvmField val GIFT_4 = of("GIFT_4")
+
+            @JvmField val GIFT_5 = of("GIFT_5")
+
+            @JvmField val GIFT_6 = of("GIFT_6")
+
+            @JvmField val GIFT_CARD = of("GIFT_CARD")
+
+            @JvmField val CASH = of("CASH")
+
+            @JvmField val COIN = of("COIN")
+
+            @JvmField val CARD = of("CARD")
+
+            @JvmField val STAR_1 = of("STAR_1")
+
+            @JvmField val STAR_2 = of("STAR_2")
+
+            @JvmField val STAR_3 = of("STAR_3")
+
+            @JvmField val TROPHY = of("TROPHY")
+
+            @JvmField val CROWN = of("CROWN")
+
+            @JvmField val SEAL = of("SEAL")
+
+            @JvmField val HEART_1 = of("HEART_1")
+
+            @JvmField val HEART_2 = of("HEART_2")
+
+            @JvmField val TAG = of("TAG")
+
+            @JvmField val DIAMOND = of("DIAMOND")
+
+            @JvmField val CONFETTI = of("CONFETTI")
+
+            @JvmField val ROCKET = of("ROCKET")
+
+            @JvmStatic fun of(value: String) = ImageIconKey(JsonField.of(value))
+        }
+
+        /** An enum containing [ImageIconKey]'s known values. */
+        enum class Known {
+            GIFT_1,
+            GIFT_2,
+            GIFT_3,
+            GIFT_4,
+            GIFT_5,
+            GIFT_6,
+            GIFT_CARD,
+            CASH,
+            COIN,
+            CARD,
+            STAR_1,
+            STAR_2,
+            STAR_3,
+            TROPHY,
+            CROWN,
+            SEAL,
+            HEART_1,
+            HEART_2,
+            TAG,
+            DIAMOND,
+            CONFETTI,
+            ROCKET,
+        }
+
+        /**
+         * An enum containing [ImageIconKey]'s known values, as well as an [_UNKNOWN] member.
+         *
+         * An instance of [ImageIconKey] can contain an unknown value in a couple of cases:
+         * - It was deserialized from data that doesn't match any known member. For example, if the
+         *   SDK is on an older version than the API, then the API may respond with new members that
+         *   the SDK is unaware of.
+         * - It was constructed with an arbitrary value using the [of] method.
+         */
+        enum class Value {
+            GIFT_1,
+            GIFT_2,
+            GIFT_3,
+            GIFT_4,
+            GIFT_5,
+            GIFT_6,
+            GIFT_CARD,
+            CASH,
+            COIN,
+            CARD,
+            STAR_1,
+            STAR_2,
+            STAR_3,
+            TROPHY,
+            CROWN,
+            SEAL,
+            HEART_1,
+            HEART_2,
+            TAG,
+            DIAMOND,
+            CONFETTI,
+            ROCKET,
+            /**
+             * An enum member indicating that [ImageIconKey] was instantiated with an unknown value.
+             */
+            _UNKNOWN,
+        }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value, or [Value._UNKNOWN]
+         * if the class was instantiated with an unknown value.
+         *
+         * Use the [known] method instead if you're certain the value is always known or if you want
+         * to throw for the unknown case.
+         */
+        fun value(): Value =
+            when (this) {
+                GIFT_1 -> Value.GIFT_1
+                GIFT_2 -> Value.GIFT_2
+                GIFT_3 -> Value.GIFT_3
+                GIFT_4 -> Value.GIFT_4
+                GIFT_5 -> Value.GIFT_5
+                GIFT_6 -> Value.GIFT_6
+                GIFT_CARD -> Value.GIFT_CARD
+                CASH -> Value.CASH
+                COIN -> Value.COIN
+                CARD -> Value.CARD
+                STAR_1 -> Value.STAR_1
+                STAR_2 -> Value.STAR_2
+                STAR_3 -> Value.STAR_3
+                TROPHY -> Value.TROPHY
+                CROWN -> Value.CROWN
+                SEAL -> Value.SEAL
+                HEART_1 -> Value.HEART_1
+                HEART_2 -> Value.HEART_2
+                TAG -> Value.TAG
+                DIAMOND -> Value.DIAMOND
+                CONFETTI -> Value.CONFETTI
+                ROCKET -> Value.ROCKET
+                else -> Value._UNKNOWN
+            }
+
+        /**
+         * Returns an enum member corresponding to this class instance's value.
+         *
+         * Use the [value] method instead if you're uncertain the value is always known and don't
+         * want to throw for the unknown case.
+         *
+         * @throws GrowsurfInvalidDataException if this class instance's value is a not a known
+         *   member.
+         */
+        fun known(): Known =
+            when (this) {
+                GIFT_1 -> Known.GIFT_1
+                GIFT_2 -> Known.GIFT_2
+                GIFT_3 -> Known.GIFT_3
+                GIFT_4 -> Known.GIFT_4
+                GIFT_5 -> Known.GIFT_5
+                GIFT_6 -> Known.GIFT_6
+                GIFT_CARD -> Known.GIFT_CARD
+                CASH -> Known.CASH
+                COIN -> Known.COIN
+                CARD -> Known.CARD
+                STAR_1 -> Known.STAR_1
+                STAR_2 -> Known.STAR_2
+                STAR_3 -> Known.STAR_3
+                TROPHY -> Known.TROPHY
+                CROWN -> Known.CROWN
+                SEAL -> Known.SEAL
+                HEART_1 -> Known.HEART_1
+                HEART_2 -> Known.HEART_2
+                TAG -> Known.TAG
+                DIAMOND -> Known.DIAMOND
+                CONFETTI -> Known.CONFETTI
+                ROCKET -> Known.ROCKET
+                else -> throw GrowsurfInvalidDataException("Unknown ImageIconKey: $value")
+            }
+
+        /**
+         * Returns this class instance's primitive wire representation.
+         *
+         * This differs from the [toString] method because that method is primarily for debugging
+         * and generally doesn't throw.
+         *
+         * @throws GrowsurfInvalidDataException if this class instance's value does not have the
+         *   expected primitive type.
+         */
+        fun asString(): String =
+            _value().asString().orElseThrow {
+                GrowsurfInvalidDataException("Value is not a String")
+            }
+
+        private var validated: Boolean = false
+
+        /**
+         * Validates that the types of all values in this object match their expected types
+         * recursively.
+         *
+         * This method is _not_ forwards compatible with new types from the API for existing fields.
+         *
+         * @throws GrowsurfInvalidDataException if any value type in this object doesn't match its
+         *   expected type.
+         */
+        fun validate(): ImageIconKey = apply {
+            if (validated) {
+                return@apply
+            }
+
+            known()
+            validated = true
+        }
+
+        fun isValid(): Boolean =
+            try {
+                validate()
+                true
+            } catch (e: GrowsurfInvalidDataException) {
+                false
+            }
+
+        /**
+         * Returns a score indicating how many valid values are contained in this object
+         * recursively.
+         *
+         * Used for best match union deserialization.
+         */
+        @JvmSynthetic internal fun validity(): Int = if (value() == Value._UNKNOWN) 0 else 1
+
+        override fun equals(other: Any?): Boolean {
+            if (this === other) {
+                return true
+            }
+
+            return other is ImageIconKey && value == other.value
+        }
+
+        override fun hashCode() = value.hashCode()
+
+        override fun toString() = value.toString()
+    }
+
     /** Whether the reward can be earned in total, on a monthly basis, or on a yearly basis. */
     class LimitDuration @JsonCreator private constructor(private val value: JsonField<String>) :
         Enum {
@@ -1616,6 +1922,7 @@ private constructor(
             description == other.description &&
             event == other.event &&
             imageUrl == other.imageUrl &&
+            imageIconKey == other.imageIconKey &&
             isVisible == other.isVisible &&
             limit == other.limit &&
             limitDuration == other.limitDuration &&
@@ -1644,6 +1951,7 @@ private constructor(
             description,
             event,
             imageUrl,
+            imageIconKey,
             isVisible,
             limit,
             limitDuration,
@@ -1664,5 +1972,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Reward{id=$id, isUnlimited=$isUnlimited, metadata=$metadata, type=$type, commissionStructure=$commissionStructure, conversionsRequired=$conversionsRequired, couponCode=$couponCode, description=$description, event=$event, imageUrl=$imageUrl, isVisible=$isVisible, limit=$limit, limitDuration=$limitDuration, nextMilestonePrefix=$nextMilestonePrefix, nextMilestoneSuffix=$nextMilestoneSuffix, numberOfWinners=$numberOfWinners, order=$order, referralCouponCode=$referralCouponCode, referralDescription=$referralDescription, referredRewardUpfront=$referredRewardUpfront, referredValue=$referredValue, title=$title, value=$value, additionalProperties=$additionalProperties}"
+        "Reward{id=$id, isUnlimited=$isUnlimited, metadata=$metadata, type=$type, commissionStructure=$commissionStructure, conversionsRequired=$conversionsRequired, couponCode=$couponCode, description=$description, event=$event, imageUrl=$imageUrl, imageIconKey=$imageIconKey, isVisible=$isVisible, limit=$limit, limitDuration=$limitDuration, nextMilestonePrefix=$nextMilestonePrefix, nextMilestoneSuffix=$nextMilestoneSuffix, numberOfWinners=$numberOfWinners, order=$order, referralCouponCode=$referralCouponCode, referralDescription=$referralDescription, referredRewardUpfront=$referredRewardUpfront, referredValue=$referredValue, title=$title, value=$value, additionalProperties=$additionalProperties}"
 }
