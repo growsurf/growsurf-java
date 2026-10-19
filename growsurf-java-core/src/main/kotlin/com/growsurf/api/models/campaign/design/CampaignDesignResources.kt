@@ -79,8 +79,6 @@ constructor(
     @ExcludeMissing
     private val emptyState: JsonField<String> = JsonMissing.of(),
     @JsonProperty("icon") private val icon: CampaignDesignResourcesIcon? = null,
-    @JsonProperty("emptyStateGraphic")
-    private val emptyStateGraphic: Map<String, JsonValue>? = null,
     @field:JsonAnySetter
     private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
 ) {
@@ -114,7 +112,6 @@ constructor(
         @ExcludeMissing
         emptyState: JsonField<String> = JsonMissing.of(),
         @JsonProperty("icon") icon: CampaignDesignResourcesIcon? = null,
-        @JsonProperty("emptyStateGraphic") emptyStateGraphic: Map<String, JsonValue>? = null,
     ) : this(
         isPublicDisplayed,
         title,
@@ -124,7 +121,6 @@ constructor(
         copiedText,
         emptyState,
         icon,
-        emptyStateGraphic,
         mutableMapOf(),
     )
 
@@ -159,6 +155,8 @@ constructor(
     /**
      * Empty-section graphic: `type` (`DEFAULT`, `IMAGE`, `NONE`), starter `key`, and `imageUrl`.
      */
+    // Preserve existing constructor and copy signatures by keeping this additive field in the open
+    // map.
     fun emptyStateGraphic(): Optional<Map<String, JsonValue>> =
-        Optional.ofNullable(emptyStateGraphic)
+        additionalProperties["emptyStateGraphic"]?.asObject() ?: Optional.empty()
 }
