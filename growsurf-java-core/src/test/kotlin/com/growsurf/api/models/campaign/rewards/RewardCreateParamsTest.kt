@@ -20,6 +20,7 @@ internal class RewardCreateParamsTest {
             .event(RewardEvent.LEAD)
             .referralDescription("referralDescription")
             .imageUrl("imageUrl")
+            .imageIconKey(RewardCreateParams.ImageIconKey.GIFT_1)
             .isVisible(true)
             .isUnlimited(true)
             .referredRewardUpfront(true)
