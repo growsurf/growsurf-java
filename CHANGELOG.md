@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.17.0](https://github.com/growsurf/growsurf-java/compare/v1.16.0...v1.17.0) (2026-10-19)
+
+
+### Features
+
+* support reward image icon keys ([e1fb8e6](https://github.com/growsurf/growsurf-java/commit/e1fb8e6f8fd9d9dae5d8292e0ffdb8f363c73723))
+* support reward image icon keys ([688adc4](https://github.com/growsurf/growsurf-java/commit/688adc49b13bcb2db68a7b91d2a5240b7296b0d0))
+
 ## [1.16.0](https://github.com/growsurf/growsurf-java/compare/v1.15.0...v1.16.0) (2026-10-18)
 
 
