@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonValue as JsonValueAnnotation
+import com.fasterxml.jackson.core.type.TypeReference
 import com.growsurf.api.core.ExcludeMissing
 import com.growsurf.api.core.JsonField
 import com.growsurf.api.core.JsonMissing
@@ -722,6 +723,30 @@ constructor(
     fun offerPopupSubmitError(): Optional<String> =
         offerPopupSubmitError.getOptional("offerPopupSubmitError")
 
+    /**
+     * HTML shown beside the popup on its hosted offer page. The offer page fields are read from
+     * additional properties so the published constructor and `copy` signatures stay binary
+     * compatible.
+     */
+    fun offerPageDescription(): Optional<String> =
+        additionalProperties["offerPageDescription"]?.asString() ?: Optional.empty()
+
+    /** Up to 5 How it works steps on the hosted offer page. */
+    fun offerPageSteps(): Optional<List<CampaignDesignOfferPageStep>> =
+        Optional.ofNullable(
+            additionalProperties["offerPageSteps"]?.convert(
+                object : TypeReference<List<CampaignDesignOfferPageStep>>() {}
+            )
+        )
+
+    /** Up to 3 links on the hosted offer page. */
+    fun offerPageLinks(): Optional<List<CampaignDesignOfferPageLink>> =
+        Optional.ofNullable(
+            additionalProperties["offerPageLinks"]?.convert(
+                object : TypeReference<List<CampaignDesignOfferPageLink>>() {}
+            )
+        )
+
     fun isBannerEnabled(): Optional<Boolean> = Optional.ofNullable(isBannerEnabled)
 
     fun bannerText(): Optional<String> = bannerText.getOptional("bannerText")
@@ -787,6 +812,55 @@ constructor(
     fun color(): Optional<String> = color.getOptional("color")
 
     fun backgroundColor(): Optional<String> = backgroundColor.getOptional("backgroundColor")
+}
+
+/** A How it works step on the hosted offer page. */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+data class CampaignDesignOfferPageStep
+constructor(
+    @JsonProperty("text") private val text: String? = null,
+    @JsonProperty("iconKey") private val iconKey: String? = null,
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
+) {
+    @JsonCreator
+    constructor(
+        @JsonProperty("text") text: String? = null,
+        @JsonProperty("iconKey") iconKey: String? = null,
+    ) : this(text, iconKey, mutableMapOf())
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+
+    fun text(): Optional<String> = Optional.ofNullable(text)
+
+    /** Step icon key, such as `SIGNUP`, `APPROVED`, or `REWARD`. */
+    fun iconKey(): Optional<String> = Optional.ofNullable(iconKey)
+}
+
+/** A link on the hosted offer page. An empty `url` links to the Share URL. */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+data class CampaignDesignOfferPageLink
+constructor(
+    @JsonProperty("text") private val text: String? = null,
+    @JsonProperty("url") private val url: String? = null,
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
+) {
+    @JsonCreator
+    constructor(
+        @JsonProperty("text") text: String? = null,
+        @JsonProperty("url") url: String? = null,
+    ) : this(text, url, mutableMapOf())
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+
+    fun text(): Optional<String> = Optional.ofNullable(text)
+
+    fun url(): Optional<String> = Optional.ofNullable(url)
 }
 
 /** Which pages the website widget appears on. */
