@@ -202,6 +202,25 @@ constructor(
     fun serverError(): Optional<String> = Optional.ofNullable(serverError)
 
     fun invalidLink(): Optional<String> = Optional.ofNullable(invalidLink)
+
+    /*
+     * The verification fields below are read from additional properties so the published
+     * constructor and `copy` signatures stay binary compatible.
+     */
+
+    /**
+     * The heading when an identified participant verifies their email without entering an address.
+     */
+    fun verificationHeading(): Optional<String> =
+        additionalProperties["verificationHeading"]?.asString() ?: Optional.empty()
+
+    /** Explains that the sign-in link goes to the email address on the participant’s account. */
+    fun verificationDescription(): Optional<String> =
+        additionalProperties["verificationDescription"]?.asString() ?: Optional.empty()
+
+    /** The instructions shown after an identified participant requests a sign-in link. */
+    fun verificationSuccessBody(): Optional<String> =
+        additionalProperties["verificationSuccessBody"]?.asString() ?: Optional.empty()
 }
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
