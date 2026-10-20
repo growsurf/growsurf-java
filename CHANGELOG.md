@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.20.0](https://github.com/growsurf/growsurf-java/compare/v1.19.0...v1.20.0) (2026-10-20)
+
+
+### Features
+
+* add hosted offer page design and redirect fields ([7e85a2a](https://github.com/growsurf/growsurf-java/commit/7e85a2a773acf8b3a14981846f52d1b3fa7d1d1c))
+* add hosted offer page design and redirect fields ([95ed915](https://github.com/growsurf/growsurf-java/commit/95ed915de255f683e1365c03b1cf66d0351abb5d))
+
+
+### Bug Fixes
+
+* keep referred experience constructor binary compatible ([94a8a19](https://github.com/growsurf/growsurf-java/commit/94a8a19f41b1e48e83244ed70413cd1efad21f60))
+
 ## [1.19.0](https://github.com/growsurf/growsurf-java/compare/v1.18.0...v1.19.0) (2026-10-20)
 
 
