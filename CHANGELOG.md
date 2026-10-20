@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.19.0](https://github.com/growsurf/growsurf-java/compare/v1.18.0...v1.19.0) (2026-10-20)
+
+
+### Features
+
+* add identified-participant login verification copy to campaign design ([a467227](https://github.com/growsurf/growsurf-java/commit/a4672277798baa768d12cfe98077799d0b388da7))
+* add identified-participant login verification copy to campaign design ([58c6d0e](https://github.com/growsurf/growsurf-java/commit/58c6d0ea0b256244184b2813fd3b7a054b9095e5))
+
 ## [1.18.0](https://github.com/growsurf/growsurf-java/compare/v1.17.0...v1.18.0) (2026-10-19)
 
 
