@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.annotation.JsonValue as JsonValueAnnotation
+import com.fasterxml.jackson.core.type.TypeReference
 import com.growsurf.api.core.ExcludeMissing
 import com.growsurf.api.core.JsonField
 import com.growsurf.api.core.JsonMissing
@@ -515,13 +516,6 @@ constructor(
     @JsonProperty("offerPopupSubmitError")
     @ExcludeMissing
     private val offerPopupSubmitError: JsonField<String> = JsonMissing.of(),
-    @JsonProperty("offerPageDescription")
-    @ExcludeMissing
-    private val offerPageDescription: JsonField<String> = JsonMissing.of(),
-    @JsonProperty("offerPageSteps")
-    private val offerPageSteps: List<CampaignDesignOfferPageStep>? = null,
-    @JsonProperty("offerPageLinks")
-    private val offerPageLinks: List<CampaignDesignOfferPageLink>? = null,
     @JsonProperty("isBannerEnabled") private val isBannerEnabled: Boolean? = null,
     @JsonProperty("bannerText")
     @ExcludeMissing
@@ -564,7 +558,6 @@ constructor(
         offerPopupEmailPlaceholder.getOptional("offerPopupEmailPlaceholder")
         offerPopupPromoCodeCopyLabel.getOptional("offerPopupPromoCodeCopyLabel")
         offerPopupSubmitError.getOptional("offerPopupSubmitError")
-        offerPageDescription.getOptional("offerPageDescription")
         bannerText.getOptional("bannerText")
         headingText.getOptional("headingText")
         pageTitleReplacement.getOptional("pageTitleReplacement")
@@ -616,11 +609,6 @@ constructor(
         @JsonProperty("offerPopupSubmitError")
         @ExcludeMissing
         offerPopupSubmitError: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("offerPageDescription")
-        @ExcludeMissing
-        offerPageDescription: JsonField<String> = JsonMissing.of(),
-        @JsonProperty("offerPageSteps") offerPageSteps: List<CampaignDesignOfferPageStep>? = null,
-        @JsonProperty("offerPageLinks") offerPageLinks: List<CampaignDesignOfferPageLink>? = null,
         @JsonProperty("isBannerEnabled") isBannerEnabled: Boolean? = null,
         @JsonProperty("bannerText")
         @ExcludeMissing
@@ -663,9 +651,6 @@ constructor(
         offerPopupEmailPlaceholder,
         offerPopupPromoCodeCopyLabel,
         offerPopupSubmitError,
-        offerPageDescription,
-        offerPageSteps,
-        offerPageLinks,
         isBannerEnabled,
         bannerText,
         bannerPlacement,
@@ -738,17 +723,29 @@ constructor(
     fun offerPopupSubmitError(): Optional<String> =
         offerPopupSubmitError.getOptional("offerPopupSubmitError")
 
-    /** HTML shown beside the popup on its hosted offer page. */
+    /**
+     * HTML shown beside the popup on its hosted offer page. The offer page fields are read from
+     * additional properties so the published constructor and `copy` signatures stay binary
+     * compatible.
+     */
     fun offerPageDescription(): Optional<String> =
-        offerPageDescription.getOptional("offerPageDescription")
+        additionalProperties["offerPageDescription"]?.asString() ?: Optional.empty()
 
     /** Up to 5 How it works steps on the hosted offer page. */
     fun offerPageSteps(): Optional<List<CampaignDesignOfferPageStep>> =
-        Optional.ofNullable(offerPageSteps)
+        Optional.ofNullable(
+            additionalProperties["offerPageSteps"]?.convert(
+                object : TypeReference<List<CampaignDesignOfferPageStep>>() {}
+            )
+        )
 
     /** Up to 3 links on the hosted offer page. */
     fun offerPageLinks(): Optional<List<CampaignDesignOfferPageLink>> =
-        Optional.ofNullable(offerPageLinks)
+        Optional.ofNullable(
+            additionalProperties["offerPageLinks"]?.convert(
+                object : TypeReference<List<CampaignDesignOfferPageLink>>() {}
+            )
+        )
 
     fun isBannerEnabled(): Optional<Boolean> = Optional.ofNullable(isBannerEnabled)
 
