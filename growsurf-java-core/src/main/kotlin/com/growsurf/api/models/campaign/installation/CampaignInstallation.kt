@@ -170,6 +170,10 @@ private constructor(
     fun useGrowSurfHostedLinks(): Optional<Boolean> =
         configField(additionalProperties, "useGrowSurfHostedLinks")
 
+    /** Seconds the hosted offer page waits before redirecting: 5, 10, or 15. Empty means off. */
+    fun offerPageRedirectSeconds(): Optional<Long> =
+        configField(additionalProperties, "offerPageRedirectSeconds")
+
     fun allowedUrls(): Optional<List<String>> = configField(additionalProperties, "allowedUrls")
 
     fun signup(): Optional<CampaignInstallationSignup> = configField(additionalProperties, "signup")
@@ -216,6 +220,11 @@ private constructor(
 
         fun useGrowSurfHostedLinks(value: Boolean) = apply {
             additionalProperties.putConfigField("useGrowSurfHostedLinks", value)
+        }
+
+        /** 5, 10, or 15 seconds. `null` turns the hosted offer page off. */
+        fun offerPageRedirectSeconds(value: Long?) = apply {
+            additionalProperties.putConfigField("offerPageRedirectSeconds", value)
         }
 
         fun allowedUrls(value: List<String>) = apply {
@@ -280,6 +289,7 @@ private constructor(
         signupEvent().orElse(null)
         shareUrl().orElse(null)
         useGrowSurfHostedLinks().orElse(null)
+        offerPageRedirectSeconds().orElse(null)
         allowedUrls().orElse(null)
         signup().orElse(null)
         mobile().orElse(null)

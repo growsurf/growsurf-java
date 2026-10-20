@@ -515,6 +515,13 @@ constructor(
     @JsonProperty("offerPopupSubmitError")
     @ExcludeMissing
     private val offerPopupSubmitError: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("offerPageDescription")
+    @ExcludeMissing
+    private val offerPageDescription: JsonField<String> = JsonMissing.of(),
+    @JsonProperty("offerPageSteps")
+    private val offerPageSteps: List<CampaignDesignOfferPageStep>? = null,
+    @JsonProperty("offerPageLinks")
+    private val offerPageLinks: List<CampaignDesignOfferPageLink>? = null,
     @JsonProperty("isBannerEnabled") private val isBannerEnabled: Boolean? = null,
     @JsonProperty("bannerText")
     @ExcludeMissing
@@ -557,6 +564,7 @@ constructor(
         offerPopupEmailPlaceholder.getOptional("offerPopupEmailPlaceholder")
         offerPopupPromoCodeCopyLabel.getOptional("offerPopupPromoCodeCopyLabel")
         offerPopupSubmitError.getOptional("offerPopupSubmitError")
+        offerPageDescription.getOptional("offerPageDescription")
         bannerText.getOptional("bannerText")
         headingText.getOptional("headingText")
         pageTitleReplacement.getOptional("pageTitleReplacement")
@@ -608,6 +616,11 @@ constructor(
         @JsonProperty("offerPopupSubmitError")
         @ExcludeMissing
         offerPopupSubmitError: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("offerPageDescription")
+        @ExcludeMissing
+        offerPageDescription: JsonField<String> = JsonMissing.of(),
+        @JsonProperty("offerPageSteps") offerPageSteps: List<CampaignDesignOfferPageStep>? = null,
+        @JsonProperty("offerPageLinks") offerPageLinks: List<CampaignDesignOfferPageLink>? = null,
         @JsonProperty("isBannerEnabled") isBannerEnabled: Boolean? = null,
         @JsonProperty("bannerText")
         @ExcludeMissing
@@ -650,6 +663,9 @@ constructor(
         offerPopupEmailPlaceholder,
         offerPopupPromoCodeCopyLabel,
         offerPopupSubmitError,
+        offerPageDescription,
+        offerPageSteps,
+        offerPageLinks,
         isBannerEnabled,
         bannerText,
         bannerPlacement,
@@ -722,6 +738,18 @@ constructor(
     fun offerPopupSubmitError(): Optional<String> =
         offerPopupSubmitError.getOptional("offerPopupSubmitError")
 
+    /** HTML shown beside the popup on its hosted offer page. */
+    fun offerPageDescription(): Optional<String> =
+        offerPageDescription.getOptional("offerPageDescription")
+
+    /** Up to 5 How it works steps on the hosted offer page. */
+    fun offerPageSteps(): Optional<List<CampaignDesignOfferPageStep>> =
+        Optional.ofNullable(offerPageSteps)
+
+    /** Up to 3 links on the hosted offer page. */
+    fun offerPageLinks(): Optional<List<CampaignDesignOfferPageLink>> =
+        Optional.ofNullable(offerPageLinks)
+
     fun isBannerEnabled(): Optional<Boolean> = Optional.ofNullable(isBannerEnabled)
 
     fun bannerText(): Optional<String> = bannerText.getOptional("bannerText")
@@ -787,6 +815,55 @@ constructor(
     fun color(): Optional<String> = color.getOptional("color")
 
     fun backgroundColor(): Optional<String> = backgroundColor.getOptional("backgroundColor")
+}
+
+/** A How it works step on the hosted offer page. */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+data class CampaignDesignOfferPageStep
+constructor(
+    @JsonProperty("text") private val text: String? = null,
+    @JsonProperty("iconKey") private val iconKey: String? = null,
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
+) {
+    @JsonCreator
+    constructor(
+        @JsonProperty("text") text: String? = null,
+        @JsonProperty("iconKey") iconKey: String? = null,
+    ) : this(text, iconKey, mutableMapOf())
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+
+    fun text(): Optional<String> = Optional.ofNullable(text)
+
+    /** Step icon key, such as `SIGNUP`, `APPROVED`, or `REWARD`. */
+    fun iconKey(): Optional<String> = Optional.ofNullable(iconKey)
+}
+
+/** A link on the hosted offer page. An empty `url` links to the Share URL. */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+data class CampaignDesignOfferPageLink
+constructor(
+    @JsonProperty("text") private val text: String? = null,
+    @JsonProperty("url") private val url: String? = null,
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
+) {
+    @JsonCreator
+    constructor(
+        @JsonProperty("text") text: String? = null,
+        @JsonProperty("url") url: String? = null,
+    ) : this(text, url, mutableMapOf())
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+
+    fun text(): Optional<String> = Optional.ofNullable(text)
+
+    fun url(): Optional<String> = Optional.ofNullable(url)
 }
 
 /** Which pages the website widget appears on. */

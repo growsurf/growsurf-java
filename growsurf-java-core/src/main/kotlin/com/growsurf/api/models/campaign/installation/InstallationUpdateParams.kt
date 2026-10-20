@@ -149,6 +149,11 @@ private constructor(
             additionalBodyProperties["useGrowSurfHostedLinks"] = JsonValue.from(value)
         }
 
+        /** 5, 10, or 15 seconds. `null` turns the hosted offer page off. */
+        fun offerPageRedirectSeconds(value: Long?) = apply {
+            additionalBodyProperties["offerPageRedirectSeconds"] = JsonValue.from(value)
+        }
+
         fun allowedUrls(value: List<String>) = apply {
             additionalBodyProperties["allowedUrls"] = JsonValue.from(value)
         }
