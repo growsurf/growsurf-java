@@ -141,10 +141,7 @@ private constructor(
             additionalBodyProperties["notificationEmails"] = JsonValue.from(value)
         }
 
-        /**
-         * The languages your program runs in. Turning on additional languages requires the Business
-         * plan or higher.
-         */
+        /** The languages your program runs in, and whether the language picker shows flags. */
         fun languages(value: CampaignOptionsLanguages) = apply {
             additionalBodyProperties["languages"] = JsonValue.from(value)
         }

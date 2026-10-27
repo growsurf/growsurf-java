@@ -33,6 +33,7 @@ private constructor(
     private val metadata: JsonField<Metadata>,
     private val mobileInstanceId: JsonField<String>,
     private val referralStatus: JsonField<ReferralStatus>,
+    private val referredAt: JsonField<Long>,
     private val referredBy: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
@@ -57,6 +58,7 @@ private constructor(
         @JsonProperty("referralStatus")
         @ExcludeMissing
         referralStatus: JsonField<ReferralStatus> = JsonMissing.of(),
+        @JsonProperty("referredAt") @ExcludeMissing referredAt: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("referredBy") @ExcludeMissing referredBy: JsonField<String> = JsonMissing.of(),
     ) : this(
         email,
@@ -69,6 +71,7 @@ private constructor(
         metadata,
         mobileInstanceId,
         referralStatus,
+        referredAt,
         referredBy,
         mutableMapOf(),
     )
@@ -108,8 +111,10 @@ private constructor(
     fun isAffiliate(): Optional<Boolean> = isAffiliate.getOptional("isAffiliate")
 
     /**
-     * The language of the participant's portal and program emails. Must be one of the program's
-     * languages. Applied only when this request creates the participant.
+     * The language of the participant's portal and program emails. Stored when it is one of the
+     * program's languages. A regional tag maps to its language (for example, `es-MX` is stored as
+     * `es`). Any other value is ignored and the program's base language applies. Applied only when
+     * this request creates the participant.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -149,6 +154,16 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun referralStatus(): Optional<ReferralStatus> = referralStatus.getOptional("referralStatus")
+
+    /**
+     * When the participant was referred, in Unix milliseconds. Used only with a valid `referredBy`.
+     * If you omit `referralStatus`, GrowSurf compares this time with the program's referral credit
+     * window to set it. Defaults to the time of the request.
+     *
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun referredAt(): Optional<Long> = referredAt.getOptional("referredAt")
 
     /**
      * Referrer participant ID or email address.
@@ -236,6 +251,13 @@ private constructor(
     fun _referralStatus(): JsonField<ReferralStatus> = referralStatus
 
     /**
+     * Returns the raw JSON value of [referredAt].
+     *
+     * Unlike [referredAt], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("referredAt") @ExcludeMissing fun _referredAt(): JsonField<Long> = referredAt
+
+    /**
      * Returns the raw JSON value of [referredBy].
      *
      * Unlike [referredBy], this method doesn't throw if the JSON field has an unexpected type.
@@ -280,6 +302,7 @@ private constructor(
         private var metadata: JsonField<Metadata> = JsonMissing.of()
         private var mobileInstanceId: JsonField<String> = JsonMissing.of()
         private var referralStatus: JsonField<ReferralStatus> = JsonMissing.of()
+        private var referredAt: JsonField<Long> = JsonMissing.of()
         private var referredBy: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
@@ -295,6 +318,7 @@ private constructor(
             metadata = create.metadata
             mobileInstanceId = create.mobileInstanceId
             referralStatus = create.referralStatus
+            referredAt = create.referredAt
             referredBy = create.referredBy
             additionalProperties = create.additionalProperties.toMutableMap()
         }
@@ -359,8 +383,10 @@ private constructor(
         fun isAffiliate(isAffiliate: JsonField<Boolean>) = apply { this.isAffiliate = isAffiliate }
 
         /**
-         * The language of the participant's portal and program emails. Must be one of the program's
-         * languages. Applied only when this request creates the participant.
+         * The language of the participant's portal and program emails. Stored when it is one of the
+         * program's languages. A regional tag maps to its language (for example, `es-MX` is stored
+         * as `es`). Any other value is ignored and the program's base language applies. Applied
+         * only when this request creates the participant.
          */
         fun language(language: Language) = language(JsonField.of(language))
 
@@ -433,6 +459,26 @@ private constructor(
             this.referralStatus = referralStatus
         }
 
+        /**
+         * When the participant was referred, in Unix milliseconds. Used only with a valid
+         * `referredBy`. If you omit `referralStatus`, GrowSurf compares this time with the
+         * program's referral credit window to set it. Defaults to the time of the request.
+         */
+        fun referredAt(referredAt: Long?) = referredAt(JsonField.ofNullable(referredAt))
+
+        fun referredAt(referredAt: Long) = referredAt(referredAt as Long?)
+
+        /** Alias for calling [Builder.referredAt] with `referredAt.orElse(null)`. */
+        fun referredAt(referredAt: Optional<Long>) = referredAt(referredAt.getOrNull())
+
+        /**
+         * Sets [Builder.referredAt] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.referredAt] with a well-typed [Long] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun referredAt(referredAt: JsonField<Long>) = apply { this.referredAt = referredAt }
+
         /** Referrer participant ID or email address. */
         fun referredBy(referredBy: String) = referredBy(JsonField.of(referredBy))
 
@@ -488,6 +534,7 @@ private constructor(
                 metadata,
                 mobileInstanceId,
                 referralStatus,
+                referredAt,
                 referredBy,
                 additionalProperties.toMutableMap(),
             )
@@ -518,6 +565,7 @@ private constructor(
         metadata().ifPresent { it.validate() }
         mobileInstanceId()
         referralStatus().ifPresent { it.validate() }
+        referredAt()
         referredBy()
         validated = true
     }
@@ -547,6 +595,7 @@ private constructor(
             (metadata.asKnown().getOrNull()?.validity() ?: 0) +
             (if (mobileInstanceId.asKnown().isPresent) 1 else 0) +
             (referralStatus.asKnown().getOrNull()?.validity() ?: 0) +
+            (if (referredAt.asKnown().isPresent) 1 else 0) +
             (if (referredBy.asKnown().isPresent) 1 else 0)
 
     /** Shallow custom metadata object. */
@@ -814,6 +863,7 @@ private constructor(
             metadata == other.metadata &&
             mobileInstanceId == other.mobileInstanceId &&
             referralStatus == other.referralStatus &&
+            referredAt == other.referredAt &&
             referredBy == other.referredBy &&
             additionalProperties == other.additionalProperties
     }
@@ -830,6 +880,7 @@ private constructor(
             metadata,
             mobileInstanceId,
             referralStatus,
+            referredAt,
             referredBy,
             additionalProperties,
         )
@@ -838,5 +889,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Create{email=$email, fingerprint=$fingerprint, firstName=$firstName, ipAddress=$ipAddress, isAffiliate=$isAffiliate, language=$language, lastName=$lastName, metadata=$metadata, mobileInstanceId=$mobileInstanceId, referralStatus=$referralStatus, referredBy=$referredBy, additionalProperties=$additionalProperties}"
+        "Create{email=$email, fingerprint=$fingerprint, firstName=$firstName, ipAddress=$ipAddress, isAffiliate=$isAffiliate, language=$language, lastName=$lastName, metadata=$metadata, mobileInstanceId=$mobileInstanceId, referralStatus=$referralStatus, referredAt=$referredAt, referredBy=$referredBy, additionalProperties=$additionalProperties}"
 }

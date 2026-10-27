@@ -352,6 +352,20 @@ constructor(
     fun monthlyPerformanceReport(): Optional<Boolean> =
         Optional.ofNullable(monthlyPerformanceReport)
 
+    /**
+     * Referral programs only. Send recipients an email on the first of each month when manual
+     * rewards are unsent or need approval. No email is sent when there is nothing to do.
+     */
+    fun monthlyRewardReminder(): Optional<Boolean> =
+        additionalProperties["MONTHLY_REWARD_REMINDER"]?.asBoolean() ?: Optional.empty()
+
+    /**
+     * Referral programs only. Send recipients an email each Monday when manual rewards are unsent
+     * or need approval. No email is sent when there is nothing to do.
+     */
+    fun weeklyRewardReminder(): Optional<Boolean> =
+        additionalProperties["WEEKLY_REWARD_REMINDER"]?.asBoolean() ?: Optional.empty()
+
     fun newCommissionAdded(): Optional<Boolean> = Optional.ofNullable(newCommissionAdded)
 
     fun commissionAdjusted(): Optional<Boolean> = Optional.ofNullable(commissionAdjusted)
@@ -432,9 +446,8 @@ constructor(
 
     /**
      * Other languages participants can see, besides `baseLanguage`. Send the full list; send an
-     * empty list to turn them all off. Turning languages on, and any change while they are on,
-     * requires the Business plan or higher. Translations are managed in the dashboard and are kept
-     * when you remove a language.
+     * empty list to turn them all off. Translations are managed in the dashboard and are kept when
+     * you remove a language.
      */
     fun additionalLanguages(): Optional<List<Language>> = Optional.ofNullable(additionalLanguages)
 
@@ -518,10 +531,7 @@ private constructor(
     fun notificationEmails(): Optional<CampaignOptionsNotificationEmails> =
         configField(additionalProperties, "notificationEmails")
 
-    /**
-     * The languages your program runs in. Turning on additional languages requires the Business
-     * plan or higher.
-     */
+    /** The languages your program runs in, and whether the language picker shows flags. */
     fun languages(): Optional<CampaignOptionsLanguages> =
         configField(additionalProperties, "languages")
 

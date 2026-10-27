@@ -26,9 +26,8 @@ import kotlin.jvm.optionals.getOrNull
  * cannot be deleted via this endpoint. Editor-tab configuration (design, emails, options,
  * installation) is edited via the dedicated config sub-resources (e.g. `PATCH
  * /campaign/{id}/emails`), not here. Changes to participant email content are checked before
- * saving. Rejected content returns `400`; if the check is unavailable, `503` asks you to retry.
- * Neither response saves the change. A concurrent edit can return `409`; reload the program before
- * retrying.
+ * saving. Rejected content returns `400` and is not saved. A concurrent edit can return `409`;
+ * reload the program before retrying.
  */
 class CampaignUpdateParams
 private constructor(
@@ -157,7 +156,10 @@ private constructor(
          */
         fun name(name: JsonField<String>) = apply { body.name(name) }
 
-        fun companyName(companyName: String) = apply { body.companyName(companyName) }
+        fun companyName(companyName: String?) = apply { body.companyName(companyName) }
+
+        /** Alias for calling [Builder.companyName] with `companyName.orElse(null)`. */
+        fun companyName(companyName: Optional<String>) = companyName(companyName.getOrNull())
 
         /**
          * Sets [Builder.companyName] to an arbitrary JSON value.
@@ -168,9 +170,15 @@ private constructor(
          */
         fun companyName(companyName: JsonField<String>) = apply { body.companyName(companyName) }
 
-        fun companyLogoImageUrl(companyLogoImageUrl: String) = apply {
+        fun companyLogoImageUrl(companyLogoImageUrl: String?) = apply {
             body.companyLogoImageUrl(companyLogoImageUrl)
         }
+
+        /**
+         * Alias for calling [Builder.companyLogoImageUrl] with `companyLogoImageUrl.orElse(null)`.
+         */
+        fun companyLogoImageUrl(companyLogoImageUrl: Optional<String>) =
+            companyLogoImageUrl(companyLogoImageUrl.getOrNull())
 
         /**
          * Sets [Builder.companyLogoImageUrl] to an arbitrary JSON value.
@@ -475,7 +483,10 @@ private constructor(
              */
             fun name(name: JsonField<String>) = apply { this.name = name }
 
-            fun companyName(companyName: String) = companyName(JsonField.of(companyName))
+            fun companyName(companyName: String?) = companyName(JsonField.ofNullable(companyName))
+
+            /** Alias for calling [Builder.companyName] with `companyName.orElse(null)`. */
+            fun companyName(companyName: Optional<String>) = companyName(companyName.getOrNull())
 
             /**
              * Sets [Builder.companyName] to an arbitrary JSON value.
@@ -488,8 +499,15 @@ private constructor(
                 this.companyName = companyName
             }
 
-            fun companyLogoImageUrl(companyLogoImageUrl: String) =
-                companyLogoImageUrl(JsonField.of(companyLogoImageUrl))
+            fun companyLogoImageUrl(companyLogoImageUrl: String?) =
+                companyLogoImageUrl(JsonField.ofNullable(companyLogoImageUrl))
+
+            /**
+             * Alias for calling [Builder.companyLogoImageUrl] with
+             * `companyLogoImageUrl.orElse(null)`.
+             */
+            fun companyLogoImageUrl(companyLogoImageUrl: Optional<String>) =
+                companyLogoImageUrl(companyLogoImageUrl.getOrNull())
 
             /**
              * Sets [Builder.companyLogoImageUrl] to an arbitrary JSON value.

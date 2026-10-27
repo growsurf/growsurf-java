@@ -771,6 +771,13 @@ constructor(
     fun isHeadingClickableToSignupUrl(): Optional<Boolean> =
         Optional.ofNullable(isHeadingClickableToSignupUrl)
 
+    /**
+     * Whether referred visitors see `pageTitleReplacement` as the browser tab title. Programs that
+     * never set it read back `false`.
+     */
+    fun isPageTitleReplacementActive(): Optional<Boolean> =
+        additionalProperties["isPageTitleReplacementActive"]?.asBoolean() ?: Optional.empty()
+
     fun pageTitleReplacement(): Optional<String> =
         pageTitleReplacement.getOptional("pageTitleReplacement")
 

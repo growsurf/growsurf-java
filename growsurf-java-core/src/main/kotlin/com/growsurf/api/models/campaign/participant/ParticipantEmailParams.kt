@@ -45,15 +45,18 @@ private constructor(
     fun body(): Optional<String> = body.body()
 
     /**
-     * The program email template to trigger (template mode). Valid template types differ by program
-     * type: referral programs and affiliate programs each expose their own set. Send the camelCase
-     * key. The template's `isEnabled` setting only controls automatic sends. Referral programs:
-     * welcomeNonReferred, referralLinkViewedFirstTime, referralLinkUsed, referredSignup,
-     * welcomeReferred, goalAchieved, campaignEndedWinners, campaignEndedNonWinners,
-     * progressUpdateMonthly. Affiliate programs: welcomeNonReferred, referralLinkViewedFirstTime,
-     * referredSignup, commissionGenerated, commissionAdjusted, payoutPending, payoutSentSuccess,
-     * progressUpdateMonthly. `welcomeNonReferred` can only be sent to advocates or approved,
-     * enrolled affiliates in a program that has not ended.
+     * The program email template to trigger (template mode). Send the camelCase email-type key. The
+     * available types depend on the program type; the template's `isEnabled` setting controls
+     * automatic sends only. This endpoint can trigger any sendable template. System and
+     * transactional types (login link, payout destination confirmation, tax notifications), the
+     * invite email, and the follow-up reminder cannot be sent. Referral programs:
+     * `welcomeNonReferred`, `referralLinkViewedFirstTime`, `referralLinkUsed`, `referredSignup`,
+     * `welcomeReferred`, `offerClaimed`, `goalAchieved`, `campaignEndedWinners`,
+     * `campaignEndedNonWinners`, `progressUpdateMonthly`. Affiliate programs: `welcomeNonReferred`,
+     * `referralLinkViewedFirstTime`, `referredSignup`, `offerClaimed`, `commissionGenerated`,
+     * `commissionAdjusted`, `payoutPending`, `payoutSentSuccess`, `progressUpdateMonthly`.
+     * `welcomeNonReferred` can only be sent to advocates or approved, enrolled affiliates in a
+     * program that has not ended.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -180,15 +183,18 @@ private constructor(
         fun body(body: JsonField<String>) = apply { this.body.body(body) }
 
         /**
-         * The program email template to trigger (template mode). Valid template types differ by
-         * program type: referral programs and affiliate programs each expose their own set. Send
-         * the camelCase key. The template's `isEnabled` setting only controls automatic sends.
-         * Referral programs: welcomeNonReferred, referralLinkViewedFirstTime, referralLinkUsed,
-         * referredSignup, welcomeReferred, goalAchieved, campaignEndedWinners,
-         * campaignEndedNonWinners, progressUpdateMonthly. Affiliate programs: welcomeNonReferred,
-         * referralLinkViewedFirstTime, referredSignup, commissionGenerated, commissionAdjusted,
-         * payoutPending, payoutSentSuccess, progressUpdateMonthly. `welcomeNonReferred` can only be
-         * sent to advocates or approved, enrolled affiliates in a program that has not ended.
+         * The program email template to trigger (template mode). Send the camelCase email-type key.
+         * The available types depend on the program type; the template's `isEnabled` setting
+         * controls automatic sends only. This endpoint can trigger any sendable template. System
+         * and transactional types (login link, payout destination confirmation, tax notifications),
+         * the invite email, and the follow-up reminder cannot be sent. Referral programs:
+         * `welcomeNonReferred`, `referralLinkViewedFirstTime`, `referralLinkUsed`,
+         * `referredSignup`, `welcomeReferred`, `offerClaimed`, `goalAchieved`,
+         * `campaignEndedWinners`, `campaignEndedNonWinners`, `progressUpdateMonthly`. Affiliate
+         * programs: `welcomeNonReferred`, `referralLinkViewedFirstTime`, `referredSignup`,
+         * `offerClaimed`, `commissionGenerated`, `commissionAdjusted`, `payoutPending`,
+         * `payoutSentSuccess`, `progressUpdateMonthly`. `welcomeNonReferred` can only be sent to
+         * advocates or approved, enrolled affiliates in a program that has not ended.
          */
         fun emailType(emailType: String) = apply { body.emailType(emailType) }
 
@@ -415,15 +421,18 @@ private constructor(
         fun body(): Optional<String> = body.getOptional("body")
 
         /**
-         * The program email template to trigger (template mode). Valid template types differ by
-         * program type: referral programs and affiliate programs each expose their own set. Send
-         * the camelCase key. The template's `isEnabled` setting only controls automatic sends.
-         * Referral programs: welcomeNonReferred, referralLinkViewedFirstTime, referralLinkUsed,
-         * referredSignup, welcomeReferred, goalAchieved, campaignEndedWinners,
-         * campaignEndedNonWinners, progressUpdateMonthly. Affiliate programs: welcomeNonReferred,
-         * referralLinkViewedFirstTime, referredSignup, commissionGenerated, commissionAdjusted,
-         * payoutPending, payoutSentSuccess, progressUpdateMonthly. `welcomeNonReferred` can only be
-         * sent to advocates or approved, enrolled affiliates in a program that has not ended.
+         * The program email template to trigger (template mode). Send the camelCase email-type key.
+         * The available types depend on the program type; the template's `isEnabled` setting
+         * controls automatic sends only. This endpoint can trigger any sendable template. System
+         * and transactional types (login link, payout destination confirmation, tax notifications),
+         * the invite email, and the follow-up reminder cannot be sent. Referral programs:
+         * `welcomeNonReferred`, `referralLinkViewedFirstTime`, `referralLinkUsed`,
+         * `referredSignup`, `welcomeReferred`, `offerClaimed`, `goalAchieved`,
+         * `campaignEndedWinners`, `campaignEndedNonWinners`, `progressUpdateMonthly`. Affiliate
+         * programs: `welcomeNonReferred`, `referralLinkViewedFirstTime`, `referredSignup`,
+         * `offerClaimed`, `commissionGenerated`, `commissionAdjusted`, `payoutPending`,
+         * `payoutSentSuccess`, `progressUpdateMonthly`. `welcomeNonReferred` can only be sent to
+         * advocates or approved, enrolled affiliates in a program that has not ended.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -528,15 +537,18 @@ private constructor(
             fun body(body: JsonField<String>) = apply { this.body = body }
 
             /**
-             * The program email template to trigger (template mode). Valid template types differ by
-             * program type: referral programs and affiliate programs each expose their own set.
-             * Send the camelCase key. The template's `isEnabled` setting only controls automatic
-             * sends. Referral programs: welcomeNonReferred, referralLinkViewedFirstTime,
-             * referralLinkUsed, referredSignup, welcomeReferred, goalAchieved,
-             * campaignEndedWinners, campaignEndedNonWinners, progressUpdateMonthly. Affiliate
-             * programs: welcomeNonReferred, referralLinkViewedFirstTime, referredSignup,
-             * commissionGenerated, commissionAdjusted, payoutPending, payoutSentSuccess,
-             * progressUpdateMonthly. `welcomeNonReferred` can only be sent to advocates or
+             * The program email template to trigger (template mode). Send the camelCase email-type
+             * key. The available types depend on the program type; the template's `isEnabled`
+             * setting controls automatic sends only. This endpoint can trigger any sendable
+             * template. System and transactional types (login link, payout destination
+             * confirmation, tax notifications), the invite email, and the follow-up reminder cannot
+             * be sent. Referral programs: `welcomeNonReferred`, `referralLinkViewedFirstTime`,
+             * `referralLinkUsed`, `referredSignup`, `welcomeReferred`, `offerClaimed`,
+             * `goalAchieved`, `campaignEndedWinners`, `campaignEndedNonWinners`,
+             * `progressUpdateMonthly`. Affiliate programs: `welcomeNonReferred`,
+             * `referralLinkViewedFirstTime`, `referredSignup`, `offerClaimed`,
+             * `commissionGenerated`, `commissionAdjusted`, `payoutPending`, `payoutSentSuccess`,
+             * `progressUpdateMonthly`. `welcomeNonReferred` can only be sent to advocates or
              * approved, enrolled affiliates in a program that has not ended.
              */
             fun emailType(emailType: String) = emailType(JsonField.of(emailType))

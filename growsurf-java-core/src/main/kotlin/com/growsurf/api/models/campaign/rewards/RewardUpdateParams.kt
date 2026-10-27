@@ -28,8 +28,8 @@ import kotlin.jvm.optionals.getOrNull
 /**
  * Updates an existing campaign reward (`CampaignReward`). The reward `type` is immutable and cannot
  * be changed. Changes to participant email content are checked before saving. Rejected content
- * returns `400`; if the check is unavailable, `503` asks you to retry. Neither response saves the
- * change. A concurrent edit can return `409`; reload the program before retrying.
+ * returns `400` and is not saved. A concurrent edit can return `409`; reload the program before
+ * retrying.
  */
 class RewardUpdateParams
 private constructor(

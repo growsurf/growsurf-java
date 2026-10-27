@@ -112,6 +112,10 @@ private constructor(
     )
 
     /**
+     * Fixed commission amount in the currency's smallest denomination, used when `type` is `FIXED`.
+     * The maximum is `100000000` (1,000,000.00) for USD, EUR, and GBP. `null` for percentage-based
+     * commissions.
+     *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -476,6 +480,11 @@ private constructor(
             additionalProperties = commissionStructure.additionalProperties.toMutableMap()
         }
 
+        /**
+         * Fixed commission amount in the currency's smallest denomination, used when `type` is
+         * `FIXED`. The maximum is `100000000` (1,000,000.00) for USD, EUR, and GBP. `null` for
+         * percentage-based commissions.
+         */
         fun amount(amount: Long?) = amount(JsonField.ofNullable(amount))
 
         /**

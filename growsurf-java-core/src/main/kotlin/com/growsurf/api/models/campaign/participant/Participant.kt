@@ -57,6 +57,7 @@ private constructor(
     private val paypalEmailAddress: JsonField<String>,
     private val prevMonthlyRank: JsonField<Long>,
     private val prevMonthlyReferralCount: JsonField<Long>,
+    private val referralLeadQualifiedAt: JsonField<Long>,
     private val referrals: JsonField<List<String>>,
     private val referralSource: JsonField<ReferralSource>,
     private val referralStatus: JsonField<ReferralStatus>,
@@ -144,6 +145,9 @@ private constructor(
         @JsonProperty("prevMonthlyReferralCount")
         @ExcludeMissing
         prevMonthlyReferralCount: JsonField<Long> = JsonMissing.of(),
+        @JsonProperty("referralLeadQualifiedAt")
+        @ExcludeMissing
+        referralLeadQualifiedAt: JsonField<Long> = JsonMissing.of(),
         @JsonProperty("referrals")
         @ExcludeMissing
         referrals: JsonField<List<String>> = JsonMissing.of(),
@@ -209,6 +213,7 @@ private constructor(
         paypalEmailAddress,
         prevMonthlyRank,
         prevMonthlyReferralCount,
+        referralLeadQualifiedAt,
         referrals,
         referralSource,
         referralStatus,
@@ -453,6 +458,17 @@ private constructor(
      */
     fun prevMonthlyReferralCount(): Optional<Long> =
         prevMonthlyReferralCount.getOptional("prevMonthlyReferralCount")
+
+    /**
+     * When this referred signup counted as a lead for the referrer, in Unix milliseconds. Set only
+     * when the program's `referralTrigger` is `CUSTOM`. Lead-event Campaign Rewards and commissions
+     * use it.
+     *
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun referralLeadQualifiedAt(): Optional<Long> =
+        referralLeadQualifiedAt.getOptional("referralLeadQualifiedAt")
 
     /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -793,6 +809,16 @@ private constructor(
     fun _prevMonthlyReferralCount(): JsonField<Long> = prevMonthlyReferralCount
 
     /**
+     * Returns the raw JSON value of [referralLeadQualifiedAt].
+     *
+     * Unlike [referralLeadQualifiedAt], this method doesn't throw if the JSON field has an
+     * unexpected type.
+     */
+    @JsonProperty("referralLeadQualifiedAt")
+    @ExcludeMissing
+    fun _referralLeadQualifiedAt(): JsonField<Long> = referralLeadQualifiedAt
+
+    /**
      * Returns the raw JSON value of [referrals].
      *
      * Unlike [referrals], this method doesn't throw if the JSON field has an unexpected type.
@@ -955,6 +981,7 @@ private constructor(
         private var paypalEmailAddress: JsonField<String> = JsonMissing.of()
         private var prevMonthlyRank: JsonField<Long> = JsonMissing.of()
         private var prevMonthlyReferralCount: JsonField<Long> = JsonMissing.of()
+        private var referralLeadQualifiedAt: JsonField<Long> = JsonMissing.of()
         private var referrals: JsonField<MutableList<String>>? = null
         private var referralSource: JsonField<ReferralSource> = JsonMissing.of()
         private var referralStatus: JsonField<ReferralStatus> = JsonMissing.of()
@@ -1003,6 +1030,7 @@ private constructor(
             paypalEmailAddress = participant.paypalEmailAddress
             prevMonthlyRank = participant.prevMonthlyRank
             prevMonthlyReferralCount = participant.prevMonthlyReferralCount
+            referralLeadQualifiedAt = participant.referralLeadQualifiedAt
             referrals = participant.referrals.map { it.toMutableList() }
             referralSource = participant.referralSource
             referralStatus = participant.referralStatus
@@ -1511,6 +1539,35 @@ private constructor(
             this.prevMonthlyReferralCount = prevMonthlyReferralCount
         }
 
+        /**
+         * When this referred signup counted as a lead for the referrer, in Unix milliseconds. Set
+         * only when the program's `referralTrigger` is `CUSTOM`. Lead-event Campaign Rewards and
+         * commissions use it.
+         */
+        fun referralLeadQualifiedAt(referralLeadQualifiedAt: Long?) =
+            referralLeadQualifiedAt(JsonField.ofNullable(referralLeadQualifiedAt))
+
+        fun referralLeadQualifiedAt(referralLeadQualifiedAt: Long) =
+            referralLeadQualifiedAt(referralLeadQualifiedAt as Long?)
+
+        /**
+         * Alias for calling [Builder.referralLeadQualifiedAt] with
+         * `referralLeadQualifiedAt.orElse(null)`.
+         */
+        fun referralLeadQualifiedAt(referralLeadQualifiedAt: Optional<Long>) =
+            referralLeadQualifiedAt(referralLeadQualifiedAt.getOrNull())
+
+        /**
+         * Sets [Builder.referralLeadQualifiedAt] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.referralLeadQualifiedAt] with a well-typed [Long] value
+         * instead. This method is primarily for setting the field to an undocumented or not yet
+         * supported value.
+         */
+        fun referralLeadQualifiedAt(referralLeadQualifiedAt: JsonField<Long>) = apply {
+            this.referralLeadQualifiedAt = referralLeadQualifiedAt
+        }
+
         fun referrals(referrals: List<String>) = referrals(JsonField.of(referrals))
 
         /**
@@ -1752,6 +1809,7 @@ private constructor(
                 paypalEmailAddress,
                 prevMonthlyRank,
                 prevMonthlyReferralCount,
+                referralLeadQualifiedAt,
                 (referrals ?: JsonMissing.of()).map { it.toImmutable() },
                 referralSource,
                 referralStatus,
@@ -1815,6 +1873,7 @@ private constructor(
         paypalEmailAddress()
         prevMonthlyRank()
         prevMonthlyReferralCount()
+        referralLeadQualifiedAt()
         referrals()
         referralSource().ifPresent { it.validate() }
         referralStatus().ifPresent { it.validate() }
@@ -1877,6 +1936,7 @@ private constructor(
             (if (paypalEmailAddress.asKnown().isPresent) 1 else 0) +
             (if (prevMonthlyRank.asKnown().isPresent) 1 else 0) +
             (if (prevMonthlyReferralCount.asKnown().isPresent) 1 else 0) +
+            (if (referralLeadQualifiedAt.asKnown().isPresent) 1 else 0) +
             (referrals.asKnown().getOrNull()?.size ?: 0) +
             (referralSource.asKnown().getOrNull()?.validity() ?: 0) +
             (referralStatus.asKnown().getOrNull()?.validity() ?: 0) +
@@ -4069,6 +4129,7 @@ private constructor(
             paypalEmailAddress == other.paypalEmailAddress &&
             prevMonthlyRank == other.prevMonthlyRank &&
             prevMonthlyReferralCount == other.prevMonthlyReferralCount &&
+            referralLeadQualifiedAt == other.referralLeadQualifiedAt &&
             referrals == other.referrals &&
             referralSource == other.referralSource &&
             referralStatus == other.referralStatus &&
@@ -4118,6 +4179,7 @@ private constructor(
             paypalEmailAddress,
             prevMonthlyRank,
             prevMonthlyReferralCount,
+            referralLeadQualifiedAt,
             referrals,
             referralSource,
             referralStatus,
@@ -4136,5 +4198,5 @@ private constructor(
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "Participant{id=$id, email=$email, monthlyRank=$monthlyRank, monthlyReferralCount=$monthlyReferralCount, rank=$rank, referralCount=$referralCount, rewards=$rewards, shareUrl=$shareUrl, affiliateEnrollmentSource=$affiliateEnrollmentSource, affiliateStatus=$affiliateStatus, allMatchingFraudsters=$allMatchingFraudsters, createdAt=$createdAt, fingerprint=$fingerprint, firstName=$firstName, fraudReasonCode=$fraudReasonCode, fraudRiskLevel=$fraudRiskLevel, impressionCount=$impressionCount, inviteCount=$inviteCount, ipAddress=$ipAddress, isAffiliate=$isAffiliate, isNew=$isNew, isWinner=$isWinner, language=$language, lastName=$lastName, leadCount=$leadCount, metadata=$metadata, mobileInstanceId=$mobileInstanceId, monthlyReferrals=$monthlyReferrals, notes=$notes, payoutSettings=$payoutSettings, paypalEmailAddress=$paypalEmailAddress, prevMonthlyRank=$prevMonthlyRank, prevMonthlyReferralCount=$prevMonthlyReferralCount, referrals=$referrals, referralSource=$referralSource, referralStatus=$referralStatus, referredBy=$referredBy, referrer=$referrer, shareCount=$shareCount, uniqueImpressionCount=$uniqueImpressionCount, unreadCommissionsCount=$unreadCommissionsCount, unreadPayoutsCount=$unreadPayoutsCount, unsubscribed=$unsubscribed, vanityKeys=$vanityKeys, additionalProperties=$additionalProperties}"
+        "Participant{id=$id, email=$email, monthlyRank=$monthlyRank, monthlyReferralCount=$monthlyReferralCount, rank=$rank, referralCount=$referralCount, rewards=$rewards, shareUrl=$shareUrl, affiliateEnrollmentSource=$affiliateEnrollmentSource, affiliateStatus=$affiliateStatus, allMatchingFraudsters=$allMatchingFraudsters, createdAt=$createdAt, fingerprint=$fingerprint, firstName=$firstName, fraudReasonCode=$fraudReasonCode, fraudRiskLevel=$fraudRiskLevel, impressionCount=$impressionCount, inviteCount=$inviteCount, ipAddress=$ipAddress, isAffiliate=$isAffiliate, isNew=$isNew, isWinner=$isWinner, language=$language, lastName=$lastName, leadCount=$leadCount, metadata=$metadata, mobileInstanceId=$mobileInstanceId, monthlyReferrals=$monthlyReferrals, notes=$notes, payoutSettings=$payoutSettings, paypalEmailAddress=$paypalEmailAddress, prevMonthlyRank=$prevMonthlyRank, prevMonthlyReferralCount=$prevMonthlyReferralCount, referralLeadQualifiedAt=$referralLeadQualifiedAt, referrals=$referrals, referralSource=$referralSource, referralStatus=$referralStatus, referredBy=$referredBy, referrer=$referrer, shareCount=$shareCount, uniqueImpressionCount=$uniqueImpressionCount, unreadCommissionsCount=$unreadCommissionsCount, unreadPayoutsCount=$unreadPayoutsCount, unsubscribed=$unsubscribed, vanityKeys=$vanityKeys, additionalProperties=$additionalProperties}"
 }

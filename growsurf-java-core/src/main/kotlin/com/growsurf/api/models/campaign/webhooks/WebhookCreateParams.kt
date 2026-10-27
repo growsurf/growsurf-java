@@ -22,7 +22,12 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Adds a webhook to the program. */
+/**
+ * Adds a webhook to the program. A program can have only one saved Bask Health webhook across all
+ * `bask.ninja` hosts and paths, including disabled webhooks. A second Bask Health webhook returns
+ * `400`. A concurrent change to webhook settings can return `409`; reload the webhooks before
+ * retrying.
+ */
 class WebhookCreateParams
 private constructor(
     private val id: String?,

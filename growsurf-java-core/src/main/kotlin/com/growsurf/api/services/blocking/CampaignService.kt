@@ -117,9 +117,8 @@ interface CampaignService {
      * `urlId`, and `currencyISO` are immutable. Editor-tab configuration (design, emails, options,
      * installation) is edited via the dedicated config sub-resources, not here. The program cannot
      * be deleted via this endpoint. Changes to participant email content are checked before saving.
-     * Rejected content returns `400`; if the check is unavailable, `503` asks you to retry. Neither
-     * response saves the change. A concurrent edit can return `409`; reload the program before
-     * retrying.
+     * Rejected content returns `400` and is not saved. A concurrent edit can return `409`; reload
+     * the program before retrying.
      */
     fun update(id: String): Campaign = update(id, CampaignUpdateParams.none())
 

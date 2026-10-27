@@ -74,21 +74,33 @@ private constructor(
 
     /**
      * What the program is for, which seeds the share buttons and the starter rewards that suit that
-     * audience. Programs whose participants refer other businesses (`CUSTOMERS`, `USERS`,
+     * audience. Set it when you create the program; it is not accepted on update.
+     *
+     * Programs whose participants refer other businesses (`CUSTOMERS`, `USERS`,
      * `B2B_SAAS_SELF_SERVICE`, `B2B_SAAS_ENTERPRISE`, `HEALTHCARE_PROVIDERS`) start with the
-     * LinkedIn share button visible; consumer, financial, education, insurance, telehealth,
+     * LinkedIn share button visible. Consumer, financial, education, insurance, telehealth,
      * newsletter, and waitlist programs (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`,
      * `ONLINE_EDUCATION`, `INSURANCE`, `ONLINE_INSURANCE`, `TELEHEALTH`, `SUBSCRIBERS`, `WAITLIST`)
-     * start with it hidden, and on a referral program each goal also sets the rest of its share
-     * buttons to suit that audience. When you create a referral program without `rewards`, the goal
-     * also decides the starter rewards: most goals get one double-sided reward,
-     * `HEALTHCARE_PROVIDERS` gets a single-sided reward, `SUBSCRIBERS` gets a four-step milestone
-     * ladder, and `WAITLIST` gets a leaderboard. Every one arrives switched off with a placeholder
-     * name, so the program awards nothing until you set the amount and turn one on. `TELEHEALTH` is
-     * for consumer telehealth and wellness subscriptions; `HEALTHCARE_PROVIDERS` is for provider
-     * networks and clinician-facing products. `INSURANCE` replaces `ONLINE_INSURANCE`, which is
-     * still accepted. Omit it and every share button keeps its standard default. Set only when the
-     * program is created; it is not accepted on update.
+     * start with it hidden. On a referral program, each goal also sets the rest of its share
+     * buttons to suit that audience — a telehealth program keeps the public feeds off, a consumer
+     * subscription turns Pinterest and Reddit on. An affiliate program has its own share defaults,
+     * so only the LinkedIn default above applies to one. Omit `goal` and every share button keeps
+     * its standard default. Change any of it afterward with `PATCH /campaign/{id}/design`.
+     *
+     * When you create a referral program without `rewards`, the goal also decides the starter
+     * rewards: most goals get one double-sided reward, `HEALTHCARE_PROVIDERS` gets a single-sided
+     * reward, `SUBSCRIBERS` gets a four-step milestone ladder, and `WAITLIST` gets a leaderboard.
+     * Every starter reward arrives switched off with a placeholder name, so the program awards
+     * nothing until you set the amount and turn one on.
+     *
+     * `TELEHEALTH` is for consumer telehealth and wellness subscriptions, where patients refer
+     * friends. `HEALTHCARE_PROVIDERS` is for provider networks and clinician-facing products, where
+     * practices refer peer practices. A `TELEHEALTH` program also starts with
+     * `useGrowSurfHostedLinks` on, so each referral link is a GrowSurf-hosted link; turn it off
+     * with `PATCH /campaign/{id}/installation`. It also starts with `offerPageRedirectSeconds` set
+     * to `10` and with starter offer-page content (`referredExperience.offerPageDescription` and
+     * `offerPageSteps`). Values you send in the create request are kept. `INSURANCE` replaces
+     * `ONLINE_INSURANCE`, which is still accepted and behaves identically.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -226,7 +238,10 @@ private constructor(
          */
         fun name(name: JsonField<String>) = apply { body.name(name) }
 
-        fun companyName(companyName: String) = apply { body.companyName(companyName) }
+        fun companyName(companyName: String?) = apply { body.companyName(companyName) }
+
+        /** Alias for calling [Builder.companyName] with `companyName.orElse(null)`. */
+        fun companyName(companyName: Optional<String>) = companyName(companyName.getOrNull())
 
         /**
          * Sets [Builder.companyName] to an arbitrary JSON value.
@@ -237,9 +252,15 @@ private constructor(
          */
         fun companyName(companyName: JsonField<String>) = apply { body.companyName(companyName) }
 
-        fun companyLogoImageUrl(companyLogoImageUrl: String) = apply {
+        fun companyLogoImageUrl(companyLogoImageUrl: String?) = apply {
             body.companyLogoImageUrl(companyLogoImageUrl)
         }
+
+        /**
+         * Alias for calling [Builder.companyLogoImageUrl] with `companyLogoImageUrl.orElse(null)`.
+         */
+        fun companyLogoImageUrl(companyLogoImageUrl: Optional<String>) =
+            companyLogoImageUrl(companyLogoImageUrl.getOrNull())
 
         /**
          * Sets [Builder.companyLogoImageUrl] to an arbitrary JSON value.
@@ -269,22 +290,35 @@ private constructor(
 
         /**
          * What the program is for, which seeds the share buttons and the starter rewards that suit
-         * that audience. Programs whose participants refer other businesses (`CUSTOMERS`, `USERS`,
+         * that audience. Set it when you create the program; it is not accepted on update.
+         *
+         * Programs whose participants refer other businesses (`CUSTOMERS`, `USERS`,
          * `B2B_SAAS_SELF_SERVICE`, `B2B_SAAS_ENTERPRISE`, `HEALTHCARE_PROVIDERS`) start with the
-         * LinkedIn share button visible; consumer, financial, education, insurance, telehealth,
+         * LinkedIn share button visible. Consumer, financial, education, insurance, telehealth,
          * newsletter, and waitlist programs (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`,
          * `ONLINE_EDUCATION`, `INSURANCE`, `ONLINE_INSURANCE`, `TELEHEALTH`, `SUBSCRIBERS`,
-         * `WAITLIST`) start with it hidden, and on a referral program each goal also sets the rest
-         * of its share buttons to suit that audience. When you create a referral program without
-         * `rewards`, the goal also decides the starter rewards: most goals get one double-sided
-         * reward, `HEALTHCARE_PROVIDERS` gets a single-sided reward, `SUBSCRIBERS` gets a four-step
-         * milestone ladder, and `WAITLIST` gets a leaderboard. Every one arrives switched off with
-         * a placeholder name, so the program awards nothing until you set the amount and turn one
-         * on. `TELEHEALTH` is for consumer telehealth and wellness subscriptions;
-         * `HEALTHCARE_PROVIDERS` is for provider networks and clinician-facing products.
-         * `INSURANCE` replaces `ONLINE_INSURANCE`, which is still accepted. Omit it and every share
-         * button keeps its standard default. Set only when the program is created; it is not
-         * accepted on update.
+         * `WAITLIST`) start with it hidden. On a referral program, each goal also sets the rest of
+         * its share buttons to suit that audience — a telehealth program keeps the public feeds
+         * off, a consumer subscription turns Pinterest and Reddit on. An affiliate program has its
+         * own share defaults, so only the LinkedIn default above applies to one. Omit `goal` and
+         * every share button keeps its standard default. Change any of it afterward with `PATCH
+         * /campaign/{id}/design`.
+         *
+         * When you create a referral program without `rewards`, the goal also decides the starter
+         * rewards: most goals get one double-sided reward, `HEALTHCARE_PROVIDERS` gets a
+         * single-sided reward, `SUBSCRIBERS` gets a four-step milestone ladder, and `WAITLIST` gets
+         * a leaderboard. Every starter reward arrives switched off with a placeholder name, so the
+         * program awards nothing until you set the amount and turn one on.
+         *
+         * `TELEHEALTH` is for consumer telehealth and wellness subscriptions, where patients refer
+         * friends. `HEALTHCARE_PROVIDERS` is for provider networks and clinician-facing products,
+         * where practices refer peer practices. A `TELEHEALTH` program also starts with
+         * `useGrowSurfHostedLinks` on, so each referral link is a GrowSurf-hosted link; turn it off
+         * with `PATCH /campaign/{id}/installation`. It also starts with `offerPageRedirectSeconds`
+         * set to `10` and with starter offer-page content
+         * (`referredExperience.offerPageDescription` and `offerPageSteps`). Values you send in the
+         * create request are kept. `INSURANCE` replaces `ONLINE_INSURANCE`, which is still accepted
+         * and behaves identically.
          */
         fun goal(goal: Goal) = apply { body.goal(goal) }
 
@@ -543,22 +577,35 @@ private constructor(
 
         /**
          * What the program is for, which seeds the share buttons and the starter rewards that suit
-         * that audience. Programs whose participants refer other businesses (`CUSTOMERS`, `USERS`,
+         * that audience. Set it when you create the program; it is not accepted on update.
+         *
+         * Programs whose participants refer other businesses (`CUSTOMERS`, `USERS`,
          * `B2B_SAAS_SELF_SERVICE`, `B2B_SAAS_ENTERPRISE`, `HEALTHCARE_PROVIDERS`) start with the
-         * LinkedIn share button visible; consumer, financial, education, insurance, telehealth,
+         * LinkedIn share button visible. Consumer, financial, education, insurance, telehealth,
          * newsletter, and waitlist programs (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`,
          * `ONLINE_EDUCATION`, `INSURANCE`, `ONLINE_INSURANCE`, `TELEHEALTH`, `SUBSCRIBERS`,
-         * `WAITLIST`) start with it hidden, and on a referral program each goal also sets the rest
-         * of its share buttons to suit that audience. When you create a referral program without
-         * `rewards`, the goal also decides the starter rewards: most goals get one double-sided
-         * reward, `HEALTHCARE_PROVIDERS` gets a single-sided reward, `SUBSCRIBERS` gets a four-step
-         * milestone ladder, and `WAITLIST` gets a leaderboard. Every one arrives switched off with
-         * a placeholder name, so the program awards nothing until you set the amount and turn one
-         * on. `TELEHEALTH` is for consumer telehealth and wellness subscriptions;
-         * `HEALTHCARE_PROVIDERS` is for provider networks and clinician-facing products.
-         * `INSURANCE` replaces `ONLINE_INSURANCE`, which is still accepted. Omit it and every share
-         * button keeps its standard default. Set only when the program is created; it is not
-         * accepted on update.
+         * `WAITLIST`) start with it hidden. On a referral program, each goal also sets the rest of
+         * its share buttons to suit that audience — a telehealth program keeps the public feeds
+         * off, a consumer subscription turns Pinterest and Reddit on. An affiliate program has its
+         * own share defaults, so only the LinkedIn default above applies to one. Omit `goal` and
+         * every share button keeps its standard default. Change any of it afterward with `PATCH
+         * /campaign/{id}/design`.
+         *
+         * When you create a referral program without `rewards`, the goal also decides the starter
+         * rewards: most goals get one double-sided reward, `HEALTHCARE_PROVIDERS` gets a
+         * single-sided reward, `SUBSCRIBERS` gets a four-step milestone ladder, and `WAITLIST` gets
+         * a leaderboard. Every starter reward arrives switched off with a placeholder name, so the
+         * program awards nothing until you set the amount and turn one on.
+         *
+         * `TELEHEALTH` is for consumer telehealth and wellness subscriptions, where patients refer
+         * friends. `HEALTHCARE_PROVIDERS` is for provider networks and clinician-facing products,
+         * where practices refer peer practices. A `TELEHEALTH` program also starts with
+         * `useGrowSurfHostedLinks` on, so each referral link is a GrowSurf-hosted link; turn it off
+         * with `PATCH /campaign/{id}/installation`. It also starts with `offerPageRedirectSeconds`
+         * set to `10` and with starter offer-page content
+         * (`referredExperience.offerPageDescription` and `offerPageSteps`). Values you send in the
+         * create request are kept. `INSURANCE` replaces `ONLINE_INSURANCE`, which is still accepted
+         * and behaves identically.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -702,7 +749,10 @@ private constructor(
              */
             fun name(name: JsonField<String>) = apply { this.name = name }
 
-            fun companyName(companyName: String) = companyName(JsonField.of(companyName))
+            fun companyName(companyName: String?) = companyName(JsonField.ofNullable(companyName))
+
+            /** Alias for calling [Builder.companyName] with `companyName.orElse(null)`. */
+            fun companyName(companyName: Optional<String>) = companyName(companyName.getOrNull())
 
             /**
              * Sets [Builder.companyName] to an arbitrary JSON value.
@@ -715,8 +765,15 @@ private constructor(
                 this.companyName = companyName
             }
 
-            fun companyLogoImageUrl(companyLogoImageUrl: String) =
-                companyLogoImageUrl(JsonField.of(companyLogoImageUrl))
+            fun companyLogoImageUrl(companyLogoImageUrl: String?) =
+                companyLogoImageUrl(JsonField.ofNullable(companyLogoImageUrl))
+
+            /**
+             * Alias for calling [Builder.companyLogoImageUrl] with
+             * `companyLogoImageUrl.orElse(null)`.
+             */
+            fun companyLogoImageUrl(companyLogoImageUrl: Optional<String>) =
+                companyLogoImageUrl(companyLogoImageUrl.getOrNull())
 
             /**
              * Sets [Builder.companyLogoImageUrl] to an arbitrary JSON value.
@@ -748,22 +805,36 @@ private constructor(
 
             /**
              * What the program is for, which seeds the share buttons and the starter rewards that
-             * suit that audience. Programs whose participants refer other businesses (`CUSTOMERS`,
-             * `USERS`, `B2B_SAAS_SELF_SERVICE`, `B2B_SAAS_ENTERPRISE`, `HEALTHCARE_PROVIDERS`)
-             * start with the LinkedIn share button visible; consumer, financial, education,
-             * insurance, telehealth, newsletter, and waitlist programs (`B2C_SUBSCRIPTIONS`,
+             * suit that audience. Set it when you create the program; it is not accepted on update.
+             *
+             * Programs whose participants refer other businesses (`CUSTOMERS`, `USERS`,
+             * `B2B_SAAS_SELF_SERVICE`, `B2B_SAAS_ENTERPRISE`, `HEALTHCARE_PROVIDERS`) start with
+             * the LinkedIn share button visible. Consumer, financial, education, insurance,
+             * telehealth, newsletter, and waitlist programs (`B2C_SUBSCRIPTIONS`,
              * `FINANCIAL_SERVICES`, `ONLINE_EDUCATION`, `INSURANCE`, `ONLINE_INSURANCE`,
-             * `TELEHEALTH`, `SUBSCRIBERS`, `WAITLIST`) start with it hidden, and on a referral
-             * program each goal also sets the rest of its share buttons to suit that audience. When
-             * you create a referral program without `rewards`, the goal also decides the starter
-             * rewards: most goals get one double-sided reward, `HEALTHCARE_PROVIDERS` gets a
-             * single-sided reward, `SUBSCRIBERS` gets a four-step milestone ladder, and `WAITLIST`
-             * gets a leaderboard. Every one arrives switched off with a placeholder name, so the
-             * program awards nothing until you set the amount and turn one on. `TELEHEALTH` is for
-             * consumer telehealth and wellness subscriptions; `HEALTHCARE_PROVIDERS` is for
-             * provider networks and clinician-facing products. `INSURANCE` replaces
-             * `ONLINE_INSURANCE`, which is still accepted. Omit it and every share button keeps its
-             * standard default. Set only when the program is created; it is not accepted on update.
+             * `TELEHEALTH`, `SUBSCRIBERS`, `WAITLIST`) start with it hidden. On a referral program,
+             * each goal also sets the rest of its share buttons to suit that audience — a
+             * telehealth program keeps the public feeds off, a consumer subscription turns
+             * Pinterest and Reddit on. An affiliate program has its own share defaults, so only the
+             * LinkedIn default above applies to one. Omit `goal` and every share button keeps its
+             * standard default. Change any of it afterward with `PATCH /campaign/{id}/design`.
+             *
+             * When you create a referral program without `rewards`, the goal also decides the
+             * starter rewards: most goals get one double-sided reward, `HEALTHCARE_PROVIDERS` gets
+             * a single-sided reward, `SUBSCRIBERS` gets a four-step milestone ladder, and
+             * `WAITLIST` gets a leaderboard. Every starter reward arrives switched off with a
+             * placeholder name, so the program awards nothing until you set the amount and turn one
+             * on.
+             *
+             * `TELEHEALTH` is for consumer telehealth and wellness subscriptions, where patients
+             * refer friends. `HEALTHCARE_PROVIDERS` is for provider networks and clinician-facing
+             * products, where practices refer peer practices. A `TELEHEALTH` program also starts
+             * with `useGrowSurfHostedLinks` on, so each referral link is a GrowSurf-hosted link;
+             * turn it off with `PATCH /campaign/{id}/installation`. It also starts with
+             * `offerPageRedirectSeconds` set to `10` and with starter offer-page content
+             * (`referredExperience.offerPageDescription` and `offerPageSteps`). Values you send in
+             * the create request are kept. `INSURANCE` replaces `ONLINE_INSURANCE`, which is still
+             * accepted and behaves identically.
              */
             fun goal(goal: Goal) = goal(JsonField.of(goal))
 
@@ -933,21 +1004,33 @@ private constructor(
 
     /**
      * What the program is for, which seeds the share buttons and the starter rewards that suit that
-     * audience. Programs whose participants refer other businesses (`CUSTOMERS`, `USERS`,
+     * audience. Set it when you create the program; it is not accepted on update.
+     *
+     * Programs whose participants refer other businesses (`CUSTOMERS`, `USERS`,
      * `B2B_SAAS_SELF_SERVICE`, `B2B_SAAS_ENTERPRISE`, `HEALTHCARE_PROVIDERS`) start with the
-     * LinkedIn share button visible; consumer, financial, education, insurance, telehealth,
+     * LinkedIn share button visible. Consumer, financial, education, insurance, telehealth,
      * newsletter, and waitlist programs (`B2C_SUBSCRIPTIONS`, `FINANCIAL_SERVICES`,
      * `ONLINE_EDUCATION`, `INSURANCE`, `ONLINE_INSURANCE`, `TELEHEALTH`, `SUBSCRIBERS`, `WAITLIST`)
-     * start with it hidden, and on a referral program each goal also sets the rest of its share
-     * buttons to suit that audience. When you create a referral program without `rewards`, the goal
-     * also decides the starter rewards: most goals get one double-sided reward,
-     * `HEALTHCARE_PROVIDERS` gets a single-sided reward, `SUBSCRIBERS` gets a four-step milestone
-     * ladder, and `WAITLIST` gets a leaderboard. Every one arrives switched off with a placeholder
-     * name, so the program awards nothing until you set the amount and turn one on. `TELEHEALTH` is
-     * for consumer telehealth and wellness subscriptions; `HEALTHCARE_PROVIDERS` is for provider
-     * networks and clinician-facing products. `INSURANCE` replaces `ONLINE_INSURANCE`, which is
-     * still accepted. Omit it and every share button keeps its standard default. Set only when the
-     * program is created; it is not accepted on update.
+     * start with it hidden. On a referral program, each goal also sets the rest of its share
+     * buttons to suit that audience — a telehealth program keeps the public feeds off, a consumer
+     * subscription turns Pinterest and Reddit on. An affiliate program has its own share defaults,
+     * so only the LinkedIn default above applies to one. Omit `goal` and every share button keeps
+     * its standard default. Change any of it afterward with `PATCH /campaign/{id}/design`.
+     *
+     * When you create a referral program without `rewards`, the goal also decides the starter
+     * rewards: most goals get one double-sided reward, `HEALTHCARE_PROVIDERS` gets a single-sided
+     * reward, `SUBSCRIBERS` gets a four-step milestone ladder, and `WAITLIST` gets a leaderboard.
+     * Every starter reward arrives switched off with a placeholder name, so the program awards
+     * nothing until you set the amount and turn one on.
+     *
+     * `TELEHEALTH` is for consumer telehealth and wellness subscriptions, where patients refer
+     * friends. `HEALTHCARE_PROVIDERS` is for provider networks and clinician-facing products, where
+     * practices refer peer practices. A `TELEHEALTH` program also starts with
+     * `useGrowSurfHostedLinks` on, so each referral link is a GrowSurf-hosted link; turn it off
+     * with `PATCH /campaign/{id}/installation`. It also starts with `offerPageRedirectSeconds` set
+     * to `10` and with starter offer-page content (`referredExperience.offerPageDescription` and
+     * `offerPageSteps`). Values you send in the create request are kept. `INSURANCE` replaces
+     * `ONLINE_INSURANCE`, which is still accepted and behaves identically.
      */
     class Goal @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
