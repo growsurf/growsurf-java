@@ -772,8 +772,9 @@ constructor(
         Optional.ofNullable(isHeadingClickableToSignupUrl)
 
     /**
-     * Whether referred visitors see `pageTitleReplacement` as the browser tab title. Programs that
-     * never set it read back `false`.
+     * Whether referred visitors see `pageTitleReplacement` as the browser tab title. New referral
+     * programs start with `true` and new affiliate programs with `false`. Older programs without
+     * this setting read back `false`.
      */
     fun isPageTitleReplacementActive(): Optional<Boolean> =
         additionalProperties["isPageTitleReplacementActive"]?.asBoolean() ?: Optional.empty()
