@@ -28,6 +28,8 @@ enum class CampaignDesignVisualStyle(@get:JsonValueAnnotation val value: String)
     CLEAN("CLEAN"),
     FLAT("FLAT"),
     ROUND("ROUND"),
+    TINT("TINT"),
+    GLASS("GLASS"),
 }
 
 enum class CampaignDesignOfferPopupPlacement(@get:JsonValueAnnotation val value: String) {
