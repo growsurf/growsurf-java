@@ -74,6 +74,10 @@ private constructor(
             additionalBodyProperties["participantAvatarStyle"] = JsonValue.from(value)
         }
 
+        fun visualStyle(value: CampaignDesignVisualStyle) = apply {
+            additionalBodyProperties["visualStyle"] = JsonValue.from(value)
+        }
+
         fun window(value: Map<String, JsonValue>) = objectField("window", value)
 
         fun header(value: Map<String, JsonValue>) = objectField("header", value)

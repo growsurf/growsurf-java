@@ -23,6 +23,13 @@ enum class CampaignDesignParticipantAvatarStyle(@get:JsonValueAnnotation val val
     GRADIENT("GRADIENT"),
 }
 
+enum class CampaignDesignVisualStyle(@get:JsonValueAnnotation val value: String) {
+    GLOW("GLOW"),
+    CLEAN("CLEAN"),
+    FLAT("FLAT"),
+    ROUND("ROUND"),
+}
+
 enum class CampaignDesignOfferPopupPlacement(@get:JsonValueAnnotation val value: String) {
     CENTER("CENTER"),
     BOTTOM("BOTTOM"),
