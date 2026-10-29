@@ -1668,6 +1668,14 @@ private constructor(
         /**
          * Custom key/value metadata (single-level; values are stored as strings).
          *
+         * For `DOUBLE_SIDED` rewards in referral programs, `rewardAmount` is the
+         * referrer’s amount and `referredRewardAmount` is the friend’s amount. If
+         * `referredRewardAmount` is absent, both use `rewardAmount`. New or changed positive
+         * numeric amounts must use whole units for currencies without decimals, such as JPY, and no
+         * more than two decimal places for other currencies, including USD and KWD. Excess
+         * precision is rejected rather than rounded, including when you clone a program. Existing
+         * unchanged amounts and earned rewards keep their saved values.
+         *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
          */
@@ -2306,7 +2314,17 @@ private constructor(
                 this.referralCouponCode = referralCouponCode
             }
 
-            /** Custom key/value metadata (single-level; values are stored as strings). */
+            /**
+             * Custom key/value metadata (single-level; values are stored as strings).
+             *
+             * For `DOUBLE_SIDED` rewards in referral programs, `rewardAmount` is the
+             * referrer’s amount and `referredRewardAmount` is the friend’s amount. If
+             * `referredRewardAmount` is absent, both use `rewardAmount`. New or changed positive
+             * numeric amounts must use whole units for currencies without decimals, such as JPY,
+             * and no more than two decimal places for other currencies, including USD and KWD.
+             * Excess precision is rejected rather than rounded, including when you clone a program.
+             * Existing unchanged amounts and earned rewards keep their saved values.
+             */
             fun metadata(metadata: Metadata) = metadata(JsonField.of(metadata))
 
             /**
@@ -3145,7 +3163,17 @@ private constructor(
             override fun toString() = value.toString()
         }
 
-        /** Custom key/value metadata (single-level; values are stored as strings). */
+        /**
+         * Custom key/value metadata (single-level; values are stored as strings).
+         *
+         * For `DOUBLE_SIDED` rewards in referral programs, `rewardAmount` is the
+         * referrer’s amount and `referredRewardAmount` is the friend’s amount. If
+         * `referredRewardAmount` is absent, both use `rewardAmount`. New or changed positive
+         * numeric amounts must use whole units for currencies without decimals, such as JPY, and no
+         * more than two decimal places for other currencies, including USD and KWD. Excess
+         * precision is rejected rather than rounded, including when you clone a program. Existing
+         * unchanged amounts and earned rewards keep their saved values.
+         */
         class Metadata
         @JsonCreator
         private constructor(
