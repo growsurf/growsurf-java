@@ -13,6 +13,7 @@ import com.growsurf.api.core.JsonMissing
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.checkKnown
 import com.growsurf.api.core.checkRequired
+import com.growsurf.api.core.jsonMapper
 import com.growsurf.api.core.toImmutable
 import com.growsurf.api.errors.GrowsurfInvalidDataException
 import com.growsurf.api.models.campaign.Language
@@ -495,6 +496,9 @@ private constructor(
     fun referredBy(): Optional<String> = referredBy.getOptional("referredBy")
 
     /**
+     * The participant's referrer. It has the same fields as a [Participant]; its own `referrer` is
+     * always `null`. Call [Referrer.toParticipant] to read every field.
+     *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
@@ -2489,6 +2493,10 @@ private constructor(
             "PayoutSettings{requiredActions=$requiredActions, additionalProperties=$additionalProperties}"
     }
 
+    /**
+     * The participant's referrer. It has the same fields as a [Participant]; its own `referrer` is
+     * always `null`. Call [toParticipant] to read every field.
+     */
     class Referrer
     @JsonCreator(mode = JsonCreator.Mode.DISABLED)
     private constructor(
@@ -3066,6 +3074,19 @@ private constructor(
         @ExcludeMissing
         fun _additionalProperties(): Map<String, JsonValue> =
             Collections.unmodifiableMap(additionalProperties)
+
+        /**
+         * Returns this referrer as a [Participant], including the fields this class does not type,
+         * such as `rewards`, `isAffiliate`, and `vanityKeys`. Its `referrer` is always `null`.
+         *
+         * @throws GrowsurfInvalidDataException if the referrer cannot be read as a [Participant].
+         */
+        fun toParticipant(): Participant =
+            try {
+                jsonMapper().convertValue(this, Participant::class.java)
+            } catch (e: IllegalArgumentException) {
+                throw GrowsurfInvalidDataException("`referrer` is not a valid participant", e)
+            }
 
         fun toBuilder() = Builder().from(this)
 

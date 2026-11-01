@@ -40,6 +40,10 @@ constructor(
     @JsonAnyGetter
     fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
 
+    /**
+     * The email's subject line, up to 255 characters. Required, so it cannot be empty. Supports
+     * dynamic text (`{{...}}` tokens), the same as the body.
+     */
     fun subject(): Optional<String> = Optional.ofNullable(subject)
 
     fun preheader(): Optional<String> = Optional.ofNullable(preheader)
@@ -73,6 +77,10 @@ constructor(
     @JsonAnyGetter
     fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
 
+    /**
+     * The email's subject line, up to 255 characters. Required, so it cannot be empty. Supports
+     * dynamic text (`{{...}}` tokens), the same as the body.
+     */
     fun subject(): Optional<String> = Optional.ofNullable(subject)
 
     fun preheader(): Optional<String> = Optional.ofNullable(preheader)
@@ -109,6 +117,10 @@ constructor(
     @JsonAnyGetter
     fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
 
+    /**
+     * The email's subject line, up to 255 characters. Required, so it cannot be empty. Supports
+     * dynamic text (`{{...}}` tokens), the same as the body.
+     */
     fun subject(): Optional<String> = Optional.ofNullable(subject)
 
     fun preheader(): Optional<String> = Optional.ofNullable(preheader)

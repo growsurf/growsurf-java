@@ -41,6 +41,7 @@ import com.growsurf.api.models.campaign.ParticipantPayoutList
 import com.growsurf.api.models.campaign.ReferralFlowScreenshotsResponse
 import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.services.async.campaign.CommissionServiceAsync
+import com.growsurf.api.services.async.campaign.CustomDomainServiceAsync
 import com.growsurf.api.services.async.campaign.DesignServiceAsync
 import com.growsurf.api.services.async.campaign.EmailsServiceAsync
 import com.growsurf.api.services.async.campaign.InstallationServiceAsync
@@ -84,6 +85,9 @@ interface CampaignServiceAsync {
 
     /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
     fun design(): DesignServiceAsync
+
+    /** Program custom domain (`CampaignCustomDomain`) operations. */
+    fun customDomain(): CustomDomainServiceAsync
 
     /** Program Editor Emails tab (`CampaignEmails`) configuration operations. */
     fun emails(): EmailsServiceAsync
@@ -849,6 +853,9 @@ interface CampaignServiceAsync {
 
         /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
         fun design(): DesignServiceAsync.WithRawResponse
+
+        /** Program custom domain (`CampaignCustomDomain`) operations. */
+        fun customDomain(): CustomDomainServiceAsync.WithRawResponse
 
         /** Program Editor Emails tab (`CampaignEmails`) configuration operations. */
         fun emails(): EmailsServiceAsync.WithRawResponse

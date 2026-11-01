@@ -72,6 +72,125 @@ constructor(
     fun redirectUrl(): Optional<String> = redirectUrl.getOptional("redirectUrl")
 
     fun trackInputFields(): Optional<Boolean> = Optional.ofNullable(trackInputFields)
+
+    /**
+     * Extra pages where GrowSurf watches signup form fields when `trackInputFields` is on. Each URL
+     * must include an `http(s)://` scheme. Sending this list replaces the entire list.
+     *
+     * To set it, pass `additionalSignupUrls` in the additional properties.
+     */
+    fun additionalSignupUrls(): Optional<List<String>> =
+        configField(additionalProperties, "additionalSignupUrls")
+
+    /**
+     * Forms GrowSurf listens to when `signupEvent` is `FORM_DETECTION`. A form counts only when
+     * `isSelected` is `true`; a selected form must have exactly one field whose `key` is `email`. A
+     * form sent back unchanged is not checked again. Sending this list replaces the entire list.
+     *
+     * To set it, pass `forms` in the additional properties.
+     */
+    fun forms(): Optional<List<CampaignInstallationSignupForm>> =
+        configField(additionalProperties, "forms")
+}
+
+/** A signup form GrowSurf listens to when `signupEvent` is `FORM_DETECTION`. */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+data class CampaignInstallationSignupForm
+constructor(
+    @JsonProperty("selector") private val selector: String? = null,
+    @JsonProperty("isSelected") private val isSelected: Boolean? = null,
+    @JsonProperty("fields") private val fields: List<CampaignInstallationSignupFormField>? = null,
+    @JsonProperty("id") private val id: String? = null,
+    @JsonProperty("name") private val name: String? = null,
+    @JsonProperty("className") private val className: String? = null,
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
+) {
+    @JsonCreator
+    constructor(
+        @JsonProperty("selector") selector: String? = null,
+        @JsonProperty("isSelected") isSelected: Boolean? = null,
+        @JsonProperty("fields") fields: List<CampaignInstallationSignupFormField>? = null,
+        @JsonProperty("id") id: String? = null,
+        @JsonProperty("name") name: String? = null,
+        @JsonProperty("className") className: String? = null,
+    ) : this(selector, isSelected, fields, id, name, className, mutableMapOf())
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+
+    /** CSS selector for the form on the signup page. Required. */
+    fun selector(): Optional<String> = Optional.ofNullable(selector)
+
+    /** Whether GrowSurf adds participants when this form is submitted. Required. */
+    fun isSelected(): Optional<Boolean> = Optional.ofNullable(isSelected)
+
+    /** The form's input fields and the participant value each one fills. Required. */
+    fun fields(): Optional<List<CampaignInstallationSignupFormField>> = Optional.ofNullable(fields)
+
+    /** The form's `id` attribute, if any. */
+    fun id(): Optional<String> = Optional.ofNullable(id)
+
+    /** The form's `name` attribute, if any. */
+    fun name(): Optional<String> = Optional.ofNullable(name)
+
+    /** The form's `class` attribute, if any. */
+    fun className(): Optional<String> = Optional.ofNullable(className)
+}
+
+/** An input inside a signup form and the participant value it fills. */
+@JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+data class CampaignInstallationSignupFormField
+constructor(
+    @JsonProperty("selector") private val selector: String? = null,
+    @JsonProperty("key") private val key: String? = null,
+    @JsonProperty("include") private val include: Boolean? = null,
+    @JsonProperty("id") private val id: String? = null,
+    @JsonProperty("name") private val name: String? = null,
+    @JsonProperty("className") private val className: String? = null,
+    @JsonProperty("type") private val type: String? = null,
+    @field:JsonAnySetter
+    private val additionalProperties: MutableMap<String, JsonValue> = mutableMapOf(),
+) {
+    @JsonCreator
+    constructor(
+        @JsonProperty("selector") selector: String? = null,
+        @JsonProperty("key") key: String? = null,
+        @JsonProperty("include") include: Boolean? = null,
+        @JsonProperty("id") id: String? = null,
+        @JsonProperty("name") name: String? = null,
+        @JsonProperty("className") className: String? = null,
+        @JsonProperty("type") type: String? = null,
+    ) : this(selector, key, include, id, name, className, type, mutableMapOf())
+
+    /** Returns additional fields supplied by the API. */
+    @JsonAnyGetter
+    fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
+
+    /** CSS selector for the input inside the form. Required. */
+    fun selector(): Optional<String> = Optional.ofNullable(selector)
+
+    /**
+     * The participant value this input fills: `email`, `firstName`, `lastName`, `ignore`, or a
+     * metadata key. An empty string means no value is chosen yet. Required.
+     */
+    fun key(): Optional<String> = Optional.ofNullable(key)
+
+    /** Whether GrowSurf reads this input when the form is submitted. Required. */
+    fun include(): Optional<Boolean> = Optional.ofNullable(include)
+
+    /** The input's `id` attribute, if any. */
+    fun id(): Optional<String> = Optional.ofNullable(id)
+
+    /** The input's `name` attribute, if any. */
+    fun name(): Optional<String> = Optional.ofNullable(name)
+
+    /** The input's `class` attribute, if any. */
+    fun className(): Optional<String> = Optional.ofNullable(className)
+
+    /** The input's `type` attribute, if any. */
+    fun type(): Optional<String> = Optional.ofNullable(type)
 }
 
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
@@ -159,6 +278,10 @@ private constructor(
     private val additionalProperties: Map<String, JsonValue>
 ) {
 
+    /**
+     * Referral programs only. What a referred friend must do before a referral counts. `CUSTOM` is
+     * available for programs installed on a website or a GrowSurf landing page.
+     */
     fun referralTrigger(): Optional<CampaignInstallationReferralTrigger> =
         configField(additionalProperties, "referralTrigger")
 
@@ -174,6 +297,11 @@ private constructor(
     fun offerPageRedirectSeconds(): Optional<Long> =
         configField(additionalProperties, "offerPageRedirectSeconds")
 
+    /**
+     * Extra domains, beyond your share URL, where the GrowSurf window and SDK are allowed to run.
+     * Each new entry must be a full URL that includes its scheme, such as `https://`. Sending this
+     * list replaces the entire list.
+     */
     fun allowedUrls(): Optional<List<String>> = configField(additionalProperties, "allowedUrls")
 
     fun signup(): Optional<CampaignInstallationSignup> = configField(additionalProperties, "signup")

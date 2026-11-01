@@ -53,6 +53,8 @@ import com.growsurf.api.models.campaign.ReferralFlowScreenshotsResponse
 import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.services.async.campaign.CommissionServiceAsync
 import com.growsurf.api.services.async.campaign.CommissionServiceAsyncImpl
+import com.growsurf.api.services.async.campaign.CustomDomainServiceAsync
+import com.growsurf.api.services.async.campaign.CustomDomainServiceAsyncImpl
 import com.growsurf.api.services.async.campaign.DesignServiceAsync
 import com.growsurf.api.services.async.campaign.DesignServiceAsyncImpl
 import com.growsurf.api.services.async.campaign.EmailsServiceAsync
@@ -102,6 +104,10 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
 
     private val design: DesignServiceAsync by lazy { DesignServiceAsyncImpl(clientOptions) }
 
+    private val customDomain: CustomDomainServiceAsync by lazy {
+        CustomDomainServiceAsyncImpl(clientOptions)
+    }
+
     private val emails: EmailsServiceAsync by lazy { EmailsServiceAsyncImpl(clientOptions) }
 
     private val options: OptionsServiceAsync by lazy { OptionsServiceAsyncImpl(clientOptions) }
@@ -136,6 +142,9 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
 
     /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
     override fun design(): DesignServiceAsync = design
+
+    /** Program custom domain (`CampaignCustomDomain`) operations. */
+    override fun customDomain(): CustomDomainServiceAsync = customDomain
 
     /** Program Editor Emails tab (`CampaignEmails`) configuration operations. */
     override fun emails(): EmailsServiceAsync = emails
@@ -339,6 +348,10 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
             DesignServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val customDomain: CustomDomainServiceAsync.WithRawResponse by lazy {
+            CustomDomainServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val emails: EmailsServiceAsync.WithRawResponse by lazy {
             EmailsServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
@@ -382,6 +395,9 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
 
         /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
         override fun design(): DesignServiceAsync.WithRawResponse = design
+
+        /** Program custom domain (`CampaignCustomDomain`) operations. */
+        override fun customDomain(): CustomDomainServiceAsync.WithRawResponse = customDomain
 
         /** Program Editor Emails tab (`CampaignEmails`) configuration operations. */
         override fun emails(): EmailsServiceAsync.WithRawResponse = emails

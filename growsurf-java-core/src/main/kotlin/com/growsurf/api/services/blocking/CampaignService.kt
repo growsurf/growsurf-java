@@ -42,6 +42,7 @@ import com.growsurf.api.models.campaign.ParticipantPayoutList
 import com.growsurf.api.models.campaign.ReferralFlowScreenshotsResponse
 import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.services.blocking.campaign.CommissionService
+import com.growsurf.api.services.blocking.campaign.CustomDomainService
 import com.growsurf.api.services.blocking.campaign.DesignService
 import com.growsurf.api.services.blocking.campaign.EmailsService
 import com.growsurf.api.services.blocking.campaign.InstallationService
@@ -84,6 +85,9 @@ interface CampaignService {
 
     /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
     fun design(): DesignService
+
+    /** Program custom domain (`CampaignCustomDomain`) operations. */
+    fun customDomain(): CustomDomainService
 
     /** Program Editor Emails tab (`CampaignEmails`) configuration operations. */
     fun emails(): EmailsService
@@ -800,6 +804,9 @@ interface CampaignService {
 
         /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
         fun design(): DesignService.WithRawResponse
+
+        /** Program custom domain (`CampaignCustomDomain`) operations. */
+        fun customDomain(): CustomDomainService.WithRawResponse
 
         /** Program Editor Emails tab (`CampaignEmails`) configuration operations. */
         fun emails(): EmailsService.WithRawResponse

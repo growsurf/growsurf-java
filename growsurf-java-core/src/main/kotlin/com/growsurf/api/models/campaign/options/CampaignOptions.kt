@@ -154,14 +154,30 @@ constructor(
     @JsonAnyGetter
     fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
 
+    /**
+     * Blocked emails. Each new entry must be an email address or an email pattern with `*`
+     * wildcards, such as `*@hooli.com`. Max 10000. Replaces the whole list.
+     */
     fun blockedEmails(): Optional<List<String>> = Optional.ofNullable(blockedEmails)
 
+    /**
+     * Blocked IP addresses. Each new entry must be an IPv4 or IPv6 address or a pattern with `*`
+     * wildcards, such as `203.0.113.*`. Max 10000. Replaces the whole list.
+     */
     fun blockedIps(): Optional<List<String>> = Optional.ofNullable(blockedIps)
 
     fun blockedCountries(): Optional<List<String>> = Optional.ofNullable(blockedCountries)
 
+    /**
+     * Allowed email addresses or patterns. Each new entry must be an email address or an email
+     * pattern with `*` wildcards. Replaces the whole list.
+     */
     fun allowedEmails(): Optional<List<String>> = Optional.ofNullable(allowedEmails)
 
+    /**
+     * Allowed IP addresses or patterns. Each new entry must be an IPv4 or IPv6 address or a pattern
+     * with `*` wildcards. Replaces the whole list.
+     */
     fun allowedIps(): Optional<List<String>> = Optional.ofNullable(allowedIps)
 
     fun allowedCountries(): Optional<List<String>> = Optional.ofNullable(allowedCountries)
@@ -399,6 +415,10 @@ constructor(
     @JsonAnyGetter
     fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
 
+    /**
+     * Email addresses that receive program notifications. Send at least one valid address. Joined
+     * with `, `, the list can have up to 500 characters.
+     */
     fun recipients(): Optional<List<String>> = Optional.ofNullable(recipients)
 
     fun events(): Optional<CampaignOptionsNotificationEvents> = Optional.ofNullable(events)

@@ -53,6 +53,8 @@ import com.growsurf.api.models.campaign.ReferralFlowScreenshotsResponse
 import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.services.blocking.campaign.CommissionService
 import com.growsurf.api.services.blocking.campaign.CommissionServiceImpl
+import com.growsurf.api.services.blocking.campaign.CustomDomainService
+import com.growsurf.api.services.blocking.campaign.CustomDomainServiceImpl
 import com.growsurf.api.services.blocking.campaign.DesignService
 import com.growsurf.api.services.blocking.campaign.DesignServiceImpl
 import com.growsurf.api.services.blocking.campaign.EmailsService
@@ -97,6 +99,8 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
 
     private val design: DesignService by lazy { DesignServiceImpl(clientOptions) }
 
+    private val customDomain: CustomDomainService by lazy { CustomDomainServiceImpl(clientOptions) }
+
     private val emails: EmailsService by lazy { EmailsServiceImpl(clientOptions) }
 
     private val options: OptionsService by lazy { OptionsServiceImpl(clientOptions) }
@@ -127,6 +131,9 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
 
     /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
     override fun design(): DesignService = design
+
+    /** Program custom domain (`CampaignCustomDomain`) operations. */
+    override fun customDomain(): CustomDomainService = customDomain
 
     /** Program Editor Emails tab (`CampaignEmails`) configuration operations. */
     override fun emails(): EmailsService = emails
@@ -311,6 +318,10 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
             DesignServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val customDomain: CustomDomainService.WithRawResponse by lazy {
+            CustomDomainServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val emails: EmailsService.WithRawResponse by lazy {
             EmailsServiceImpl.WithRawResponseImpl(clientOptions)
         }
@@ -354,6 +365,9 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
 
         /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
         override fun design(): DesignService.WithRawResponse = design
+
+        /** Program custom domain (`CampaignCustomDomain`) operations. */
+        override fun customDomain(): CustomDomainService.WithRawResponse = customDomain
 
         /** Program Editor Emails tab (`CampaignEmails`) configuration operations. */
         override fun emails(): EmailsService.WithRawResponse = emails

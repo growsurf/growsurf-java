@@ -1501,7 +1501,7 @@ private constructor(
         fun type(): Type = type.getRequired("type")
 
         /**
-         * The reward title (internal label).
+         * The reward title (internal label). Up to 100 characters.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -1509,7 +1509,7 @@ private constructor(
         fun title(): Optional<String> = title.getOptional("title")
 
         /**
-         * The reward description shown to the referrer.
+         * The reward description shown to the referrer. Up to 255 characters.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -1527,7 +1527,8 @@ private constructor(
         fun event(): Optional<RewardEvent> = event.getOptional("event")
 
         /**
-         * The reward description shown to the referred friend (double-sided rewards).
+         * The reward description shown to the referred friend (double-sided rewards). Up to 255
+         * characters.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -1626,7 +1627,7 @@ private constructor(
 
         /**
          * Text shown before a participant's referral count in milestone-progress copy (e.g. "You
-         * are only"). Applies to `MILESTONE` rewards.
+         * are only"). Applies to `MILESTONE` rewards. Up to 255 characters.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -1636,7 +1637,8 @@ private constructor(
 
         /**
          * Text shown after a participant's referral count in milestone-progress copy (e.g.
-         * "referrals away from your next reward!"). Applies to `MILESTONE` rewards.
+         * "referrals away from your next reward!"). Applies to `MILESTONE` rewards. Up to 255
+         * characters.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -1647,7 +1649,7 @@ private constructor(
         /**
          * Legacy static coupon code shown to the referrer in the reward-won email and webhook.
          * Display text only (GrowSurf does not create or validate it); superseded by a connected
-         * billing integration's issued coupon when one exists.
+         * billing integration's issued coupon when one exists. Up to 100 characters.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -1657,7 +1659,8 @@ private constructor(
         /**
          * Legacy static coupon code shown to the referred friend in the reward-won email and
          * webhook (double-sided rewards). Same caveats as `couponCode`: display text only,
-         * superseded by a connected billing integration's issued coupon when one exists.
+         * superseded by a connected billing integration's issued coupon when one exists. Up to 100
+         * characters.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -1667,6 +1670,10 @@ private constructor(
 
         /**
          * Custom key/value metadata (single-level; values are stored as strings).
+         *
+         * Each value must be a string, number, or boolean of up to 500 characters. Each key must
+         * have 1 to 40 characters once camelCased, and two keys that camelCase to the same key are
+         * rejected. Up to 50 keys. An entry that breaks these rules returns `400`.
          *
          * For `DOUBLE_SIDED` rewards in referral programs, `rewardAmount` is the referrer’s amount
          * and `referredRewardAmount` is the friend’s amount. If `referredRewardAmount` is absent,
@@ -1998,7 +2005,7 @@ private constructor(
              */
             fun type(type: JsonField<Type>) = apply { this.type = type }
 
-            /** The reward title (internal label). */
+            /** The reward title (internal label). Up to 100 characters. */
             fun title(title: String) = title(JsonField.of(title))
 
             /**
@@ -2010,7 +2017,7 @@ private constructor(
              */
             fun title(title: JsonField<String>) = apply { this.title = title }
 
-            /** The reward description shown to the referrer. */
+            /** The reward description shown to the referrer. Up to 255 characters. */
             fun description(description: String) = description(JsonField.of(description))
 
             /**
@@ -2034,7 +2041,10 @@ private constructor(
             /** Sets [Builder.event] to an arbitrary JSON value. */
             fun event(event: JsonField<RewardEvent>) = apply { this.event = event }
 
-            /** The reward description shown to the referred friend (double-sided rewards). */
+            /**
+             * The reward description shown to the referred friend (double-sided rewards). Up to 255
+             * characters.
+             */
             fun referralDescription(referralDescription: String?) =
                 referralDescription(JsonField.ofNullable(referralDescription))
 
@@ -2221,7 +2231,7 @@ private constructor(
 
             /**
              * Text shown before a participant's referral count in milestone-progress copy (e.g.
-             * "You are only"). Applies to `MILESTONE` rewards.
+             * "You are only"). Applies to `MILESTONE` rewards. Up to 255 characters.
              */
             fun nextMilestonePrefix(nextMilestonePrefix: String?) =
                 nextMilestonePrefix(JsonField.ofNullable(nextMilestonePrefix))
@@ -2246,7 +2256,8 @@ private constructor(
 
             /**
              * Text shown after a participant's referral count in milestone-progress copy (e.g.
-             * "referrals away from your next reward!"). Applies to `MILESTONE` rewards.
+             * "referrals away from your next reward!"). Applies to `MILESTONE` rewards. Up to 255
+             * characters.
              */
             fun nextMilestoneSuffix(nextMilestoneSuffix: String?) =
                 nextMilestoneSuffix(JsonField.ofNullable(nextMilestoneSuffix))
@@ -2272,7 +2283,7 @@ private constructor(
             /**
              * Legacy static coupon code shown to the referrer in the reward-won email and webhook.
              * Display text only (GrowSurf does not create or validate it); superseded by a
-             * connected billing integration's issued coupon when one exists.
+             * connected billing integration's issued coupon when one exists. Up to 100 characters.
              */
             fun couponCode(couponCode: String?) = couponCode(JsonField.ofNullable(couponCode))
 
@@ -2291,7 +2302,8 @@ private constructor(
             /**
              * Legacy static coupon code shown to the referred friend in the reward-won email and
              * webhook (double-sided rewards). Same caveats as `couponCode`: display text only,
-             * superseded by a connected billing integration's issued coupon when one exists.
+             * superseded by a connected billing integration's issued coupon when one exists. Up to
+             * 100 characters.
              */
             fun referralCouponCode(referralCouponCode: String?) =
                 referralCouponCode(JsonField.ofNullable(referralCouponCode))
@@ -2316,6 +2328,10 @@ private constructor(
 
             /**
              * Custom key/value metadata (single-level; values are stored as strings).
+             *
+             * Each value must be a string, number, or boolean of up to 500 characters. Each key
+             * must have 1 to 40 characters once camelCased, and two keys that camelCase to the same
+             * key are rejected. Up to 50 keys. An entry that breaks these rules returns `400`.
              *
              * For `DOUBLE_SIDED` rewards in referral programs, `rewardAmount` is the referrer’s
              * amount and `referredRewardAmount` is the friend’s amount. If `referredRewardAmount`
