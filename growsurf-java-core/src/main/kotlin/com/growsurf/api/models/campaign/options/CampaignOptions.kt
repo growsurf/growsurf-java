@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonValue as JsonValueAnnotation
 import com.growsurf.api.core.ExcludeMissing
 import com.growsurf.api.core.JsonField
 import com.growsurf.api.core.JsonMissing
+import com.growsurf.api.core.JsonObject
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.toImmutable
 import com.growsurf.api.errors.GrowsurfInvalidDataException
@@ -454,6 +455,26 @@ constructor(
         mutableMapOf("showFlags" to JsonValue.from(showFlags)),
     )
 
+    /**
+     * Sets [flagCountries] (language code to flag country). A `null` value goes back to that
+     * language's default flag; languages left out keep their current flag.
+     */
+    constructor(
+        flagCountries: Map<String, String?>,
+        showFlags: Boolean? = null,
+        baseLanguage: Language? = null,
+        additionalLanguages: List<Language>? = null,
+    ) : this(
+        baseLanguage,
+        additionalLanguages,
+        listOfNotNull(
+                "flagCountries" to
+                    JsonObject.of(flagCountries.mapValues { JsonValue.from(it.value) }),
+                showFlags?.let { "showFlags" to JsonValue.from(it) },
+            )
+            .toMap(mutableMapOf()),
+    )
+
     /** Returns additional fields supplied by the API. */
     @JsonAnyGetter
     fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
@@ -477,6 +498,21 @@ constructor(
      */
     fun showFlags(): Optional<Boolean> =
         additionalProperties["showFlags"]?.asBoolean() ?: Optional.empty()
+
+    /**
+     * The flag shown next to each language name when `showFlags` is on, keyed by language code (for
+     * example `en` to `GB`). Only languages with more than one flag to choose from are listed.
+     * Values are ISO 3166 country codes; `ES-CT` is Catalonia. Send `null` for a language to go
+     * back to its default flag.
+     */
+    fun flagCountries(): Optional<Map<String, String>> =
+        additionalProperties["flagCountries"]?.asObject()?.map { countries ->
+            countries
+                .mapNotNull { (code, country) ->
+                    country.asString().orElse(null)?.let { code to it }
+                }
+                .toMap()
+        } ?: Optional.empty()
 
     /**
      * Validates that every language is one this SDK version knows.
