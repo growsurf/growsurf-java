@@ -16,7 +16,6 @@ import com.github.tomakehurst.wiremock.client.WireMock.verify
 import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo
 import com.github.tomakehurst.wiremock.junit5.WireMockTest
 import com.growsurf.api.client.okhttp.GrowsurfOkHttpClient
-import com.growsurf.api.models.account.CreateAccountResponse
 import com.growsurf.api.models.team.Team
 import com.growsurf.api.models.team.TeamUpdateParams
 import org.assertj.core.api.Assertions.assertThat
@@ -65,10 +64,8 @@ internal class TeamContractTest {
     }
 
     @Test
-    fun safeTeamAndOnboardingModels() {
+    fun safeTeamModel() {
         assertThat(Team::class.java.methods.map { it.name }).doesNotContain("id", "email")
-        assertThat(CreateAccountResponse.Builder::class.java.methods.map { it.name })
-            .doesNotContain("id")
     }
 
     private fun jsonResponse(body: String) =

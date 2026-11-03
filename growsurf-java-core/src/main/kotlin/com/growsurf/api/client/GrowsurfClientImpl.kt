@@ -4,8 +4,6 @@ package com.growsurf.api.client
 
 import com.growsurf.api.core.ClientOptions
 import com.growsurf.api.core.getPackageVersion
-import com.growsurf.api.services.blocking.AccountService
-import com.growsurf.api.services.blocking.AccountServiceImpl
 import com.growsurf.api.services.blocking.CampaignService
 import com.growsurf.api.services.blocking.CampaignServiceImpl
 import com.growsurf.api.services.blocking.TeamService
@@ -29,8 +27,6 @@ class GrowsurfClientImpl(private val clientOptions: ClientOptions) : GrowsurfCli
         WithRawResponseImpl(clientOptions)
     }
 
-    private val account: AccountService by lazy { AccountServiceImpl(clientOptionsWithUserAgent) }
-
     private val team: TeamService by lazy { TeamServiceImpl(clientOptionsWithUserAgent) }
 
     private val campaign: CampaignService by lazy {
@@ -44,8 +40,6 @@ class GrowsurfClientImpl(private val clientOptions: ClientOptions) : GrowsurfCli
     override fun withOptions(modifier: Consumer<ClientOptions.Builder>): GrowsurfClient =
         GrowsurfClientImpl(clientOptions.toBuilder().apply(modifier::accept).build())
 
-    override fun account(): AccountService = account
-
     override fun team(): TeamService = team
 
     override fun campaign(): CampaignService = campaign
@@ -54,10 +48,6 @@ class GrowsurfClientImpl(private val clientOptions: ClientOptions) : GrowsurfCli
 
     class WithRawResponseImpl internal constructor(private val clientOptions: ClientOptions) :
         GrowsurfClient.WithRawResponse {
-
-        private val account: AccountService.WithRawResponse by lazy {
-            AccountServiceImpl.WithRawResponseImpl(clientOptions)
-        }
 
         private val team: TeamService.WithRawResponse by lazy {
             TeamServiceImpl.WithRawResponseImpl(clientOptions)
@@ -73,8 +63,6 @@ class GrowsurfClientImpl(private val clientOptions: ClientOptions) : GrowsurfCli
             GrowsurfClientImpl.WithRawResponseImpl(
                 clientOptions.toBuilder().apply(modifier::accept).build()
             )
-
-        override fun account(): AccountService.WithRawResponse = account
 
         override fun team(): TeamService.WithRawResponse = team
 

@@ -103,7 +103,7 @@ See this table for the available options:
 | `apiKey`  | `growsurf.apiKey`  | `GROWSURF_API_KEY`   | Authenticated requests only | `""` |
 | `baseUrl` | `growsurf.baseUrl` | `GROWSURF_BASE_URL`  | false | `"https://api.growsurf.com/v2"` |
 
-`POST /accounts` does not require an API key. Every other endpoint does.
+Every endpoint requires an API key. Sign up at https://app.growsurf.com, then create an API key in the GrowSurf dashboard.
 
 System properties take precedence over environment variables.
 
