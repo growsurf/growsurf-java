@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.22.0](https://github.com/growsurf/growsurf-java/compare/v1.21.0...v1.22.0) (2026-11-03)
+
+
+### Features
+
+* remove account create method (endpoint retired) ([dc696f3](https://github.com/growsurf/growsurf-java/commit/dc696f3613bfb4db8481870ecd228d7e7b2286ab))
+* remove account create method (endpoint retired) ([268e37a](https://github.com/growsurf/growsurf-java/commit/268e37ab36b3b4e7ebc9940f4f6ec72f2281f150))
+
 ## [1.21.0](https://github.com/growsurf/growsurf-java/compare/v1.20.0...v1.21.0) (2026-11-03)
 
 
