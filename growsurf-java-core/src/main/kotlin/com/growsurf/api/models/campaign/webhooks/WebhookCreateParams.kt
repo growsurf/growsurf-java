@@ -22,7 +22,13 @@ import java.util.Objects
 import java.util.Optional
 import kotlin.jvm.optionals.getOrNull
 
-/** Adds a webhook to the program. */
+/**
+ * Adds a webhook to the program. A program can have only one saved Bask Health webhook across all
+ * `bask.ninja` hosts and paths, including disabled webhooks. A second Bask Health webhook returns
+ * `400`. A program can have up to 5 webhooks, counting the primary webhook slot, so you can create
+ * up to 4. Creating another returns `400`. A concurrent change to webhook settings can return
+ * `409`; reload the webhooks before retrying.
+ */
 class WebhookCreateParams
 private constructor(
     private val id: String?,
@@ -42,8 +48,9 @@ private constructor(
     fun payloadUrl(): String = body.payloadUrl()
 
     /**
-     * The events this webhook is subscribed to. When omitted, the webhook is subscribed to no
-     * events.
+     * The events this webhook is subscribed to. When omitted, the webhook is subscribed to every
+     * event its program type offers. Send an empty list to subscribe to no events. An event the
+     * program type does not offer returns `400`.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -161,8 +168,9 @@ private constructor(
         fun payloadUrl(payloadUrl: JsonField<String>) = apply { body.payloadUrl(payloadUrl) }
 
         /**
-         * The events this webhook is subscribed to. When omitted, the webhook is subscribed to no
-         * events.
+         * The events this webhook is subscribed to. When omitted, the webhook is subscribed to
+         * every event its program type offers. Send an empty list to subscribe to no events. An
+         * event the program type does not offer returns `400`.
          */
         fun events(events: List<WebhookEvent>) = apply { body.events(events) }
 
@@ -390,8 +398,9 @@ private constructor(
         fun payloadUrl(): String = payloadUrl.getRequired("payloadUrl")
 
         /**
-         * The events this webhook is subscribed to. When omitted, the webhook is subscribed to no
-         * events.
+         * The events this webhook is subscribed to. When omitted, the webhook is subscribed to
+         * every event its program type offers. Send an empty list to subscribe to no events. An
+         * event the program type does not offer returns `400`.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -502,7 +511,8 @@ private constructor(
 
             /**
              * The events this webhook is subscribed to. When omitted, the webhook is subscribed to
-             * no events.
+             * every event its program type offers. Send an empty list to subscribe to no events. An
+             * event the program type does not offer returns `400`.
              */
             fun events(events: List<WebhookEvent>) = events(JsonField.of(events))
 

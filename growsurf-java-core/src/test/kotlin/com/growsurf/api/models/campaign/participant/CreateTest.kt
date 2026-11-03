@@ -28,6 +28,7 @@ internal class CreateTest {
                 )
                 .mobileInstanceId("mobileInstanceId")
                 .referralStatus(Create.ReferralStatus.CREDIT_PENDING)
+                .referredAt(0L)
                 .referredBy("referredBy")
                 .build()
 
@@ -45,6 +46,7 @@ internal class CreateTest {
             )
         assertThat(create.mobileInstanceId()).contains("mobileInstanceId")
         assertThat(create.referralStatus()).contains(Create.ReferralStatus.CREDIT_PENDING)
+        assertThat(create.referredAt()).contains(0L)
         assertThat(create.referredBy()).contains("referredBy")
     }
 
@@ -66,6 +68,7 @@ internal class CreateTest {
                 )
                 .mobileInstanceId("mobileInstanceId")
                 .referralStatus(Create.ReferralStatus.CREDIT_PENDING)
+                .referredAt(0L)
                 .referredBy("referredBy")
                 .build()
 

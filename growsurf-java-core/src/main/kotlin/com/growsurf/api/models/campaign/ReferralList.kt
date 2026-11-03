@@ -333,6 +333,8 @@ private constructor(
         private val updatedAt: JsonField<Long>,
         private val firstName: JsonField<String>,
         private val lastName: JsonField<String>,
+        private val referralTriggeredAt: JsonField<Long>,
+        private val referralCreditExpiredAt: JsonField<Long>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -355,7 +357,15 @@ private constructor(
             @JsonProperty("firstName")
             @ExcludeMissing
             firstName: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("lastName") @ExcludeMissing lastName: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("lastName")
+            @ExcludeMissing
+            lastName: JsonField<String> = JsonMissing.of(),
+            @JsonProperty("referralTriggeredAt")
+            @ExcludeMissing
+            referralTriggeredAt: JsonField<Long> = JsonMissing.of(),
+            @JsonProperty("referralCreditExpiredAt")
+            @ExcludeMissing
+            referralCreditExpiredAt: JsonField<Long> = JsonMissing.of(),
         ) : this(
             id,
             createdAt,
@@ -365,6 +375,8 @@ private constructor(
             updatedAt,
             firstName,
             lastName,
+            referralTriggeredAt,
+            referralCreditExpiredAt,
             mutableMapOf(),
         )
 
@@ -415,6 +427,26 @@ private constructor(
          *   the server responded with an unexpected value).
          */
         fun lastName(): Optional<String> = lastName.getOptional("lastName")
+
+        /**
+         * When the referral was triggered, as a Unix timestamp in milliseconds. `null` until the
+         * referral is triggered, and for invites.
+         *
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun referralTriggeredAt(): Optional<Long> =
+            referralTriggeredAt.getOptional("referralTriggeredAt")
+
+        /**
+         * When the referrer's credit for this referral expired, as a Unix timestamp in
+         * milliseconds. `null` when the credit has not expired.
+         *
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun referralCreditExpiredAt(): Optional<Long> =
+            referralCreditExpiredAt.getOptional("referralCreditExpiredAt")
 
         /**
          * Returns the raw JSON value of [id].
@@ -477,6 +509,26 @@ private constructor(
          */
         @JsonProperty("lastName") @ExcludeMissing fun _lastName(): JsonField<String> = lastName
 
+        /**
+         * Returns the raw JSON value of [referralTriggeredAt].
+         *
+         * Unlike [referralTriggeredAt], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("referralTriggeredAt")
+        @ExcludeMissing
+        fun _referralTriggeredAt(): JsonField<Long> = referralTriggeredAt
+
+        /**
+         * Returns the raw JSON value of [referralCreditExpiredAt].
+         *
+         * Unlike [referralCreditExpiredAt], this method doesn't throw if the JSON field has an
+         * unexpected type.
+         */
+        @JsonProperty("referralCreditExpiredAt")
+        @ExcludeMissing
+        fun _referralCreditExpiredAt(): JsonField<Long> = referralCreditExpiredAt
+
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
             additionalProperties.put(key, value)
@@ -518,6 +570,8 @@ private constructor(
             private var updatedAt: JsonField<Long>? = null
             private var firstName: JsonField<String> = JsonMissing.of()
             private var lastName: JsonField<String> = JsonMissing.of()
+            private var referralTriggeredAt: JsonField<Long> = JsonMissing.of()
+            private var referralCreditExpiredAt: JsonField<Long> = JsonMissing.of()
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
@@ -530,6 +584,8 @@ private constructor(
                 updatedAt = referral.updatedAt
                 firstName = referral.firstName
                 lastName = referral.lastName
+                referralTriggeredAt = referral.referralTriggeredAt
+                referralCreditExpiredAt = referral.referralCreditExpiredAt
                 additionalProperties = referral.additionalProperties.toMutableMap()
             }
 
@@ -630,6 +686,72 @@ private constructor(
              */
             fun lastName(lastName: JsonField<String>) = apply { this.lastName = lastName }
 
+            /**
+             * When the referral was triggered, as a Unix timestamp in milliseconds. `null` until
+             * the referral is triggered, and for invites.
+             */
+            fun referralTriggeredAt(referralTriggeredAt: Long?) =
+                referralTriggeredAt(JsonField.ofNullable(referralTriggeredAt))
+
+            /**
+             * Alias for [Builder.referralTriggeredAt].
+             *
+             * This unboxed primitive overload exists for backwards compatibility.
+             */
+            fun referralTriggeredAt(referralTriggeredAt: Long) =
+                referralTriggeredAt(referralTriggeredAt as Long?)
+
+            /**
+             * Alias for calling [Builder.referralTriggeredAt] with
+             * `referralTriggeredAt.orElse(null)`.
+             */
+            fun referralTriggeredAt(referralTriggeredAt: Optional<Long>) =
+                referralTriggeredAt(referralTriggeredAt.getOrNull())
+
+            /**
+             * Sets [Builder.referralTriggeredAt] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.referralTriggeredAt] with a well-typed [Long] value
+             * instead. This method is primarily for setting the field to an undocumented or not yet
+             * supported value.
+             */
+            fun referralTriggeredAt(referralTriggeredAt: JsonField<Long>) = apply {
+                this.referralTriggeredAt = referralTriggeredAt
+            }
+
+            /**
+             * When the referrer's credit for this referral expired, as a Unix timestamp in
+             * milliseconds. `null` when the credit has not expired.
+             */
+            fun referralCreditExpiredAt(referralCreditExpiredAt: Long?) =
+                referralCreditExpiredAt(JsonField.ofNullable(referralCreditExpiredAt))
+
+            /**
+             * Alias for [Builder.referralCreditExpiredAt].
+             *
+             * This unboxed primitive overload exists for backwards compatibility.
+             */
+            fun referralCreditExpiredAt(referralCreditExpiredAt: Long) =
+                referralCreditExpiredAt(referralCreditExpiredAt as Long?)
+
+            /**
+             * Alias for calling [Builder.referralCreditExpiredAt] with
+             * `referralCreditExpiredAt.orElse(null)`.
+             */
+            fun referralCreditExpiredAt(referralCreditExpiredAt: Optional<Long>) =
+                referralCreditExpiredAt(referralCreditExpiredAt.getOrNull())
+
+            /**
+             * Sets [Builder.referralCreditExpiredAt] to an arbitrary JSON value.
+             *
+             * You should usually call [Builder.referralCreditExpiredAt] with a well-typed [Long]
+             * value instead. This method is primarily for setting the field to an undocumented or
+             * not yet supported value.
+             */
+            fun referralCreditExpiredAt(referralCreditExpiredAt: JsonField<Long>) = apply {
+                this.referralCreditExpiredAt = referralCreditExpiredAt
+            }
+
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
                 putAllAdditionalProperties(additionalProperties)
@@ -676,6 +798,8 @@ private constructor(
                     checkRequired("updatedAt", updatedAt),
                     firstName,
                     lastName,
+                    referralTriggeredAt,
+                    referralCreditExpiredAt,
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -704,6 +828,8 @@ private constructor(
             updatedAt()
             firstName()
             lastName()
+            referralTriggeredAt()
+            referralCreditExpiredAt()
             validated = true
         }
 
@@ -730,7 +856,9 @@ private constructor(
                 (if (referredBy.asKnown().isPresent) 1 else 0) +
                 (if (updatedAt.asKnown().isPresent) 1 else 0) +
                 (if (firstName.asKnown().isPresent) 1 else 0) +
-                (if (lastName.asKnown().isPresent) 1 else 0)
+                (if (lastName.asKnown().isPresent) 1 else 0) +
+                (if (referralTriggeredAt.asKnown().isPresent) 1 else 0) +
+                (if (referralCreditExpiredAt.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -746,6 +874,8 @@ private constructor(
                 updatedAt == other.updatedAt &&
                 firstName == other.firstName &&
                 lastName == other.lastName &&
+                referralTriggeredAt == other.referralTriggeredAt &&
+                referralCreditExpiredAt == other.referralCreditExpiredAt &&
                 additionalProperties == other.additionalProperties
         }
 
@@ -759,6 +889,8 @@ private constructor(
                 updatedAt,
                 firstName,
                 lastName,
+                referralTriggeredAt,
+                referralCreditExpiredAt,
                 additionalProperties,
             )
         }
@@ -766,7 +898,7 @@ private constructor(
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Referral{id=$id, createdAt=$createdAt, email=$email, referralStatus=$referralStatus, referredBy=$referredBy, updatedAt=$updatedAt, firstName=$firstName, lastName=$lastName, additionalProperties=$additionalProperties}"
+            "Referral{id=$id, createdAt=$createdAt, email=$email, referralStatus=$referralStatus, referredBy=$referredBy, updatedAt=$updatedAt, firstName=$firstName, lastName=$lastName, referralTriggeredAt=$referralTriggeredAt, referralCreditExpiredAt=$referralCreditExpiredAt, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

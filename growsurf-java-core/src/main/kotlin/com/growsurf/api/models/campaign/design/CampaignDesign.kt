@@ -38,6 +38,10 @@ private constructor(
     fun participantAvatarStyle(): Optional<CampaignDesignParticipantAvatarStyle> =
         configField(additionalProperties, "participantAvatarStyle")
 
+    /** The program Style. Omitted when the program has no saved Style. */
+    fun visualStyle(): Optional<CampaignDesignVisualStyle> =
+        configField(additionalProperties, "visualStyle")
+
     fun window(): Optional<Map<String, JsonValue>> = configField(additionalProperties, "window")
 
     fun header(): Optional<Map<String, JsonValue>> = configField(additionalProperties, "header")
@@ -127,6 +131,10 @@ private constructor(
 
         fun participantAvatarStyle(value: CampaignDesignParticipantAvatarStyle) = apply {
             additionalProperties.putConfigField("participantAvatarStyle", value)
+        }
+
+        fun visualStyle(value: CampaignDesignVisualStyle) = apply {
+            additionalProperties.putConfigField("visualStyle", value)
         }
 
         fun window(value: Map<String, JsonValue>) = objectField("window", value)
@@ -236,6 +244,7 @@ private constructor(
         }
 
         participantAvatarStyle().orElse(null)
+        visualStyle().orElse(null)
         window().orElse(null)
         header().orElse(null)
         stats().orElse(null)

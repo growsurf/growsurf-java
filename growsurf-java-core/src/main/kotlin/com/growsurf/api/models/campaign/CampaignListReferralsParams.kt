@@ -356,11 +356,23 @@ private constructor(
 
             @JvmField val EMAIL = of("email")
 
-            @JvmField val FIRST_NAME = of("firstName")
+            @Deprecated(
+                "The API no longer sorts referrals by this field and returns 400. Use UPDATED_AT, CREATED_AT, EMAIL, or REFERRAL_TRIGGERED_AT."
+            )
+            @JvmField
+            val FIRST_NAME = of("firstName")
 
-            @JvmField val LAST_NAME = of("lastName")
+            @Deprecated(
+                "The API no longer sorts referrals by this field and returns 400. Use UPDATED_AT, CREATED_AT, EMAIL, or REFERRAL_TRIGGERED_AT."
+            )
+            @JvmField
+            val LAST_NAME = of("lastName")
 
-            @JvmField val REFERRAL_STATUS = of("referralStatus")
+            @Deprecated(
+                "The API no longer sorts referrals by this field and returns 400. Use UPDATED_AT, CREATED_AT, EMAIL, or REFERRAL_TRIGGERED_AT."
+            )
+            @JvmField
+            val REFERRAL_STATUS = of("referralStatus")
 
             @JvmField val REFERRAL_TRIGGERED_AT = of("referralTriggeredAt")
 
@@ -372,8 +384,17 @@ private constructor(
             UPDATED_AT,
             CREATED_AT,
             EMAIL,
+            @Deprecated(
+                "The API no longer sorts referrals by this field and returns 400. Use UPDATED_AT, CREATED_AT, EMAIL, or REFERRAL_TRIGGERED_AT."
+            )
             FIRST_NAME,
+            @Deprecated(
+                "The API no longer sorts referrals by this field and returns 400. Use UPDATED_AT, CREATED_AT, EMAIL, or REFERRAL_TRIGGERED_AT."
+            )
             LAST_NAME,
+            @Deprecated(
+                "The API no longer sorts referrals by this field and returns 400. Use UPDATED_AT, CREATED_AT, EMAIL, or REFERRAL_TRIGGERED_AT."
+            )
             REFERRAL_STATUS,
             REFERRAL_TRIGGERED_AT,
         }
@@ -391,8 +412,17 @@ private constructor(
             UPDATED_AT,
             CREATED_AT,
             EMAIL,
+            @Deprecated(
+                "The API no longer sorts referrals by this field and returns 400. Use UPDATED_AT, CREATED_AT, EMAIL, or REFERRAL_TRIGGERED_AT."
+            )
             FIRST_NAME,
+            @Deprecated(
+                "The API no longer sorts referrals by this field and returns 400. Use UPDATED_AT, CREATED_AT, EMAIL, or REFERRAL_TRIGGERED_AT."
+            )
             LAST_NAME,
+            @Deprecated(
+                "The API no longer sorts referrals by this field and returns 400. Use UPDATED_AT, CREATED_AT, EMAIL, or REFERRAL_TRIGGERED_AT."
+            )
             REFERRAL_STATUS,
             REFERRAL_TRIGGERED_AT,
             /** An enum member indicating that [SortBy] was instantiated with an unknown value. */

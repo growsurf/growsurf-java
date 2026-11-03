@@ -23,6 +23,15 @@ enum class CampaignDesignParticipantAvatarStyle(@get:JsonValueAnnotation val val
     GRADIENT("GRADIENT"),
 }
 
+enum class CampaignDesignVisualStyle(@get:JsonValueAnnotation val value: String) {
+    GLOW("GLOW"),
+    CLEAN("CLEAN"),
+    FLAT("FLAT"),
+    ROUND("ROUND"),
+    TINT("TINT"),
+    GLASS("GLASS"),
+}
+
 enum class CampaignDesignOfferPopupPlacement(@get:JsonValueAnnotation val value: String) {
     CENTER("CENTER"),
     BOTTOM("BOTTOM"),
@@ -770,6 +779,14 @@ constructor(
 
     fun isHeadingClickableToSignupUrl(): Optional<Boolean> =
         Optional.ofNullable(isHeadingClickableToSignupUrl)
+
+    /**
+     * Whether referred visitors see `pageTitleReplacement` as the browser tab title. New referral
+     * programs start with `true` and new affiliate programs with `false`. Older programs without
+     * this setting read back `false`.
+     */
+    fun isPageTitleReplacementActive(): Optional<Boolean> =
+        additionalProperties["isPageTitleReplacementActive"]?.asBoolean() ?: Optional.empty()
 
     fun pageTitleReplacement(): Optional<String> =
         pageTitleReplacement.getOptional("pageTitleReplacement")

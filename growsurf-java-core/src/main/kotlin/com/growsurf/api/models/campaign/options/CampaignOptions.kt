@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonValue as JsonValueAnnotation
 import com.growsurf.api.core.ExcludeMissing
 import com.growsurf.api.core.JsonField
 import com.growsurf.api.core.JsonMissing
+import com.growsurf.api.core.JsonObject
 import com.growsurf.api.core.JsonValue
 import com.growsurf.api.core.toImmutable
 import com.growsurf.api.errors.GrowsurfInvalidDataException
@@ -154,14 +155,30 @@ constructor(
     @JsonAnyGetter
     fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
 
+    /**
+     * Blocked emails. Each new entry must be an email address or an email pattern with `*`
+     * wildcards, such as `*@hooli.com`. Max 10000. Replaces the whole list.
+     */
     fun blockedEmails(): Optional<List<String>> = Optional.ofNullable(blockedEmails)
 
+    /**
+     * Blocked IP addresses. Each new entry must be an IPv4 or IPv6 address or a pattern with `*`
+     * wildcards, such as `203.0.113.*`. Max 10000. Replaces the whole list.
+     */
     fun blockedIps(): Optional<List<String>> = Optional.ofNullable(blockedIps)
 
     fun blockedCountries(): Optional<List<String>> = Optional.ofNullable(blockedCountries)
 
+    /**
+     * Allowed email addresses or patterns. Each new entry must be an email address or an email
+     * pattern with `*` wildcards. Replaces the whole list.
+     */
     fun allowedEmails(): Optional<List<String>> = Optional.ofNullable(allowedEmails)
 
+    /**
+     * Allowed IP addresses or patterns. Each new entry must be an IPv4 or IPv6 address or a pattern
+     * with `*` wildcards. Replaces the whole list.
+     */
     fun allowedIps(): Optional<List<String>> = Optional.ofNullable(allowedIps)
 
     fun allowedCountries(): Optional<List<String>> = Optional.ofNullable(allowedCountries)
@@ -352,6 +369,20 @@ constructor(
     fun monthlyPerformanceReport(): Optional<Boolean> =
         Optional.ofNullable(monthlyPerformanceReport)
 
+    /**
+     * Referral programs only. Send recipients an email on the first of each month when manual
+     * rewards are unsent or need approval. No email is sent when there is nothing to do.
+     */
+    fun monthlyRewardReminder(): Optional<Boolean> =
+        additionalProperties["MONTHLY_REWARD_REMINDER"]?.asBoolean() ?: Optional.empty()
+
+    /**
+     * Referral programs only. Send recipients an email each Monday when manual rewards are unsent
+     * or need approval. No email is sent when there is nothing to do.
+     */
+    fun weeklyRewardReminder(): Optional<Boolean> =
+        additionalProperties["WEEKLY_REWARD_REMINDER"]?.asBoolean() ?: Optional.empty()
+
     fun newCommissionAdded(): Optional<Boolean> = Optional.ofNullable(newCommissionAdded)
 
     fun commissionAdjusted(): Optional<Boolean> = Optional.ofNullable(commissionAdjusted)
@@ -385,6 +416,10 @@ constructor(
     @JsonAnyGetter
     fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
 
+    /**
+     * Email addresses that receive program notifications. Send at least one valid address. Joined
+     * with `, `, the list can have up to 500 characters.
+     */
     fun recipients(): Optional<List<String>> = Optional.ofNullable(recipients)
 
     fun events(): Optional<CampaignOptionsNotificationEvents> = Optional.ofNullable(events)
@@ -420,6 +455,26 @@ constructor(
         mutableMapOf("showFlags" to JsonValue.from(showFlags)),
     )
 
+    /**
+     * Sets [flagCountries] (language code to flag country). A `null` value goes back to that
+     * language's default flag; languages left out keep their current flag.
+     */
+    constructor(
+        flagCountries: Map<String, String?>,
+        showFlags: Boolean? = null,
+        baseLanguage: Language? = null,
+        additionalLanguages: List<Language>? = null,
+    ) : this(
+        baseLanguage,
+        additionalLanguages,
+        listOfNotNull(
+                "flagCountries" to
+                    JsonObject.of(flagCountries.mapValues { JsonValue.from(it.value) }),
+                showFlags?.let { "showFlags" to JsonValue.from(it) },
+            )
+            .toMap(mutableMapOf()),
+    )
+
     /** Returns additional fields supplied by the API. */
     @JsonAnyGetter
     fun _additionalProperties(): Map<String, JsonValue> = additionalProperties.toImmutable()
@@ -432,9 +487,8 @@ constructor(
 
     /**
      * Other languages participants can see, besides `baseLanguage`. Send the full list; send an
-     * empty list to turn them all off. Turning languages on, and any change while they are on,
-     * requires the Business plan or higher. Translations are managed in the dashboard and are kept
-     * when you remove a language.
+     * empty list to turn them all off. Translations are managed in the dashboard and are kept when
+     * you remove a language.
      */
     fun additionalLanguages(): Optional<List<Language>> = Optional.ofNullable(additionalLanguages)
 
@@ -444,6 +498,21 @@ constructor(
      */
     fun showFlags(): Optional<Boolean> =
         additionalProperties["showFlags"]?.asBoolean() ?: Optional.empty()
+
+    /**
+     * The flag shown next to each language name when `showFlags` is on, keyed by language code (for
+     * example `en` to `GB`). Only languages with more than one flag to choose from are listed.
+     * Values are ISO 3166 country codes; `ES-CT` is Catalonia. Send `null` for a language to go
+     * back to its default flag.
+     */
+    fun flagCountries(): Optional<Map<String, String>> =
+        additionalProperties["flagCountries"]?.asObject()?.map { countries ->
+            countries
+                .mapNotNull { (code, country) ->
+                    country.asString().orElse(null)?.let { code to it }
+                }
+                .toMap()
+        } ?: Optional.empty()
 
     /**
      * Validates that every language is one this SDK version knows.
@@ -518,10 +587,7 @@ private constructor(
     fun notificationEmails(): Optional<CampaignOptionsNotificationEmails> =
         configField(additionalProperties, "notificationEmails")
 
-    /**
-     * The languages your program runs in. Turning on additional languages requires the Business
-     * plan or higher.
-     */
+    /** The languages your program runs in, and whether the language picker shows flags. */
     fun languages(): Optional<CampaignOptionsLanguages> =
         configField(additionalProperties, "languages")
 

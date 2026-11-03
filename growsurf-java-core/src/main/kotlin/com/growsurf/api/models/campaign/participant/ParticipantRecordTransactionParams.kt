@@ -189,6 +189,9 @@ private constructor(
      */
     fun paymentProvider(): Optional<String> = body.paymentProvider()
 
+    /** The typed connected payment provider: `stripe`, `chargebee`, or `recurly`. */
+    fun paymentProviderEnum(): Optional<PaymentProvider> = body.paymentProviderEnum()
+
     /** `true` for test or `false` for live. Requires `paymentProvider`. */
     fun testMode(): Optional<Boolean> = body.testMode()
 
@@ -713,6 +716,11 @@ private constructor(
             body.paymentProvider(paymentProvider)
         }
 
+        /** Sets the connected payment provider: `stripe`, `chargebee`, or `recurly`. */
+        fun paymentProvider(paymentProvider: PaymentProvider) = apply {
+            body.paymentProvider(paymentProvider)
+        }
+
         fun testMode(testMode: Boolean) = apply { body.testMode(testMode) }
 
         /**
@@ -1165,6 +1173,15 @@ private constructor(
          * `testMode`.
          */
         fun paymentProvider(): Optional<String> = paymentProvider.getOptional("paymentProvider")
+
+        /**
+         * The typed connected payment provider: `stripe`, `chargebee`, or `recurly`.
+         *
+         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
+         *   the server responded with an unexpected value).
+         */
+        fun paymentProviderEnum(): Optional<PaymentProvider> =
+            paymentProvider.getOptional("paymentProvider").map(PaymentProvider::of)
 
         /** `true` for test or `false` for live. Requires `paymentProvider`. */
         fun testMode(): Optional<Boolean> = testMode.getOptional("testMode")
@@ -1754,6 +1771,10 @@ private constructor(
 
             fun paymentProvider(paymentProvider: String) =
                 paymentProvider(JsonField.of(paymentProvider))
+
+            /** Sets the connected payment provider: `stripe`, `chargebee`, or `recurly`. */
+            fun paymentProvider(paymentProvider: PaymentProvider) =
+                paymentProvider(paymentProvider.asString())
 
             fun testMode(testMode: Boolean) = testMode(JsonField.of(testMode))
 

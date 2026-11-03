@@ -41,6 +41,7 @@ import com.growsurf.api.models.campaign.ParticipantPayoutList
 import com.growsurf.api.models.campaign.ReferralFlowScreenshotsResponse
 import com.growsurf.api.models.campaign.ReferralList
 import com.growsurf.api.services.async.campaign.CommissionServiceAsync
+import com.growsurf.api.services.async.campaign.CustomDomainServiceAsync
 import com.growsurf.api.services.async.campaign.DesignServiceAsync
 import com.growsurf.api.services.async.campaign.EmailsServiceAsync
 import com.growsurf.api.services.async.campaign.InstallationServiceAsync
@@ -85,6 +86,9 @@ interface CampaignServiceAsync {
     /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
     fun design(): DesignServiceAsync
 
+    /** Program custom domain (`CampaignCustomDomain`) operations. */
+    fun customDomain(): CustomDomainServiceAsync
+
     /** Program Editor Emails tab (`CampaignEmails`) configuration operations. */
     fun emails(): EmailsServiceAsync
 
@@ -118,9 +122,8 @@ interface CampaignServiceAsync {
      * `urlId`, and `currencyISO` are immutable. Editor-tab configuration (design, emails, options,
      * installation) is edited via the dedicated config sub-resources, not here. The program cannot
      * be deleted via this endpoint. Changes to participant email content are checked before saving.
-     * Rejected content returns `400`; if the check is unavailable, `503` asks you to retry. Neither
-     * response saves the change. A concurrent edit can return `409`; reload the program before
-     * retrying.
+     * Rejected content returns `400` and is not saved. A concurrent edit can return `409`; reload
+     * the program before retrying.
      */
     fun update(id: String): CompletableFuture<Campaign> = update(id, CampaignUpdateParams.none())
 
@@ -850,6 +853,9 @@ interface CampaignServiceAsync {
 
         /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
         fun design(): DesignServiceAsync.WithRawResponse
+
+        /** Program custom domain (`CampaignCustomDomain`) operations. */
+        fun customDomain(): CustomDomainServiceAsync.WithRawResponse
 
         /** Program Editor Emails tab (`CampaignEmails`) configuration operations. */
         fun emails(): EmailsServiceAsync.WithRawResponse
