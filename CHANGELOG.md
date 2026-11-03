@@ -1,5 +1,27 @@
 # Changelog
 
+## [1.21.0](https://github.com/growsurf/growsurf-java/compare/v1.20.0...v1.21.0) (2026-11-03)
+
+
+### Features
+
+* add Tint and Glass program styles ([542259d](https://github.com/growsurf/growsurf-java/commit/542259d2072c0568805fefec160cb5e273660743))
+* **api:** add languages.flagCountries to Campaign Options ([84e113a](https://github.com/growsurf/growsurf-java/commit/84e113a6ab6c19dbd053c4ece564d56793ea7e51))
+* **api:** sync REST v2 contract changes ([6b831a6](https://github.com/growsurf/growsurf-java/commit/6b831a6e10907cc1865b2bd16c39f3fee25f28ab))
+* expose documented error-body fields and sync campaign and participant models ([ade640e](https://github.com/growsurf/growsurf-java/commit/ade640e2b52a28ab8b435b4b1d81c0c23c25bc10))
+* expose program visual style in campaign design ([1aa0880](https://github.com/growsurf/growsurf-java/commit/1aa088021e15ee6e9118c25ad5260f36119c1651))
+
+
+### Bug Fixes
+
+* format reward metadata documentation ([652fa95](https://github.com/growsurf/growsurf-java/commit/652fa956c0067941c7850099d5003d678ff95efc))
+
+
+### Documentation
+
+* clarify Add Participant claim-offer wording and page title defaults ([6ef247b](https://github.com/growsurf/growsurf-java/commit/6ef247b6723ef63a758c9e7f912f343fa8075159))
+* clarify referral reward metadata amounts ([17f9fb4](https://github.com/growsurf/growsurf-java/commit/17f9fb47e182e4d8d02a02fe782a2a472d54b285))
+
 ## [1.20.0](https://github.com/growsurf/growsurf-java/compare/v1.19.0...v1.20.0) (2026-10-20)
 
 
