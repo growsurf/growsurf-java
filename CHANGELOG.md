@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.23.0](https://github.com/growsurf/growsurf-java/compare/v1.22.0...v1.23.0) (2026-11-04)
+
+
+### Features
+
+* add reward amountSource and percentOff, and zh-TW and es-419 languages ([16ec6ee](https://github.com/growsurf/growsurf-java/commit/16ec6eedb198ad99f4dc7a6bd142a5149211c26b))
+* add reward amountSource and percentOff, and zh-TW and es-419 languages ([fba851d](https://github.com/growsurf/growsurf-java/commit/fba851d3931596d9932c709af3a61253691d112b))
+
 ## [1.22.0](https://github.com/growsurf/growsurf-java/compare/v1.21.0...v1.22.0) (2026-11-03)
 
 
