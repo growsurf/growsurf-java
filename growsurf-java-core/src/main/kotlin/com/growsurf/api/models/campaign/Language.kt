@@ -95,6 +95,10 @@ class Language @JsonCreator private constructor(private val value: JsonField<Str
 
         @JvmField val SW = of("sw")
 
+        @JvmField val ZH_TW = of("zh-TW")
+
+        @JvmField val ES_419 = of("es-419")
+
         @JvmStatic fun of(value: String) = Language(JsonField.of(value))
     }
 
@@ -138,6 +142,8 @@ class Language @JsonCreator private constructor(private val value: JsonField<Str
         FIL,
         AF,
         SW,
+        ZH_TW,
+        ES_419,
     }
 
     enum class Value {
@@ -180,6 +186,8 @@ class Language @JsonCreator private constructor(private val value: JsonField<Str
         FIL,
         AF,
         SW,
+        ZH_TW,
+        ES_419,
         _UNKNOWN,
     }
 
@@ -224,6 +232,8 @@ class Language @JsonCreator private constructor(private val value: JsonField<Str
             FIL -> Value.FIL
             AF -> Value.AF
             SW -> Value.SW
+            ZH_TW -> Value.ZH_TW
+            ES_419 -> Value.ES_419
             else -> Value._UNKNOWN
         }
 
@@ -268,6 +278,8 @@ class Language @JsonCreator private constructor(private val value: JsonField<Str
             FIL -> Known.FIL
             AF -> Known.AF
             SW -> Known.SW
+            ZH_TW -> Known.ZH_TW
+            ES_419 -> Known.ES_419
             else -> throw GrowsurfInvalidDataException("Unknown Language: $value")
         }
 
