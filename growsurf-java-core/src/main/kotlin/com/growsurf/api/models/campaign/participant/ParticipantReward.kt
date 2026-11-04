@@ -142,6 +142,25 @@ private constructor(
     fun currencyIso(): Optional<String> = currencyIso.getOptional("currencyISO")
 
     /**
+     * Discount of a percent-off coupon (`20` = 20% off), empty for every other reward. Read from
+     * additional properties so the published constructor and `copy` signatures stay binary
+     * compatible.
+     */
+    fun percentOff(): Optional<Double> =
+        additionalProperties["percentOff"]?.asNumber()?.map { it.toDouble() } ?: Optional.empty()
+
+    /**
+     * Where `amount` or `percentOff` comes from, empty when both are empty. Read from additional
+     * properties so the published constructor and `copy` signatures stay binary compatible.
+     */
+    fun amountSource(): Optional<ParticipantRewardAmountSource> =
+        additionalProperties["amountSource"]?.asString()?.flatMap { value ->
+            Optional.ofNullable(
+                ParticipantRewardAmountSource.values().firstOrNull { it.value == value }
+            )
+        } ?: Optional.empty()
+
+    /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */
