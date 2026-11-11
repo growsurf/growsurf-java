@@ -67,6 +67,7 @@ enum class CampaignDesignHeadingPlacement(@get:JsonValueAnnotation val value: St
 }
 
 enum class CampaignDesignReferrerNameFormat(@get:JsonValueAnnotation val value: String) {
+    NONE("NONE"),
     FIRST("FIRST"),
     FIRST_LAST_INITIAL("FIRST_LAST_INITIAL"),
     FIRST_LAST("FIRST_LAST"),
