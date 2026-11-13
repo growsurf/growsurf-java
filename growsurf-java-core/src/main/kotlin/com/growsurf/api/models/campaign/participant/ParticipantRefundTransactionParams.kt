@@ -41,7 +41,7 @@ private constructor(
 
     /**
      * REFUND covers full refunds, partial refunds, and refund cancellations; CHARGEBACK is always a
-     * full reversal.
+     * full reversal. Defaults to REFUND.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -59,7 +59,9 @@ private constructor(
 
     /**
      * Cumulative amount refunded so far, in the currency's minor unit. Omit for a full refund. For
-     * a partial refund send the running total, not the per-refund delta.
+     * a partial refund send the running total, not the per-refund delta. Required when
+     * `refundStatus` is `canceled`: send the total that stays refunded after the cancellation (`0`
+     * when none remain).
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -144,8 +146,7 @@ private constructor(
     fun refundId(): Optional<String> = body.refundId()
 
     /**
-     * Refund status. Send "canceled" with a lowered amountRefunded to restore a previously reduced
-     * commission.
+     * Refund status. Send "canceled" with the original refundId to cancel that refund.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -354,7 +355,7 @@ private constructor(
 
         /**
          * REFUND covers full refunds, partial refunds, and refund cancellations; CHARGEBACK is
-         * always a full reversal.
+         * always a full reversal. Defaults to REFUND.
          */
         fun amendmentType(amendmentType: AmendmentType) = apply {
             body.amendmentType(amendmentType)
@@ -387,7 +388,9 @@ private constructor(
 
         /**
          * Cumulative amount refunded so far, in the currency's minor unit. Omit for a full refund.
-         * For a partial refund send the running total, not the per-refund delta.
+         * For a partial refund send the running total, not the per-refund delta. Required when
+         * `refundStatus` is `canceled`: send the total that stays refunded after the cancellation
+         * (`0` when none remain).
          */
         fun amountRefunded(amountRefunded: Long) = apply { body.amountRefunded(amountRefunded) }
 
@@ -536,8 +539,7 @@ private constructor(
         fun refundId(refundId: JsonField<String>) = apply { body.refundId(refundId) }
 
         /**
-         * Refund status. Send "canceled" with a lowered amountRefunded to restore a previously
-         * reduced commission.
+         * Refund status. Send "canceled" with the original refundId to cancel that refund.
          */
         fun refundStatus(refundStatus: String) = apply { body.refundStatus(refundStatus) }
 
@@ -834,7 +836,7 @@ private constructor(
 
         /**
          * REFUND covers full refunds, partial refunds, and refund cancellations; CHARGEBACK is
-         * always a full reversal.
+         * always a full reversal. Defaults to REFUND.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -852,7 +854,9 @@ private constructor(
 
         /**
          * Cumulative amount refunded so far, in the currency's minor unit. Omit for a full refund.
-         * For a partial refund send the running total, not the per-refund delta.
+         * For a partial refund send the running total, not the per-refund delta. Required when
+         * `refundStatus` is `canceled`: send the total that stays refunded after the cancellation
+         * (`0` when none remain).
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -935,8 +939,7 @@ private constructor(
         fun refundId(): Optional<String> = refundId.getOptional("refundId")
 
         /**
-         * Refund status. Send "canceled" with a lowered amountRefunded to restore a previously
-         * reduced commission.
+         * Refund status. Send "canceled" with the original refundId to cancel that refund.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
          *   the server responded with an unexpected value).
@@ -1170,7 +1173,7 @@ private constructor(
 
             /**
              * REFUND covers full refunds, partial refunds, and refund cancellations; CHARGEBACK is
-             * always a full reversal.
+             * always a full reversal. Defaults to REFUND.
              */
             fun amendmentType(amendmentType: AmendmentType) =
                 amendmentType(JsonField.of(amendmentType))
@@ -1205,6 +1208,8 @@ private constructor(
             /**
              * Cumulative amount refunded so far, in the currency's minor unit. Omit for a full
              * refund. For a partial refund send the running total, not the per-refund delta.
+             * Required when `refundStatus` is `canceled`: send the total that stays refunded after
+             * the cancellation (`0` when none remain).
              */
             fun amountRefunded(amountRefunded: Long) = amountRefunded(JsonField.of(amountRefunded))
 
@@ -1361,8 +1366,7 @@ private constructor(
             fun refundId(refundId: JsonField<String>) = apply { this.refundId = refundId }
 
             /**
-             * Refund status. Send "canceled" with a lowered amountRefunded to restore a previously
-             * reduced commission.
+             * Refund status. Send "canceled" with the original refundId to cancel that refund.
              */
             fun refundStatus(refundStatus: String) = refundStatus(JsonField.of(refundStatus))
 
@@ -1584,7 +1588,7 @@ private constructor(
 
     /**
      * REFUND covers full refunds, partial refunds, and refund cancellations; CHARGEBACK is always a
-     * full reversal.
+     * full reversal. Defaults to REFUND.
      */
     class AmendmentType @JsonCreator private constructor(private val value: JsonField<String>) :
         Enum {

@@ -526,7 +526,7 @@ private constructor(
 
     /**
      * REFUND covers full refunds, partial refunds, and refund cancellations; CHARGEBACK is always a
-     * full reversal.
+     * full reversal. Defaults to REFUND.
      */
     class AmendmentType @JsonCreator private constructor(private val value: JsonField<String>) :
         Enum {

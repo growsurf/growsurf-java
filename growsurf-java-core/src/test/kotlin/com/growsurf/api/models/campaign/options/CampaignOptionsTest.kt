@@ -129,6 +129,19 @@ internal class CampaignOptionsTest {
         assertThat(options.languages().get().showFlags()).contains(false)
         assertThat(options.languages().get().copy().showFlags()).contains(false)
         assertThat(CampaignOptionsLanguages().showFlags()).isEmpty()
+        assertThat(options.languages().get().baseLanguageTranslation()).isEmpty()
+        val translation =
+            mapper
+                .readValue(
+                    """{"languages":{"baseLanguage":"da","baseLanguageTranslation":{"untranslated":12,"total":58}}}""",
+                    CampaignOptions::class.java,
+                )
+                .languages()
+                .get()
+                .baseLanguageTranslation()
+                .get()
+        assertThat(translation.untranslated()).isEqualTo(12L)
+        assertThat(translation.total()).isEqualTo(58L)
         assertThat(options.isValid()).isTrue()
 
         val params =

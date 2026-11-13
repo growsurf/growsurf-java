@@ -37,7 +37,11 @@ interface GroupsServiceAsync {
         requestOptions: RequestOptions = RequestOptions.none(),
     ): CompletableFuture<RewardGroupListResponse>
 
-    /** Creates a group with a copy of each active Default reward, except Leaderboard rewards. */
+    /**
+     * Creates a group with a copy of each active Default reward, except Leaderboard rewards. Group
+     * names must be unique in the program, ignoring case. A name that another group uses returns
+     * `409`, and "Default" returns `400`.
+     */
     fun create(id: String, params: RewardGroupCreateParams): CompletableFuture<RewardGroup> =
         create(id, params, RequestOptions.none())
 
@@ -72,6 +76,8 @@ interface GroupsServiceAsync {
 
     /**
      * Renames, reorders, or changes the rules of a group. Sending `rules` replaces the whole list.
+     * Group names must be unique in the program, ignoring case. A name that another group uses
+     * returns `409`, and "Default" returns `400`.
      */
     fun update(groupId: String, params: RewardGroupUpdateParams): CompletableFuture<RewardGroup> =
         update(groupId, params, RequestOptions.none())

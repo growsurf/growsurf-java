@@ -49,12 +49,6 @@ private constructor(
     fun messageText(): String = body.messageText()
 
     /**
-     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
-     *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-     */
-    fun subjectText(): String = body.subjectText()
-
-    /**
      * Returns the raw JSON value of [emailAddresses].
      *
      * Unlike [emailAddresses], this method doesn't throw if the JSON field has an unexpected type.
@@ -67,13 +61,6 @@ private constructor(
      * Unlike [messageText], this method doesn't throw if the JSON field has an unexpected type.
      */
     fun _messageText(): JsonField<String> = body._messageText()
-
-    /**
-     * Returns the raw JSON value of [subjectText].
-     *
-     * Unlike [subjectText], this method doesn't throw if the JSON field has an unexpected type.
-     */
-    fun _subjectText(): JsonField<String> = body._subjectText()
 
     fun _additionalBodyProperties(): Map<String, JsonValue> = body._additionalProperties()
 
@@ -95,7 +82,6 @@ private constructor(
          * .id()
          * .emailAddresses()
          * .messageText()
-         * .subjectText()
          * ```
          */
         @JvmStatic fun builder() = Builder()
@@ -139,7 +125,6 @@ private constructor(
          * Otherwise, it's more convenient to use the top-level setters instead:
          * - [emailAddresses]
          * - [messageText]
-         * - [subjectText]
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
@@ -175,17 +160,6 @@ private constructor(
          * value.
          */
         fun messageText(messageText: JsonField<String>) = apply { body.messageText(messageText) }
-
-        fun subjectText(subjectText: String) = apply { body.subjectText(subjectText) }
-
-        /**
-         * Sets [Builder.subjectText] to an arbitrary JSON value.
-         *
-         * You should usually call [Builder.subjectText] with a well-typed [String] value instead.
-         * This method is primarily for setting the field to an undocumented or not yet supported
-         * value.
-         */
-        fun subjectText(subjectText: JsonField<String>) = apply { body.subjectText(subjectText) }
 
         fun additionalBodyProperties(additionalBodyProperties: Map<String, JsonValue>) = apply {
             body.additionalProperties(additionalBodyProperties)
@@ -314,7 +288,6 @@ private constructor(
          * .id()
          * .emailAddresses()
          * .messageText()
-         * .subjectText()
          * ```
          *
          * @throws IllegalStateException if any required field is unset.
@@ -347,7 +320,6 @@ private constructor(
     private constructor(
         private val emailAddresses: JsonField<List<String>>,
         private val messageText: JsonField<String>,
-        private val subjectText: JsonField<String>,
         private val additionalProperties: MutableMap<String, JsonValue>,
     ) {
 
@@ -359,10 +331,7 @@ private constructor(
             @JsonProperty("messageText")
             @ExcludeMissing
             messageText: JsonField<String> = JsonMissing.of(),
-            @JsonProperty("subjectText")
-            @ExcludeMissing
-            subjectText: JsonField<String> = JsonMissing.of(),
-        ) : this(emailAddresses, messageText, subjectText, mutableMapOf())
+        ) : this(emailAddresses, messageText, mutableMapOf())
 
         /**
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
@@ -375,12 +344,6 @@ private constructor(
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
          */
         fun messageText(): String = messageText.getRequired("messageText")
-
-        /**
-         * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
-         *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
-         */
-        fun subjectText(): String = subjectText.getRequired("subjectText")
 
         /**
          * Returns the raw JSON value of [emailAddresses].
@@ -400,15 +363,6 @@ private constructor(
         @JsonProperty("messageText")
         @ExcludeMissing
         fun _messageText(): JsonField<String> = messageText
-
-        /**
-         * Returns the raw JSON value of [subjectText].
-         *
-         * Unlike [subjectText], this method doesn't throw if the JSON field has an unexpected type.
-         */
-        @JsonProperty("subjectText")
-        @ExcludeMissing
-        fun _subjectText(): JsonField<String> = subjectText
 
         @JsonAnySetter
         private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -431,7 +385,6 @@ private constructor(
              * ```java
              * .emailAddresses()
              * .messageText()
-             * .subjectText()
              * ```
              */
             @JvmStatic fun builder() = Builder()
@@ -442,14 +395,12 @@ private constructor(
 
             private var emailAddresses: JsonField<MutableList<String>>? = null
             private var messageText: JsonField<String>? = null
-            private var subjectText: JsonField<String>? = null
             private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
             @JvmSynthetic
             internal fun from(body: Body) = apply {
                 emailAddresses = body.emailAddresses.map { it.toMutableList() }
                 messageText = body.messageText
-                subjectText = body.subjectText
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
@@ -492,19 +443,6 @@ private constructor(
                 this.messageText = messageText
             }
 
-            fun subjectText(subjectText: String) = subjectText(JsonField.of(subjectText))
-
-            /**
-             * Sets [Builder.subjectText] to an arbitrary JSON value.
-             *
-             * You should usually call [Builder.subjectText] with a well-typed [String] value
-             * instead. This method is primarily for setting the field to an undocumented or not yet
-             * supported value.
-             */
-            fun subjectText(subjectText: JsonField<String>) = apply {
-                this.subjectText = subjectText
-            }
-
             fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
                 this.additionalProperties.clear()
                 putAllAdditionalProperties(additionalProperties)
@@ -533,7 +471,6 @@ private constructor(
              * ```java
              * .emailAddresses()
              * .messageText()
-             * .subjectText()
              * ```
              *
              * @throws IllegalStateException if any required field is unset.
@@ -542,7 +479,6 @@ private constructor(
                 Body(
                     checkRequired("emailAddresses", emailAddresses).map { it.toImmutable() },
                     checkRequired("messageText", messageText),
-                    checkRequired("subjectText", subjectText),
                     additionalProperties.toMutableMap(),
                 )
         }
@@ -565,7 +501,6 @@ private constructor(
 
             emailAddresses()
             messageText()
-            subjectText()
             validated = true
         }
 
@@ -586,8 +521,7 @@ private constructor(
         @JvmSynthetic
         internal fun validity(): Int =
             (emailAddresses.asKnown().getOrNull()?.size ?: 0) +
-                (if (messageText.asKnown().isPresent) 1 else 0) +
-                (if (subjectText.asKnown().isPresent) 1 else 0)
+                (if (messageText.asKnown().isPresent) 1 else 0)
 
         override fun equals(other: Any?): Boolean {
             if (this === other) {
@@ -597,18 +531,17 @@ private constructor(
             return other is Body &&
                 emailAddresses == other.emailAddresses &&
                 messageText == other.messageText &&
-                subjectText == other.subjectText &&
                 additionalProperties == other.additionalProperties
         }
 
         private val hashCode: Int by lazy {
-            Objects.hash(emailAddresses, messageText, subjectText, additionalProperties)
+            Objects.hash(emailAddresses, messageText, additionalProperties)
         }
 
         override fun hashCode(): Int = hashCode
 
         override fun toString() =
-            "Body{emailAddresses=$emailAddresses, messageText=$messageText, subjectText=$subjectText, additionalProperties=$additionalProperties}"
+            "Body{emailAddresses=$emailAddresses, messageText=$messageText, additionalProperties=$additionalProperties}"
     }
 
     override fun equals(other: Any?): Boolean {

@@ -118,7 +118,7 @@ interface ParticipantService {
     /**
      * Removes participant access immediately by GrowSurf participant ID or email address. Related
      * record cleanup completes automatically. Do not repeat a successful deletion to finish
-     * cleanup.
+     * cleanup. A `202` response includes pending analytics erasure details.
      */
     fun delete(
         participantIdOrEmail: String,
@@ -152,7 +152,7 @@ interface ParticipantService {
      * per request — chunk larger lists across multiple calls. The response reports a per-row
      * `status` for every submitted entry, so a `200` can include rows that were `NOT_FOUND` or
      * failed. Deletion is permanent. Successful rows lose participant access immediately; related
-     * record cleanup completes automatically, subject to required financial record retention.
+     * record cleanup completes automatically, subject to required financial record retention. A `202` response also includes `analyticsErasure` when analytics erasure is pending.
      */
     fun bulkDelete(id: String, params: ParticipantBulkDeleteParams): ParticipantBulkDeleteResponse =
         bulkDelete(id, params, RequestOptions.none())
@@ -418,8 +418,8 @@ interface ParticipantService {
 
     /**
      * Sends email invites on behalf of a participant to a list of email addresses. Sending invites
-     * via the API requires a **verified custom email domain** on the program; the request fails
-     * until one is verified.
+     * via the API requires a **verified custom email domain** on the program. Until one is
+     * verified, it returns `success: false`.
      */
     fun sendInvites(
         participantIdOrEmail: String,
