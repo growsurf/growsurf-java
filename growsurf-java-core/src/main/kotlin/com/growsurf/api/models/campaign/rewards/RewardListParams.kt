@@ -59,6 +59,12 @@ private constructor(
         /** Alias for calling [Builder.id] with `id.orElse(null)`. */
         fun id(id: Optional<String>) = id(id.getOrNull())
 
+        /**
+         * Return only this group's rewards. An ID that is not a group in this program returns
+         * `404`.
+         */
+        fun groupId(groupId: String) = putAdditionalQueryParam("groupId", groupId)
+
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
             putAllAdditionalHeaders(additionalHeaders)

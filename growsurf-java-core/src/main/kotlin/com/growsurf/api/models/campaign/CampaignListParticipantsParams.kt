@@ -108,6 +108,12 @@ private constructor(
         /** Alias for calling [Builder.nextId] with `nextId.orElse(null)`. */
         fun nextId(nextId: Optional<String>) = nextId(nextId.getOrNull())
 
+        /**
+         * Return only this group's members. An ID that is not a group in this program returns
+         * `404`.
+         */
+        fun groupId(groupId: String) = putAdditionalQueryParam("groupId", groupId)
+
         fun additionalHeaders(additionalHeaders: Headers) = apply {
             this.additionalHeaders.clear()
             putAllAdditionalHeaders(additionalHeaders)

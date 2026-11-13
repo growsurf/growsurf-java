@@ -347,6 +347,17 @@ private constructor(
         fun firstName(firstName: String) = firstName(JsonField.of(firstName))
 
         /**
+         * Places the new participant in this group (`grp_…`), or in Default with `null`. This is a
+         * manual placement, so the groups' email and domain rules do not apply to them. Applied
+         * only when this request creates the participant. An ID that is not a group in this program
+         * returns `400` and adds no one.
+         */
+        fun groupId(groupId: String?) = putAdditionalProperty("groupId", JsonValue.from(groupId))
+
+        /** Alias for calling [Builder.groupId] with `groupId.orElse(null)`. */
+        fun groupId(groupId: Optional<String>) = groupId(groupId.getOrNull())
+
+        /**
          * Sets [Builder.firstName] to an arbitrary JSON value.
          *
          * You should usually call [Builder.firstName] with a well-typed [String] value instead.

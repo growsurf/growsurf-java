@@ -25,6 +25,8 @@ import com.growsurf.api.models.campaign.participant.ParticipantAddParams
 import com.growsurf.api.models.campaign.participant.ParticipantAnalyticsResponse
 import com.growsurf.api.models.campaign.participant.ParticipantBulkDeleteParams
 import com.growsurf.api.models.campaign.participant.ParticipantBulkDeleteResponse
+import com.growsurf.api.models.campaign.participant.ParticipantBulkMoveParams
+import com.growsurf.api.models.campaign.participant.ParticipantBulkMoveResponse
 import com.growsurf.api.models.campaign.participant.ParticipantCancelDelayedReferralParams
 import com.growsurf.api.models.campaign.participant.ParticipantCancelDelayedReferralResponse
 import com.growsurf.api.models.campaign.participant.ParticipantDeleteParams
@@ -94,6 +96,13 @@ class ParticipantServiceImpl internal constructor(private val clientOptions: Cli
     ): ParticipantBulkDeleteResponse =
         // post /campaign/{id}/participants/bulk-delete
         withRawResponse().bulkDelete(params, requestOptions).parse()
+
+    override fun bulkMove(
+        params: ParticipantBulkMoveParams,
+        requestOptions: RequestOptions,
+    ): ParticipantBulkMoveResponse =
+        // post /campaign/{id}/participants/bulk-move
+        withRawResponse().bulkMove(params, requestOptions).parse()
 
     override fun add(params: ParticipantAddParams, requestOptions: RequestOptions): Participant =
         // post /campaign/{id}/participant
@@ -310,6 +319,35 @@ class ParticipantServiceImpl internal constructor(private val clientOptions: Cli
             return errorHandler.handle(response).parseable {
                 response
                     .use { deleteHandler.handle(it) }
+                    .also {
+                        if (requestOptions.responseValidation!!) {
+                            it.validate()
+                        }
+                    }
+            }
+        }
+
+        private val bulkMoveHandler: Handler<ParticipantBulkMoveResponse> =
+            jsonHandler<ParticipantBulkMoveResponse>(clientOptions.jsonMapper)
+
+        override fun bulkMove(
+            params: ParticipantBulkMoveParams,
+            requestOptions: RequestOptions,
+        ): HttpResponseFor<ParticipantBulkMoveResponse> {
+            val id = checkRequired("id", params.id().getOrNull())
+            val request =
+                HttpRequest.builder()
+                    .method(HttpMethod.POST)
+                    .baseUrl(clientOptions.baseUrl())
+                    .addPathSegments("campaign", id, "participants", "bulk-move")
+                    .body(json(clientOptions.jsonMapper, params._body()))
+                    .build()
+                    .prepare(clientOptions, params)
+            val requestOptions = requestOptions.applyDefaults(RequestOptions.from(clientOptions))
+            val response = clientOptions.httpClient.execute(request, requestOptions)
+            return errorHandler.handle(response).parseable {
+                response
+                    .use { bulkMoveHandler.handle(it) }
                     .also {
                         if (requestOptions.responseValidation!!) {
                             it.validate()

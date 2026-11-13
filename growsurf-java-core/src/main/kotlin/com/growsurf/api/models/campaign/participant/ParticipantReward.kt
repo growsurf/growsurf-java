@@ -161,6 +161,14 @@ private constructor(
         } ?: Optional.empty()
 
     /**
+     * The group whose reward this is (`grp_…`), saved when it was earned. Empty for Default and for
+     * rewards earned before groups existed. Read from additional properties so the published
+     * constructor and `copy` signatures stay binary compatible.
+     */
+    fun groupId(): Optional<String> =
+        additionalProperties["groupId"]?.asString() ?: Optional.empty()
+
+    /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
      */

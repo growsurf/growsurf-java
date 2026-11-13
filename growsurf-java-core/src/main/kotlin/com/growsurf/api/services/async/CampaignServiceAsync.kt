@@ -44,6 +44,7 @@ import com.growsurf.api.services.async.campaign.CommissionServiceAsync
 import com.growsurf.api.services.async.campaign.CustomDomainServiceAsync
 import com.growsurf.api.services.async.campaign.DesignServiceAsync
 import com.growsurf.api.services.async.campaign.EmailsServiceAsync
+import com.growsurf.api.services.async.campaign.GroupsServiceAsync
 import com.growsurf.api.services.async.campaign.InstallationServiceAsync
 import com.growsurf.api.services.async.campaign.IntegrationsServiceAsync
 import com.growsurf.api.services.async.campaign.OptionsServiceAsync
@@ -82,6 +83,9 @@ interface CampaignServiceAsync {
 
     /** Program Resource management and secure FILE upload operations. */
     fun resources(): ProgramResourcesServiceAsync
+
+    /** Group operations. Groups give some participants a different reward list. */
+    fun groups(): GroupsServiceAsync
 
     /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
     fun design(): DesignServiceAsync
@@ -850,6 +854,9 @@ interface CampaignServiceAsync {
 
         /** Program Resource management and secure FILE upload operations. */
         fun resources(): ProgramResourcesServiceAsync.WithRawResponse
+
+        /** Group operations. Groups give some participants a different reward list. */
+        fun groups(): GroupsServiceAsync.WithRawResponse
 
         /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
         fun design(): DesignServiceAsync.WithRawResponse

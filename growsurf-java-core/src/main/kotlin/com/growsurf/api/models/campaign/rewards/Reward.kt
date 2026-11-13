@@ -224,6 +224,14 @@ private constructor(
     fun imageUrl(): Optional<String> = imageUrl.getOptional("imageUrl")
 
     /**
+     * The group this reward belongs to (`grp_…`), empty for Default. A participant earns only their
+     * own group's rewards. Read from additional properties so the published constructor and `copy`
+     * signatures stay binary compatible.
+     */
+    fun groupId(): Optional<String> =
+        additionalProperties["groupId"]?.asString() ?: Optional.empty()
+
+    /**
      * The starter icon shown for the reward, or `null` when `imageUrl` is your own image.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the

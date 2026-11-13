@@ -17,6 +17,7 @@ import com.growsurf.api.core.jsonMapper
 import com.growsurf.api.core.toImmutable
 import com.growsurf.api.errors.GrowsurfInvalidDataException
 import com.growsurf.api.models.campaign.Language
+import com.growsurf.api.models.campaign.groups.RewardGroupSource
 import java.util.Collections
 import java.util.Objects
 import java.util.Optional
@@ -335,6 +336,24 @@ private constructor(
      *   server responded with an unexpected value).
      */
     fun fraudRiskLevel(): Optional<FraudRiskLevel> = fraudRiskLevel.getOptional("fraudRiskLevel")
+
+    /**
+     * The participant's group (`grp_…`), empty for Default. Their new referrals earn this group's
+     * rewards. Read from additional properties so the published constructor and `copy` signatures
+     * stay binary compatible.
+     */
+    fun groupId(): Optional<String> =
+        additionalProperties["groupId"]?.asString() ?: Optional.empty()
+
+    /**
+     * How the participant got into their group, empty when no group placement was ever made. Read
+     * from additional properties so the published constructor and `copy` signatures stay binary
+     * compatible.
+     */
+    fun groupSource(): Optional<RewardGroupSource> =
+        additionalProperties["groupSource"]?.asString()?.flatMap { value ->
+            Optional.ofNullable(RewardGroupSource.values().firstOrNull { it.value == value })
+        } ?: Optional.empty()
 
     /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the

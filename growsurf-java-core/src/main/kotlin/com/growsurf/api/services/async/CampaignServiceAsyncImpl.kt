@@ -59,6 +59,8 @@ import com.growsurf.api.services.async.campaign.DesignServiceAsync
 import com.growsurf.api.services.async.campaign.DesignServiceAsyncImpl
 import com.growsurf.api.services.async.campaign.EmailsServiceAsync
 import com.growsurf.api.services.async.campaign.EmailsServiceAsyncImpl
+import com.growsurf.api.services.async.campaign.GroupsServiceAsync
+import com.growsurf.api.services.async.campaign.GroupsServiceAsyncImpl
 import com.growsurf.api.services.async.campaign.InstallationServiceAsync
 import com.growsurf.api.services.async.campaign.InstallationServiceAsyncImpl
 import com.growsurf.api.services.async.campaign.IntegrationsServiceAsync
@@ -97,6 +99,8 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
     }
 
     private val rewards: RewardsServiceAsync by lazy { RewardsServiceAsyncImpl(clientOptions) }
+
+    private val groups: GroupsServiceAsync by lazy { GroupsServiceAsyncImpl(clientOptions) }
 
     private val resources: ProgramResourcesServiceAsync by lazy {
         ProgramResourcesServiceAsyncImpl(clientOptions)
@@ -139,6 +143,8 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
 
     /** Program Resource management and secure FILE upload operations. */
     override fun resources(): ProgramResourcesServiceAsync = resources
+
+    override fun groups(): GroupsServiceAsync = groups
 
     /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
     override fun design(): DesignServiceAsync = design
@@ -340,6 +346,10 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
             RewardsServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val groups: GroupsServiceAsync.WithRawResponse by lazy {
+            GroupsServiceAsyncImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val resources: ProgramResourcesServiceAsync.WithRawResponse by lazy {
             ProgramResourcesServiceAsyncImpl.WithRawResponseImpl(clientOptions)
         }
@@ -392,6 +402,8 @@ class CampaignServiceAsyncImpl internal constructor(private val clientOptions: C
 
         /** Program Resource management and secure FILE upload operations. */
         override fun resources(): ProgramResourcesServiceAsync.WithRawResponse = resources
+
+        override fun groups(): GroupsServiceAsync.WithRawResponse = groups
 
         /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
         override fun design(): DesignServiceAsync.WithRawResponse = design
