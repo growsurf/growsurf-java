@@ -28,7 +28,8 @@ import kotlin.jvm.optionals.getOrNull
  * request — chunk larger lists across multiple calls. The response reports a per-row `status` for
  * every submitted entry, so a `200` can include rows that were `NOT_FOUND` or failed. Deletion is
  * permanent. Successful rows lose participant access immediately; related record cleanup completes
- * automatically, subject to required financial record retention. A `202` response also includes `analyticsErasure` when analytics erasure is pending.
+ * automatically, subject to required financial record retention. A `202` response also includes
+ * `analyticsErasure` when analytics erasure is pending.
  */
 class ParticipantBulkDeleteParams
 private constructor(

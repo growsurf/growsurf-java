@@ -34,9 +34,9 @@ interface GroupsService {
     ): RewardGroupListResponse
 
     /**
-     * Creates an empty group. Add Campaign Rewards with its `groupId` before adding
-     * participants or rules. Omit `rules` or send an empty array; nonempty rules return `400`.
-     * Group names must be unique, ignoring case. Duplicate names return `409`; "Default" returns `400`.
+     * Creates an empty group. Add Campaign Rewards with its `groupId` before adding participants or
+     * rules. Omit `rules` or send an empty array; nonempty rules return `400`. Group names must be
+     * unique, ignoring case. Duplicate names return `409`; "Default" returns `400`.
      */
     fun create(id: String, params: RewardGroupCreateParams): RewardGroup =
         create(id, params, RequestOptions.none())

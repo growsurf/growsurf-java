@@ -538,9 +538,7 @@ private constructor(
          */
         fun refundId(refundId: JsonField<String>) = apply { body.refundId(refundId) }
 
-        /**
-         * Refund status. Send "canceled" with the original refundId to cancel that refund.
-         */
+        /** Refund status. Send "canceled" with the original refundId to cancel that refund. */
         fun refundStatus(refundStatus: String) = apply { body.refundStatus(refundStatus) }
 
         /**
@@ -1365,9 +1363,7 @@ private constructor(
              */
             fun refundId(refundId: JsonField<String>) = apply { this.refundId = refundId }
 
-            /**
-             * Refund status. Send "canceled" with the original refundId to cancel that refund.
-             */
+            /** Refund status. Send "canceled" with the original refundId to cancel that refund. */
             fun refundStatus(refundStatus: String) = refundStatus(JsonField.of(refundStatus))
 
             /**

@@ -202,7 +202,8 @@ private constructor(
     fun referralCouponCode(): Optional<String> = body.referralCouponCode()
 
     /**
-     * Custom key/value metadata (single-level; values are stored as strings). Sending `metadata` replaces the stored object.
+     * Custom key/value metadata (single-level; values are stored as strings). Sending `metadata`
+     * replaces the stored object.
      *
      * Each value must be a string, number, or boolean of up to 500 characters. Each key must have 1
      * to 40 characters once camelCased, and two keys that camelCase to the same key are rejected.
@@ -789,7 +790,8 @@ private constructor(
         }
 
         /**
-         * Custom key/value metadata (single-level; values are stored as strings). Sending `metadata` replaces the stored object.
+         * Custom key/value metadata (single-level; values are stored as strings). Sending
+         * `metadata` replaces the stored object.
          *
          * Each value must be a string, number, or boolean of up to 500 characters. Each key must
          * have 1 to 40 characters once camelCased, and two keys that camelCase to the same key are
@@ -1297,7 +1299,8 @@ private constructor(
             referralCouponCode.getOptional("referralCouponCode")
 
         /**
-         * Custom key/value metadata (single-level; values are stored as strings). Sending `metadata` replaces the stored object.
+         * Custom key/value metadata (single-level; values are stored as strings). Sending
+         * `metadata` replaces the stored object.
          *
          * Each value must be a string, number, or boolean of up to 500 characters. Each key must
          * have 1 to 40 characters once camelCased, and two keys that camelCase to the same key are
@@ -1928,7 +1931,8 @@ private constructor(
             }
 
             /**
-             * Custom key/value metadata (single-level; values are stored as strings). Sending `metadata` replaces the stored object.
+             * Custom key/value metadata (single-level; values are stored as strings). Sending
+             * `metadata` replaces the stored object.
              *
              * Each value must be a string, number, or boolean of up to 500 characters. Each key
              * must have 1 to 40 characters once camelCased, and two keys that camelCase to the same
@@ -2199,7 +2203,8 @@ private constructor(
     }
 
     /**
-     * Custom key/value metadata (single-level; values are stored as strings). Sending `metadata` replaces the stored object.
+     * Custom key/value metadata (single-level; values are stored as strings). Sending `metadata`
+     * replaces the stored object.
      *
      * For `DOUBLE_SIDED` rewards in referral programs, `rewardAmount` is the referrer’s amount and
      * `referredRewardAmount` is the friend’s amount. If `referredRewardAmount` is absent, both use
