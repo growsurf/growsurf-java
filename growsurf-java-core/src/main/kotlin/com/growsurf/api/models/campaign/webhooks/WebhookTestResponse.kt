@@ -35,7 +35,7 @@ private constructor(
     ) : this(payload, response, success, mutableMapOf())
 
     /**
-     * The mock event payload that was sent.
+     * The mock event payload that was sent. `id` is the event ID.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
      *   server responded with an unexpected value).
@@ -116,7 +116,7 @@ private constructor(
             additionalProperties = webhookTestResponse.additionalProperties.toMutableMap()
         }
 
-        /** The mock event payload that was sent. */
+        /** The mock event payload that was sent. `id` is the event ID. */
         fun payload(payload: Payload) = payload(JsonField.of(payload))
 
         /**
@@ -228,7 +228,7 @@ private constructor(
             (response.asKnown().getOrNull()?.validity() ?: 0) +
             (if (success.asKnown().isPresent) 1 else 0)
 
-    /** The mock event payload that was sent. */
+    /** The mock event payload that was sent. `id` is the event ID. */
     class Payload
     @JsonCreator
     private constructor(
