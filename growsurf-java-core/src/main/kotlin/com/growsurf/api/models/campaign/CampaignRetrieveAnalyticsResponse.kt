@@ -4549,6 +4549,7 @@ private constructor(
         class PayoutStatus
         @JsonCreator(mode = JsonCreator.Mode.DISABLED)
         private constructor(
+            private val attention: JsonField<PayoutStatusMetric>,
             private val failed: JsonField<PayoutStatusMetric>,
             private val issued: JsonField<PayoutStatusMetric>,
             private val queued: JsonField<PayoutStatusMetric>,
@@ -4559,6 +4560,9 @@ private constructor(
 
             @JsonCreator
             private constructor(
+                @JsonProperty("attention")
+                @ExcludeMissing
+                attention: JsonField<PayoutStatusMetric> = JsonMissing.of(),
                 @JsonProperty("failed")
                 @ExcludeMissing
                 failed: JsonField<PayoutStatusMetric> = JsonMissing.of(),
@@ -4574,7 +4578,15 @@ private constructor(
                 @JsonProperty("upcoming")
                 @ExcludeMissing
                 upcoming: JsonField<PayoutStatusMetric> = JsonMissing.of(),
-            ) : this(failed, issued, queued, reversed, upcoming, mutableMapOf())
+            ) : this(attention, failed, issued, queued, reversed, upcoming, mutableMapOf())
+
+            /**
+             * Queued or issued Wise payouts that are paused until a refund is confirmed.
+             *
+             * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g.
+             *   if the server responded with an unexpected value).
+             */
+            fun attention(): Optional<PayoutStatusMetric> = attention.getOptional("attention")
 
             /**
              * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g.
@@ -4605,6 +4617,16 @@ private constructor(
              *   if the server responded with an unexpected value).
              */
             fun upcoming(): Optional<PayoutStatusMetric> = upcoming.getOptional("upcoming")
+
+            /**
+             * Returns the raw JSON value of [attention].
+             *
+             * Unlike [attention], this method doesn't throw if the JSON field has an unexpected
+             * type.
+             */
+            @JsonProperty("attention")
+            @ExcludeMissing
+            fun _attention(): JsonField<PayoutStatusMetric> = attention
 
             /**
              * Returns the raw JSON value of [failed].
@@ -4674,6 +4696,7 @@ private constructor(
             /** A builder for [PayoutStatus]. */
             class Builder internal constructor() {
 
+                private var attention: JsonField<PayoutStatusMetric> = JsonMissing.of()
                 private var failed: JsonField<PayoutStatusMetric> = JsonMissing.of()
                 private var issued: JsonField<PayoutStatusMetric> = JsonMissing.of()
                 private var queued: JsonField<PayoutStatusMetric> = JsonMissing.of()
@@ -4683,12 +4706,27 @@ private constructor(
 
                 @JvmSynthetic
                 internal fun from(payoutStatus: PayoutStatus) = apply {
+                    attention = payoutStatus.attention
                     failed = payoutStatus.failed
                     issued = payoutStatus.issued
                     queued = payoutStatus.queued
                     reversed = payoutStatus.reversed
                     upcoming = payoutStatus.upcoming
                     additionalProperties = payoutStatus.additionalProperties.toMutableMap()
+                }
+
+                /** Queued or issued Wise payouts that are paused until a refund is confirmed. */
+                fun attention(attention: PayoutStatusMetric) = attention(JsonField.of(attention))
+
+                /**
+                 * Sets [Builder.attention] to an arbitrary JSON value.
+                 *
+                 * You should usually call [Builder.attention] with a well-typed
+                 * [PayoutStatusMetric] value instead. This method is primarily for setting the
+                 * field to an undocumented or not yet supported value.
+                 */
+                fun attention(attention: JsonField<PayoutStatusMetric>) = apply {
+                    this.attention = attention
                 }
 
                 fun failed(failed: PayoutStatusMetric) = failed(JsonField.of(failed))
@@ -4779,6 +4817,7 @@ private constructor(
                  */
                 fun build(): PayoutStatus =
                     PayoutStatus(
+                        attention,
                         failed,
                         issued,
                         queued,
@@ -4795,6 +4834,7 @@ private constructor(
                     return@apply
                 }
 
+                attention().ifPresent { it.validate() }
                 failed().ifPresent { it.validate() }
                 issued().ifPresent { it.validate() }
                 queued().ifPresent { it.validate() }
@@ -4813,7 +4853,8 @@ private constructor(
 
             @JvmSynthetic
             internal fun validity(): Int =
-                (failed.asKnown().getOrNull()?.validity() ?: 0) +
+                (attention.asKnown().getOrNull()?.validity() ?: 0) +
+                    (failed.asKnown().getOrNull()?.validity() ?: 0) +
                     (issued.asKnown().getOrNull()?.validity() ?: 0) +
                     (queued.asKnown().getOrNull()?.validity() ?: 0) +
                     (reversed.asKnown().getOrNull()?.validity() ?: 0) +
@@ -5013,6 +5054,7 @@ private constructor(
                 }
 
                 return other is PayoutStatus &&
+                    attention == other.attention &&
                     failed == other.failed &&
                     issued == other.issued &&
                     queued == other.queued &&
@@ -5022,13 +5064,21 @@ private constructor(
             }
 
             private val hashCode: Int by lazy {
-                Objects.hash(failed, issued, queued, reversed, upcoming, additionalProperties)
+                Objects.hash(
+                    attention,
+                    failed,
+                    issued,
+                    queued,
+                    reversed,
+                    upcoming,
+                    additionalProperties,
+                )
             }
 
             override fun hashCode(): Int = hashCode
 
             override fun toString() =
-                "PayoutStatus{failed=$failed, issued=$issued, queued=$queued, reversed=$reversed, upcoming=$upcoming, additionalProperties=$additionalProperties}"
+                "PayoutStatus{attention=$attention, failed=$failed, issued=$issued, queued=$queued, reversed=$reversed, upcoming=$upcoming, additionalProperties=$additionalProperties}"
         }
 
         /** Reward counts grouped by review and fulfillment status. */

@@ -14,6 +14,7 @@ import com.growsurf.api.core.checkRequired
 import com.growsurf.api.errors.GrowsurfInvalidDataException
 import java.util.Collections
 import java.util.Objects
+import java.util.Optional
 
 class ParticipantSendInvitesResponse
 @JsonCreator(mode = JsonCreator.Mode.DISABLED)
@@ -21,6 +22,7 @@ private constructor(
     private val invitesSent: JsonField<Long>,
     private val messageType: JsonField<String>,
     private val success: JsonField<Boolean>,
+    private val message: JsonField<String>,
     private val additionalProperties: MutableMap<String, JsonValue>,
 ) {
 
@@ -33,7 +35,8 @@ private constructor(
         @ExcludeMissing
         messageType: JsonField<String> = JsonMissing.of(),
         @JsonProperty("success") @ExcludeMissing success: JsonField<Boolean> = JsonMissing.of(),
-    ) : this(invitesSent, messageType, success, mutableMapOf())
+        @JsonProperty("message") @ExcludeMissing message: JsonField<String> = JsonMissing.of(),
+    ) : this(invitesSent, messageType, success, message, mutableMapOf())
 
     /**
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
@@ -52,6 +55,14 @@ private constructor(
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
      */
     fun success(): Boolean = success.getRequired("success")
+
+    /**
+     * Human-readable detail for the result. Empty when there is nothing to add.
+     *
+     * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
+     *   server responded with an unexpected value).
+     */
+    fun message(): Optional<String> = message.getOptional("message")
 
     /**
      * Returns the raw JSON value of [invitesSent].
@@ -73,6 +84,13 @@ private constructor(
      * Unlike [success], this method doesn't throw if the JSON field has an unexpected type.
      */
     @JsonProperty("success") @ExcludeMissing fun _success(): JsonField<Boolean> = success
+
+    /**
+     * Returns the raw JSON value of [message].
+     *
+     * Unlike [message], this method doesn't throw if the JSON field has an unexpected type.
+     */
+    @JsonProperty("message") @ExcludeMissing fun _message(): JsonField<String> = message
 
     @JsonAnySetter
     private fun putAdditionalProperty(key: String, value: JsonValue) {
@@ -108,6 +126,7 @@ private constructor(
         private var invitesSent: JsonField<Long>? = null
         private var messageType: JsonField<String>? = null
         private var success: JsonField<Boolean>? = null
+        private var message: JsonField<String> = JsonMissing.of()
         private var additionalProperties: MutableMap<String, JsonValue> = mutableMapOf()
 
         @JvmSynthetic
@@ -115,6 +134,7 @@ private constructor(
             invitesSent = participantSendInvitesResponse.invitesSent
             messageType = participantSendInvitesResponse.messageType
             success = participantSendInvitesResponse.success
+            message = participantSendInvitesResponse.message
             additionalProperties =
                 participantSendInvitesResponse.additionalProperties.toMutableMap()
         }
@@ -150,6 +170,17 @@ private constructor(
          * method is primarily for setting the field to an undocumented or not yet supported value.
          */
         fun success(success: JsonField<Boolean>) = apply { this.success = success }
+
+        /** Human-readable detail for the result. Empty when there is nothing to add. */
+        fun message(message: String) = message(JsonField.of(message))
+
+        /**
+         * Sets [Builder.message] to an arbitrary JSON value.
+         *
+         * You should usually call [Builder.message] with a well-typed [String] value instead. This
+         * method is primarily for setting the field to an undocumented or not yet supported value.
+         */
+        fun message(message: JsonField<String>) = apply { this.message = message }
 
         fun additionalProperties(additionalProperties: Map<String, JsonValue>) = apply {
             this.additionalProperties.clear()
@@ -189,6 +220,7 @@ private constructor(
                 checkRequired("invitesSent", invitesSent),
                 checkRequired("messageType", messageType),
                 checkRequired("success", success),
+                message,
                 additionalProperties.toMutableMap(),
             )
     }
@@ -211,6 +243,7 @@ private constructor(
         invitesSent()
         messageType()
         success()
+        message()
         validated = true
     }
 
@@ -231,7 +264,8 @@ private constructor(
     internal fun validity(): Int =
         (if (invitesSent.asKnown().isPresent) 1 else 0) +
             (if (messageType.asKnown().isPresent) 1 else 0) +
-            (if (success.asKnown().isPresent) 1 else 0)
+            (if (success.asKnown().isPresent) 1 else 0) +
+            (if (message.asKnown().isPresent) 1 else 0)
 
     override fun equals(other: Any?): Boolean {
         if (this === other) {
@@ -242,15 +276,16 @@ private constructor(
             invitesSent == other.invitesSent &&
             messageType == other.messageType &&
             success == other.success &&
+            message == other.message &&
             additionalProperties == other.additionalProperties
     }
 
     private val hashCode: Int by lazy {
-        Objects.hash(invitesSent, messageType, success, additionalProperties)
+        Objects.hash(invitesSent, messageType, success, message, additionalProperties)
     }
 
     override fun hashCode(): Int = hashCode
 
     override fun toString() =
-        "ParticipantSendInvitesResponse{invitesSent=$invitesSent, messageType=$messageType, success=$success, additionalProperties=$additionalProperties}"
+        "ParticipantSendInvitesResponse{invitesSent=$invitesSent, messageType=$messageType, success=$success, message=$message, additionalProperties=$additionalProperties}"
 }

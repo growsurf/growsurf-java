@@ -175,10 +175,7 @@ private constructor(private val id: String?, private val body: Map<String, Any?>
         /** The group name (internal only, never shown to participants). 1 to 100 characters. */
         fun name(name: String) = apply { body["name"] = name }
 
-        /**
-         * The rules that place participants in this group. Each email and domain can be in one
-         * group only. Up to 500.
-         */
+        /** Omit or send an empty array. Add rules after configuring a reward. */
         fun rules(rules: List<RewardGroupRule>) = apply { body["rules"] = rules.toList() }
 
         internal fun body(body: Map<String, Any?>) = apply {
