@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.24.0](https://github.com/growsurf/growsurf-java/compare/v1.23.0...v1.24.0) (2026-11-18)
+
+
+### Features
+
+* add reward groups and participant bulk move ([6753e9b](https://github.com/growsurf/growsurf-java/commit/6753e9b61935a03606201878565e3d14f3bacc48))
+* **api:** add payout attention and invite message; align group wording ([ef6b14e](https://github.com/growsurf/growsurf-java/commit/ef6b14ee28e3d16c06cdf85ae86ea0279618e25b))
+* **api:** sync REST v2 docs and types ([df47515](https://github.com/growsurf/growsurf-java/commit/df475154d37eb2289a1f79a04a713d51122f8283))
+
+
+### Documentation
+
+* align group creation and webhook event contracts ([5e360f9](https://github.com/growsurf/growsurf-java/commit/5e360f942540e098254ca1ee63edcd920b01eb8a))
+
+
+### Styles
+
+* apply pinned Kotlin formatter to API documentation ([d451b07](https://github.com/growsurf/growsurf-java/commit/d451b0766c31fed7712f17e06fa0a93ceef6179f))
+
 ## [1.23.0](https://github.com/growsurf/growsurf-java/compare/v1.22.0...v1.23.0) (2026-11-04)
 
 
