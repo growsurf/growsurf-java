@@ -59,6 +59,8 @@ import com.growsurf.api.services.blocking.campaign.DesignService
 import com.growsurf.api.services.blocking.campaign.DesignServiceImpl
 import com.growsurf.api.services.blocking.campaign.EmailsService
 import com.growsurf.api.services.blocking.campaign.EmailsServiceImpl
+import com.growsurf.api.services.blocking.campaign.GroupsService
+import com.growsurf.api.services.blocking.campaign.GroupsServiceImpl
 import com.growsurf.api.services.blocking.campaign.InstallationService
 import com.growsurf.api.services.blocking.campaign.InstallationServiceImpl
 import com.growsurf.api.services.blocking.campaign.IntegrationsService
@@ -92,6 +94,8 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
     private val commission: CommissionService by lazy { CommissionServiceImpl(clientOptions) }
 
     private val rewards: RewardsService by lazy { RewardsServiceImpl(clientOptions) }
+
+    private val groups: GroupsService by lazy { GroupsServiceImpl(clientOptions) }
 
     private val resources: ProgramResourcesService by lazy {
         ProgramResourcesServiceImpl(clientOptions)
@@ -128,6 +132,8 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
 
     /** Program Resource management and secure FILE upload operations. */
     override fun resources(): ProgramResourcesService = resources
+
+    override fun groups(): GroupsService = groups
 
     /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
     override fun design(): DesignService = design
@@ -310,6 +316,10 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
             RewardsServiceImpl.WithRawResponseImpl(clientOptions)
         }
 
+        private val groups: GroupsService.WithRawResponse by lazy {
+            GroupsServiceImpl.WithRawResponseImpl(clientOptions)
+        }
+
         private val resources: ProgramResourcesService.WithRawResponse by lazy {
             ProgramResourcesServiceImpl.WithRawResponseImpl(clientOptions)
         }
@@ -362,6 +372,8 @@ class CampaignServiceImpl internal constructor(private val clientOptions: Client
 
         /** Program Resource management and secure FILE upload operations. */
         override fun resources(): ProgramResourcesService.WithRawResponse = resources
+
+        override fun groups(): GroupsService.WithRawResponse = groups
 
         /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
         override fun design(): DesignService.WithRawResponse = design

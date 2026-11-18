@@ -45,6 +45,7 @@ import com.growsurf.api.services.blocking.campaign.CommissionService
 import com.growsurf.api.services.blocking.campaign.CustomDomainService
 import com.growsurf.api.services.blocking.campaign.DesignService
 import com.growsurf.api.services.blocking.campaign.EmailsService
+import com.growsurf.api.services.blocking.campaign.GroupsService
 import com.growsurf.api.services.blocking.campaign.InstallationService
 import com.growsurf.api.services.blocking.campaign.IntegrationsService
 import com.growsurf.api.services.blocking.campaign.OptionsService
@@ -82,6 +83,9 @@ interface CampaignService {
 
     /** Program Resource management and secure FILE upload operations. */
     fun resources(): ProgramResourcesService
+
+    /** Group operations. Groups give some participants a different reward list. */
+    fun groups(): GroupsService
 
     /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
     fun design(): DesignService
@@ -801,6 +805,9 @@ interface CampaignService {
 
         /** Program Resource management and secure FILE upload operations. */
         fun resources(): ProgramResourcesService.WithRawResponse
+
+        /** Group operations. Groups give some participants a different reward list. */
+        fun groups(): GroupsService.WithRawResponse
 
         /** Program Editor Design tab (`CampaignDesign`) configuration operations. */
         fun design(): DesignService.WithRawResponse

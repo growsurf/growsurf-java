@@ -202,7 +202,8 @@ private constructor(
     fun referralCouponCode(): Optional<String> = body.referralCouponCode()
 
     /**
-     * Custom key/value metadata (single-level; values are stored as strings).
+     * Custom key/value metadata (single-level; values are stored as strings). Sending `metadata`
+     * replaces the stored object.
      *
      * Each value must be a string, number, or boolean of up to 500 characters. Each key must have 1
      * to 40 characters once camelCased, and two keys that camelCase to the same key are rejected.
@@ -528,6 +529,17 @@ private constructor(
         /** An image URL for the reward. */
         fun imageUrl(imageUrl: String?) = apply { body.imageUrl(imageUrl) }
 
+        /**
+         * The group this reward belongs to (`grp_…`), or `null` for Default. `LEADERBOARD` rewards
+         * apply to the whole program and cannot be in a group. An ID that is not a group in this
+         * program returns `400`.
+         */
+        fun groupId(groupId: String?) =
+            putAdditionalBodyProperty("groupId", JsonValue.from(groupId))
+
+        /** Alias for calling [Builder.groupId] with `groupId.orElse(null)`. */
+        fun groupId(groupId: Optional<String>) = groupId(groupId.getOrNull())
+
         /** Alias for calling [Builder.imageUrl] with `imageUrl.orElse(null)`. */
         fun imageUrl(imageUrl: Optional<String>) = imageUrl(imageUrl.getOrNull())
 
@@ -778,7 +790,8 @@ private constructor(
         }
 
         /**
-         * Custom key/value metadata (single-level; values are stored as strings).
+         * Custom key/value metadata (single-level; values are stored as strings). Sending
+         * `metadata` replaces the stored object.
          *
          * Each value must be a string, number, or boolean of up to 500 characters. Each key must
          * have 1 to 40 characters once camelCased, and two keys that camelCase to the same key are
@@ -1286,7 +1299,8 @@ private constructor(
             referralCouponCode.getOptional("referralCouponCode")
 
         /**
-         * Custom key/value metadata (single-level; values are stored as strings).
+         * Custom key/value metadata (single-level; values are stored as strings). Sending
+         * `metadata` replaces the stored object.
          *
          * Each value must be a string, number, or boolean of up to 500 characters. Each key must
          * have 1 to 40 characters once camelCased, and two keys that camelCase to the same key are
@@ -1917,7 +1931,8 @@ private constructor(
             }
 
             /**
-             * Custom key/value metadata (single-level; values are stored as strings).
+             * Custom key/value metadata (single-level; values are stored as strings). Sending
+             * `metadata` replaces the stored object.
              *
              * Each value must be a string, number, or boolean of up to 500 characters. Each key
              * must have 1 to 40 characters once camelCased, and two keys that camelCase to the same
@@ -2188,7 +2203,8 @@ private constructor(
     }
 
     /**
-     * Custom key/value metadata (single-level; values are stored as strings).
+     * Custom key/value metadata (single-level; values are stored as strings). Sending `metadata`
+     * replaces the stored object.
      *
      * For `DOUBLE_SIDED` rewards in referral programs, `rewardAmount` is the referrer’s amount and
      * `referredRewardAmount` is the friend’s amount. If `referredRewardAmount` is absent, both use

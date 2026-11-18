@@ -299,6 +299,17 @@ private constructor(
         fun firstName(firstName: String) = apply { body.firstName(firstName) }
 
         /**
+         * Moves the participant to this group (`grp_…`), or to Default with `null`. This is a
+         * manual placement, so the groups' email and domain rules do not override it later. The
+         * move applies to new referrals only; rewards already earned keep their amounts.
+         */
+        fun groupId(groupId: String?) =
+            putAdditionalBodyProperty("groupId", JsonValue.from(groupId))
+
+        /** Alias for calling [Builder.groupId] with `groupId.orElse(null)`. */
+        fun groupId(groupId: Optional<String>) = groupId(groupId.getOrNull())
+
+        /**
          * Sets [Builder.firstName] to an arbitrary JSON value.
          *
          * You should usually call [Builder.firstName] with a well-typed [String] value instead.

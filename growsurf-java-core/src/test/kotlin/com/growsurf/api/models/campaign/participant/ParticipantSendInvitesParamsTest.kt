@@ -14,7 +14,6 @@ internal class ParticipantSendInvitesParamsTest {
             .participantIdOrEmail("participantIdOrEmail")
             .addEmailAddress("erlich@aviato.com")
             .messageText("{{referrerFirstName}} invited you with {{referrerShareUrl}}.")
-            .subjectText("Join me on Pied Piper")
             .build()
     }
 
@@ -26,7 +25,6 @@ internal class ParticipantSendInvitesParamsTest {
                 .participantIdOrEmail("participantIdOrEmail")
                 .addEmailAddress("erlich@aviato.com")
                 .messageText("{{referrerFirstName}} invited you with {{referrerShareUrl}}.")
-                .subjectText("Join me on Pied Piper")
                 .build()
 
         assertThat(params._pathParam(0)).isEqualTo("id")
@@ -43,7 +41,6 @@ internal class ParticipantSendInvitesParamsTest {
                 .participantIdOrEmail("participantIdOrEmail")
                 .addEmailAddress("erlich@aviato.com")
                 .messageText("{{referrerFirstName}} invited you with {{referrerShareUrl}}.")
-                .subjectText("Join me on Pied Piper")
                 .build()
 
         val body = params._body()
@@ -51,6 +48,5 @@ internal class ParticipantSendInvitesParamsTest {
         assertThat(body.emailAddresses()).containsExactly("erlich@aviato.com")
         assertThat(body.messageText())
             .isEqualTo("{{referrerFirstName}} invited you with {{referrerShareUrl}}.")
-        assertThat(body.subjectText()).isEqualTo("Join me on Pied Piper")
     }
 }

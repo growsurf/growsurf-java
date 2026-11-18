@@ -15,6 +15,8 @@ import com.growsurf.api.models.campaign.participant.ParticipantAddParams
 import com.growsurf.api.models.campaign.participant.ParticipantAnalyticsResponse
 import com.growsurf.api.models.campaign.participant.ParticipantBulkDeleteParams
 import com.growsurf.api.models.campaign.participant.ParticipantBulkDeleteResponse
+import com.growsurf.api.models.campaign.participant.ParticipantBulkMoveParams
+import com.growsurf.api.models.campaign.participant.ParticipantBulkMoveResponse
 import com.growsurf.api.models.campaign.participant.ParticipantCancelDelayedReferralParams
 import com.growsurf.api.models.campaign.participant.ParticipantCancelDelayedReferralResponse
 import com.growsurf.api.models.campaign.participant.ParticipantDeleteParams
@@ -116,7 +118,7 @@ interface ParticipantService {
     /**
      * Removes participant access immediately by GrowSurf participant ID or email address. Related
      * record cleanup completes automatically. Do not repeat a successful deletion to finish
-     * cleanup.
+     * cleanup. A `202` response includes pending analytics erasure details.
      */
     fun delete(
         participantIdOrEmail: String,
@@ -150,7 +152,8 @@ interface ParticipantService {
      * per request — chunk larger lists across multiple calls. The response reports a per-row
      * `status` for every submitted entry, so a `200` can include rows that were `NOT_FOUND` or
      * failed. Deletion is permanent. Successful rows lose participant access immediately; related
-     * record cleanup completes automatically, subject to required financial record retention.
+     * record cleanup completes automatically, subject to required financial record retention. A
+     * `202` response also includes `analyticsErasure` when analytics erasure is pending.
      */
     fun bulkDelete(id: String, params: ParticipantBulkDeleteParams): ParticipantBulkDeleteResponse =
         bulkDelete(id, params, RequestOptions.none())
@@ -171,6 +174,30 @@ interface ParticipantService {
         params: ParticipantBulkDeleteParams,
         requestOptions: RequestOptions = RequestOptions.none(),
     ): ParticipantBulkDeleteResponse
+
+    /**
+     * Moves a list of participants to a group, or to Default with `groupId: null`. Each entry in
+     * `participants` is a GrowSurf participant ID or an email address (mixed lists are allowed). Up
+     * to `200` entries per request. The response reports a per-row `status` for every submitted
+     * entry. All found participants move together: if the move fails, no one moves. A move is a
+     * manual placement, so the group's email and domain rules do not override it later. A move
+     * applies to new referrals only. An ID that is not a group in this program returns `400`.
+     */
+    fun bulkMove(id: String, params: ParticipantBulkMoveParams): ParticipantBulkMoveResponse =
+        bulkMove(id, params, RequestOptions.none())
+
+    /** @see bulkMove */
+    fun bulkMove(
+        id: String,
+        params: ParticipantBulkMoveParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ParticipantBulkMoveResponse = bulkMove(params.toBuilder().id(id).build(), requestOptions)
+
+    /** @see bulkMove */
+    fun bulkMove(
+        params: ParticipantBulkMoveParams,
+        requestOptions: RequestOptions = RequestOptions.none(),
+    ): ParticipantBulkMoveResponse
 
     /**
      * Adds a new participant to the program. If the email already exists, the existing participant
@@ -392,8 +419,8 @@ interface ParticipantService {
 
     /**
      * Sends email invites on behalf of a participant to a list of email addresses. Sending invites
-     * via the API requires a **verified custom email domain** on the program; the request fails
-     * until one is verified.
+     * via the API requires a **verified custom email domain** on the program. Until one is
+     * verified, it returns `success: false`.
      */
     fun sendInvites(
         participantIdOrEmail: String,
@@ -814,6 +841,16 @@ interface ParticipantService {
             params: ParticipantBulkDeleteParams,
             requestOptions: RequestOptions = RequestOptions.none(),
         ): HttpResponseFor<ParticipantBulkDeleteResponse>
+
+        /**
+         * Returns a raw HTTP response for `post /campaign/{id}/participants/bulk-move`, but is
+         * otherwise the same as [ParticipantService.bulkMove].
+         */
+        @MustBeClosed
+        fun bulkMove(
+            params: ParticipantBulkMoveParams,
+            requestOptions: RequestOptions = RequestOptions.none(),
+        ): HttpResponseFor<ParticipantBulkMoveResponse>
 
         /**
          * Returns a raw HTTP response for `post /campaign/{id}/participant`, but is otherwise the

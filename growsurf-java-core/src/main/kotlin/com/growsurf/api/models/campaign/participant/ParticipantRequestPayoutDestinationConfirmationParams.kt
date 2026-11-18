@@ -39,7 +39,9 @@ private constructor(
     fun participantIdOrEmail(): Optional<String> = Optional.ofNullable(participantIdOrEmail)
 
     /**
-     * The payout provider the participant should confirm a destination for.
+     * The payout provider the participant should confirm a destination for. `VENMO` uses a
+     * confirmed email and is available only when connected PayPal Payouts and payout-email
+     * confirmation are enabled in a USD program. Venmo recipients must be in the United States.
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
      *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -125,7 +127,11 @@ private constructor(
          */
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
-        /** The payout provider the participant should confirm a destination for. */
+        /**
+         * The payout provider the participant should confirm a destination for. `VENMO` uses a
+         * confirmed email and is available only when connected PayPal Payouts and payout-email
+         * confirmation are enabled in a USD program. Venmo recipients must be in the United States.
+         */
         fun provider(provider: Provider) = apply { body.provider(provider) }
 
         /**
@@ -305,7 +311,9 @@ private constructor(
         ) : this(provider, mutableMapOf())
 
         /**
-         * The payout provider the participant should confirm a destination for.
+         * The payout provider the participant should confirm a destination for. `VENMO` uses a
+         * confirmed email and is available only when connected PayPal Payouts and payout-email
+         * confirmation are enabled in a USD program. Venmo recipients must be in the United States.
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type or is
          *   unexpectedly missing or null (e.g. if the server responded with an unexpected value).
@@ -356,7 +364,12 @@ private constructor(
                 additionalProperties = body.additionalProperties.toMutableMap()
             }
 
-            /** The payout provider the participant should confirm a destination for. */
+            /**
+             * The payout provider the participant should confirm a destination for. `VENMO` uses a
+             * confirmed email and is available only when connected PayPal Payouts and payout-email
+             * confirmation are enabled in a USD program. Venmo recipients must be in the United
+             * States.
+             */
             fun provider(provider: Provider) = provider(JsonField.of(provider))
 
             /**
@@ -458,7 +471,11 @@ private constructor(
             "Body{provider=$provider, additionalProperties=$additionalProperties}"
     }
 
-    /** The payout provider the participant should confirm a destination for. */
+    /**
+     * The payout provider the participant should confirm a destination for. `VENMO` uses a
+     * confirmed email and is available only when connected PayPal Payouts and payout-email
+     * confirmation are enabled in a USD program. Venmo recipients must be in the United States.
+     */
     class Provider @JsonCreator private constructor(private val value: JsonField<String>) : Enum {
 
         /**

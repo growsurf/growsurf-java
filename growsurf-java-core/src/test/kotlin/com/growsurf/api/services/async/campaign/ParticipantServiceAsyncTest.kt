@@ -333,7 +333,6 @@ internal class ParticipantServiceAsyncTest {
                     .participantIdOrEmail("participantIdOrEmail")
                     .addEmailAddress("erlich@aviato.com")
                     .messageText("{{referrerFirstName}} invited you with {{referrerShareUrl}}.")
-                    .subjectText("Join me on Pied Piper")
                     .build()
             )
 

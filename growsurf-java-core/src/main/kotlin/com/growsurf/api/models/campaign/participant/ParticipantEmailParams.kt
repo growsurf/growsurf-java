@@ -35,8 +35,9 @@ private constructor(
     fun participantIdOrEmail(): Optional<String> = Optional.ofNullable(participantIdOrEmail)
 
     /**
-     * HTML body for a free-form email. You can personalize it with dynamic text, inserting
-     * `{{...}}` tokens like `{{firstName}}` or `{{shareUrl}}`. See
+     * HTML body for a free-form email. When `settings.design.layoutMode` is `INLINE`, include
+     * `{{emailFooter}}` in the body; `{{emailHeader}}` is optional. You can personalize it with
+     * dynamic text, inserting `{{...}}` tokens like `{{firstName}}` or `{{shareUrl}}`. See
      * [Guide to using dynamic text in GrowSurf emails](https://support.growsurf.com/article/213-guide-to-using-dynamic-text-in-growsurf-emails).
      *
      * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if the
@@ -168,8 +169,9 @@ private constructor(
         fun body(body: Body) = apply { this.body = body.toBuilder() }
 
         /**
-         * HTML body for a free-form email. You can personalize it with dynamic text, inserting
-         * `{{...}}` tokens like `{{firstName}}` or `{{shareUrl}}`. See
+         * HTML body for a free-form email. When `settings.design.layoutMode` is `INLINE`, include
+         * `{{emailFooter}}` in the body; `{{emailHeader}}` is optional. You can personalize it with
+         * dynamic text, inserting `{{...}}` tokens like `{{firstName}}` or `{{shareUrl}}`. See
          * [Guide to using dynamic text in GrowSurf emails](https://support.growsurf.com/article/213-guide-to-using-dynamic-text-in-growsurf-emails).
          */
         fun body(body: String) = apply { this.body.body(body) }
@@ -411,8 +413,9 @@ private constructor(
         ) : this(body, emailType, preheader, subject, mutableMapOf())
 
         /**
-         * HTML body for a free-form email. You can personalize it with dynamic text, inserting
-         * `{{...}}` tokens like `{{firstName}}` or `{{shareUrl}}`. See
+         * HTML body for a free-form email. When `settings.design.layoutMode` is `INLINE`, include
+         * `{{emailFooter}}` in the body; `{{emailHeader}}` is optional. You can personalize it with
+         * dynamic text, inserting `{{...}}` tokens like `{{firstName}}` or `{{shareUrl}}`. See
          * [Guide to using dynamic text in GrowSurf emails](https://support.growsurf.com/article/213-guide-to-using-dynamic-text-in-growsurf-emails).
          *
          * @throws GrowsurfInvalidDataException if the JSON field has an unexpected type (e.g. if
@@ -521,8 +524,10 @@ private constructor(
             }
 
             /**
-             * HTML body for a free-form email. You can personalize it with dynamic text, inserting
-             * `{{...}}` tokens like `{{firstName}}` or `{{shareUrl}}`. See
+             * HTML body for a free-form email. When `settings.design.layoutMode` is `INLINE`,
+             * include `{{emailFooter}}` in the body; `{{emailHeader}}` is optional. You can
+             * personalize it with dynamic text, inserting `{{...}}` tokens like `{{firstName}}` or
+             * `{{shareUrl}}`. See
              * [Guide to using dynamic text in GrowSurf emails](https://support.growsurf.com/article/213-guide-to-using-dynamic-text-in-growsurf-emails).
              */
             fun body(body: String) = body(JsonField.of(body))
